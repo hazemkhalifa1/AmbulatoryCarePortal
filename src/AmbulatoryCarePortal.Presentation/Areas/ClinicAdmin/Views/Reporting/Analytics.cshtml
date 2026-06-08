@@ -1,0 +1,195 @@
+@model AnalyticsViewModel
+
+@{
+    ViewData["Title"] = $"{Model.AnalyticsType} Analytics";
+    var insightBadge = (string type) => type switch
+    {
+        "Success" => "success",
+        "Warning" => "warning",
+        "Info" => "info",
+        "Danger" => "danger",
+        _ => "secondary"
+    };
+    var insightIcon = (string type) => type switch
+    {
+        "Success" => "fa-check-circle",
+        "Warning" => "fa-exclamation-triangle",
+        "Info" => "fa-info-circle",
+        "Danger" => "fa-times-circle",
+        _ => "fa-circle"
+    };
+    var trendIcon = (string dir) => dir switch
+    {
+        "Up" => "fa-arrow-up text-success",
+        "Down" => "fa-arrow-down text-danger",
+        _ => "fa-minus text-muted"
+    };
+}
+
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-chart-pie me-2"></i>@Model.AnalyticsType Analytics Dashboard</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.ChartData != null && Model.ChartData.Any())
+{
+    <div class="row">
+        @foreach (var chart in Model.ChartData)
+        {
+            var chartId = $"chart-{chart.Title.Replace(" ", "-").ToLower()}";
+            <div class="col-lg-6 col-md-12 mb-4">
+                <div class="card card-primary card-outline h-100">
+                    <div class="card-header">
+                        <h5 class="card-title"><i class="fas fa-chart-simple me-2"></i>@chart.Title</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="@chartId"
+                                data-chart-type="@chart.ChartType"
+                                data-labels='@System.Text.Json.JsonSerializer.Serialize(chart.Labels)'
+                                data-values='@System.Text.Json.JsonSerializer.Serialize(chart.Values)'
+                                style="min-height: 280px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (Model.Insights != null && Model.Insights.Any())
+{
+    <div class="row">
+        <div class="col-12 mb-3">
+            <h4><i class="fas fa-lightbulb me-2"></i>Insights & Recommendations</h4>
+        </div>
+        @foreach (var insight in Model.Insights)
+        {
+            <div class="col-lg-6 col-md-12 mb-4">
+                <div class="card card-outline card-@insightBadge(insight.Type) h-100">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas @insightIcon(insight.Type) me-2 text-@insightBadge(insight.Type)"></i>
+                            @insight.Title
+                        </h5>
+                        <span class="badge bg-@insightBadge(insight.Type) float-end">@insight.Type</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@insight.Description</p>
+                        @if (!string.IsNullOrEmpty(insight.Recommendation))
+                        {
+                            <div class="alert alert-@insightBadge(insight.Type) mb-0 py-2">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                <strong>Recommendation:</strong> @insight.Recommendation
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (Model.Trends != null && Model.Trends.Any())
+{
+    <div class="row">
+        <div class="col-12 mb-3">
+            <h4><i class="fas fa-chart-line me-2"></i>Performance Trends</h4>
+        </div>
+        <div class="col-12">
+            <div class="card card-outline card-secondary">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Change %</th>
+                                    <th>Direction</th>
+                                    <th>Period</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var trend in Model.Trends)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@trend.Metric</td>
+                                        <td>
+                                            <span class="badge bg-@(trend.ChangePercentage >= 0 ? "success" : "danger")">
+                                                @(trend.ChangePercentage >= 0 ? "+" : "")@trend.ChangePercentage.ToString("F1")%
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <i class="fas @trendIcon(trend.Direction) fa-lg"></i>
+                                            <span class="ms-1">@trend.Direction</span>
+                                        </td>
+                                        <td class="text-muted">@trend.Period</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var chartCanvases = document.querySelectorAll('canvas[data-chart-type]');
+            chartCanvases.forEach(function (canvas) {
+                var ctx = canvas.getContext('2d');
+                var chartType = canvas.getAttribute('data-chart-type');
+                var labels, values;
+
+                try {
+                    labels = JSON.parse(canvas.getAttribute('data-labels'));
+                    values = JSON.parse(canvas.getAttribute('data-values'));
+                } catch (e) {
+                    return;
+                }
+
+                if (!labels || !values) return;
+
+                var isPieLike = chartType === 'Doughnut' || chartType === 'Pie';
+                var config = {
+                    type: chartType.toLowerCase(),
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '',
+                            data: values,
+                            backgroundColor: isPieLike
+                                ? ['#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6f42c1', '#fd7e14']
+                                : '#0d6efd',
+                            borderColor: isPieLike ? '#fff' : '#0d6efd',
+                            borderWidth: isPieLike ? 2 : 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                };
+
+                new Chart(ctx, config);
+            });
+        });
+    </script>
+}

@@ -1,0 +1,157 @@
+@model CreateHRStaffViewModel
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Add Staff Member";
+    var isArabic = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    @(isArabic ? "إضافة موظف جديد" : "Add New Staff Member")
+                </h3>
+            </div>
+
+            <form method="post" asp-action="Create">
+                @Html.AntiForgeryToken()
+
+                <div class="card-body">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i>
+                            @(isArabic ? "يرجى تصحيح الأخطاء أدناه." : "Please correct the errors below.")
+                            <div asp-validation-summary="All" class="mt-2"></div>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="FirstName" class="form-label">
+                                    @(isArabic ? "الاسم الأول" : "First Name") <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="FirstName" class="form-control" placeholder="@(isArabic ? "الاسم الأول" : "First name")" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="LastName" class="form-label">
+                                    @(isArabic ? "اسم العائلة" : "Last Name") <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="LastName" class="form-control" placeholder="@(isArabic ? "اسم العائلة" : "Last name")" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="NationalId" class="form-label">
+                                    @(isArabic ? "رقم الهوية" : "National ID")
+                                </label>
+                                <input asp-for="NationalId" class="form-control" placeholder="@(isArabic ? "رقم الهوية" : "National ID")" />
+                                <span asp-validation-for="NationalId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="StaffType" class="form-label">
+                                    @(isArabic ? "نوع الموظف" : "Staff Type") <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="StaffType" class="form-select">
+                                    <option value="">-- @(isArabic ? "اختر" : "Select") --</option>
+                                    @foreach (var type in Model.StaffTypes)
+                                    {
+                                        <option value="@type">@type</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="StaffType" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label">
+                                    @(isArabic ? "البريد الإلكتروني" : "Email") <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="Email" class="form-control" type="email" placeholder="email@example.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="PhoneNumber" class="form-label">
+                                    @(isArabic ? "رقم الهاتف" : "Phone Number")
+                                </label>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="+966 5X XXX XXXX" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="PositionTitle" class="form-label">
+                                    @(isArabic ? "المسمى الوظيفي" : "Position Title") <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="PositionTitle" class="form-control" placeholder="@(isArabic ? "المسمى الوظيفي" : "e.g. Senior Nurse")" />
+                                <span asp-validation-for="PositionTitle" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="DepartmentId" class="form-label">
+                                    @(isArabic ? "القسم" : "Department") <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="DepartmentId" class="form-select">
+                                    <option value="">-- @(isArabic ? "اختر القسم" : "Select Department") --</option>
+                                    @foreach (var dept in Model.AvailableDepartments)
+                                    {
+                                        <option value="@dept.Id">@dept.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="JoinDate" class="form-label">
+                                    @(isArabic ? "تاريخ الالتحاق" : "Join Date") <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="JoinDate" class="form-control" type="date"
+                                       value="@Model.JoinDate.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="JoinDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> @(isArabic ? "حفظ" : "Save")
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> @(isArabic ? "إلغاء" : "Cancel")
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

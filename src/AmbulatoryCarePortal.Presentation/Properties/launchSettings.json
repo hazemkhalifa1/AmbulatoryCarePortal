@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "AmbulatoryCarePortal.Presentation": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:2167;http://localhost:2168"
+    }
+  }
+}

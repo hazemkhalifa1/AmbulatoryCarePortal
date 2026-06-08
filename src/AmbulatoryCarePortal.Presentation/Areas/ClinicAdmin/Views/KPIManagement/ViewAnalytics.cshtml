@@ -1,0 +1,197 @@
+@model KPIAnalyticsViewModel
+
+@{
+    ViewData["Title"] = "KPI Analytics";
+}
+
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <h3 class="mb-0"><i class="fas fa-chart-bar text-info me-2"></i>KPI Analytics</h3>
+    </div>
+    <div class="col-sm-6 text-end">
+        <a asp-action="EnterData" asp-route-kpiId="@Model.KPI.Id" class="btn btn-success me-1">
+            <i class="fas fa-pen me-1"></i>Enter Data
+        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to List
+        </a>
+    </div>
+</div>
+
+<div class="card card-info card-outline mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-bullseye me-1"></i>@Model.KPI.Name
+            @if (!string.IsNullOrEmpty(Model.KPI.NameAr))
+            {
+                <small class="text-muted ms-2">@Model.KPI.NameAr</small>
+            }
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <small class="text-muted d-block">Target Value</small>
+                <span class="fw-bold fs-5">@Model.KPI.TargetValue.ToString("N2")</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Frequency</small>
+                <span class="badge bg-secondary fs-6">@Model.KPI.Frequency</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Total Entries</small>
+                <span class="fw-bold fs-5">@Model.TotalEntries</span>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted d-block">Last Entry</small>
+                <span class="fw-bold fs-6">@(Model.LastEntryDate != DateTime.MinValue ? Model.LastEntryDate.ToString("MMM dd, yyyy") : "N/A")</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>@Model.AverageAchievement.ToString("N2")%</h3>
+                <p>Average Achievement</p>
+            </div>
+            <div class="icon"><i class="fas fa-percentage"></i></div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>@Model.HighestAchievement.ToString("N2")%</h3>
+                <p>Highest Achievement</p>
+            </div>
+            <div class="icon"><i class="fas fa-arrow-up"></i></div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>@Model.LowestAchievement.ToString("N2")%</h3>
+                <p>Lowest Achievement</p>
+            </div>
+            <div class="icon"><i class="fas fa-arrow-down"></i></div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box @(Model.Trend == "Increasing" ? "bg-success" : Model.Trend == "Decreasing" ? "bg-danger" : "bg-secondary")">
+            <div class="inner">
+                <h3>
+                    @if (Model.Trend == "Increasing")
+                    {
+                        <i class="fas fa-arrow-up me-1"></i>
+                    }
+                    else if (Model.Trend == "Decreasing")
+                    {
+                        <i class="fas fa-arrow-down me-1"></i>
+                    }
+                    else
+                    {
+                        <i class="fas fa-minus me-1"></i>
+                    }
+                    @(Model.TrendPercentage >= 0 ? "+" : "")@Model.TrendPercentage.ToString("N2")%
+                </h3>
+                <p>Trend (@Model.Trend)</p>
+            </div>
+            <div class="icon">
+                @if (Model.Trend == "Increasing")
+                {
+                    <i class="fas fa-chart-line"></i>
+                }
+                else if (Model.Trend == "Decreasing")
+                {
+                    <i class="fas fa-chart-line fa-rotate-180"></i>
+                }
+                else
+                {
+                    <i class="fas fa-minus"></i>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-outline card-info">
+    <div class="card-header">
+        <h5 class="card-title mb-0"><i class="fas fa-table me-1"></i>Entry History</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Period</th>
+                        <th class="text-end">Actual Value</th>
+                        <th class="text-end">Target Value</th>
+                        <th class="text-center">Achievement %</th>
+                        <th>Notes</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Entries.Any())
+                    {
+                        @foreach (var entry in Model.Entries)
+                        {
+                            var pct = entry.ActualValue > 0 && Model.KPI.TargetValue > 0
+                                ? Math.Round((entry.ActualValue / Model.KPI.TargetValue) * 100, 2)
+                                : 0m;
+                            var barColor = pct >= 100 ? "bg-success" : pct >= 75 ? "bg-info" : pct >= 50 ? "bg-warning" : "bg-danger";
+                            <tr>
+                                <td>
+                                    <span class="fw-semibold">@(new DateTime(entry.PeriodYear, entry.PeriodMonth, 1).ToString("MMM yyyy"))</span>
+                                    <small class="d-block text-muted">@entry.PeriodYear-@entry.PeriodMonth.ToString("D2")</small>
+                                </td>
+                                <td class="text-end">@entry.ActualValue.ToString("N2")</td>
+                                <td class="text-end">@Model.KPI.TargetValue.ToString("N2")</td>
+                                <td class="text-center" style="min-width:130px;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress flex-grow-1" style="height:6px;">
+                                            <div class="progress-bar @barColor" role="progressbar"
+                                                 style="width:@Math.Min(pct, 100)%"
+                                                 aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <small class="text-nowrap fw-semibold">@pct.ToString("N2")%</small>
+                                    </div>
+                                </td>
+                                <td class="text-muted small" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                    @entry.Notes
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Export" asp-route-kpiId="@Model.KPI.Id" asp-route-format="excel"
+                                           class="btn btn-outline-secondary" title="Export">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-database fa-2x d-block mb-2"></i>
+                                No entries recorded yet.
+                                <a asp-action="EnterData" asp-route-kpiId="@Model.KPI.Id" class="d-block mt-2">Enter first data entry</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.TotalEntries > 12)
+    {
+        <div class="card-footer text-center text-muted small">
+            Showing latest 12 of @Model.TotalEntries entries
+        </div>
+    }
+</div>

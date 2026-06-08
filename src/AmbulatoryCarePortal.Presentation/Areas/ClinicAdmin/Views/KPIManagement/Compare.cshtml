@@ -1,0 +1,129 @@
+@model List<KPIComparisonViewModel>
+
+@{
+    ViewData["Title"] = "Compare KPIs";
+}
+
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <h3 class="mb-0"><i class="fas fa-arrows-alt-h text-warning me-2"></i>Compare KPIs</h3>
+    </div>
+    <div class="col-sm-6 text-end">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to List
+        </a>
+    </div>
+</div>
+
+<div class="card card-warning card-outline">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-chart-simple me-1"></i>KPI Performance Comparison
+        </h5>
+        <div class="card-tools">
+            <span class="badge bg-success me-1"><i class="fas fa-check-circle"></i> On Target</span>
+            <span class="badge bg-danger"><i class="fas fa-exclamation-circle"></i> Below Target</span>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th>KPI Name</th>
+                        <th class="text-end">Target</th>
+                        <th class="text-end">Actual</th>
+                        <th class="text-center">Achievement %</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int rank = 1;
+                        @foreach (var item in Model)
+                        {
+                            var barColor = item.AchievementPercentage >= 100 ? "bg-success" :
+                                item.AchievementPercentage >= 75 ? "bg-info" :
+                                item.AchievementPercentage >= 50 ? "bg-warning" : "bg-danger";
+                            var isOnTarget = item.Status == "On Target";
+                            <tr>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary rounded-pill">@rank</span>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold">@item.KPIName</div>
+                                </td>
+                                <td class="text-end">
+                                    <span class="fw-semibold">@item.TargetValue.ToString("N2")</span>
+                                </td>
+                                <td class="text-end">
+                                    <span class="@(item.ActualValue >= item.TargetValue ? "text-success fw-semibold" : "")">
+                                        @item.ActualValue.ToString("N2")
+                                    </span>
+                                </td>
+                                <td class="text-center" style="min-width:180px;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress flex-grow-1" style="height:10px;">
+                                            <div class="progress-bar @barColor" role="progressbar"
+                                                 style="width:@Math.Min(item.AchievementPercentage, 100)%"
+                                                 aria-valuenow="@item.AchievementPercentage" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <span class="fw-bold text-nowrap" style="min-width:70px;">
+                                            @item.AchievementPercentage.ToString("N2")%
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @if (isOnTarget)
+                                    {
+                                        <span class="badge bg-success fs-6 px-3 py-2">
+                                            <i class="fas fa-check-circle me-1"></i>On Target
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger fs-6 px-3 py-2">
+                                            <i class="fas fa-exclamation-circle me-1"></i>Below Target
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                            rank++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-chart-simple fa-2x d-block mb-2"></i>
+                                No KPIs available for comparison.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.Any())
+    {
+        <div class="card-footer">
+            <div class="row text-center small">
+                <div class="col-md-4">
+                    <span class="text-muted">Total KPIs:</span>
+                    <span class="fw-semibold ms-1">@Model.Count</span>
+                </div>
+                <div class="col-md-4">
+                    <span class="text-muted">On Target:</span>
+                    <span class="fw-semibold text-success ms-1">@Model.Count(m => m.Status == "On Target")</span>
+                </div>
+                <div class="col-md-4">
+                    <span class="text-muted">Below Target:</span>
+                    <span class="fw-semibold text-danger ms-1">@Model.Count(m => m.Status == "Below Target")</span>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,194 @@
+/* Login Page Specific Styles */
+
+.login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.login-box {
+    width: 360px;
+}
+
+.login-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: white;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.login-logo a {
+    color: white;
+    text-decoration: none;
+}
+
+.login-logo b {
+    color: #ffc107;
+}
+
+.login-box .card {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 0.25rem;
+}
+
+.login-box-msg {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group .form-control {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.95rem;
+}
+
+.input-group .input-group-text {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    color: #999;
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.input-group .form-control:focus {
+    border-color: #667eea;
+    box-shadow: none;
+}
+
+.input-group .form-control:focus + .input-group-text {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.form-check {
+    padding-left: 1.5rem;
+}
+
+.form-check-input {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.3rem;
+    margin-left: -1.5rem;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-check-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-block {
+    width: 100%;
+    padding: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.25rem;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #653a91 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 0.25rem 0.5rem rgba(102, 126, 234, 0.3);
+    color: white;
+}
+
+.btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    color: white;
+}
+
+.alert {
+    border-radius: 0.25rem;
+    border: none;
+    margin-bottom: 1.5rem;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+a {
+    color: #667eea;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.row > * {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.col-8, .col-4 {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Footer */
+.login-box .mt-3 {
+    margin-top: 1.5rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 480px) {
+    .login-box {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .login-logo {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .login-box-msg {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .input-group {
+        margin-bottom: 1rem;
+    }
+
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .col-8, .col-4 {
+        padding: 0 0.25rem;
+    }
+}

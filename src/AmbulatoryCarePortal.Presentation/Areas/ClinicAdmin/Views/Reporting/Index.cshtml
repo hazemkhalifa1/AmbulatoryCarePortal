@@ -1,0 +1,134 @@
+@model List<ReportTypeOptionViewModel>
+
+@{
+    ViewData["Title"] = "Reporting Center";
+    var getIcon = (string type) => type switch
+    {
+        "Compliance" => "fa-shield-halved",
+        "KPI" => "fa-chart-line",
+        "Audit" => "fa-history",
+        "Checklist" => "fa-square-check",
+        "HR" => "fa-users",
+        _ => "fa-file-lines"
+    };
+    var getColor = (string type) => type switch
+    {
+        "Compliance" => "primary",
+        "KPI" => "success",
+        "Audit" => "info",
+        "Checklist" => "warning",
+        "HR" => "danger",
+        _ => "secondary"
+    };
+    var getBuilderAction = (string type) => type switch
+    {
+        "Compliance" => nameof(ReportingController.ComplianceReportBuilder),
+        "KPI" => nameof(ReportingController.KPIReportBuilder),
+        "Audit" => nameof(ReportingController.AuditReportBuilder),
+        "Checklist" => nameof(ReportingController.ChecklistReportBuilder),
+        "HR" => nameof(ReportingController.HRReportBuilder),
+        _ => nameof(ReportingController.Index)
+    };
+}
+
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-print me-2"></i>Available Reports</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var report in Model)
+                    {
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card card-@getColor(report.Type) card-outline h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start mb-3">
+                                        <div class="me-3">
+                                            <i class="fas @getIcon(report.Type) fa-2x text-@getColor(report.Type)"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="card-title mb-1">@report.DisplayName</h5>
+                                            <p class="card-text text-muted small mb-2">@report.Description</p>
+                                            <div>
+                                                @foreach (var fmt in report.SupportedFormats)
+                                                {
+                                                    <span class="badge bg-@getColor(report.Type) me-1">@fmt</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-top-0">
+                                    <a asp-action="@getBuilderAction(report.Type)" class="btn btn-@getColor(report.Type) btn-block">
+                                        <i class="fas fa-file-export me-1"></i> Generate Report
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-secondary">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-envelope me-2"></i>Email Report</h3>
+            </div>
+            <form method="post" asp-action="EmailReport">
+                @Html.AntiForgeryToken()
+                <div class="card-body">
+                    <div class="row align-items-end">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <label for="reportType" class="form-label">Report Type</label>
+                            <select name="reportType" id="reportType" class="form-select" required>
+                                <option value="">— Select Report —</option>
+                                @foreach (var report in Model)
+                                {
+                                    <option value="@report.Type">@report.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-5 mb-3 mb-md-0">
+                            <label for="recipients" class="form-label">Recipients (comma-separated)</label>
+                            <input type="text" name="recipients" id="recipients" class="form-control" placeholder="email1@example.com, email2@example.com" required />
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-secondary w-100">
+                                <i class="fas fa-paper-plane me-1"></i> Send Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var recipientInput = document.getElementById('recipients');
+            if (recipientInput) {
+                var oldHandler = recipientInput.form.onsubmit;
+                recipientInput.form.addEventListener('submit', function (e) {
+                    if (!recipientInput.value.trim()) {
+                        e.preventDefault();
+                        recipientInput.classList.add('is-invalid');
+                        return false;
+                    }
+                });
+                recipientInput.addEventListener('input', function () {
+                    if (this.value.trim()) {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            }
+        });
+    </script>
+}

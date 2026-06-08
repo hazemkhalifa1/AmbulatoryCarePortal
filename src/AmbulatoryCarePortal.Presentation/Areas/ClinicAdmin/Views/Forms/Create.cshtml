@@ -1,0 +1,55 @@
+@model AmbulatoryCarePortal.Application.DTOs.CreateFormDto
+
+@{
+    ViewData["Title"] = "Add Form";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card card-success">
+            <div class="card-header">
+                <h3 class="card-title">New Form</h3>
+            </div>
+            <form method="post" asp-action="Create">
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Title">Title (English)</label>
+                        <input asp-for="Title" class="form-control" required />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="TitleAr">Title (Arabic)</label>
+                        <input asp-for="TitleAr" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Category">Category</label>
+                        <select asp-for="Category" class="form-control">
+                            <option value="">-- Select Category --</option>
+                            <option value="Incident">Incident</option>
+                            <option value="Consent">Consent</option>
+                            <option value="Referral">Referral</option>
+                            <option value="Complaint">Complaint</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Assessment">Assessment</option>
+                            <option value="Screening">Screening</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Create Form</button>
+                    <a href="/ClinicAdmin/Forms" class="btn btn-secondary float-right">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

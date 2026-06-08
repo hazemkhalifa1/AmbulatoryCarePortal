@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - CBAHI Ambulatory Care Portal</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    
+    <!-- AdminLTE CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+    <div class="wrapper">
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+                        <i class="fas fa-bars"></i>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge badge-warning navbar-badge" id="notificationBadge">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notificationDropdown">
+                        <span class="dropdown-header">Notifications</span>
+                        <div class="dropdown-divider"></div>
+                        <a href="/ClinicAdmin/Notifications" class="dropdown-item dropdown-footer">View All</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="langToggle">
+                        <i class="fas fa-globe"></i> <span id="langLabel">EN</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <li class="dropdown-header">@User.Identity?.Name</li>
+                        <li class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/Account/Profile">My Profile</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li>
+                            <form method="post" action="/Account/Logout">
+                                <button type="submit" class="dropdown-item">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Sidebar -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="/" class="brand-link">
+                <span class="brand-text font-weight-light">CBAHI Portal</span>
+            </a>
+
+            <div class="sidebar">
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+                        @if (User.IsInRole("SuperAdmin"))
+                        {
+                            <li class="nav-item">
+                                <a href="/SuperAdmin/Dashboard" class="nav-link active">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>Dashboard</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/SuperAdmin/Dashboard/Clinics" class="nav-link">
+                                    <i class="nav-icon fas fa-hospital"></i>
+                                    <p>Manage Clinics</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/SuperAdmin/Dashboard/AuditLog" class="nav-link">
+                                    <i class="nav-icon fas fa-history"></i>
+                                    <p>Audit Logs</p>
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("HospitalAdmin") || User.IsInRole("ClinicAdmin") || User.IsInRole("DepartmentUser") || User.IsInRole("Auditor") || User.IsInRole("Viewer"))
+                        {
+                            <li class="nav-item">
+                                <a href="/ClinicAdmin/Dashboard" class="nav-link">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>Dashboard</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/ClinicAdmin/PolicyManagement" class="nav-link">
+                                    <i class="nav-icon fas fa-file-pdf"></i>
+                                    <p>Policies</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/ClinicAdmin/KPIManagement" class="nav-link">
+                                    <i class="nav-icon fas fa-chart-line"></i>
+                                    <p>KPI Monitoring</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/ClinicAdmin/ChecklistManagement" class="nav-link">
+                                    <i class="nav-icon fas fa-clipboard-check"></i>
+                                    <p>Checklists</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/ClinicAdmin/Forms" class="nav-link">
+                                    <i class="nav-icon fas fa-file-alt"></i>
+                                    <p>Forms Library</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/ClinicAdmin/HRManagement" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>HR Credentialing</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/ClinicAdmin/Notifications" class="nav-link">
+                                    <i class="nav-icon fas fa-bell"></i>
+                                    <p>Notifications</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/ClinicAdmin/Reporting" class="nav-link">
+                                    <i class="nav-icon fas fa-chart-bar"></i>
+                                    <p>Reports</p>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+            <!-- Content Header -->
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0">@ViewData["Title"]</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="content">
+                <div class="container-fluid">
+                    @if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <strong>Copyright &copy; 2024 <a href="#">CBAHI</a>.</strong>
+            All rights reserved.
+            <div class="float-right d-none d-sm-inline-block">
+                <b>Version</b> 1.0.0
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AdminLTE JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Notification count polling for authenticated users
+        @if (User.Identity?.IsAuthenticated ?? false)
+        {
+            <text>
+            setInterval(function() {
+                var badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    fetch('/ClinicAdmin/Notifications/Index', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(function(r) { return r.text(); })
+                        .then(function(html) {
+                            var parser = new DOMParser();
+                            var doc = parser.parseFromString(html, 'text/html');
+                            var count = doc.querySelector('[data-unread-count]');
+                            if (count) {
+                                badge.textContent = count.getAttribute('data-unread-count');
+                            }
+                        }).catch(function() {});
+                }
+            }, 60000);
+            </text>
+        }
+
+        // Language toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            var langToggle = document.getElementById('langToggle');
+            if (langToggle) {
+                langToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var currentLang = document.documentElement.lang;
+                    var newLang = currentLang === 'ar' ? 'en' : 'ar';
+                    document.documentElement.lang = newLang;
+                    document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
+                    document.getElementById('langLabel').textContent = newLang.toUpperCase();
+                    localStorage.setItem('lang', newLang);
+
+                    // Toggle RTL stylesheet
+                    var rtlLink = document.getElementById('bootstrap-rtl');
+                    if (newLang === 'ar') {
+                        if (!rtlLink) {
+                            var link = document.createElement('link');
+                            link.id = 'bootstrap-rtl';
+                            link.rel = 'stylesheet';
+                            link.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css';
+                            document.head.appendChild(link);
+                        }
+                    } else {
+                        if (rtlLink) rtlLink.remove();
+                    }
+                });
+
+                // Apply saved language
+                var savedLang = localStorage.getItem('lang') || 'en';
+                if (savedLang === 'ar') {
+                    document.documentElement.lang = 'ar';
+                    document.documentElement.dir = 'rtl';
+                    document.getElementById('langLabel').textContent = 'AR';
+                    var link = document.createElement('link');
+                    link.id = 'bootstrap-rtl';
+                    link.rel = 'stylesheet';
+                    link.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css';
+                    document.head.appendChild(link);
+                }
+            }
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

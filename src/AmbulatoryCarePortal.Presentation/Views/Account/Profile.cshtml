@@ -1,0 +1,45 @@
+@model AmbulatoryCarePortal.Presentation.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-circle fa-5x text-primary"></i>
+                </div>
+                <h3 class="profile-username text-center">@Model.FullNameEn</h3>
+                @if (!string.IsNullOrEmpty(Model.FullNameAr))
+                {
+                    <p class="text-muted text-center">@Model.FullNameAr</p>
+                }
+                <ul class="list-group list-group-unbordered mb-3">
+                    <li class="list-group-item">
+                        <b>Email</b> <span class="float-right">@Model.Email</span>
+                    </li>
+                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                    {
+                        <li class="list-group-item">
+                            <b>Phone</b> <span class="float-right">@Model.PhoneNumber</span>
+                        </li>
+                    }
+                    <li class="list-group-item">
+                        <b>Role</b> <span class="float-right"><span class="badge badge-info">@Model.Role</span></span>
+                    </li>
+                    @if (Model.LastLoginAt.HasValue)
+                    {
+                        <li class="list-group-item">
+                            <b>Last Login</b> <span class="float-right">@Model.LastLoginAt.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                        </li>
+                    }
+                </ul>
+                <form method="post" action="/Account/Logout">
+                    <button type="submit" class="btn btn-danger btn-block"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

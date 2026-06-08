@@ -1,0 +1,201 @@
+@model CreateChecklistViewModel
+
+@{
+    ViewData["Title"] = "Create Checklist";
+}
+
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<form asp-action="Create" method="post" id="checklistForm">
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-clipboard-list"></i> Checklist Details
+            </h3>
+        </div>
+        <div class="card-body">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Name <span class="text-danger">*</span></label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter checklist name" required>
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="NameAr" class="form-label">Name (Arabic) <span dir="rtl">الاسم</span></label>
+                        <input asp-for="NameAr" class="form-control" placeholder="أدخل اسم القائمة" dir="rtl">
+                        <span asp-validation-for="NameAr" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Frequency" class="form-label">Frequency <span class="text-danger">*</span></label>
+                        <select asp-for="Frequency" class="form-select">
+                            <option value="">-- Select Frequency --</option>
+                            @if (Model.Frequencies.Any())
+                            {
+                                @foreach (var freq in Model.Frequencies)
+                                {
+                                    <option value="@freq">@freq</option>
+                                }
+                            }
+                            else
+                            {
+                                <option value="Daily">Daily</option>
+                                <option value="Weekly">Weekly</option>
+                                <option value="Monthly">Monthly</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Frequency" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="DepartmentId" class="form-label">Department</label>
+                        <select asp-for="DepartmentId" class="form-select">
+                            <option value="">-- All Departments --</option>
+                            @if (Model.AvailableDepartments.Any())
+                            {
+                                @foreach (var dept in Model.AvailableDepartments)
+                                {
+                                    <option value="@dept.Id">@dept.Name</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Optional description..."></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-list"></i> Checklist Items
+            </h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-primary btn-sm" onclick="addItem()">
+                    <i class="fas fa-plus"></i> Add Item
+                </button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0" id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>Question Text <span class="text-danger">*</span></th>
+                            <th>Question Text (Arabic)</th>
+                            <th style="width: 80px;">Order</th>
+                            <th style="width: 80px;">Weight</th>
+                            <th style="width: 50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsContainer">
+                        <tr id="noItemsRow">
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-plus-circle fa-2x mb-2 d-block"></i>
+                                Click "Add Item" to add checklist questions.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Create Checklist
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let itemIndex = 0;
+
+        function addItem() {
+            $('#noItemsRow').hide();
+
+            const html = `
+                <tr class="item-row" data-index="${itemIndex}">
+                    <td class="item-counter text-center align-middle">${itemIndex + 1}</td>
+                    <td>
+                        <input type="text" name="Items[${itemIndex}].QuestionText" class="form-control form-control-sm" placeholder="Enter question" required>
+                    </td>
+                    <td>
+                        <input type="text" name="Items[${itemIndex}].QuestionTextAr" class="form-control form-control-sm" placeholder="أدخل السؤال" dir="rtl">
+                    </td>
+                    <td>
+                        <input type="number" name="Items[${itemIndex}].ItemOrder" class="form-control form-control-sm" value="${itemIndex + 1}" min="1">
+                    </td>
+                    <td>
+                        <input type="number" name="Items[${itemIndex}].Weight" class="form-control form-control-sm" value="1" min="1" max="100">
+                    </td>
+                    <td class="text-center align-middle">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            $('#itemsContainer').append(html);
+            itemIndex++;
+        }
+
+        function removeItem(btn) {
+            $(btn).closest('tr').remove();
+            recalcCounters();
+            if ($('.item-row').length === 0) {
+                $('#noItemsRow').show();
+            }
+        }
+
+        function recalcCounters() {
+            $('.item-row').each(function(i) {
+                $(this).find('.item-counter').text(i + 1);
+                $(this).find('input[name$=".ItemOrder"]').val(i + 1);
+                $(this).find('input').each(function() {
+                    const name = $(this).attr('name');
+                    if (name) {
+                        $(this).attr('name', name.replace(/Items\[\d+\]/, `Items[${i}]`));
+                    }
+                });
+            });
+            itemIndex = $('.item-row').length;
+        }
+
+        $('#checklistForm').on('submit', function(e) {
+            const rows = $('.item-row').length;
+            if (rows === 0) {
+                e.preventDefault();
+                alert('Please add at least one checklist item.');
+                return false;
+            }
+        });
+    </script>
+}

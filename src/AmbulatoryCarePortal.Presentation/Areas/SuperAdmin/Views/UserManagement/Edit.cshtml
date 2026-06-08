@@ -1,0 +1,124 @@
+@model AmbulatoryCarePortal.Presentation.ViewModels.UserRoleManagementViewModel
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">Edit User - @Model.Email</h3>
+            </div>
+            <form method="post" asp-action="Edit" asp-route-id="@Model.UserId">
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="UserId" />
+
+                    <div class="form-group">
+                        <label asp-for="Email">Email</label>
+                        <input asp-for="Email" class="form-control" type="email" required />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="FullName">Full Name</label>
+                        <input asp-for="FullName" class="form-control" required />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber">Phone Number</label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="SelectedRole">Role</label>
+                        <select asp-for="SelectedRole" class="form-control" required>
+                            <option value="">-- Select Role --</option>
+                            @if (Model.AvailableRoles != null)
+                            {
+                                @foreach (var role in Model.AvailableRoles)
+                                {
+                                    <option value="@role.RoleName" selected="@(role.RoleName == Model.SelectedRole)">@role.RoleName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    @if (Model.AvailableClinics != null && Model.AvailableClinics.Any())
+                    {
+                        <div class="form-group">
+                            <label asp-for="ClinicId">Clinic</label>
+                            <select asp-for="ClinicId" class="form-control">
+                                <option value="">-- Select Clinic --</option>
+                                @foreach (var clinic in Model.AvailableClinics)
+                                {
+                                    <option value="@clinic.Id" selected="@(clinic.Id == Model.ClinicId)">@clinic.Name</option>
+                                }
+                            </select>
+                        </div>
+                    }
+
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input asp-for="IsActive" class="form-check-input" />
+                            <label asp-for="IsActive" class="form-check-label">Active</label>
+                        </div>
+                    </div>
+
+                    <hr />
+                    <h5>Password Management</h5>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input id="newPassword" type="password" class="form-control" />
+                        <button type="button" class="btn btn-sm btn-info mt-2" onclick="resetPassword()">
+                            <i class="fas fa-key"></i> Reset Password
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Created</label>
+                        <p class="form-control-static">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                    @if (Model.LastLoginAt.HasValue)
+                    {
+                        <div class="form-group">
+                            <label>Last Login</label>
+                            <p class="form-control-static">@Model.LastLoginAt.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-warning"><i class="fas fa-save"></i> Update User</button>
+                    <a href="/SuperAdmin/UserManagement" class="btn btn-secondary float-right">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function resetPassword() {
+            var newPassword = document.getElementById('newPassword').value;
+            if (!newPassword || newPassword.length < 8) {
+                alert('Password must be at least 8 characters.');
+                return;
+            }
+            if (confirm('Are you sure you want to reset the password for @Model.Email?')) {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '/SuperAdmin/UserManagement/ResetPassword/@Model.UserId';
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'newPassword';
+                input.value = newPassword;
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}

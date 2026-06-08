@@ -1,0 +1,108 @@
+@model List<object>
+
+@{
+    ViewData["Title"] = "Notifications";
+    var unreadCount = ViewBag.UnreadCount as int? ?? 0;
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Notifications
+                    @if (unreadCount > 0)
+                    {
+                        <span class="badge badge-warning">@unreadCount unread</span>
+                    }
+                </h3>
+                <div class="card-tools">
+                    @if (unreadCount > 0)
+                    {
+                        <form method="post" action="/ClinicAdmin/Notifications/MarkAllRead" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="fas fa-check-double"></i> Mark All Read
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (dynamic notification in Model)
+                        {
+                            var isRead = (bool)notification.IsRead;
+                            var notifType = (string)notification.NotificationType.ToString();
+                            var iconClass = notifType switch
+                            {
+                                "DocumentExpiry" => "fas fa-calendar-exclamation text-warning",
+                                "DocumentMissing" => "fas fa-file-excel text-danger",
+                                "OpenGap" => "fas fa-exclamation-triangle text-danger",
+                                "ComplianceAlert" => "fas fa-chart-line text-warning",
+                                "PolicyUpdate" => "fas fa-file-pdf text-info",
+                                _ => "fas fa-bell text-secondary"
+                            };
+
+                            <div class="list-group-item list-group-item-action @(isRead ? "" : "list-group-item-info")">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <i class="@iconClass fa-lg"></i>
+                                    </div>
+                                    <div class="col">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1 @(isRead ? "" : "font-weight-bold")">@notification.Title</h6>
+                                            <small class="text-muted">@notification.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                                        </div>
+                                        <p class="mb-1">@notification.Message</p>
+                                    </div>
+                                    <div class="col-auto">
+                                        @if (!isRead)
+                                        {
+                                            <form method="post" action="/ClinicAdmin/Notifications/MarkRead/@notification.Id" style="display:inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-primary mark-read-btn">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-bell-slash fa-3x mb-3"></i>
+                        <p>No notifications</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.mark-read-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var form = this.closest('form');
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    }
+                }).then(r => r.json()).then(data => {
+                    if (data.success) {
+                        var item = this.closest('.list-group-item');
+                        item.classList.remove('list-group-item-info');
+                        location.reload();
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,205 @@
+@model List<KPIDetailViewModel>
+
+@{
+    ViewData["Title"] = "KPI Monitoring";
+}
+
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <h3 class="mb-0"><i class="fas fa-chart-line text-primary me-2"></i>KPI Monitoring</h3>
+    </div>
+    <div class="col-sm-6 text-end">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>Create New KPI
+        </a>
+    </div>
+</div>
+
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <form method="get" asp-action="Index" id="filterForm" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small">Search</label>
+                <div class="input-group">
+                    <input type="text" name="searchTerm" class="form-control" placeholder="Search by KPI name..." value="@ViewBag.SearchTerm" />
+                    <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Frequency</label>
+                <select name="frequencyFilter" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Frequencies</option>
+                    <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">Daily</option>
+                    <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">Weekly</option>
+                    <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">Monthly</option>
+                    <option value="Quarterly" selected="@(ViewBag.FrequencyFilter == "Quarterly")">Quarterly</option>
+                    <option value="Annually" selected="@(ViewBag.FrequencyFilter == "Annually")">Annually</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Department</label>
+                <select name="departmentFilter" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Departments</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>KPI Name</th>
+                        <th class="text-end">Target Value</th>
+                        <th class="text-end">Latest Entry</th>
+                        <th class="text-center">Achievement Rate</th>
+                        <th class="text-center">Frequency</th>
+                        <th class="text-center">Entries</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            var rateColor = item.AchievementRate >= 100 ? "bg-success" :
+                                item.AchievementRate >= 75 ? "bg-info" :
+                                item.AchievementRate >= 50 ? "bg-warning" : "bg-danger";
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">@item.KPI.Name</div>
+                                    @if (!string.IsNullOrEmpty(item.KPI.NameAr))
+                                    {
+                                        <small class="text-muted">@item.KPI.NameAr</small>
+                                    }
+                                </td>
+                                <td class="text-end">@item.KPI.TargetValue.ToString("N2")</td>
+                                <td class="text-end">
+                                    @if (item.LatestEntry != null)
+                                    {
+                                        <span>@item.LatestEntry.ActualValue.ToString("N2")</span>
+                                        <small class="text-muted d-block">/ @item.KPI.TargetValue.ToString("N2")</small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No data</span>
+                                    }
+                                </td>
+                                <td class="text-center" style="min-width:140px;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress flex-grow-1" style="height:8px;">
+                                            <div class="progress-bar @rateColor" role="progressbar"
+                                                 style="width:@Math.Min(item.AchievementRate, 100)%"
+                                                 aria-valuenow="@item.AchievementRate" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <small class="text-nowrap fw-semibold">@item.AchievementRate.ToString("N2")%</small>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary">@item.KPI.Frequency</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info">@item.TotalEntries</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="EnterData" asp-route-kpiId="@item.KPI.Id"
+                                           class="btn btn-outline-success" title="Enter Data">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                        <a asp-action="ViewAnalytics" asp-route-id="@item.KPI.Id"
+                                           class="btn btn-outline-info" title="View Analytics">
+                                            <i class="fas fa-chart-bar"></i>
+                                        </a>
+                                        <a asp-action="Compare" class="btn btn-outline-warning" title="Compare">
+                                            <i class="fas fa-arrows-alt-h"></i>
+                                        </a>
+                                        <a asp-action="Export" asp-route-kpiId="@item.KPI.Id" asp-route-format="excel"
+                                           class="btn btn-outline-secondary" title="Export">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-2x d-block mb-2"></i>
+                                No KPIs found. Click "Create New KPI" to get started.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (ViewBag.TotalPages > 1)
+    {
+        <div class="card-footer">
+            <nav>
+                <ul class="pagination pagination-sm justify-content-center mb-0">
+                    <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(ViewBag.CurrentPage - 1)"
+                           asp-route-searchTerm="@ViewBag.SearchTerm"
+                           asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
+                           asp-route-departmentFilter="@ViewBag.DepartmentFilter">
+                            &laquo;
+                        </a>
+                    </li>
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index"
+                               asp-route-page="@i"
+                               asp-route-searchTerm="@ViewBag.SearchTerm"
+                               asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
+                               asp-route-departmentFilter="@ViewBag.DepartmentFilter">
+                                @i
+                            </a>
+                        </li>
+                    }
+                    <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(ViewBag.CurrentPage + 1)"
+                           asp-route-searchTerm="@ViewBag.SearchTerm"
+                           asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
+                           asp-route-departmentFilter="@ViewBag.DepartmentFilter">
+                            &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <small class="d-block text-center text-muted mt-1">
+                Showing page @ViewBag.CurrentPage of @ViewBag.TotalPages (@ViewBag.TotalCount total KPIs)
+            </small>
+        </div>
+    }
+    else
+    {
+        <div class="card-footer text-center text-muted small">
+            @ViewBag.TotalCount KPI(s) found
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var deptFilter = '@ViewBag.DepartmentFilter';
+            if (deptFilter) {
+                $('select[name="departmentFilter"]').val(deptFilter);
+            }
+        });
+    </script>
+}

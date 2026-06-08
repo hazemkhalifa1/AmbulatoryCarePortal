@@ -1,0 +1,124 @@
+@model KPIEntryViewModel
+
+@{
+    ViewData["Title"] = "Enter KPI Data";
+}
+
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <h3 class="mb-0"><i class="fas fa-pen text-success me-2"></i>Enter KPI Data</h3>
+    </div>
+    <div class="col-sm-6 text-end">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-success card-outline">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-1"></i>@Model.KPIName
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr>
+                                <td class="text-muted" style="width:120px;">KPI Name</td>
+                                <td class="fw-semibold">@Model.KPIName</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Frequency</td>
+                                <td><span class="badge bg-secondary">@Model.Frequency</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr>
+                                <td class="text-muted" style="width:120px;">Target Value</td>
+                                <td class="fw-bold fs-5 text-primary">@Model.TargetValue.ToString("N2")</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <form asp-action="EnterData" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="KPIId" />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PeriodMonth" class="form-label">Period Month <span class="text-danger">*</span></label>
+                            <select asp-for="PeriodMonth" class="form-select">
+                                @for (int m = 1; m <= 12; m++)
+                                {
+                                    <option value="@m">@m - @(new DateTime(2000, m, 1).ToString("MMMM"))</option>
+                                }
+                            </select>
+                            <span asp-validation-for="PeriodMonth" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PeriodYear" class="form-label">Period Year <span class="text-danger">*</span></label>
+                            <select asp-for="PeriodYear" class="form-select">
+                                @for (int y = DateTime.UtcNow.Year - 2; y <= DateTime.UtcNow.Year + 1; y++)
+                                {
+                                    <option value="@y">@y</option>
+                                }
+                            </select>
+                            <span asp-validation-for="PeriodYear" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ActualValue" class="form-label">Actual Value <span class="text-danger">*</span></label>
+                        <input asp-for="ActualValue" class="form-control" type="number" step="0.01" min="0" />
+                        <span asp-validation-for="ActualValue" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label">Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3"
+                                  placeholder="Optional notes about this entry..."></textarea>
+                        <span asp-validation-for="Notes" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Evidence File</label>
+                        <input type="file" name="evidenceFile" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx" />
+                        <small class="text-muted">Accepted: PDF, Images, Word, Excel</small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i>Save Entry
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-outline card-info">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="fas fa-info-circle me-1"></i>Entry Info</h5>
+            </div>
+            <div class="card-body small">
+                <p class="mb-2"><i class="fas fa-calendar text-info me-1"></i> Default period is the current month/year.</p>
+                <p class="mb-2"><i class="fas fa-calculator text-info me-1"></i> Achievement = Actual / Target &times; 100%</p>
+                <p class="mb-0"><i class="fas fa-file text-info me-1"></i> Upload supporting evidence documents.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

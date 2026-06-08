@@ -1,0 +1,83 @@
+@model AmbulatoryCarePortal.Presentation.ViewModels.CreateClinicViewModel
+
+@{
+    ViewData["Title"] = "Create Clinic";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Clinic Information</h3>
+            </div>
+            <form method="post" asp-action="CreateClinic">
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Name">Name (English)</label>
+                                <input asp-for="Name" class="form-control" required />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="NameAr">Name (Arabic)</label>
+                                <input asp-for="NameAr" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CityEn">City (English)</label>
+                                <input asp-for="CityEn" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CityAr">City (Arabic)</label>
+                                <input asp-for="CityAr" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ClinicType">Clinic Type</label>
+                        <select asp-for="ClinicType" class="form-control" asp-items="Html.GetEnumSelectList<AmbulatoryCarePortal.Domain.Enums.ClinicType>()" required>
+                            <option value="">-- Select Type --</option>
+                        </select>
+                        <span asp-validation-for="ClinicType" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="LicenseNumber">License Number</label>
+                                <input asp-for="LicenseNumber" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="LicenseExpiry">License Expiry Date</label>
+                                <input asp-for="LicenseExpiry" type="date" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Create Clinic</button>
+                    <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-secondary float-right">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

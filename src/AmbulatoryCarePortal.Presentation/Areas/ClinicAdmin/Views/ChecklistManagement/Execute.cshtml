@@ -1,0 +1,109 @@
+@using AmbulatoryCarePortal.Domain.Enums
+@model ExecuteChecklistViewModel
+
+@{
+    ViewData["Title"] = "Execute Checklist";
+}
+
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<form asp-action="Execute" asp-route-templateId="@Model.TemplateId" method="post" enctype="multipart/form-data">
+    <div class="card card-success card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-play-circle"></i> @Model.TemplateName
+            </h3>
+            <div class="card-tools">
+                <span class="badge bg-secondary">
+                    <i class="fas fa-calendar"></i> @Model.ExecutedDate.ToString("yyyy-MM-dd HH:mm")
+                </span>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Items.Any())
+    {
+        for (int i = 0; i < Model.Items.Count; i++)
+        {
+            <div class="card card-outline card-default mb-2">
+                <div class="card-body">
+                    <div class="row align-items-start">
+                        <div class="col-md-7">
+                            <h6 class="mb-1">@Model.Items[i].QuestionText</h6>
+                            @if (!string.IsNullOrEmpty(Model.Items[i].QuestionTextAr))
+                            {
+                                <p class="text-muted small mb-2" dir="rtl">@Model.Items[i].QuestionTextAr</p>
+                            }
+                            <div class="btn-group btn-group-sm" role="group">
+                                <input type="radio" class="btn-check" name="Items[@i].Answer" id="answer_@(i)_yes" value="Yes"
+                                       @(Model.Items[i].Answer == ChecklistAnswer.Yes ? "checked" : "")>
+                                <label class="btn btn-outline-success" for="answer_@(i)_yes">
+                                    <i class="fas fa-check-circle"></i> Yes
+                                </label>
+
+                                <input type="radio" class="btn-check" name="Items[@i].Answer" id="answer_@(i)_no" value="No"
+                                       @(Model.Items[i].Answer == ChecklistAnswer.No ? "checked" : "")>
+                                <label class="btn btn-outline-danger" for="answer_@(i)_no">
+                                    <i class="fas fa-times-circle"></i> No
+                                </label>
+
+                                <input type="radio" class="btn-check" name="Items[@i].Answer" id="answer_@(i)_na" value="NA"
+                                       @(Model.Items[i].Answer == ChecklistAnswer.NA ? "checked" : "")>
+                                <label class="btn btn-outline-secondary" for="answer_@(i)_na">
+                                    <i class="fas fa-minus-circle"></i> N/A
+                                </label>
+                            </div>
+                            <input type="hidden" name="Items[@i].ItemId" value="@Model.Items[i].ItemId" />
+                            <input type="hidden" name="Items[@i].QuestionText" value="@Model.Items[i].QuestionText" />
+                            <input type="hidden" name="Items[@i].QuestionTextAr" value="@Model.Items[i].QuestionTextAr" />
+                            <input type="hidden" name="Items[@i].ItemOrder" value="@Model.Items[i].ItemOrder" />
+                        </div>
+                        <div class="col-md-5">
+                            <textarea name="Items[@i].Notes" class="form-control form-control-sm" rows="2"
+                                      placeholder="Notes for this item...">@Model.Items[i].Notes</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> This checklist has no items defined.
+        </div>
+    }
+
+    <div class="card card-outline card-default">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-paperclip"></i> Additional Details</h3>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="Notes" class="form-label">Overall Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Overall notes for this execution..."></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="evidenceFile" class="form-label">Evidence File</label>
+                <input type="file" name="evidenceFile" id="evidenceFile" class="form-control">
+                <div class="form-text text-muted small">Upload supporting evidence (PDF, images, etc.)</div>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check"></i> Submit Execution
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

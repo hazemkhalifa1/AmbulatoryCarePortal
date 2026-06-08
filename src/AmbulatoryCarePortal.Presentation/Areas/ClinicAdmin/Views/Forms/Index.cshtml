@@ -1,0 +1,102 @@
+@model List<AmbulatoryCarePortal.Application.DTOs.FormDto>
+
+@{
+    ViewData["Title"] = "Forms Library";
+    var searchTerm = ViewBag.SearchTerm as string ?? "";
+    var canManage = User.IsInRole("ClinicAdmin") || User.IsInRole("HospitalAdmin");
+}
+
+<div class="row mb-3">
+    <div class="col-md-8">
+        <form method="get" class="form-inline">
+            <div class="input-group input-group-lg" style="width: 100%;">
+                <input type="text" name="searchTerm" class="form-control" placeholder="Search forms..." value="@searchTerm">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    @if (canManage)
+    {
+        <div class="col-md-4 text-right">
+            <a href="/ClinicAdmin/Forms/Create" class="btn btn-success btn-lg">
+                <i class="fas fa-plus"></i> Add Form
+            </a>
+        </div>
+    }
+</div>
+
+<div class="row">
+    @if (Model.Any())
+    {
+        @foreach (var form in Model)
+        {
+            <div class="col-md-4 col-sm-6">
+                <div class="card card-outline card-primary">
+                    <div class="card-header">
+                        <h5 class="card-title">@form.Title</h5>
+                        @if (!string.IsNullOrEmpty(form.TitleAr))
+                        {
+                            <small class="float-right text-muted">@form.TitleAr</small>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <span class="badge badge-info">v@(form.VersionNumber)</span>
+                            @if (!string.IsNullOrEmpty(form.Category))
+                            {
+                                <span class="badge badge-secondary">@form.Category</span>
+                            }
+                            @if (form.IsActive)
+                            {
+                                <span class="badge badge-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">Inactive</span>
+                            }
+                        </div>
+                        @if (form.PublishedAt.HasValue)
+                        {
+                            <small class="text-muted">Published: @form.PublishedAt.Value.ToString("dd/MM/yyyy")</small>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <a href="/ClinicAdmin/Forms/Versions/@form.Id" class="btn btn-sm btn-info">
+                            <i class="fas fa-history"></i> Versions
+                        </a>
+                        @if (!string.IsNullOrEmpty(form.FilePath))
+                        {
+                            <a href="@form.FilePath" target="_blank" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="@form.FilePath" download class="btn btn-sm btn-success">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                        }
+                        @if (canManage)
+                        {
+                            <form method="post" action="/ClinicAdmin/Forms/Delete/@form.Id" style="display:inline" onsubmit="return confirm('Delete this form and all versions?');">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center text-muted py-5">
+                    <i class="fas fa-file-alt fa-3x mb-3"></i>
+                    <p>No forms found. @(canManage ? "<a href='/ClinicAdmin/Forms/Create'>Create one</a>" : "")</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

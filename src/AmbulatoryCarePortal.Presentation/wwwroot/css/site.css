@@ -1,0 +1,398 @@
+/* ===========================
+   CUSTOM STYLES FOR CBAHI
+   =========================== */
+
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+}
+
+/* Body and General */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+}
+
+/* Navbar Customization */
+.main-header.navbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: 3px solid #667eea;
+}
+
+.brand-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: 3px solid #667eea;
+}
+
+.brand-text {
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+}
+
+/* Sidebar Customization */
+.main-sidebar {
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+}
+
+.main-sidebar .brand-link {
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+}
+
+.sidebar .nav-link {
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+    padding-left: 1.25rem !important;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left-color: #667eea;
+}
+
+.sidebar .nav-link.active {
+    background-color: rgba(102, 126, 234, 0.2);
+    border-left-color: #667eea;
+    font-weight: 600;
+}
+
+/* Cards */
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: none;
+    color: white;
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.card-title {
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Badges */
+.badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+/* Small Box */
+.small-box {
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.small-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.small-box .icon {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    opacity: 0.15;
+}
+
+.small-box h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+}
+
+.small-box p {
+    margin: 0;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+/* Tables */
+.table {
+    background: white;
+}
+
+.table thead th {
+    border-top: none;
+    border-bottom: 2px solid #e0e0e0;
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+    padding: 1rem 0.75rem;
+}
+
+.table td {
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* Progress Bar */
+.progress {
+    height: 6px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 0.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #653a91 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 0.25rem 0.5rem rgba(102, 126, 234, 0.3);
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Forms */
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Alert */
+.alert {
+    border-radius: 0.25rem;
+    border: none;
+}
+
+/* Content Header */
+.content-header {
+    background: white;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* Login Page */
+.login-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-box {
+    width: 360px;
+}
+
+.login-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: white;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.login-box .card {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+.login-box-msg {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group .form-control {
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+}
+
+.input-group .input-group-text {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+}
+
+.input-group .form-control:focus {
+    border-color: #667eea;
+}
+
+.input-group .form-control:focus ~ .input-group-text {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.btn-block {
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+}
+
+/* Pagination */
+.pagination {
+    border-radius: 0.25rem;
+    margin-top: 1rem;
+}
+
+.pagination .page-link {
+    color: #667eea;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    margin-right: 0.25rem;
+}
+
+.pagination .page-link:hover {
+    color: #764ba2;
+    background-color: #f8f9fa;
+    border-color: #667eea;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+/* RTL Support */
+html[dir="rtl"] .sidebar {
+    border-left: none;
+    border-right: 3px solid rgba(0, 0, 0, 0.1);
+}
+
+html[dir="rtl"] .sidebar .nav-link {
+    border-right: 3px solid transparent;
+    border-left: none;
+    padding-right: 1.25rem !important;
+    padding-left: 1rem !important;
+}
+
+html[dir="rtl"] .sidebar .nav-link:hover {
+    border-right-color: #667eea;
+}
+
+html[dir="rtl"] .sidebar .nav-link.active {
+    border-right-color: #667eea;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .small-box h3 {
+        font-size: 1.75rem;
+    }
+
+    .login-box {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .table {
+        font-size: 0.875rem;
+    }
+
+    .table th, .table td {
+        padding: 0.5rem 0.25rem;
+    }
+}
+
+/* Utility Classes */
+.text-muted {
+    color: #999 !important;
+}
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.animated {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

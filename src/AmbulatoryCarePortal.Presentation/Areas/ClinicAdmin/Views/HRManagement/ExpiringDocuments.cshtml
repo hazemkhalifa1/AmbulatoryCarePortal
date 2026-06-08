@@ -1,0 +1,110 @@
+@model List<ExpiringDocumentViewModel>
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Expiring Documents";
+    var isArabic = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    @(isArabic ? "الوثائق وشيكة الانتهاء" : "Expiring Documents")
+                </h3>
+                <div class="card-tools">
+                    <a asp-action="Index" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-arrow-left"></i> @(isArabic ? "عودة" : "Back")
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>@(isArabic ? "الوثيقة" : "Document Name")</th>
+                                <th>@(isArabic ? "الموظف" : "Staff Name")</th>
+                                <th>@(isArabic ? "القسم" : "Department")</th>
+                                <th>@(isArabic ? "تاريخ الانتهاء" : "Expiry Date")</th>
+                                <th>@(isArabic ? "الأيام المتبقية" : "Days Left")</th>
+                                <th>@(isArabic ? "التصنيف" : "Category")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Any())
+                            {
+                                @foreach (var item in Model)
+                                {
+                                    var rowClass = item.Category == "Critical" ? "table-danger" :
+                                                   item.Category == "Urgent" ? "table-warning" : "";
+                                    <tr class="@rowClass">
+                                        <td><strong>@item.Document.DocumentName</strong></td>
+                                        <td>@item.StaffName</td>
+                                        <td>@item.DepartmentName</td>
+                                        <td>
+                                            @item.Document.ExpiryDate?.ToString("dd/MM/yyyy")
+                                        </td>
+                                        <td>
+                                            <strong>@item.DaysUntilExpiry</strong>
+                                            @(isArabic ? "يوم" : "days")
+                                        </td>
+                                        <td>
+                                            @if (item.Category == "Critical")
+                                            {
+                                                <span class="badge badge-danger">
+                                                    <i class="fas fa-bolt"></i> @(isArabic ? "حرج" : "Critical")
+                                                </span>
+                                            }
+                                            else if (item.Category == "Urgent")
+                                            {
+                                                <span class="badge badge-warning">
+                                                    <i class="fas fa-exclamation"></i> @(isArabic ? "عاجل" : "Urgent")
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-info">
+                                                    <i class="fas fa-info-circle"></i> @(isArabic ? "قادم" : "Upcoming")
+                                                </span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="fas fa-check-circle fa-2x d-block mb-2 text-success"></i>
+                                        @(isArabic ? "لا توجد وثائق وشيكة الانتهاء" : "No expiring documents found.")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @if (Model.Any())
+            {
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <span class="badge badge-danger"><i class="fas fa-bolt"></i> @(isArabic ? "حرج (7 أيام أو أقل)" : "Critical (7 days or less)")</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="badge badge-warning"><i class="fas fa-exclamation"></i> @(isArabic ? "عاجل (30 يومًا أو أقل)" : "Urgent (30 days or less)")</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="badge badge-info"><i class="fas fa-info-circle"></i> @(isArabic ? "قادم (90 يومًا)" : "Upcoming (90 days)")</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

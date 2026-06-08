@@ -1,0 +1,125 @@
+@using AmbulatoryCarePortal.Domain.Enums
+@model List<ChecklistHistoryViewModel>
+
+@{
+    ViewData["Title"] = "Checklist History";
+    var templateName = ViewBag.TemplateName as string ?? "Checklist";
+    var templateId = ViewBag.TemplateId as int? ?? 0;
+}
+
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+    <div class="col-sm-6 text-sm-end">
+        <a asp-action="Execute" asp-route-templateId="@templateId" class="btn btn-success">
+            <i class="fas fa-play"></i> Execute Now
+        </a>
+    </div>
+</div>
+
+<div class="card card-info card-outline">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-history"></i> Execution History: <strong>@templateName</strong>
+        </h3>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>Executed Date</th>
+                            <th>Executed By</th>
+                            <th>Total Items</th>
+                            <th>Yes Count</th>
+                            <th>Completion %</th>
+                            <th>Completion</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="text-nowrap">@item.Round.ExecutedAt.ToString("yyyy-MM-dd")</span>
+                                    <br><small class="text-muted">@item.Round.ExecutedAt.ToString("HH:mm")</small>
+                                </td>
+                                <td>@item.Round.ExecutedBy</td>
+                                <td class="text-center">@item.TotalItems</td>
+                                <td class="text-center">@item.CompletedItems</td>
+                                <td style="min-width: 120px;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress progress-xs flex-grow-1" style="height: 8px;">
+                                            <div class="progress-bar @(item.CompletionRate >= 80 ? "bg-success" : item.CompletionRate >= 50 ? "bg-warning" : "bg-danger")"
+                                                 style="width: @item.CompletionRate%"></div>
+                                        </div>
+                                        <small class="text-nowrap">@item.CompletionRate%</small>
+                                    </div>
+                                </td>
+                                <td style="min-width: 120px;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress progress-xs flex-grow-1" style="height: 8px;">
+                                            <div class="progress-bar @(item.CompletionRate >= 80 ? "bg-success" : item.CompletionRate >= 50 ? "bg-warning" : "bg-danger")"
+                                                 style="width: @item.CompletionRate%"></div>
+                                        </div>
+                                        <small class="text-nowrap">@item.CompletionRate%</small>
+                                    </div>
+                                </td>
+                                <td class="text-nowrap">
+                                    <form asp-action="Approve" asp-route-roundId="@item.Round.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Approve this checklist execution?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-success" title="Approve">
+                                            <i class="fas fa-check-double"></i> Approve
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-history fa-3x mb-3 d-block"></i>
+                <p>No execution history found for this checklist.</p>
+                <a asp-action="Execute" asp-route-templateId="@templateId" class="btn btn-success">
+                    <i class="fas fa-play"></i> Execute Now
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Notes Modal -->
+<div class="modal fade" id="notesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-sticky-note"></i> Execution Notes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="notesBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showNotes(notes) {
+            $('#notesBody').text(notes);
+            $('#notesModal').modal('show');
+        }
+    </script>
+}

@@ -1,0 +1,283 @@
+@model ClinicDto
+
+@{
+    ViewData["Title"] = ViewBag.PageTitle ?? "Clinic Dashboard";
+}
+
+<div class="row">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>@Model.Name</h3>
+                <p>Clinic Name</p>
+                <p class="text-white-50 mb-0" dir="rtl">@Model.NameAr</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-hospital"></i>
+            </div>
+            <a href="@Url.Action("Policies")" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>@Model.CityEn</h3>
+                <p>City</p>
+                <p class="text-white-50 mb-0" dir="rtl">@Model.CityAr</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <a href="@Url.Action("Staff")" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>@Model.ClinicType</h3>
+                <p>Clinic Type</p>
+                <p class="text-white-50 mb-0" dir="rtl">نوع العيادة</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-tag"></i>
+            </div>
+            <a href="@Url.Action("KPIs")" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>@Model.ComplianceScore.ToString("F1")%</h3>
+                <p>Compliance Score</p>
+                <p class="text-white-50 mb-0" dir="rtl">نسبة الامتثال</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <a href="#" class="small-box-footer" onclick="updateComplianceScore()">
+                Recalculate <i class="fas fa-sync-alt"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-shield-alt"></i> Compliance Score
+                    <small class="ml-2 text-muted">نسبة الامتثال</small>
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="updateComplianceScore()">
+                        <i class="fas fa-sync-alt"></i> Recalculate
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        <canvas id="complianceGauge" width="200" height="200"></canvas>
+                        <h2 class="mt-2 mb-0">
+                            <span id="complianceValue">@Model.ComplianceScore.ToString("F1")</span>%
+                        </h2>
+                        <p class="text-muted mb-0">Overall Compliance</p>
+                        <p class="text-muted small" dir="rtl">الامتثال العام</p>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="progress-group mb-3">
+                            <span class="progress-text">Compliance Score</span>
+                            <span class="float-right"><b>@Model.ComplianceScore.ToString("F1")%</b></span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-@(Model.ComplianceScore >= 80 ? "success" : Model.ComplianceScore >= 60 ? "warning" : "danger")"
+                                     style="width: @Model.ComplianceScore%">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">Clinic Name</span>
+                                        <span class="info-box-number">@Model.Name</span>
+                                        <span dir="rtl">@Model.NameAr</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">City</span>
+                                        <span class="info-box-number">@Model.CityEn</span>
+                                        <span dir="rtl">@Model.CityAr</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">License</span>
+                                        <span class="info-box-number">@Model.LicenseNumber</span>
+                                        @if (Model.LicenseExpiry.HasValue)
+                                        {
+                                            <small>Exp: @Model.LicenseExpiry.Value.ToString("dd/MM/yyyy")</small>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">Status</span>
+                                        <span class="info-box-number">
+                                            @if (Model.IsActive)
+                                            {
+                                                <span class="badge badge-success">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-danger">Inactive</span>
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-warning card-outline">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-bolt"></i> Quick Actions
+                    <small class="ml-2 text-muted" dir="rtl">إجراءات سريعة</small>
+                </h3>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("Policies")" class="btn btn-info btn-block mb-2">
+                    <i class="fas fa-file-alt"></i> Manage Policies
+                </a>
+                <a href="@Url.Action("KPIs")" class="btn btn-success btn-block mb-2">
+                    <i class="fas fa-chart-line"></i> View KPIs
+                </a>
+                <a href="@Url.Action("Staff")" class="btn btn-primary btn-block mb-2">
+                    <i class="fas fa-users"></i> Staff Management
+                </a>
+                <a href="@Url.Action("ExpiringDocuments")" class="btn btn-warning btn-block">
+                    <i class="fas fa-clock"></i> Expiring Documents
+                </a>
+            </div>
+        </div>
+
+        <div class="card card-secondary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-info-circle"></i> License Information
+                </h3>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5">License #</dt>
+                    <dd class="col-sm-7">@Model.LicenseNumber</dd>
+
+                    <dt class="col-sm-5">Expiry</dt>
+                    <dd class="col-sm-7">
+                        @if (Model.LicenseExpiry.HasValue)
+                        {
+                            @Model.LicenseExpiry.Value.ToString("dd/MM/yyyy")
+                        }
+                        else
+                        {
+                            <span class="text-muted">N/A</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-5">Type</dt>
+                    <dd class="col-sm-7">@Model.ClinicType</dd>
+
+                    <dt class="col-sm-5">Status</dt>
+                    <dd class="col-sm-7">
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge badge-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Inactive</span>
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        $(function () {
+            renderGauge(@Model.ComplianceScore);
+        });
+
+        function renderGauge(score) {
+            const canvas = document.getElementById('complianceGauge');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [score, 100 - score],
+                        backgroundColor: [
+                            score >= 80 ? '#28a745' : score >= 60 ? '#ffc107' : '#dc3545',
+                            '#e9ecef'
+                        ],
+                        borderWidth: 0,
+                        circumference: 180,
+                        rotation: 270
+                    }]
+                },
+                options: {
+                    cutout: '75%',
+                    responsive: false,
+                    plugins: {
+                        tooltip: { enabled: false },
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function updateComplianceScore() {
+            $.post('@Url.Action("UpdateComplianceScore")', function (response) {
+                if (response.success) {
+                    $('#complianceValue').text(response.score.toFixed(1));
+                    renderGauge(response.score);
+                    location.reload();
+                } else {
+                    alert(response.message || 'Error updating compliance score');
+                }
+            }).fail(function () {
+                alert('An error occurred while updating the compliance score.');
+            });
+        }
+    </script>
+}

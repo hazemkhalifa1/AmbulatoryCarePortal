@@ -1,0 +1,99 @@
+@model CreatePolicyDocumentViewModel
+
+@{
+    ViewData["Title"] = "Create Policy Document";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-plus-circle me-2"></i>Create Policy Document</h3>
+            </div>
+            <form method="post" asp-action="Create" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <div class="card-body">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Title" class="form-label">Title <span class="text-danger">*</span></label>
+                                <input asp-for="Title" class="form-control" placeholder="Enter policy title" required />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="TitleAr" class="form-label">Arabic Title</label>
+                                <input asp-for="TitleAr" class="form-control" placeholder="أدخل عنوان السياسة" dir="rtl" />
+                                <span asp-validation-for="TitleAr" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="StandardCode" class="form-label">Standard Code</label>
+                                <input asp-for="StandardCode" class="form-control" placeholder="e.g. CBAHI-STD-001" />
+                                <span asp-validation-for="StandardCode" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="DepartmentId" class="form-label">Department <span class="text-danger">*</span></label>
+                                <select asp-for="DepartmentId" class="form-select" required>
+                                    <option value="">— Select Department —</option>
+                                    @foreach (var dept in Model.AvailableDepartments)
+                                    {
+                                        <option value="@dept.Id">@dept.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="ExpiryDate" class="form-label">Expiry Date</label>
+                                <input asp-for="ExpiryDate" class="form-control" type="date" />
+                                <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="policyFile" class="form-label">Policy File (PDF)</label>
+                                <input type="file" name="policyFile" class="form-control" accept=".pdf" />
+                                <small class="text-muted">Upload the official policy document in PDF format.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Create Policy
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
