@@ -1,43 +1,63 @@
 @model AmbulatoryCarePortal.Presentation.ViewModels.ProfileViewModel
 
 @{
-    ViewData["Title"] = "My Profile";
+    ViewData["Title"] = Localizer.T("Profile.Title");
 }
 
-<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <div class="card card-primary card-outline">
-            <div class="card-body box-profile">
+<div class="row fade-in">
+    <div class="col-lg-6 mx-auto">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-user-circle"></i> @Localizer.T("Profile.Information")
+                </h3>
+            </div>
+            <div class="card-body">
                 <div class="text-center mb-4">
-                    <i class="fas fa-user-circle fa-5x text-primary"></i>
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-light" style="width: 96px; height: 96px;">
+                        <span class="text-primary" style="font-size: 2.5rem;">@Model.FullNameEn?.Substring(0, 1)?.ToUpper()</span>
+                    </div>
+                    <h3 class="mt-3 mb-1">@Model.FullNameEn</h3>
+                    @if (!string.IsNullOrEmpty(Model.FullNameAr))
+                    {
+                        <p class="text-muted mb-0" dir="rtl">@Model.FullNameAr</p>
+                    }
                 </div>
-                <h3 class="profile-username text-center">@Model.FullNameEn</h3>
-                @if (!string.IsNullOrEmpty(Model.FullNameAr))
+
+                <div class="detail-row">
+                    <span class="detail-label">@Localizer.T("Profile.Email")</span>
+                    <span class="detail-value">@Model.Email</span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.PhoneNumber))
                 {
-                    <p class="text-muted text-center">@Model.FullNameAr</p>
+                    <div class="detail-row">
+                        <span class="detail-label">@Localizer.T("Profile.Phone")</span>
+                        <span class="detail-value">@Model.PhoneNumber</span>
+                    </div>
                 }
-                <ul class="list-group list-group-unbordered mb-3">
-                    <li class="list-group-item">
-                        <b>Email</b> <span class="float-right">@Model.Email</span>
-                    </li>
-                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
-                    {
-                        <li class="list-group-item">
-                            <b>Phone</b> <span class="float-right">@Model.PhoneNumber</span>
-                        </li>
-                    }
-                    <li class="list-group-item">
-                        <b>Role</b> <span class="float-right"><span class="badge badge-info">@Model.Role</span></span>
-                    </li>
-                    @if (Model.LastLoginAt.HasValue)
-                    {
-                        <li class="list-group-item">
-                            <b>Last Login</b> <span class="float-right">@Model.LastLoginAt.Value.ToString("dd/MM/yyyy HH:mm")</span>
-                        </li>
-                    }
-                </ul>
+
+                <div class="detail-row">
+                    <span class="detail-label">@Localizer.T("Profile.Role")</span>
+                    <span class="detail-value">
+                        <span class="badge badge-primary">@Model.Role</span>
+                    </span>
+                </div>
+
+                @if (Model.LastLoginAt.HasValue)
+                {
+                    <div class="detail-row">
+                        <span class="detail-label">@Localizer.T("Profile.LastLogin")</span>
+                        <span class="detail-value">@Model.LastLoginAt.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                }
+            </div>
+            <div class="card-footer">
                 <form method="post" action="/Account/Logout">
-                    <button type="submit" class="btn btn-danger btn-block"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger w-full">
+                        <i class="fas fa-sign-out-alt"></i> @Localizer.T("Profile.Logout")
+                    </button>
                 </form>
             </div>
         </div>

@@ -4,41 +4,53 @@
     ViewData["Title"] = "Create User";
 }
 
-<div class="row">
+<div class="row fade-in">
     <div class="col-md-8 offset-md-2">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">New User</h3>
+                <h3 class="card-title"><i class="fas fa-user-plus"></i> New User</h3>
             </div>
-            <form method="post" asp-action="Create" asp-route-password="">
+            <form method="post" asp-action="Create" asp-route-password="" aria-label="Create user form">
                 <div class="card-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                     <div class="form-group">
-                        <label asp-for="Email">Email</label>
-                        <input asp-for="Email" class="form-control" type="email" required />
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <label asp-for="Email" class="form-label">Email <span class="required">*</span></label>
+                        <div class="input-group">
+                            <div class="input-group-text"><i class="fas fa-envelope"></i></div>
+                            <input asp-for="Email" class="form-control" type="email" required aria-required="true" />
+                        </div>
+                        <span asp-validation-for="Email" class="invalid-feedback"></span>
                     </div>
 
                     <div class="form-group">
-                        <label>Password</label>
-                        <input name="password" type="password" class="form-control" required minlength="8" />
+                        <label class="form-label">Password <span class="required">*</span></label>
+                        <div class="input-group">
+                            <div class="input-group-text"><i class="fas fa-lock"></i></div>
+                            <input name="password" type="password" class="form-control" required minlength="8" aria-required="true" />
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="FullName">Full Name</label>
-                        <input asp-for="FullName" class="form-control" required />
-                        <span asp-validation-for="FullName" class="text-danger"></span>
+                        <label asp-for="FullName" class="form-label">Full Name <span class="required">*</span></label>
+                        <div class="input-group">
+                            <div class="input-group-text"><i class="fas fa-user"></i></div>
+                            <input asp-for="FullName" class="form-control" required aria-required="true" />
+                        </div>
+                        <span asp-validation-for="FullName" class="invalid-feedback"></span>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="PhoneNumber">Phone Number</label>
-                        <input asp-for="PhoneNumber" class="form-control" />
+                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                        <div class="input-group">
+                            <div class="input-group-text"><i class="fas fa-phone"></i></div>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="SelectedRole">Role</label>
-                        <select asp-for="SelectedRole" class="form-control" required>
+                        <label asp-for="SelectedRole" class="form-label">Role <span class="required">*</span></label>
+                        <select asp-for="SelectedRole" class="form-control" required aria-required="true">
                             <option value="">-- Select Role --</option>
                             @if (Model.AvailableRoles != null)
                             {
@@ -53,7 +65,7 @@
                     @if (Model.AvailableClinics != null && Model.AvailableClinics.Any())
                     {
                         <div class="form-group">
-                            <label asp-for="ClinicId">Clinic</label>
+                            <label asp-for="ClinicId" class="form-label">Clinic</label>
                             <select asp-for="ClinicId" class="form-control">
                                 <option value="">-- Select Clinic --</option>
                                 @foreach (var clinic in Model.AvailableClinics)
@@ -73,7 +85,7 @@
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Create User</button>
-                    <a href="/SuperAdmin/UserManagement" class="btn btn-secondary float-right">Cancel</a>
+                    <a href="/SuperAdmin/UserManagement" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>

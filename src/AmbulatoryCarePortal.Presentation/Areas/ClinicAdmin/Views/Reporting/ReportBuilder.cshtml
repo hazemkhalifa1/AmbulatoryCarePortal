@@ -35,87 +35,96 @@
     };
 }
 
-<div class="row">
-    <div class="col-lg-8 col-md-10 offset-lg-2 offset-md-1">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas @getIcon me-2"></i>@Model.ReportType Report Configuration</h3>
+<div class="fade-in">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 offset-lg-2 offset-md-1">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas @getIcon"></i> @Model.ReportType Report Configuration</h3>
+                </div>
+                <form method="post" asp-action="@generateAction">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="ReportType" />
+                    <input type="hidden" asp-for="SelectedClinicIds" />
+
+                    <div class="card-body">
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <div asp-validation-summary="ModelOnly"></div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label asp-for="StartDate" class="form-label">Start Date <span class="required">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        <input asp-for="StartDate" class="form-control" type="date" required />
+                                    </div>
+                                    <span asp-validation-for="StartDate" class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label asp-for="EndDate" class="form-label">End Date <span class="required">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        <input asp-for="EndDate" class="form-control" type="date" required />
+                                    </div>
+                                    <span asp-validation-for="EndDate" class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label asp-for="Format" class="form-label">Export Format <span class="required">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-file-export"></i></span>
+                                        <select asp-for="Format" class="form-control" required>
+                                            <option value="PDF">PDF</option>
+                                            <option value="Excel">Excel</option>
+                                            <option value="CSV">CSV</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="Format" class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3 d-flex align-items-end">
+                                @if (showCharts)
+                                {
+                                    <div class="form-check form-switch me-4">
+                                        <input asp-for="IncludeCharts" class="form-check-input" role="switch" />
+                                        <label asp-for="IncludeCharts" class="form-check-label">Include Charts</label>
+                                    </div>
+                                }
+                                @if (showAuditTrail)
+                                {
+                                    <div class="form-check form-switch">
+                                        <input asp-for="IncludeAuditTrail" class="form-check-input" role="switch" />
+                                        <label asp-for="IncludeAuditTrail" class="form-check-label">Include Audit Trail</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-file-export"></i> Generate @Model.ReportType Report
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <form method="post" asp-action="@generateAction">
-                @Html.AntiForgeryToken()
-                <input type="hidden" asp-for="ReportType" />
-                <input type="hidden" asp-for="SelectedClinicIds" />
-
-                <div class="card-body">
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    }
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="StartDate" class="form-label">Start Date <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <input asp-for="StartDate" class="form-control" type="date" required />
-                            </div>
-                            <span asp-validation-for="StartDate" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="EndDate" class="form-label">End Date <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <input asp-for="EndDate" class="form-control" type="date" required />
-                            </div>
-                            <span asp-validation-for="EndDate" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Format" class="form-label">Export Format <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-file-export"></i></span>
-                                <select asp-for="Format" class="form-select" required>
-                                    <option value="PDF">PDF</option>
-                                    <option value="Excel">Excel</option>
-                                    <option value="CSV">CSV</option>
-                                </select>
-                            </div>
-                            <span asp-validation-for="Format" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6 mb-3 d-flex align-items-end">
-                            @if (showCharts)
-                            {
-                                <div class="form-check form-switch me-4">
-                                    <input asp-for="IncludeCharts" class="form-check-input" role="switch" />
-                                    <label asp-for="IncludeCharts" class="form-check-label">Include Charts</label>
-                                </div>
-                            }
-                            @if (showAuditTrail)
-                            {
-                                <div class="form-check form-switch">
-                                    <input asp-for="IncludeAuditTrail" class="form-check-input" role="switch" />
-                                    <label asp-for="IncludeAuditTrail" class="form-check-label">Include Audit Trail</label>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <div class="d-flex justify-content-between">
-                        <a asp-action="Index" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-1"></i> Back
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-file-export me-1"></i> Generate @Model.ReportType Report
-                        </button>
-                    </div>
-                </div>
-            </form>
         </div>
     </div>
 </div>

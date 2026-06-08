@@ -1,68 +1,270 @@
-// CBAHI Portal - Common JavaScript Functions
+// CBAHI Portal - Enterprise JavaScript
+// Healthcare SaaS Platform | 2026
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initializeTooltips();
     initializeConfirmation();
-    initializeDataTables();
+    initializeSidebar();
+    initializeActiveNav();
+    initializeNotificationPolling();
+    initializePasswordToggle();
+    initializeTableSearch();
+    initializeLoadingButtons();
+    initializeLanguageToggle();
 });
 
-// Initialize Tooltips
+// ============================================================
+// TOOLTIPS
+// ============================================================
 function initializeTooltips() {
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+        new bootstrap.Tooltip(el);
     });
 }
 
-// Initialize Confirmation Dialogs
+// ============================================================
+// CONFIRMATION DIALOGS
+// ============================================================
 function initializeConfirmation() {
-    document.addEventListener('click', function(event) {
-        if (event.target.matches('[data-confirm]')) {
-            event.preventDefault();
-            const message = event.target.getAttribute('data-confirm');
-            
-            if (confirm(message)) {
-                if (event.target.tagName === 'A') {
-                    window.location.href = event.target.href;
-                } else if (event.target.tagName === 'BUTTON') {
-                    event.target.closest('form').submit();
-                }
+    document.addEventListener('click', function (event) {
+        var target = event.target.closest('[data-confirm]');
+        if (!target) return;
+        event.preventDefault();
+        var message = target.getAttribute('data-confirm');
+        if (confirm(message)) {
+            if (target.tagName === 'A') {
+                window.location.href = target.href;
+            } else if (target.tagName === 'BUTTON' || target.closest('form')) {
+                var form = target.closest('form');
+                if (form) form.submit();
             }
         }
     });
 }
 
-// Initialize Data Tables
-function initializeDataTables() {
-    const tables = document.querySelectorAll('[data-datatable]');
-    tables.forEach(function(table) {
-        // Custom data table initialization can be added here
+// ============================================================
+// SIDEBAR
+// ============================================================
+function initializeSidebar() {
+    var toggleBtn = document.querySelector('[data-widget="pushmenu"]');
+    var sidebar = document.querySelector('.main-sidebar');
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            toggleSidebar();
+        });
+    }
+
+    // Mobile overlay
+    if (sidebar && window.innerWidth <= 991) {
+        var overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+
+        overlay.addEventListener('click', function () {
+            toggleSidebar();
+        });
+
+        sidebar.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+    }
+}
+
+function toggleSidebar() {
+    var body = document.body;
+    if (window.innerWidth <= 991) {
+        body.classList.toggle('sidebar-open');
+    } else {
+        body.classList.toggle('sidebar-collapse');
+    }
+}
+
+// ============================================================
+// ACTIVE NAV LINK
+// ============================================================
+function initializeActiveNav() {
+    var currentPath = window.location.pathname.toLowerCase();
+    document.querySelectorAll('.nav-sidebar .nav-link').forEach(function (link) {
+        var href = link.getAttribute('href');
+        if (href && currentPath.indexOf(href.toLowerCase()) === 0) {
+            link.classList.add('active');
+        }
     });
 }
 
-// Show Alert Message
-function showAlert(message, type = 'info') {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show animated`;
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    const container = document.querySelector('.container-fluid');
+// ============================================================
+// NOTIFICATION POLLING
+// ============================================================
+function initializeNotificationPolling() {
+    var badge = document.getElementById('notificationBadge');
+    if (!badge) return;
+
+    function pollNotifications() {
+        fetch('/ClinicAdmin/Notifications/Index', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+            .then(function (r) { return r.text(); })
+            .then(function (html) {
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, 'text/html');
+                var count = doc.querySelector('[data-unread-count]');
+                if (count) {
+                    badge.textContent = count.getAttribute('data-unread-count');
+                    if (count.getAttribute('data-unread-count') !== '0') {
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            })
+            .catch(function () { });
+    }
+
+    setInterval(pollNotifications, 60000);
+}
+
+// ============================================================
+// PASSWORD TOGGLE (Login/Reset)
+// ============================================================
+function initializePasswordToggle() {
+    document.querySelectorAll('.toggle-password').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var input = this.closest('.input-group').querySelector('.form-control');
+            if (!input) return;
+            var type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+    });
+}
+
+// ============================================================
+// TABLE SEARCH
+// ============================================================
+function initializeTableSearch() {
+    document.querySelectorAll('[data-table-search]').forEach(function (input) {
+        var tableId = input.getAttribute('data-table-search');
+        var table = document.getElementById(tableId);
+        if (!table) return;
+
+        input.addEventListener('keyup', function () {
+            var filter = this.value.toUpperCase();
+            var rows = table.getElementsByTagName('tr');
+
+            for (var i = 1; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                var found = false;
+                for (var j = 0; j < cells.length; j++) {
+                    if (cells[j] && cells[j].textContent.toUpperCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = found ? '' : 'none';
+            }
+        });
+    });
+}
+
+// ============================================================
+// LOADING BUTTONS
+// ============================================================
+function initializeLoadingButtons() {
+    document.querySelectorAll('[data-loading]').forEach(function (btn) {
+        var form = btn.closest('form');
+        if (form) {
+            form.addEventListener('submit', function () {
+                btn.classList.add('loading');
+                btn.disabled = true;
+            });
+
+            // Re-enable button if jQuery Validate blocks submission
+            if (typeof $ !== 'undefined') {
+                $(form).on('invalid-form.validate', function () {
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                });
+            }
+        }
+    });
+}
+
+// ============================================================
+// LANGUAGE TOGGLE
+// ============================================================
+function initializeLanguageToggle() {
+    var langToggle = document.getElementById('langToggle');
+    if (!langToggle) return;
+
+    langToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        var currentLang = document.documentElement.lang;
+        var newLang = currentLang === 'ar' ? 'en' : 'ar';
+        setLanguage(newLang);
+    });
+
+    // Apply saved language
+    var savedLang = localStorage.getItem('lang') || 'en';
+    if (savedLang === 'ar') {
+        setLanguage('ar');
+    }
+}
+
+function setLanguage(lang) {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    var label = document.getElementById('langLabel');
+    if (label) label.textContent = lang.toUpperCase();
+    localStorage.setItem('lang', lang);
+    document.cookie = 'lang=' + lang + '; path=/; max-age=31536000';
+
+    var rtlLink = document.getElementById('bootstrap-rtl');
+    if (lang === 'ar') {
+        if (!rtlLink) {
+            var link = document.createElement('link');
+            link.id = 'bootstrap-rtl';
+            link.rel = 'stylesheet';
+            link.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css';
+            document.head.appendChild(link);
+        }
+    } else {
+        if (rtlLink) rtlLink.remove();
+    }
+}
+
+// ============================================================
+// SHOW ALERT
+// ============================================================
+function showAlert(message, type) {
+    type = type || 'info';
+    var alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-' + type + ' alert-dismissible fade show';
+    alertDiv.setAttribute('role', 'alert');
+    alertDiv.style.animation = 'fadeIn 0.3s ease-out';
+    alertDiv.innerHTML =
+        '<i class="fas fa-' + (type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle') + '"></i>' +
+        '<div class="alert-content">' + message + '</div>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+
+    var container = document.querySelector('.content > .container-fluid');
     if (container) {
         container.insertBefore(alertDiv, container.firstChild);
     }
-    
-    // Auto-dismiss after 5 seconds
-    setTimeout(() => {
-        alertDiv.remove();
+
+    setTimeout(function () {
+        if (alertDiv.parentNode) alertDiv.remove();
     }, 5000);
 }
 
-// API Call Helper
-async function apiCall(url, method = 'GET', data = null) {
-    const options = {
+// ============================================================
+// API CALL HELPER
+// ============================================================
+async function apiCall(url, method, data) {
+    method = method || 'GET';
+    var options = {
         method: method,
         headers: {
             'Content-Type': 'application/json',
@@ -75,12 +277,10 @@ async function apiCall(url, method = 'GET', data = null) {
     }
 
     try {
-        const response = await fetch(url, options);
-        
+        var response = await fetch(url, options);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error('HTTP error! status: ' + response.status);
         }
-        
         return await response.json();
     } catch (error) {
         console.error('API Call Error:', error);
@@ -89,174 +289,151 @@ async function apiCall(url, method = 'GET', data = null) {
     }
 }
 
-// Format Date
-function formatDate(date, format = 'dd/mm/yyyy') {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    
-    if (format === 'dd/mm/yyyy') return `${day}/${month}/${year}`;
-    if (format === 'yyyy-mm-dd') return `${year}-${month}-${day}`;
+// ============================================================
+// DATE FORMATTING
+// ============================================================
+function formatDate(date, format) {
+    format = format || 'dd/mm/yyyy';
+    var d = new Date(date);
+    var day = String(d.getDate()).padStart(2, '0');
+    var month = String(d.getMonth() + 1).padStart(2, '0');
+    var year = d.getFullYear();
+
+    if (format === 'dd/mm/yyyy') return day + '/' + month + '/' + year;
+    if (format === 'yyyy-mm-dd') return year + '-' + month + '-' + day;
     return d.toLocaleDateString();
 }
 
-// Format Currency
-function formatCurrency(amount, currency = 'SAR') {
+// ============================================================
+// CURRENCY FORMATTING
+// ============================================================
+function formatCurrency(amount, currency) {
+    currency = currency || 'SAR';
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: currency
     }).format(amount);
 }
 
-// Format Percentage
-function formatPercentage(value, decimals = 2) {
+// ============================================================
+// PERCENTAGE FORMATTING
+// ============================================================
+function formatPercentage(value, decimals) {
+    decimals = decimals || 0;
     return Number(value).toFixed(decimals) + '%';
 }
 
-// Update Compliance Score
-async function updateComplianceScore() {
-    try {
-        const response = await apiCall('/ClinicAdmin/Dashboard/UpdateComplianceScore', 'POST');
-        
-        if (response.success) {
-            showAlert('Compliance score updated successfully', 'success');
-            return response.score;
-        }
-    } catch (error) {
-        showAlert('Failed to update compliance score', 'danger');
-    }
-}
+// ============================================================
+// EXPORT TABLE TO CSV
+// ============================================================
+function exportTableToCSV(tableId, filename) {
+    filename = filename || 'export.csv';
+    var table = document.getElementById(tableId);
+    if (!table) return;
 
-// Delete Record with Confirmation
-async function deleteRecord(id, recordType = 'record') {
-    if (confirm(`Are you sure you want to delete this ${recordType}?`)) {
-        try {
-            const response = await apiCall(`/api/${recordType}/${id}`, 'DELETE');
-            
-            if (response.success) {
-                showAlert(`${recordType} deleted successfully`, 'success');
-                setTimeout(() => window.location.reload(), 1500);
-            }
-        } catch (error) {
-            showAlert(`Failed to delete ${recordType}`, 'danger');
-        }
-    }
-}
-
-// Search Table
-function searchTable(inputId, tableId) {
-    const input = document.getElementById(inputId);
-    const table = document.getElementById(tableId);
-    const rows = table.getElementsByTagName('tr');
-    
-    input.addEventListener('keyup', function() {
-        const filter = input.value.toUpperCase();
-        
-        for (let i = 1; i < rows.length; i++) {
-            const cells = rows[i].getElementsByTagName('td');
-            let found = false;
-            
-            for (let j = 0; j < cells.length; j++) {
-                if (cells[j].textContent.toUpperCase().indexOf(filter) > -1) {
-                    found = true;
-                    break;
-                }
-            }
-            
-            rows[i].style.display = found ? '' : 'none';
-        }
+    var csv = [];
+    var headers = [];
+    table.querySelectorAll('thead th').forEach(function (th) {
+        headers.push('"' + th.textContent.trim() + '"');
     });
-}
-
-// Export Table to CSV
-function exportTableToCSV(tableId, filename = 'export.csv') {
-    const table = document.getElementById(tableId);
-    let csv = [];
-    
-    // Get headers
-    const headers = [];
-    const headerCells = table.querySelectorAll('thead th');
-    headerCells.forEach(th => headers.push(th.textContent.trim()));
     csv.push(headers.join(','));
-    
-    // Get rows
-    const rows = table.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        const cells = [];
-        const tds = row.querySelectorAll('td');
-        tds.forEach(td => cells.push('"' + td.textContent.trim() + '"'));
+
+    table.querySelectorAll('tbody tr').forEach(function (row) {
+        var cells = [];
+        row.querySelectorAll('td').forEach(function (td) {
+            cells.push('"' + td.textContent.trim().replace(/"/g, '""') + '"');
+        });
         csv.push(cells.join(','));
     });
-    
-    // Download
-    const csvContent = csv.join('\n');
-    const link = document.createElement('a');
+
+    var csvContent = csv.join('\n');
+    var link = document.createElement('a');
     link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
     link.download = filename;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
 }
 
-// Print Table
+// ============================================================
+// PRINT TABLE
+// ============================================================
 function printTable(tableId) {
-    const table = document.getElementById(tableId);
-    const printWindow = window.open('', '', 'width=900,height=600');
-    
+    var table = document.getElementById(tableId);
+    if (!table) return;
+
+    var printWindow = window.open('', '', 'width=900,height=600');
     printWindow.document.write('<html><head><title>Print</title>');
     printWindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">');
+    printWindow.document.write('<style>body{padding:20px;font-family:Segoe UI,sans-serif}</style>');
     printWindow.document.write('</head><body>');
     printWindow.document.write(table.outerHTML);
     printWindow.document.write('</body></html>');
-    
     printWindow.document.close();
     printWindow.print();
 }
 
-// Initialize Sidebar Toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const sidebar = document.querySelector('.main-sidebar');
-    const toggleBtn = document.querySelector('[data-widget="pushmenu"]');
-    
-    if (toggleBtn && sidebar) {
-        toggleBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.body.classList.toggle('sidebar-collapse');
-        });
-    }
-});
-
-// Add Active Class to Current Nav Link
-document.addEventListener('DOMContentLoaded', function() {
-    const currentUrl = window.location.pathname;
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    navLinks.forEach(link => {
-        if (link.href === window.location.href) {
-            link.classList.add('active');
-        }
-    });
-});
-
-// Utility function to show loading spinner
+// ============================================================
+// SHOW/HIDE LOADING SPINNER
+// ============================================================
 function showLoading(element) {
-    if (element instanceof string) {
+    if (typeof element === 'string') {
         element = document.querySelector(element);
     }
-    
     if (element) {
-        element.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> Loading...';
+        element.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
         element.disabled = true;
     }
 }
 
-// Utility function to hide loading spinner
-function hideLoading(element, text = 'Submit') {
-    if (element instanceof string) {
+function hideLoading(element, text) {
+    text = text || 'Submit';
+    if (typeof element === 'string') {
         element = document.querySelector(element);
     }
-    
     if (element) {
         element.innerHTML = text;
         element.disabled = false;
     }
 }
+
+// ============================================================
+// DEVELOPER TOAST (auto-dismiss)
+// ============================================================
+var developerToastTimer = null;
+
+document.addEventListener('click', function (e) {
+    var trigger = e.target.closest('[data-dev-card]');
+    if (!trigger) return;
+    e.preventDefault();
+
+    var toast = document.getElementById('developerToast');
+    if (!toast) return;
+
+    if (developerToastTimer) {
+        clearTimeout(developerToastTimer);
+        developerToastTimer = null;
+    }
+
+    toast.classList.remove('active');
+    void toast.offsetWidth;
+    toast.classList.add('active');
+
+    developerToastTimer = setTimeout(function () {
+        toast.classList.remove('active');
+        developerToastTimer = null;
+    }, 2800);
+});
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        var toast = document.getElementById('developerToast');
+        if (toast) {
+            toast.classList.remove('active');
+            if (developerToastTimer) {
+                clearTimeout(developerToastTimer);
+                developerToastTimer = null;
+            }
+        }
+    }
+});

@@ -12,229 +12,228 @@
     };
 }
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-file-pdf me-2"></i>Policy Information</h3>
-                <div class="card-tools">
-                    <a asp-action="Edit" asp-route-id="@Model.Policy.Id" class="btn btn-warning btn-sm">
-                        <i class="fas fa-edit"></i> Edit
-                    </a>
+<div class="fade-in">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-file-pdf me-2"></i>Policy Information</h3>
+                    <div class="card-tools">
+                        <a asp-action="Edit" asp-route-id="@Model.Policy.Id" class="btn btn-warning btn-sm" aria-label="Edit policy">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="detail-row">
+                        <span class="detail-label">Title</span>
+                        <span class="detail-value">@Model.Policy.Title</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Policy.TitleAr))
+                    {
+                        <div class="detail-row">
+                            <span class="detail-label">Arabic Title</span>
+                            <span class="detail-value" dir="rtl">@Model.Policy.TitleAr</span>
+                        </div>
+                    }
+                    <div class="detail-row">
+                        <span class="detail-label">Standard Code</span>
+                        <span class="detail-value">
+                            @if (!string.IsNullOrEmpty(Model.Policy.StandardCode))
+                            {
+                                <span class="badge badge-info">@Model.Policy.StandardCode</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">&mdash;</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Department</span>
+                        <span class="detail-value">@Model.Policy.DepartmentName</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">
+                            <span class="badge badge-@statusBadge fs-6">@Model.Status</span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value"><span class="badge badge-primary">v@(Model.Policy.VersionNumber)</span></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Attachments</span>
+                        <span class="detail-value"><span class="badge badge-info">@Model.Policy.AttachmentCount</span></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Expiry Date</span>
+                        <span class="detail-value">
+                            @if (Model.Policy.ExpiryDate.HasValue)
+                            {
+                                <span class="@(Model.Policy.ExpiryDate.Value <= DateTime.UtcNow.AddMonths(1) ? "text-danger fw-bold" : "")">
+                                    @Model.Policy.ExpiryDate.Value.ToString("yyyy-MM-dd")
+                                    @if (Model.Policy.ExpiryDate.Value <= DateTime.UtcNow.AddMonths(1))
+                                    {
+                                        <i class="fas fa-exclamation-triangle ms-1"></i>
+                                    }
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">&mdash;</span>
+                            }
+                        </span>
+                    </div>
+                    @if (Model.Evidence.Any(e => !string.IsNullOrEmpty(e.DocumentName)))
+                    {
+                        <div class="detail-row">
+                            <span class="detail-label">Evidence Files</span>
+                            <span class="detail-value"><span class="badge badge-info">@Model.EvidenceCount file(s)</span></span>
+                        </div>
+                    }
                 </div>
             </div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <tbody>
-                        <tr>
-                            <th style="width: 180px;" class="bg-light">Title</th>
-                            <td>@Model.Policy.Title</td>
-                        </tr>
-                        @if (!string.IsNullOrEmpty(Model.Policy.TitleAr))
-                        {
-                            <tr>
-                                <th class="bg-light">Arabic Title</th>
-                                <td dir="rtl">@Model.Policy.TitleAr</td>
-                            </tr>
-                        }
-                        <tr>
-                            <th class="bg-light">Standard Code</th>
-                            <td>
-                                @if (!string.IsNullOrEmpty(Model.Policy.StandardCode))
-                                {
-                                    <span class="badge bg-info">@Model.Policy.StandardCode</span>
-                                }
-                                else
-                                {
-                                    <span class="text-muted">—</span>
-                                }
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="bg-light">Department</th>
-                            <td>@Model.Policy.DepartmentName</td>
-                        </tr>
-                        <tr>
-                            <th class="bg-light">Status</th>
-                            <td>
-                                <span class="badge bg-@statusBadge fs-6">@Model.Status</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="bg-light">Version</th>
-                            <td><span class="badge bg-primary">v@(Model.Policy.VersionNumber)</span></td>
-                        </tr>
-                        <tr>
-                            <th class="bg-light">Attachments</th>
-                            <td><span class="badge bg-info">@Model.Policy.AttachmentCount</span></td>
-                        </tr>
-                        <tr>
-                            <th class="bg-light">Expiry Date</th>
-                            <td>
-                                @if (Model.Policy.ExpiryDate.HasValue)
-                                {
-                                    <span class="@(Model.Policy.ExpiryDate.Value <= DateTime.UtcNow.AddMonths(1) ? "text-danger fw-bold" : "")">
-                                        @Model.Policy.ExpiryDate.Value.ToString("yyyy-MM-dd")
-                                        @if (Model.Policy.ExpiryDate.Value <= DateTime.UtcNow.AddMonths(1))
-                                        {
-                                            <i class="fas fa-exclamation-triangle ms-1"></i>
-                                        }
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="text-muted">—</span>
-                                }
-                            </td>
-                        </tr>
-                        @if (Model.Evidence.Any(e => !string.IsNullOrEmpty(e.DocumentName)))
-                        {
-                            <tr>
-                                <th class="bg-light">Evidence Files</th>
-                                <td><span class="badge bg-info">@Model.EvidenceCount file(s)</span></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
-        <div class="card card-info">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-paperclip me-2"></i>Evidence Attachments</h3>
-                <div class="card-tools">
-                    <span class="badge bg-info">@Model.EvidenceCount attachment(s)</span>
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-paperclip me-2"></i>Evidence Attachments</h3>
+                    <div class="card-tools">
+                        <span class="badge badge-info">@Model.EvidenceCount attachment(s)</span>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                @if (Model.Evidence.Any())
-                {
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Document Name</th>
-                                    <th>File Type</th>
-                                    <th>Upload Date</th>
-                                    <th>Notes</th>
-                                    <th class="text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var ev in Model.Evidence)
-                                {
+                <div class="card-body">
+                    @if (Model.Evidence.Any())
+                    {
+                        <div class="table-container">
+                            <table class="table table-hover" id="evidenceTable" role="table" aria-label="Evidence attachments">
+                                <thead>
                                     <tr>
-                                        <td>@ev.DocumentName</td>
-                                        <td>
-                                            <span class="badge bg-secondary">@ev.FileType</span>
-                                        </td>
-                                        <td>@ev.UploadDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                        <td>
-                                            @if (!string.IsNullOrEmpty(ev.Notes))
-                                            {
-                                                @ev.Notes
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">—</span>
-                                            }
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="badge bg-success"><i class="fas fa-check"></i> Uploaded</span>
-                                        </td>
+                                        <th scope="col">Document Name</th>
+                                        <th scope="col">File Type</th>
+                                        <th scope="col">Upload Date</th>
+                                        <th scope="col">Notes</th>
+                                        <th scope="col" class="text-center">Actions</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <div class="text-center text-muted py-4">
-                        <i class="fas fa-paperclip fa-3x mb-2"></i><br />
-                        No evidence attachments yet.
-                    </div>
-                }
+                                </thead>
+                                <tbody>
+                                    @foreach (var ev in Model.Evidence)
+                                    {
+                                        <tr>
+                                            <td>@ev.DocumentName</td>
+                                            <td>
+                                                <span class="badge badge-secondary">@ev.FileType</span>
+                                            </td>
+                                            <td>@ev.UploadDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(ev.Notes))
+                                                {
+                                                    @ev.Notes
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">&mdash;</span>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge badge-success"><i class="fas fa-check"></i> Uploaded</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="fas fa-paperclip empty-icon"></i>
+                            <h4>No Evidence Attachments</h4>
+                            <p>No evidence attachments yet. Upload supporting documents below.</p>
+                        </div>
+                    }
 
-                <hr />
-                <h5 class="mb-3"><i class="fas fa-upload me-2"></i>Upload Evidence</h5>
-                <form method="post" asp-action="UploadEvidence" enctype="multipart/form-data">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="policyId" value="@Model.Policy.Id" />
-                    <div class="row g-3">
-                        <div class="col-md-5">
-                            <input type="file" name="evidenceFile" class="form-control" required />
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" name="notes" class="form-control" placeholder="Optional notes..." />
-                        </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-success w-100">
-                                <i class="fas fa-upload me-1"></i> Upload
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card card-success">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-check-circle me-2"></i>Approval</h3>
-            </div>
-            <div class="card-body text-center">
-                @if (Model.Status == "Approved")
-                {
-                    <div class="py-3">
-                        <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
-                        <h5 class="text-success">Approved</h5>
-                        <p class="text-muted">This policy has been approved.</p>
-                    </div>
-                }
-                else if (Model.Status == "Expired")
-                {
-                    <div class="py-3">
-                        <i class="fas fa-calendar-times text-danger fa-4x mb-3"></i>
-                        <h5 class="text-danger">Expired</h5>
-                        <p class="text-muted">This policy has expired.</p>
-                    </div>
-                }
-                else
-                {
-                    <div class="py-3">
-                        <i class="fas fa-hourglass-half text-warning fa-4x mb-3"></i>
-                        <h5 class="text-warning">@Model.Status</h5>
-                        <p class="text-muted">Pending review and approval.</p>
-                        @if (User.IsInRole("ComplianceOfficer") || User.IsInRole("ClinicAdmin"))
-                        {
-                            <form method="post" asp-action="Approve">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@Model.Policy.Id" />
-                                <button type="submit" class="btn btn-success w-100 mt-2"
-                                        onclick="return confirm('Are you sure you want to approve this policy?')">
-                                    <i class="fas fa-thumbs-up me-1"></i> Approve Policy
+                    <hr />
+                    <h5 class="mb-3"><i class="fas fa-upload me-2"></i>Upload Evidence</h5>
+                    <form method="post" asp-action="UploadEvidence" enctype="multipart/form-data" role="form" aria-label="Upload evidence form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="policyId" value="@Model.Policy.Id" />
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <input type="file" name="evidenceFile" class="form-control" required aria-required="true" aria-label="Evidence file" />
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" name="notes" class="form-control" placeholder="Optional notes..." aria-label="Optional notes" />
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-success w-100" aria-label="Upload evidence">
+                                    <i class="fas fa-upload me-1"></i> Upload
                                 </button>
-                            </form>
-                        }
-                    </div>
-                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
-        <div class="card card-default">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-cog me-2"></i>Actions</h3>
+        <div class="col-md-4">
+            <div class="card card-success">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-check-circle me-2"></i>Approval</h3>
+                </div>
+                <div class="card-body text-center">
+                    @if (Model.Status == "Approved")
+                    {
+                        <div class="py-3">
+                            <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
+                            <h5 class="text-success">Approved</h5>
+                            <p class="text-muted">This policy has been approved.</p>
+                        </div>
+                    }
+                    else if (Model.Status == "Expired")
+                    {
+                        <div class="py-3">
+                            <i class="fas fa-calendar-times text-danger fa-4x mb-3"></i>
+                            <h5 class="text-danger">Expired</h5>
+                            <p class="text-muted">This policy has expired.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="py-3">
+                            <i class="fas fa-hourglass-half text-warning fa-4x mb-3"></i>
+                            <h5 class="text-warning">@Model.Status</h5>
+                            <p class="text-muted">Pending review and approval.</p>
+                            @if (User.IsInRole("ComplianceOfficer") || User.IsInRole("ClinicAdmin"))
+                            {
+                                <form method="post" asp-action="Approve" aria-label="Approve policy form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@Model.Policy.Id" />
+                                    <button type="submit" class="btn btn-success w-100 mt-2"
+                                            onclick="return confirm('Are you sure you want to approve this policy?')" aria-label="Approve policy">
+                                        <i class="fas fa-thumbs-up me-1"></i> Approve Policy
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    }
+                </div>
             </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a asp-action="Edit" asp-route-id="@Model.Policy.Id" class="btn btn-warning">
-                        <i class="fas fa-edit me-1"></i> Edit Policy
-                    </a>
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-1"></i> Back to List
-                    </a>
+
+            <div class="card card-secondary">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-cog me-2"></i>Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Policy.Id" class="btn btn-warning" aria-label="Edit policy">
+                            <i class="fas fa-edit me-1"></i> Edit Policy
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary" aria-label="Back to policy list">
+                            <i class="fas fa-arrow-left me-1"></i> Back to List
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

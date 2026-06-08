@@ -4,153 +4,146 @@
     ViewData["Title"] = ViewBag.PageTitle ?? "Policy Documents";
 }
 
-<div class="row">
-    <div class="col-12">
-        <div class="card card-primary card-outline">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-file-alt"></i> All Policy Documents
-                    <small class="ml-2 text-muted" dir="rtl">وثائق السياسات</small>
-                </h3>
-                <div class="card-tools">
-                    <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> Add Policy
-                    </a>
-                </div>
+<div class="fade-in">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-file-alt"></i> All Policy Documents
+                <small class="ml-2 text-muted" dir="rtl">وثائق السياسات</small>
+            </h3>
+            <div class="card-tools">
+                <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-primary" aria-label="Add new policy">
+                    <i class="fas fa-plus"></i> Add Policy
+                </a>
             </div>
+        </div>
 
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <input type="text" id="tableSearch" class="form-control" placeholder="Search policies..." />
-                            <div class="input-group-append">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            </div>
-                        </div>
+        <div class="card-body">
+            <div class="table-container">
+                <div class="table-toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="form-control" id="tableSearch" data-table-search="policiesTable" placeholder="Search policies..." aria-label="Search policies" />
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="policiesTable">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Standard Code</th>
-                                <th>Status</th>
-                                <th>Department</th>
-                                <th>Version</th>
-                                <th>Expiry Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.Data.Any())
+                <table class="table table-hover" id="policiesTable" role="table" aria-label="Policy documents">
+                    <thead>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Standard Code</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Version</th>
+                            <th scope="col">Expiry Date</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Data.Any())
+                        {
+                            @foreach (var doc in Model.Data)
                             {
-                                @foreach (var doc in Model.Data)
-                                {
-                                    <tr>
-                                        <td>
-                                            <strong>@doc.Title</strong>
-                                            @if (!string.IsNullOrEmpty(doc.TitleAr))
+                                <tr>
+                                    <td>
+                                        <strong>@doc.Title</strong>
+                                        @if (!string.IsNullOrEmpty(doc.TitleAr))
+                                        {
+                                            <br /><small dir="rtl">@doc.TitleAr</small>
+                                        }
+                                    </td>
+                                    <td><code>@doc.StandardCode</code></td>
+                                    <td>
+                                        @switch (doc.DocumentStatus)
+                                        {
+                                            case DocumentStatus.Draft:
+                                                <span class="badge badge-secondary">Draft</span>
+                                                break;
+                                            case DocumentStatus.NeedsReview:
+                                                <span class="badge badge-info">Needs Review</span>
+                                                break;
+                                            case DocumentStatus.Pending:
+                                                <span class="badge badge-warning">Pending</span>
+                                                break;
+                                            case DocumentStatus.Approved:
+                                                <span class="badge badge-success">Approved</span>
+                                                break;
+                                            case DocumentStatus.Complete:
+                                                <span class="badge badge-primary">Complete</span>
+                                                break;
+                                            case DocumentStatus.MissingAttachment:
+                                                <span class="badge badge-danger">Missing Attachment</span>
+                                                break;
+                                            case DocumentStatus.Expired:
+                                                <span class="badge badge-secondary">Expired</span>
+                                                break;
+                                            default:
+                                                <span class="badge badge-secondary">@doc.DocumentStatus</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>@doc.DepartmentName</td>
+                                    <td><span class="badge badge-info">v@(doc.VersionNumber)</span></td>
+                                    <td>
+                                        @if (doc.ExpiryDate.HasValue)
+                                        {
+                                            @doc.ExpiryDate.Value.ToString("dd/MM/yyyy")
+                                            if (doc.ExpiryDate.Value <= DateTime.UtcNow)
                                             {
-                                                <br /><small dir="rtl">@doc.TitleAr</small>
+                                                <br /><span class="badge badge-danger">Expired</span>
                                             }
-                                        </td>
-                                        <td><code>@doc.StandardCode</code></td>
-                                        <td>
-                                            @switch (doc.DocumentStatus)
+                                            else if (doc.ExpiryDate.Value <= DateTime.UtcNow.AddDays(30))
                                             {
-                                                case DocumentStatus.Draft:
-                                                    <span class="badge badge-secondary">Draft</span>
-                                                    break;
-                                                case DocumentStatus.NeedsReview:
-                                                    <span class="badge badge-info">Needs Review</span>
-                                                    break;
-                                                case DocumentStatus.Pending:
-                                                    <span class="badge badge-warning">Pending</span>
-                                                    break;
-                                                case DocumentStatus.Approved:
-                                                    <span class="badge badge-success">Approved</span>
-                                                    break;
-                                                case DocumentStatus.Complete:
-                                                    <span class="badge badge-primary">Complete</span>
-                                                    break;
-                                                case DocumentStatus.MissingAttachment:
-                                                    <span class="badge badge-danger">Missing Attachment</span>
-                                                    break;
-                                                case DocumentStatus.Expired:
-                                                    <span class="badge badge-dark">Expired</span>
-                                                    break;
-                                                default:
-                                                    <span class="badge badge-secondary">@doc.DocumentStatus</span>
-                                                    break;
+                                                <br /><span class="badge badge-warning">Expiring Soon</span>
                                             }
-                                        </td>
-                                        <td>@doc.DepartmentName</td>
-                                        <td><span class="badge badge-info">v@(doc.VersionNumber)</span></td>
-                                        <td>
-                                            @if (doc.ExpiryDate.HasValue)
-                                            {
-                                                @doc.ExpiryDate.Value.ToString("dd/MM/yyyy")
-                                                if (doc.ExpiryDate.Value <= DateTime.UtcNow)
-                                                {
-                                                    <br /><span class="badge badge-danger">Expired</span>
-                                                }
-                                                else if (doc.ExpiryDate.Value <= DateTime.UtcNow.AddDays(30))
-                                                {
-                                                    <br /><span class="badge badge-warning">Expiring Soon</span>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">N/A</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <a href="@Url.Action("Details", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-info" title="View">
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <a href="@Url.Action("Details", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-info" title="View" aria-label="View policy details">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="@Url.Action("Edit", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-warning" title="Edit">
+                                            <a href="@Url.Action("Edit", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-warning" title="Edit" aria-label="Edit policy">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="@Url.Action("Delete", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-danger" title="Delete"
+                                            <a href="@Url.Action("Delete", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-danger" title="Delete" aria-label="Delete policy"
                                                onclick="return confirm('Are you sure you want to delete this policy?')">
                                                 <i class="fas fa-trash"></i>
                                             </a>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted py-4">
-                                        <i class="fas fa-file-alt fa-2x mb-2 d-block"></i>
-                                        No policy documents found.
-                                        <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })">Create one</a>
+                                        </div>
                                     </td>
                                 </tr>
                             }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card-footer clearfix">
-                <div class="row align-items-center">
-                    <div class="col-sm-6">
-                        <div class="pagination-info text-muted">
-                            Showing <strong>@Model.Data.Count</strong> of <strong>@Model.TotalCount</strong> policies
-                            (Page @Model.PageNumber of @Model.TotalPages)
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        @if (Model.TotalPages > 1)
+                        }
+                        else
                         {
-                            <ul class="pagination m-0 float-right">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fas fa-file-alt fa-2x mb-2 d-block"></i>
+                                    No policy documents found.
+                                    <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })">Create one</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="table-footer">
+                    <div class="pagination-info">
+                        Showing <strong>@Model.Data.Count</strong> of <strong>@Model.TotalCount</strong> policies
+                        (Page @Model.PageNumber of @Model.TotalPages)
+                    </div>
+
+                    @if (Model.TotalPages > 1)
+                    {
+                        <nav aria-label="Policies table pagination">
+                            <ul class="pagination">
                                 <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                                    <a href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" class="page-link">
+                                    <a href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" class="page-link" aria-label="Previous page">
                                         <i class="fas fa-chevron-left"></i> Previous
                                     </a>
                                 </li>
@@ -158,18 +151,18 @@
                                 @for (int i = 1; i <= Model.TotalPages; i++)
                                 {
                                     <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                        <a href="?page=@i&pageSize=@Model.PageSize" class="page-link">@i</a>
+                                        <a href="?page=@i&pageSize=@Model.PageSize" class="page-link" aria-label="Page @i" aria-current="@(i == Model.PageNumber ? "page" : null)">@i</a>
                                     </li>
                                 }
 
                                 <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                                    <a href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" class="page-link">
+                                    <a href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" class="page-link" aria-label="Next page">
                                         Next <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
                             </ul>
-                        }
-                    </div>
+                        </nav>
+                    }
                 </div>
             </div>
         </div>

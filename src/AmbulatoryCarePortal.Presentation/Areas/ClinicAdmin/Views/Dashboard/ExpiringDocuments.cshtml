@@ -4,170 +4,158 @@
     ViewData["Title"] = ViewBag.PageTitle ?? "Expiring Documents";
 }
 
-<div class="row">
-    <div class="col-12">
-        <div class="card card-warning card-outline">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-exclamation-triangle"></i> Expiring Documents
-                    <small class="ml-2 text-muted" dir="rtl">الوثائق المنتهية صلاحيتها</small>
-                </h3>
-                <div class="card-tools">
-                    <span class="badge badge-warning">@Model.Count document(s)</span>
-                </div>
+<div class="fade-in">
+    <div class="card card-warning">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-exclamation-triangle"></i> Expiring Documents
+                <small class="ml-2 text-muted" dir="rtl">الوثائق المنتهية صلاحيتها</small>
+            </h3>
+            <div class="card-tools">
+                <span class="badge badge-warning">@Model.Count document(s)</span>
             </div>
+        </div>
 
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <input type="text" id="tableSearch" class="form-control" placeholder="Search documents..." />
-                            <div class="input-group-append">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            </div>
-                        </div>
+        <div class="card-body">
+            <div class="table-container">
+                <div class="table-toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="form-control" id="tableSearch" data-table-search="expiringTable" placeholder="Search documents..." aria-label="Search documents" />
                     </div>
-                    <div class="col-md-6 text-right">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-outline-success" onclick="filterDocs('all')">All</button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="filterDocs('critical')">Critical</button>
-                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="filterDocs('urgent')">Urgent</button>
-                            <button type="button" class="btn btn-sm btn-outline-info" onclick="filterDocs('upcoming')">Upcoming</button>
-                        </div>
+                    <div class="btn-group" role="group" aria-label="Document filter options">
+                        <button type="button" class="btn btn-sm btn-outline-success" onclick="filterDocs('all')" aria-label="Show all documents">All</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="filterDocs('critical')" aria-label="Show critical documents">Critical</button>
+                        <button type="button" class="btn btn-sm btn-outline-warning" onclick="filterDocs('urgent')" aria-label="Show urgent documents">Urgent</button>
+                        <button type="button" class="btn btn-sm btn-outline-info" onclick="filterDocs('upcoming')" aria-label="Show upcoming documents">Upcoming</button>
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="expiringTable">
-                        <thead>
-                            <tr>
-                                <th>Document Name</th>
-                                <th>Document Type</th>
-                                <th>Expiry Date</th>
-                                <th>Days Left</th>
-                                <th>Verified</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.Any())
+                <table class="table table-hover" id="expiringTable" role="table" aria-label="Expiring documents">
+                    <thead>
+                        <tr>
+                            <th scope="col">Document Name</th>
+                            <th scope="col">Document Type</th>
+                            <th scope="col">Expiry Date</th>
+                            <th scope="col">Days Left</th>
+                            <th scope="col">Verified</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            @foreach (var doc in Model.OrderBy(d => d.DaysUntilExpiry))
                             {
-                                @foreach (var doc in Model.OrderBy(d => d.DaysUntilExpiry))
-                                {
-                                    var statusClass = doc.DaysUntilExpiry <= 0 ? "critical" : doc.DaysUntilExpiry <= 7 ? "urgent" : "upcoming";
-                                    var statusLabel = doc.DaysUntilExpiry <= 0 ? "Expired" : doc.DaysUntilExpiry <= 7 ? "Critical" : doc.DaysUntilExpiry <= 14 ? "Urgent" : "Upcoming";
+                                var statusClass = doc.DaysUntilExpiry <= 0 ? "critical" : doc.DaysUntilExpiry <= 7 ? "urgent" : "upcoming";
+                                var statusLabel = doc.DaysUntilExpiry <= 0 ? "Expired" : doc.DaysUntilExpiry <= 7 ? "Critical" : doc.DaysUntilExpiry <= 14 ? "Urgent" : "Upcoming";
 
-                                    <tr class="doc-row" data-status="@statusClass">
-                                        <td>
-                                            <strong>@doc.DocumentName</strong>
-                                        </td>
-                                        <td>
-                                            @switch (doc.DocumentType)
-                                            {
-                                                case HrDocumentType.ID:
-                                                    <span class="badge badge-secondary">ID</span>
-                                                    break;
-                                                case HrDocumentType.CV:
-                                                    <span class="badge badge-info">CV</span>
-                                                    break;
-                                                case HrDocumentType.EducationCert:
-                                                    <span class="badge badge-primary">Education Cert</span>
-                                                    break;
-                                                case HrDocumentType.License:
-                                                    <span class="badge badge-warning">License</span>
-                                                    break;
-                                                case HrDocumentType.Training:
-                                                    <span class="badge badge-success">Training</span>
-                                                    break;
-                                                case HrDocumentType.Competency:
-                                                    <span class="badge badge-info">Competency</span>
-                                                    break;
-                                                case HrDocumentType.RadiationSafety:
-                                                    <span class="badge badge-danger">Radiation Safety</span>
-                                                    break;
-                                                case HrDocumentType.JobDescription:
-                                                    <span class="badge badge-secondary">Job Description</span>
-                                                    break;
-                                                case HrDocumentType.Orientation:
-                                                    <span class="badge badge-primary">Orientation</span>
-                                                    break;
-                                                default:
-                                                    <span class="badge badge-secondary">@doc.DocumentType</span>
-                                                    break;
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (doc.ExpiryDate.HasValue)
-                                            {
-                                                @doc.ExpiryDate.Value.ToString("dd/MM/yyyy")
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">N/A</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <strong>@doc.DaysUntilExpiry</strong> day(s)
-                                        </td>
-                                        <td>
-                                            @if (doc.IsVerified)
-                                            {
-                                                <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge badge-warning"><i class="fas fa-times"></i> Unverified</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (statusClass == "critical")
-                                            {
-                                                <span class="badge badge-danger">@statusLabel</span>
-                                            }
-                                            else if (statusClass == "urgent")
-                                            {
-                                                <span class="badge badge-warning">@statusLabel</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge badge-info">@statusLabel</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <a href="@Url.Action("Edit", "HRManagement", new { area = "ClinicAdmin", id = doc.Id })#documents" class="btn btn-sm btn-warning" title="Renew">
+                                <tr class="doc-row" data-status="@statusClass">
+                                    <td>
+                                        <strong>@doc.DocumentName</strong>
+                                    </td>
+                                    <td>
+                                        @switch (doc.DocumentType)
+                                        {
+                                            case HrDocumentType.ID:
+                                                <span class="badge badge-secondary">ID</span>
+                                                break;
+                                            case HrDocumentType.CV:
+                                                <span class="badge badge-info">CV</span>
+                                                break;
+                                            case HrDocumentType.EducationCert:
+                                                <span class="badge badge-primary">Education Cert</span>
+                                                break;
+                                            case HrDocumentType.License:
+                                                <span class="badge badge-warning">License</span>
+                                                break;
+                                            case HrDocumentType.Training:
+                                                <span class="badge badge-success">Training</span>
+                                                break;
+                                            case HrDocumentType.Competency:
+                                                <span class="badge badge-info">Competency</span>
+                                                break;
+                                            case HrDocumentType.RadiationSafety:
+                                                <span class="badge badge-danger">Radiation Safety</span>
+                                                break;
+                                            case HrDocumentType.JobDescription:
+                                                <span class="badge badge-secondary">Job Description</span>
+                                                break;
+                                            case HrDocumentType.Orientation:
+                                                <span class="badge badge-primary">Orientation</span>
+                                                break;
+                                            default:
+                                                <span class="badge badge-secondary">@doc.DocumentType</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (doc.ExpiryDate.HasValue)
+                                        {
+                                            @doc.ExpiryDate.Value.ToString("dd/MM/yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <strong>@doc.DaysUntilExpiry</strong> day(s)
+                                    </td>
+                                    <td>
+                                        @if (doc.IsVerified)
+                                        {
+                                            <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-warning"><i class="fas fa-times"></i> Unverified</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (statusClass == "critical")
+                                        {
+                                            <span class="badge badge-danger">@statusLabel</span>
+                                        }
+                                        else if (statusClass == "urgent")
+                                        {
+                                            <span class="badge badge-warning">@statusLabel</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-info">@statusLabel</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <a href="@Url.Action("Edit", "HRManagement", new { area = "ClinicAdmin", id = doc.Id })#documents" class="btn btn-sm btn-warning" title="Renew" aria-label="Renew document">
                                                 <i class="fas fa-sync-alt"></i>
                                             </a>
-                                            <a href="@Url.Action("Details", "HRManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-info" title="View Staff">
+                                            <a href="@Url.Action("Details", "HRManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-info" title="View Staff" aria-label="View staff member">
                                                 <i class="fas fa-user"></i>
                                             </a>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted py-4">
-                                        <i class="fas fa-check-circle fa-2x mb-2 d-block text-success"></i>
-                                        No expiring documents. All documents are up to date!
+                                        </div>
                                     </td>
                                 </tr>
                             }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fas fa-check-circle fa-2x mb-2 d-block text-success"></i>
+                                    No expiring documents. All documents are up to date!
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
 
-            <div class="card-footer">
-                <div class="row">
-                    <div class="col-sm-4">
+                <div class="table-footer">
+                    <div class="pagination-info">
                         <span class="badge badge-danger"><i class="fas fa-circle"></i> Critical (Expired or &le; 7 days)</span>
-                    </div>
-                    <div class="col-sm-4">
                         <span class="badge badge-warning"><i class="fas fa-circle"></i> Urgent (8&ndash;14 days)</span>
-                    </div>
-                    <div class="col-sm-4">
                         <span class="badge badge-info"><i class="fas fa-circle"></i> Upcoming (15&ndash;30 days)</span>
                     </div>
                 </div>

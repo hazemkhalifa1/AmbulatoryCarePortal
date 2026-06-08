@@ -4,95 +4,95 @@
     ViewData["Title"] = "Create Checklist";
 }
 
-<div class="row mb-3">
+<div class="row fade-in">
     <div class="col-sm-6">
         <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Back to List
+            <i class="fas fa-arrow-left me-1"></i> Back to List
         </a>
     </div>
 </div>
 
 <form asp-action="Create" method="post" id="checklistForm">
-    <div class="card card-primary card-outline">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-clipboard-list"></i> Checklist Details
-            </h3>
-        </div>
-        <div class="card-body">
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-clipboard-list"></i> Checklist Details</h3>
+                </div>
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label">Name <span class="text-danger">*</span></label>
-                        <input asp-for="Name" class="form-control" placeholder="Enter checklist name" required>
-                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Name" class="form-label">Name <span class="required">*</span></label>
+                                <input asp-for="Name" class="form-control" placeholder="Enter checklist name" required>
+                                <span asp-validation-for="Name" class="invalid-feedback"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="NameAr" class="form-label">Name (Arabic) <span dir="rtl">الاسم</span></label>
+                                <input asp-for="NameAr" class="form-control" placeholder="أدخل اسم القائمة" dir="rtl">
+                                <span asp-validation-for="NameAr" class="invalid-feedback"></span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="NameAr" class="form-label">Name (Arabic) <span dir="rtl">الاسم</span></label>
-                        <input asp-for="NameAr" class="form-control" placeholder="أدخل اسم القائمة" dir="rtl">
-                        <span asp-validation-for="NameAr" class="text-danger small"></span>
-                    </div>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="Frequency" class="form-label">Frequency <span class="text-danger">*</span></label>
-                        <select asp-for="Frequency" class="form-select">
-                            <option value="">-- Select Frequency --</option>
-                            @if (Model.Frequencies.Any())
-                            {
-                                @foreach (var freq in Model.Frequencies)
-                                {
-                                    <option value="@freq">@freq</option>
-                                }
-                            }
-                            else
-                            {
-                                <option value="Daily">Daily</option>
-                                <option value="Weekly">Weekly</option>
-                                <option value="Monthly">Monthly</option>
-                            }
-                        </select>
-                        <span asp-validation-for="Frequency" class="text-danger small"></span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Frequency" class="form-label">Frequency <span class="required">*</span></label>
+                                <select asp-for="Frequency" class="form-select">
+                                    <option value="">-- Select Frequency --</option>
+                                    @if (Model.Frequencies.Any())
+                                    {
+                                        @foreach (var freq in Model.Frequencies)
+                                        {
+                                            <option value="@freq">@freq</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="Daily">Daily</option>
+                                        <option value="Weekly">Weekly</option>
+                                        <option value="Monthly">Monthly</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Frequency" class="invalid-feedback"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="DepartmentId" class="form-label">Department</label>
+                                <select asp-for="DepartmentId" class="form-select">
+                                    <option value="">-- All Departments --</option>
+                                    @if (Model.AvailableDepartments.Any())
+                                    {
+                                        @foreach (var dept in Model.AvailableDepartments)
+                                        {
+                                            <option value="@dept.Id">@dept.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="DepartmentId" class="invalid-feedback"></span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="DepartmentId" class="form-label">Department</label>
-                        <select asp-for="DepartmentId" class="form-select">
-                            <option value="">-- All Departments --</option>
-                            @if (Model.AvailableDepartments.Any())
-                            {
-                                @foreach (var dept in Model.AvailableDepartments)
-                                {
-                                    <option value="@dept.Id">@dept.Name</option>
-                                }
-                            }
-                        </select>
-                        <span asp-validation-for="DepartmentId" class="text-danger small"></span>
-                    </div>
-                </div>
-            </div>
 
-            <div class="mb-3">
-                <label asp-for="Description" class="form-label">Description</label>
-                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Optional description..."></textarea>
-                <span asp-validation-for="Description" class="text-danger small"></span>
+                    <div class="form-group">
+                        <label asp-for="Description" class="form-label">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Optional description..."></textarea>
+                        <span asp-validation-for="Description" class="invalid-feedback"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="card card-primary card-outline">
+    <div class="card card-primary">
         <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-list"></i> Checklist Items
-            </h3>
+            <h3 class="card-title"><i class="fas fa-list"></i> Checklist Items</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-primary btn-sm" onclick="addItem()">
                     <i class="fas fa-plus"></i> Add Item
@@ -100,12 +100,12 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-striped mb-0" id="itemsTable">
+            <div class="table-container">
+                <table class="table table-hover" id="itemsTable">
                     <thead>
                         <tr>
                             <th style="width: 50px;">#</th>
-                            <th>Question Text <span class="text-danger">*</span></th>
+                            <th>Question Text <span class="required">*</span></th>
                             <th>Question Text (Arabic)</th>
                             <th style="width: 80px;">Order</th>
                             <th style="width: 80px;">Weight</th>
@@ -114,20 +114,25 @@
                     </thead>
                     <tbody id="itemsContainer">
                         <tr id="noItemsRow">
-                            <td colspan="6" class="text-center text-muted py-4">
-                                <i class="fas fa-plus-circle fa-2x mb-2 d-block"></i>
-                                Click "Add Item" to add checklist questions.
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <i class="fas fa-plus-circle empty-icon"></i>
+                                    <h4>No Items Added</h4>
+                                    <p>Click "Add Item" to add checklist questions.</p>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="card-footer text-end">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Create Checklist
-            </button>
-            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        <div class="card-footer">
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> Create Checklist
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
         </div>
     </div>
 </form>
@@ -156,7 +161,7 @@
                         <input type="number" name="Items[${itemIndex}].Weight" class="form-control form-control-sm" value="1" min="1" max="100">
                     </td>
                     <td class="text-center align-middle">
-                        <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)" aria-label="Remove item">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>

@@ -1,4 +1,5 @@
 @using AmbulatoryCarePortal.Presentation
+@using AmbulatoryCarePortal.Presentation.Helpers
 @using AmbulatoryCarePortal.Application.DTOs
 @using AmbulatoryCarePortal.Application.DTOs.Clinic
 @using AmbulatoryCarePortal.Application.DTOs.PolicyDocument
@@ -8,3 +9,5 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, AmbulatoryCarePortal.Presentation
+
+@inject ITranslationService Localizer

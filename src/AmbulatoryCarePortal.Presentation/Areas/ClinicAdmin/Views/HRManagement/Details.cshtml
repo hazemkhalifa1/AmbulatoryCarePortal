@@ -8,265 +8,274 @@
     var docTypes = Enum.GetValues<HrDocumentType>();
 }
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="card card-primary card-outline">
-            <div class="card-body box-profile">
-                <div class="text-center mb-3">
-                    <div class="profile-user-img img-fluid img-circle"
-                         style="width:100px;height:100px;background:#e9ecef;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:2.5rem;color:#6c757d;">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                </div>
-
-                <h3 class="profile-username text-center">@Model.Staff.FullNameEn</h3>
-                @if (!string.IsNullOrEmpty(Model.Staff.FullNameAr))
-                {
-                    <p class="text-center text-muted" dir="rtl">@Model.Staff.FullNameAr</p>
-                }
-
-                <ul class="list-group list-group-unbordered mb-3">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="fas fa-building mr-1"></i> @(isArabic ? "القسم" : "Department")</span>
-                        <span class="fw-bold">@Model.Staff.DepartmentName</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="fas fa-tag mr-1"></i> @(isArabic ? "النوع" : "Type")</span>
-                        <span class="badge bg-info">@Model.Staff.StaffType</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="fas fa-check-circle mr-1"></i> @(isArabic ? "الحالة" : "Status")</span>
-                        @if (Model.Staff.IsActive)
-                        {
-                            <span class="badge bg-success">@(isArabic ? "نشط" : "Active")</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-danger">@(isArabic ? "غير نشط" : "Inactive")</span>
-                        }
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="fas fa-file mr-1"></i> @(isArabic ? "الوثائق" : "Documents")</span>
-                        <span class="fw-bold">@Model.DocumentCount</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="fas fa-check-circle mr-1"></i> @(isArabic ? "الامتثال" : "Compliance")</span>
-                        @if (Model.ComplianceStatus == "Compliant")
-                        {
-                            <span class="badge badge-success"><i class="fas fa-check"></i> @(isArabic ? "ممتثل" : "Compliant")</span>
-                        }
-                        else
-                        {
-                            <span class="badge badge-danger"><i class="fas fa-times"></i> @(isArabic ? "غير ممتثل" : "Non-Compliant")</span>
-                        }
-                    </li>
-                </ul>
-
-                <a asp-action="Index" class="btn btn-secondary w-100">
-                    <i class="fas fa-arrow-left"></i> @(isArabic ? "عودة" : "Back to List")
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-8">
-        <div class="row mb-3">
-            <div class="col-lg-4 col-6">
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>@Model.DocumentCount</h3>
-                        <p>@(isArabic ? "إجمالي الوثائق" : "Total Documents")</p>
-                    </div>
-                    <div class="icon"><i class="fas fa-file"></i></div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-6">
-                <div class="small-box bg-warning">
-                    <div class="inner">
-                        <h3>@Model.ExpiringCount</h3>
-                        <p>@(isArabic ? "وشيكة الانتهاء" : "Expiring Soon")</p>
-                    </div>
-                    <div class="icon"><i class="fas fa-clock"></i></div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-6">
-                <div class="small-box bg-danger">
-                    <div class="inner">
-                        <h3>@Model.ExpiredCount</h3>
-                        <p>@(isArabic ? "منتهية" : "Expired")</p>
-                    </div>
-                    <div class="icon"><i class="fas fa-calendar-times"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-file-alt mr-2"></i>
-                    @(isArabic ? "الوثائق" : "Documents")
-                </h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#uploadSection">
-                        <i class="fas fa-upload"></i> @(isArabic ? "رفع وثيقة" : "Upload Document")
-                    </button>
-                </div>
-            </div>
-
-            <div class="collapse @(ViewBag.ShowUpload == true ? "show" : "")" id="uploadSection">
-                <div class="card-body bg-light">
-                    <form method="post" asp-action="UploadDocument" enctype="multipart/form-data">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="staffId" value="@Model.Staff.Id" />
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label class="form-label">@(isArabic ? "اسم الوثيقة" : "Document Name") <span class="text-danger">*</span></label>
-                                    <input name="DocumentName" class="form-control form-control-sm" required />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label class="form-label">@(isArabic ? "اسم الوثيقة (عربي)" : "Document Name (Arabic)")</label>
-                                    <input name="DocumentNameAr" class="form-control form-control-sm" dir="rtl" />
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-2">
-                                    <label class="form-label">@(isArabic ? "نوع الوثيقة" : "Document Type") <span class="text-danger">*</span></label>
-                                    <select name="DocumentType" class="form-select form-select-sm">
-                                        <option value="">-- @(isArabic ? "اختر" : "Select") --</option>
-                                        @foreach (var dt in docTypes)
-                                        {
-                                            <option value="@dt">@dt</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-2">
-                                    <label class="form-label">@(isArabic ? "تاريخ الإصدار" : "Issue Date")</label>
-                                    <input name="IssueDate" class="form-control form-control-sm" type="date" />
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-2">
-                                    <label class="form-label">@(isArabic ? "تاريخ الانتهاء" : "Expiry Date")</label>
-                                    <input name="ExpiryDate" class="form-control form-control-sm" type="date" />
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="mb-2">
-                                    <label class="form-label">@(isArabic ? "الملف" : "File") <span class="text-danger">*</span></label>
-                                    <input name="documentFile" class="form-control form-control-sm" type="file" required />
-                                </div>
-                            </div>
-                            <div class="col-md-4 d-flex align-items-end">
-                                <div class="mb-2">
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-upload"></i> @(isArabic ? "رفع" : "Upload")
-                                    </button>
-                                </div>
-                            </div>
+<div class="fade-in">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card card-primary">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <div style="width:100px;height:100px;background:var(--color-bg-secondary);display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:2.5rem;color:var(--color-text-secondary);">
+                            <i class="fas fa-user-circle"></i>
                         </div>
-                    </form>
-                </div>
-            </div>
+                    </div>
 
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>@(isArabic ? "اسم الوثيقة" : "Document Name")</th>
-                                <th>@(isArabic ? "النوع" : "Type")</th>
-                                <th>@(isArabic ? "تاريخ الانتهاء" : "Expiry Date")</th>
-                                <th>@(isArabic ? "الأيام المتبقية" : "Days Left")</th>
-                                <th>@(isArabic ? "تم التحقق" : "Verified")</th>
-                                <th>@(isArabic ? "الإجراءات" : "Actions")</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.Documents.Any())
+                    <h3>@Model.Staff.FullNameEn</h3>
+                    @if (!string.IsNullOrEmpty(Model.Staff.FullNameAr))
+                    {
+                        <p class="text-muted" dir="rtl">@Model.Staff.FullNameAr</p>
+                    }
+
+                    <hr />
+
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-building"></i> @(isArabic ? "القسم" : "Department")</span>
+                        <span class="detail-value">@Model.Staff.DepartmentName</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-tag"></i> @(isArabic ? "النوع" : "Type")</span>
+                        <span class="detail-value"><span class="badge badge-info">@Model.Staff.StaffType</span></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-check-circle"></i> @(isArabic ? "الحالة" : "Status")</span>
+                        <span class="detail-value">
+                            @if (Model.Staff.IsActive)
                             {
-                                @foreach (var doc in Model.Documents)
-                                {
-                                    var daysLeft = doc.ExpiryDate.HasValue ? doc.DaysUntilExpiry : (int?)null;
-                                    <tr class="@(daysLeft < 0 ? "table-danger" : daysLeft <= 30 ? "table-warning" : "")">
-                                        <td>@doc.DocumentName</td>
-                                        <td><span class="badge bg-secondary">@doc.DocumentType</span></td>
-                                        <td>
-                                            @if (doc.ExpiryDate.HasValue)
-                                            {
-                                                @doc.ExpiryDate.Value.ToString("dd/MM/yyyy")
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">@(isArabic ? "غير محدد" : "N/A")</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (daysLeft.HasValue)
-                                            {
-                                                if (daysLeft < 0)
-                                                {
-                                                    <span class="badge bg-danger">@(Math.Abs(daysLeft.Value)) @(isArabic ? "يوم متجاوز" : "days overdue")</span>
-                                                }
-                                                else if (daysLeft <= 7)
-                                                {
-                                                    <span class="badge bg-warning">@daysLeft @(isArabic ? "يوم" : "days")</span>
-                                                }
-                                                else if (daysLeft <= 30)
-                                                {
-                                                    <span class="badge bg-info">@daysLeft @(isArabic ? "يوم" : "days")</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-success">@daysLeft @(isArabic ? "يوم" : "days")</span>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">-</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (doc.IsVerified)
-                                            {
-                                                <span class="badge badge-success"><i class="fas fa-check"></i></span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge badge-warning"><i class="fas fa-clock"></i> @(isArabic ? "قيد الانتظار" : "Pending")</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (!doc.IsVerified)
-                                            {
-                                                <form method="post" asp-action="VerifyDocument" style="display:inline">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="documentId" value="@doc.Id" />
-                                                    <button type="submit" class="btn btn-sm btn-success" title="Verify">
-                                                        <i class="fas fa-check-circle"></i>
-                                                    </button>
-                                                </form>
-                                            }
-                                        </td>
-                                    </tr>
-                                }
+                                <span class="badge badge-success">@(isArabic ? "نشط" : "Active")</span>
                             }
                             else
                             {
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">
-                                        <i class="fas fa-file fa-2x d-block mb-2"></i>
-                                        @(isArabic ? "لا توجد وثائق مرفوعة" : "No documents uploaded yet.")
-                                    </td>
-                                </tr>
+                                <span class="badge badge-danger">@(isArabic ? "غير نشط" : "Inactive")</span>
                             }
-                        </tbody>
-                    </table>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-file"></i> @(isArabic ? "الوثائق" : "Documents")</span>
+                        <span class="detail-value">@Model.DocumentCount</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-check-circle"></i> @(isArabic ? "الامتثال" : "Compliance")</span>
+                        <span class="detail-value">
+                            @if (Model.ComplianceStatus == "Compliant")
+                            {
+                                <span class="badge badge-success"><i class="fas fa-check"></i> @(isArabic ? "ممتثل" : "Compliant")</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger"><i class="fas fa-times"></i> @(isArabic ? "غير ممتثل" : "Non-Compliant")</span>
+                            }
+                        </span>
+                    </div>
+
+                    <hr />
+
+                    <a asp-action="Index" class="btn btn-secondary btn-block">
+                        <i class="fas fa-arrow-left"></i> @(isArabic ? "عودة" : "Back to List")
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="row mb-4">
+                <div class="col-lg-4 col-6">
+                    <div class="small-box bg-info">
+                        <h3>@Model.DocumentCount</h3>
+                        <p>@(isArabic ? "إجمالي الوثائق" : "Total Documents")</p>
+                        <div class="icon"><i class="fas fa-file"></i></div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-6">
+                    <div class="small-box bg-warning">
+                        <h3>@Model.ExpiringCount</h3>
+                        <p>@(isArabic ? "وشيكة الانتهاء" : "Expiring Soon")</p>
+                        <div class="icon"><i class="fas fa-clock"></i></div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-6">
+                    <div class="small-box bg-danger">
+                        <h3>@Model.ExpiredCount</h3>
+                        <p>@(isArabic ? "منتهية" : "Expired")</p>
+                        <div class="icon"><i class="fas fa-calendar-times"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-file-alt"></i>
+                        @(isArabic ? "الوثائق" : "Documents")
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#uploadSection" aria-expanded="@((ViewBag.ShowUpload == true ? "true" : "false"))">
+                            <i class="fas fa-upload"></i> @(isArabic ? "رفع وثيقة" : "Upload Document")
+                        </button>
+                    </div>
+                </div>
+
+                <div class="collapse @(ViewBag.ShowUpload == true ? "show" : "")" id="uploadSection">
+                    <div class="card-body bg-light">
+                        <form method="post" asp-action="UploadDocument" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="staffId" value="@Model.Staff.Id" />
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">@(isArabic ? "اسم الوثيقة" : "Document Name") <span class="required">*</span></label>
+                                        <input name="DocumentName" class="form-control" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">@(isArabic ? "اسم الوثيقة (عربي)" : "Document Name (Arabic)")</label>
+                                        <input name="DocumentNameAr" class="form-control" dir="rtl" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label">@(isArabic ? "نوع الوثيقة" : "Document Type") <span class="required">*</span></label>
+                                        <select name="DocumentType" class="form-control">
+                                            <option value="">-- @(isArabic ? "اختر" : "Select") --</option>
+                                            @foreach (var dt in docTypes)
+                                            {
+                                                <option value="@dt">@dt</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label">@(isArabic ? "تاريخ الإصدار" : "Issue Date")</label>
+                                        <input name="IssueDate" class="form-control" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label">@(isArabic ? "تاريخ الانتهاء" : "Expiry Date")</label>
+                                        <input name="ExpiryDate" class="form-control" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label class="form-label">@(isArabic ? "الملف" : "File") <span class="required">*</span></label>
+                                        <input name="documentFile" class="form-control" type="file" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <div class="form-group w-100">
+                                        <button type="submit" class="btn btn-success btn-block">
+                                            <i class="fas fa-upload"></i> @(isArabic ? "رفع" : "Upload")
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-container">
+                        <table class="table table-hover" id="documentsTable">
+                            <thead>
+                                <tr>
+                                    <th>@(isArabic ? "اسم الوثيقة" : "Document Name")</th>
+                                    <th>@(isArabic ? "النوع" : "Type")</th>
+                                    <th>@(isArabic ? "تاريخ الانتهاء" : "Expiry Date")</th>
+                                    <th>@(isArabic ? "الأيام المتبقية" : "Days Left")</th>
+                                    <th>@(isArabic ? "تم التحقق" : "Verified")</th>
+                                    <th>@(isArabic ? "الإجراءات" : "Actions")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Documents.Any())
+                                {
+                                    @foreach (var doc in Model.Documents)
+                                    {
+                                        var daysLeft = doc.ExpiryDate.HasValue ? doc.DaysUntilExpiry : (int?)null;
+                                        <tr class="@(daysLeft < 0 ? "table-danger" : daysLeft <= 30 ? "table-warning" : "")">
+                                            <td>@doc.DocumentName</td>
+                                            <td><span class="badge badge-secondary">@doc.DocumentType</span></td>
+                                            <td>
+                                                @if (doc.ExpiryDate.HasValue)
+                                                {
+                                                    @doc.ExpiryDate.Value.ToString("dd/MM/yyyy")
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">@(isArabic ? "غير محدد" : "N/A")</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (daysLeft.HasValue)
+                                                {
+                                                    if (daysLeft < 0)
+                                                    {
+                                                        <span class="badge badge-danger">@(Math.Abs(daysLeft.Value)) @(isArabic ? "يوم متجاوز" : "days overdue")</span>
+                                                    }
+                                                    else if (daysLeft <= 7)
+                                                    {
+                                                        <span class="badge badge-warning">@daysLeft @(isArabic ? "يوم" : "days")</span>
+                                                    }
+                                                    else if (daysLeft <= 30)
+                                                    {
+                                                        <span class="badge badge-info">@daysLeft @(isArabic ? "يوم" : "days")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge badge-success">@daysLeft @(isArabic ? "يوم" : "days")</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (doc.IsVerified)
+                                                {
+                                                    <span class="badge badge-success"><i class="fas fa-check"></i></span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-warning"><i class="fas fa-clock"></i> @(isArabic ? "قيد الانتظار" : "Pending")</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="actions-cell">
+                                                    @if (!doc.IsVerified)
+                                                    {
+                                                        <form method="post" asp-action="VerifyDocument" style="display:inline">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="documentId" value="@doc.Id" />
+                                                            <button type="submit" class="btn btn-sm btn-success" title="Verify" aria-label="Verify document">
+                                                                <i class="fas fa-check-circle"></i>
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6">
+                                            <div class="empty-state">
+                                                <i class="fas fa-file empty-icon"></i>
+                                                <h4>@(isArabic ? "لا توجد وثائق" : "No Documents")</h4>
+                                                <p>@(isArabic ? "لا توجد وثائق مرفوعة لهذا الموظف." : "No documents uploaded for this staff member.")</p>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#uploadSection">
+                                                    <i class="fas fa-upload"></i> @(isArabic ? "رفع وثيقة" : "Upload Document")
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,14 +1,16 @@
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = Localizer.T("App.Title");
     var statusCode = ViewBag.StatusCode ?? 500;
-    var message = ViewBag.ErrorMessage ?? "An unexpected error occurred. Please try again later.";
+    var message = ViewBag.ErrorMessage ?? Localizer.T("Error.Message");
 }
 
-<div class="error-page">
-    <h2 class="headline text-warning">@statusCode</h2>
+<div class="error-page fade-in">
+    <div class="headline text-warning">@statusCode</div>
     <div class="error-content">
-        <h3><i class="fas fa-exclamation-triangle text-warning"></i> Oops! Something went wrong.</h3>
+        <h3><i class="fas fa-exclamation-triangle text-warning me-2"></i> @Localizer.T("Error.Heading")</h3>
         <p>@message</p>
-        <a href="/" class="btn btn-primary"><i class="fas fa-home"></i> Return to Home</a>
+        <a href="/" class="btn btn-primary">
+            <i class="fas fa-home"></i> @Localizer.T("Error.ReturnHome")
+        </a>
     </div>
 </div>

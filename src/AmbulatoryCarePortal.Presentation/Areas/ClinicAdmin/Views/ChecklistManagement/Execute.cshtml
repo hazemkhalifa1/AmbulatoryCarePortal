@@ -5,23 +5,21 @@
     ViewData["Title"] = "Execute Checklist";
 }
 
-<div class="row mb-3">
+<div class="row fade-in">
     <div class="col-sm-6">
         <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Back to List
+            <i class="fas fa-arrow-left me-1"></i> Back to List
         </a>
     </div>
 </div>
 
 <form asp-action="Execute" asp-route-templateId="@Model.TemplateId" method="post" enctype="multipart/form-data">
-    <div class="card card-success card-outline">
+    <div class="card card-success">
         <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-play-circle"></i> @Model.TemplateName
-            </h3>
+            <h3 class="card-title"><i class="fas fa-play-circle"></i> @Model.TemplateName</h3>
             <div class="card-tools">
-                <span class="badge bg-secondary">
-                    <i class="fas fa-calendar"></i> @Model.ExecutedDate.ToString("yyyy-MM-dd HH:mm")
+                <span class="badge badge-secondary">
+                    <i class="fas fa-calendar me-1"></i> @Model.ExecutedDate.ToString("yyyy-MM-dd HH:mm")
                 </span>
             </div>
         </div>
@@ -31,7 +29,7 @@
     {
         for (int i = 0; i < Model.Items.Count; i++)
         {
-            <div class="card card-outline card-default mb-2">
+            <div class="card card-secondary mb-2">
                 <div class="card-body">
                     <div class="row align-items-start">
                         <div class="col-md-7">
@@ -40,7 +38,7 @@
                             {
                                 <p class="text-muted small mb-2" dir="rtl">@Model.Items[i].QuestionTextAr</p>
                             }
-                            <div class="btn-group btn-group-sm" role="group">
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Answer options for question @(i+1)">
                                 <input type="radio" class="btn-check" name="Items[@i].Answer" id="answer_@(i)_yes" value="Yes"
                                        @(Model.Items[i].Answer == ChecklistAnswer.Yes ? "checked" : "")>
                                 <label class="btn btn-outline-success" for="answer_@(i)_yes">
@@ -66,7 +64,7 @@
                         </div>
                         <div class="col-md-5">
                             <textarea name="Items[@i].Notes" class="form-control form-control-sm" rows="2"
-                                      placeholder="Notes for this item...">@Model.Items[i].Notes</textarea>
+                                      placeholder="Notes for this item..." aria-label="Notes for question @(i+1)">@Model.Items[i].Notes</textarea>
                         </div>
                     </div>
                 </div>
@@ -76,30 +74,32 @@
     else
     {
         <div class="alert alert-warning">
-            <i class="fas fa-exclamation-triangle"></i> This checklist has no items defined.
+            <i class="fas fa-exclamation-triangle me-1"></i> This checklist has no items defined.
         </div>
     }
 
-    <div class="card card-outline card-default">
+    <div class="card card-secondary">
         <div class="card-header">
             <h3 class="card-title"><i class="fas fa-paperclip"></i> Additional Details</h3>
         </div>
         <div class="card-body">
-            <div class="mb-3">
+            <div class="form-group">
                 <label for="Notes" class="form-label">Overall Notes</label>
                 <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Overall notes for this execution..."></textarea>
             </div>
-            <div class="mb-3">
+            <div class="form-group">
                 <label for="evidenceFile" class="form-label">Evidence File</label>
-                <input type="file" name="evidenceFile" id="evidenceFile" class="form-control">
+                <input type="file" name="evidenceFile" id="evidenceFile" class="form-control" aria-label="Upload evidence file">
                 <div class="form-text text-muted small">Upload supporting evidence (PDF, images, etc.)</div>
             </div>
         </div>
-        <div class="card-footer text-end">
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-check"></i> Submit Execution
-            </button>
-            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        <div class="card-footer">
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check me-1"></i> Submit Execution
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
         </div>
     </div>
 </form>

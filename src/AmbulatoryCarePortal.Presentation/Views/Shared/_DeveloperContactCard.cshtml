@@ -1,0 +1,10 @@
+@inject ITranslationService Localizer
+
+<div class="developer-toast" id="developerToast" role="status">
+    <div class="developer-toast-name">@Localizer.T("Developer.Name")</div>
+    <div class="developer-toast-title">@Localizer.T("Developer.Title")</div>
+    <a href="https://wa.me/201022673000" target="_blank" rel="noopener noreferrer" class="developer-toast-phone">
+        <i class="fab fa-whatsapp"></i>
+        @Localizer.T("Developer.Phone")
+    </a>
+</div>

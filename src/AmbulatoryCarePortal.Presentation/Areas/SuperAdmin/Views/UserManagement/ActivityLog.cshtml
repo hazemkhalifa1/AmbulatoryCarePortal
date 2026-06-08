@@ -4,22 +4,28 @@
     ViewData["Title"] = "Activity Log";
 }
 
-<div class="row">
+<div class="row fade-in">
     <div class="col-12">
-        <div class="card">
+        <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">User Activity</h3>
+                <h3 class="card-title"><i class="fas fa-history"></i> User Activity</h3>
                 <div class="card-tools">
-                    <a href="/SuperAdmin/UserManagement" class="btn btn-sm btn-secondary">
+                    <a href="/SuperAdmin/UserManagement" class="btn btn-sm btn-secondary" aria-label="Back to users list">
                         <i class="fas fa-arrow-left"></i> Back to Users
                     </a>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 @if (Model.Any())
                 {
-                    <div class="table-responsive">
-                        <table class="table table-hover">
+                    <div class="table-container">
+                        <div class="table-toolbar">
+                            <div class="search-box">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" class="form-control" data-table-search="activityLogTable" placeholder="Search activity..." aria-label="Search activity log">
+                            </div>
+                        </div>
+                        <table class="table table-hover" id="activityLogTable">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -38,21 +44,33 @@
                                         <td>@log.TargetType</td>
                                         <td>@log.IpAddress</td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#logModal@(log.Id)">
+                                            <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#logModal@(log.Id)" aria-label="View action details">
                                                 <i class="fas fa-eye"></i> View
                                             </button>
-                                            <div class="modal fade" id="logModal@(log.Id)" tabindex="-1">
+                                            <div class="modal fade" id="logModal@(log.Id)" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title">Action Details</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p><strong>Action:</strong> @log.Action</p>
-                                                            <p><strong>User:</strong> @log.User</p>
-                                                            <p><strong>Date:</strong> @log.ActionDate.ToString("dd/MM/yyyy HH:mm")</p>
-                                                            <p><strong>IP Address:</strong> @log.IpAddress</p>
+                                                            <div class="detail-row">
+                                                                <span class="detail-label">Action</span>
+                                                                <span class="detail-value">@log.Action</span>
+                                                            </div>
+                                                            <div class="detail-row">
+                                                                <span class="detail-label">User</span>
+                                                                <span class="detail-value">@log.User</span>
+                                                            </div>
+                                                            <div class="detail-row">
+                                                                <span class="detail-label">Date</span>
+                                                                <span class="detail-value">@log.ActionDate.ToString("dd/MM/yyyy HH:mm")</span>
+                                                            </div>
+                                                            <div class="detail-row">
+                                                                <span class="detail-label">IP Address</span>
+                                                                <span class="detail-value">@log.IpAddress</span>
+                                                            </div>
                                                             @if (!string.IsNullOrEmpty(log.OldValues))
                                                             {
                                                                 <p><strong>Old Values:</strong></p>
@@ -79,7 +97,11 @@
                 }
                 else
                 {
-                    <p class="text-muted text-center mb-0">No activity log entries found.</p>
+                    <div class="empty-state">
+                        <i class="fas fa-history empty-icon"></i>
+                        <h4>No Activity Log Entries</h4>
+                        <p>There are no activity log entries to display.</p>
+                    </div>
                 }
             </div>
         </div>

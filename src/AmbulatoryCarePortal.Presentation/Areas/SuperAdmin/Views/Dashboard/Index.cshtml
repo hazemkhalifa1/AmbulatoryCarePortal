@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row">
+<div class="row fade-in">
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
@@ -15,7 +15,7 @@
             <div class="icon">
                 <i class="fas fa-hospital"></i>
             </div>
-            <a href="/SuperAdmin/Dashboard/Clinics" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="/SuperAdmin/Dashboard/Clinics" class="small-box-footer" aria-label="View all clinics">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 
@@ -28,7 +28,7 @@
             <div class="icon">
                 <i class="fas fa-chart-pie"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="#" class="small-box-footer" aria-label="View compliance details">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 
@@ -41,7 +41,7 @@
             <div class="icon">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="#" class="small-box-footer" aria-label="View pending reviews">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 
@@ -54,20 +54,25 @@
             <div class="icon">
                 <i class="fas fa-calendar-times"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="#" class="small-box-footer" aria-label="View overdue items">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 </div>
 
-<div class="row">
+<div class="row fade-in">
     <div class="col-md-6">
         <div class="card card-primary">
-            <div class="card-header with-border">
-                <h3 class="card-title">Recent Clinics</h3>
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-hospital-alt"></i> Recent Clinics</h3>
+                <div class="card-tools">
+                    <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-sm btn-primary">
+                        <i class="fas fa-list"></i> View All
+                    </a>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
+            <div class="card-body p-0">
+                <div class="table-container">
+                    <table class="table table-hover" id="recentClinicsTable">
                         <thead>
                             <tr>
                                 <th>Clinic Name</th>
@@ -82,7 +87,7 @@
                                 @foreach (var clinic in Model.Take(5))
                                 {
                                     <tr>
-                                        <td>@clinic.Name</td>
+                                        <td><strong>@clinic.Name</strong></td>
                                         <td>@clinic.CityEn</td>
                                         <td>
                                             <div class="progress progress-xs">
@@ -91,9 +96,11 @@
                                             <small>@clinic.ComplianceScore%</small>
                                         </td>
                                         <td>
-                                            <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinic.Id" class="btn btn-sm btn-info">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
+                                            <div class="actions-cell">
+                                                <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinic.Id" class="btn btn-sm btn-info" aria-label="View clinic details">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 }
@@ -113,17 +120,17 @@
 
     <div class="col-md-6">
         <div class="card card-warning">
-            <div class="card-header with-border">
-                <h3 class="card-title">Quick Actions</h3>
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-bolt"></i> Quick Actions</h3>
             </div>
             <div class="card-body">
-                <a href="/SuperAdmin/Dashboard/CreateClinic" class="btn btn-primary btn-block mb-2">
+                <a href="/SuperAdmin/Dashboard/CreateClinic" class="btn btn-primary btn-block mb-2" aria-label="Add new clinic">
                     <i class="fas fa-plus"></i> Add New Clinic
                 </a>
-                <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-info btn-block mb-2">
+                <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-info btn-block mb-2" aria-label="View all clinics">
                     <i class="fas fa-list"></i> View All Clinics
                 </a>
-                <a href="/SuperAdmin/Dashboard/AuditLog" class="btn btn-warning btn-block">
+                <a href="/SuperAdmin/Dashboard/AuditLog" class="btn btn-warning btn-block" aria-label="View audit log">
                     <i class="fas fa-history"></i> View Audit Log
                 </a>
             </div>

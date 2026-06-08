@@ -4,9 +4,9 @@
     ViewData["Title"] = "KPI Monitoring";
 }
 
-<div class="row mb-3">
+<div class="row fade-in">
     <div class="col-sm-6">
-        <h3 class="mb-0"><i class="fas fa-chart-line text-primary me-2"></i>KPI Monitoring</h3>
+        <h3><i class="fas fa-chart-line text-primary me-2"></i>KPI Monitoring</h3>
     </div>
     <div class="col-sm-6 text-end">
         <a asp-action="Create" class="btn btn-primary">
@@ -15,44 +15,47 @@
     </div>
 </div>
 
-<div class="card card-primary card-outline">
+<div class="card card-primary">
     <div class="card-header">
-        <form method="get" asp-action="Index" id="filterForm" class="row g-3 align-items-end">
-            <div class="col-md-4">
-                <label class="form-label small">Search</label>
-                <div class="input-group">
-                    <input type="text" name="searchTerm" class="form-control" placeholder="Search by KPI name..." value="@ViewBag.SearchTerm" />
-                    <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+        <h3 class="card-title"><i class="fas fa-filter"></i> Filter KPIs</h3>
+        <div class="card-tools">
+            <form method="get" asp-action="Index" id="filterForm" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" name="searchTerm" class="form-control" placeholder="Search by KPI name..." value="@ViewBag.SearchTerm" aria-label="Search KPIs" />
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label small">Frequency</label>
-                <select name="frequencyFilter" class="form-select" onchange="this.form.submit()">
-                    <option value="">All Frequencies</option>
-                    <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">Daily</option>
-                    <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">Weekly</option>
-                    <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">Monthly</option>
-                    <option value="Quarterly" selected="@(ViewBag.FrequencyFilter == "Quarterly")">Quarterly</option>
-                    <option value="Annually" selected="@(ViewBag.FrequencyFilter == "Annually")">Annually</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label small">Department</label>
-                <select name="departmentFilter" class="form-select" onchange="this.form.submit()">
-                    <option value="">All Departments</option>
-                </select>
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <a asp-action="Index" class="btn btn-outline-secondary w-100">
-                    <i class="fas fa-undo me-1"></i>Reset
-                </a>
-            </div>
-        </form>
+                <div class="col-md-3">
+                    <label class="form-label small">Frequency</label>
+                    <select name="frequencyFilter" class="form-select" onchange="this.form.submit()" aria-label="Filter by frequency">
+                        <option value="">All Frequencies</option>
+                        <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">Daily</option>
+                        <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">Weekly</option>
+                        <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">Monthly</option>
+                        <option value="Quarterly" selected="@(ViewBag.FrequencyFilter == "Quarterly")">Quarterly</option>
+                        <option value="Annually" selected="@(ViewBag.FrequencyFilter == "Annually")">Annually</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small">Department</label>
+                    <select name="departmentFilter" class="form-select" onchange="this.form.submit()" aria-label="Filter by department">
+                        <option value="">All Departments</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <a asp-action="Index" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-undo me-1"></i>Reset
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped align-middle mb-0">
-                <thead class="table-light">
+        <div class="table-container">
+            <table class="table table-hover" id="kpiTable">
+                <thead>
                     <tr>
                         <th>KPI Name</th>
                         <th class="text-end">Target Value</th>
@@ -91,38 +94,38 @@
                                         <span class="text-muted">No data</span>
                                     }
                                 </td>
-                                <td class="text-center" style="min-width:140px;">
-                                    <div class="d-flex align-items-center gap-2">
+                                <td class="text-center">
+                                    <div class="d-flex align-items-center gap-2" style="min-width:140px;">
                                         <div class="progress flex-grow-1" style="height:8px;">
                                             <div class="progress-bar @rateColor" role="progressbar"
                                                  style="width:@Math.Min(item.AchievementRate, 100)%"
-                                                 aria-valuenow="@item.AchievementRate" aria-valuemin="0" aria-valuemax="100">
+                                                 aria-valuenow="@item.AchievementRate" aria-valuemin="0" aria-valuemax="100" aria-label="Achievement rate @item.AchievementRate.ToString("N2")%">
                                             </div>
                                         </div>
                                         <small class="text-nowrap fw-semibold">@item.AchievementRate.ToString("N2")%</small>
                                     </div>
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-secondary">@item.KPI.Frequency</span>
+                                    <span class="badge badge-secondary">@item.KPI.Frequency</span>
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-info">@item.TotalEntries</span>
+                                    <span class="badge badge-info">@item.TotalEntries</span>
                                 </td>
                                 <td class="text-center">
-                                    <div class="btn-group btn-group-sm">
+                                    <div class="actions-cell">
                                         <a asp-action="EnterData" asp-route-kpiId="@item.KPI.Id"
-                                           class="btn btn-outline-success" title="Enter Data">
+                                           class="btn btn-sm btn-success" title="Enter Data" aria-label="Enter data for @item.KPI.Name">
                                             <i class="fas fa-pen"></i>
                                         </a>
                                         <a asp-action="ViewAnalytics" asp-route-id="@item.KPI.Id"
-                                           class="btn btn-outline-info" title="View Analytics">
+                                           class="btn btn-sm btn-info" title="View Analytics" aria-label="View analytics for @item.KPI.Name">
                                             <i class="fas fa-chart-bar"></i>
                                         </a>
-                                        <a asp-action="Compare" class="btn btn-outline-warning" title="Compare">
+                                        <a asp-action="Compare" class="btn btn-sm btn-warning" title="Compare" aria-label="Compare KPIs">
                                             <i class="fas fa-arrows-alt-h"></i>
                                         </a>
                                         <a asp-action="Export" asp-route-kpiId="@item.KPI.Id" asp-route-format="excel"
-                                           class="btn btn-outline-secondary" title="Export">
+                                           class="btn btn-sm btn-secondary" title="Export" aria-label="Export @item.KPI.Name">
                                             <i class="fas fa-download"></i>
                                         </a>
                                     </div>
@@ -133,9 +136,13 @@
                     else
                     {
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-4">
-                                <i class="fas fa-inbox fa-2x d-block mb-2"></i>
-                                No KPIs found. Click "Create New KPI" to get started.
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <i class="fas fa-inbox empty-icon"></i>
+                                    <h4>No KPIs Found</h4>
+                                    <p>No KPIs match your criteria. Click "Create New KPI" to get started.</p>
+                                    <a asp-action="Create" class="btn btn-primary">Create New KPI</a>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -146,15 +153,17 @@
     @if (ViewBag.TotalPages > 1)
     {
         <div class="card-footer">
-            <nav>
-                <ul class="pagination pagination-sm justify-content-center mb-0">
+            <div class="table-footer">
+                <div class="pagination-info">Showing page @ViewBag.CurrentPage of @ViewBag.TotalPages (@ViewBag.TotalCount total KPIs)</div>
+                <ul class="pagination">
                     <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
                         <a class="page-link" asp-action="Index"
                            asp-route-page="@(ViewBag.CurrentPage - 1)"
                            asp-route-searchTerm="@ViewBag.SearchTerm"
                            asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
-                           asp-route-departmentFilter="@ViewBag.DepartmentFilter">
-                            &laquo;
+                           asp-route-departmentFilter="@ViewBag.DepartmentFilter"
+                           aria-label="Previous page">
+                            <i class="fas fa-chevron-left"></i>
                         </a>
                     </li>
                     @for (int i = 1; i <= ViewBag.TotalPages; i++)
@@ -164,7 +173,8 @@
                                asp-route-page="@i"
                                asp-route-searchTerm="@ViewBag.SearchTerm"
                                asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
-                               asp-route-departmentFilter="@ViewBag.DepartmentFilter">
+                               asp-route-departmentFilter="@ViewBag.DepartmentFilter"
+                               aria-label="Page @i">
                                 @i
                             </a>
                         </li>
@@ -174,15 +184,13 @@
                            asp-route-page="@(ViewBag.CurrentPage + 1)"
                            asp-route-searchTerm="@ViewBag.SearchTerm"
                            asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
-                           asp-route-departmentFilter="@ViewBag.DepartmentFilter">
-                            &raquo;
+                           asp-route-departmentFilter="@ViewBag.DepartmentFilter"
+                           aria-label="Next page">
+                            <i class="fas fa-chevron-right"></i>
                         </a>
                     </li>
                 </ul>
-            </nav>
-            <small class="d-block text-center text-muted mt-1">
-                Showing page @ViewBag.CurrentPage of @ViewBag.TotalPages (@ViewBag.TotalCount total KPIs)
-            </small>
+            </div>
         </div>
     }
     else

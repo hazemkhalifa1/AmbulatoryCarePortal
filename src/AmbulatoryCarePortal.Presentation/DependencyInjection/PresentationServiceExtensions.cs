@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using AmbulatoryCarePortal.Presentation.Filters;
+using AmbulatoryCarePortal.Presentation.Helpers;
 
 namespace AmbulatoryCarePortal.Presentation.DependencyInjection;
 
@@ -9,6 +10,7 @@ public static class PresentationServiceExtensions
     {
         services.AddHttpContextAccessor();
         services.AddScoped<ClinicAuthorizationFilter>();
+        services.AddScoped<ITranslationService, TranslationService>();
 
         return services;
     }

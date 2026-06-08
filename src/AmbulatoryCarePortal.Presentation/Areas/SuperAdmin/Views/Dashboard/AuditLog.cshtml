@@ -5,22 +5,22 @@
     var clinicId = ViewBag.ClinicId;
 }
 
-<div class="row">
+<div class="row fade-in">
     <div class="col-12">
-        <div class="card">
+        <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">Audit Trail</h3>
+                <h3 class="card-title"><i class="fas fa-history"></i> Audit Trail</h3>
                 <div class="card-tools">
-                    <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinicId" class="btn btn-sm btn-secondary">
+                    <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinicId" class="btn btn-sm btn-secondary" aria-label="Go back">
                         <i class="fas fa-arrow-left"></i> Back
                     </a>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 @if (Model.Any())
                 {
-                    <div class="table-responsive">
-                        <table class="table table-hover">
+                    <div class="table-container">
+                        <table class="table table-hover" id="auditLogTable">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -41,7 +41,11 @@
                 }
                 else
                 {
-                    <p class="text-muted text-center mb-0">No audit log entries found.</p>
+                    <div class="empty-state">
+                        <i class="fas fa-history empty-icon"></i>
+                        <h4>No Audit Log Entries</h4>
+                        <p>There are no audit log entries to display.</p>
+                    </div>
                 }
             </div>
         </div>

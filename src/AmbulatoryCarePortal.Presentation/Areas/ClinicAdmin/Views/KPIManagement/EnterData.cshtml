@@ -4,9 +4,9 @@
     ViewData["Title"] = "Enter KPI Data";
 }
 
-<div class="row mb-3">
+<div class="row fade-in">
     <div class="col-sm-6">
-        <h3 class="mb-0"><i class="fas fa-pen text-success me-2"></i>Enter KPI Data</h3>
+        <h3><i class="fas fa-pen text-success me-2"></i>Enter KPI Data</h3>
     </div>
     <div class="col-sm-6 text-end">
         <a asp-action="Index" class="btn btn-outline-secondary">
@@ -17,33 +17,27 @@
 
 <div class="row">
     <div class="col-md-8">
-        <div class="card card-success card-outline">
+        <div class="card card-success">
             <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-chart-line me-1"></i>@Model.KPIName
-                </h5>
+                <h3 class="card-title"><i class="fas fa-chart-line"></i> @Model.KPIName</h3>
             </div>
             <div class="card-body">
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <table class="table table-sm table-borderless mb-0">
-                            <tr>
-                                <td class="text-muted" style="width:120px;">KPI Name</td>
-                                <td class="fw-semibold">@Model.KPIName</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">Frequency</td>
-                                <td><span class="badge bg-secondary">@Model.Frequency</span></td>
-                            </tr>
-                        </table>
+                        <div class="detail-row">
+                            <span class="detail-label">KPI Name</span>
+                            <span class="detail-value">@Model.KPIName</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Frequency</span>
+                            <span class="detail-value"><span class="badge badge-secondary">@Model.Frequency</span></span>
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <table class="table table-sm table-borderless mb-0">
-                            <tr>
-                                <td class="text-muted" style="width:120px;">Target Value</td>
-                                <td class="fw-bold fs-5 text-primary">@Model.TargetValue.ToString("N2")</td>
-                            </tr>
-                        </table>
+                        <div class="detail-row">
+                            <span class="detail-label">Target Value</span>
+                            <span class="detail-value fs-5 text-primary fw-bold">@Model.TargetValue.ToString("N2")</span>
+                        </div>
                     </div>
                 </div>
 
@@ -52,42 +46,49 @@
                     <input type="hidden" asp-for="KPIId" />
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="PeriodMonth" class="form-label">Period Month <span class="text-danger">*</span></label>
-                            <select asp-for="PeriodMonth" class="form-select">
-                                @for (int m = 1; m <= 12; m++)
-                                {
-                                    <option value="@m">@m - @(new DateTime(2000, m, 1).ToString("MMMM"))</option>
-                                }
-                            </select>
-                            <span asp-validation-for="PeriodMonth" class="text-danger small"></span>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PeriodMonth" class="form-label">Period Month <span class="required">*</span></label>
+                                <select asp-for="PeriodMonth" class="form-select">
+                                    @for (int m = 1; m <= 12; m++)
+                                    {
+                                        <option value="@m">@m - @(new DateTime(2000, m, 1).ToString("MMMM"))</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="PeriodMonth" class="invalid-feedback"></span>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="PeriodYear" class="form-label">Period Year <span class="text-danger">*</span></label>
-                            <select asp-for="PeriodYear" class="form-select">
-                                @for (int y = DateTime.UtcNow.Year - 2; y <= DateTime.UtcNow.Year + 1; y++)
-                                {
-                                    <option value="@y">@y</option>
-                                }
-                            </select>
-                            <span asp-validation-for="PeriodYear" class="text-danger small"></span>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PeriodYear" class="form-label">Period Year <span class="required">*</span></label>
+                                <select asp-for="PeriodYear" class="form-select">
+                                    @for (int y = DateTime.UtcNow.Year - 2; y <= DateTime.UtcNow.Year + 1; y++)
+                                    {
+                                        <option value="@y">@y</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="PeriodYear" class="invalid-feedback"></span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="ActualValue" class="form-label">Actual Value <span class="text-danger">*</span></label>
-                        <input asp-for="ActualValue" class="form-control" type="number" step="0.01" min="0" />
-                        <span asp-validation-for="ActualValue" class="text-danger small"></span>
+                    <div class="form-group">
+                        <label asp-for="ActualValue" class="form-label">Actual Value <span class="required">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calculator"></i></span>
+                            <input asp-for="ActualValue" class="form-control" type="number" step="0.01" min="0" />
+                        </div>
+                        <span asp-validation-for="ActualValue" class="invalid-feedback"></span>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="form-group">
                         <label asp-for="Notes" class="form-label">Notes</label>
                         <textarea asp-for="Notes" class="form-control" rows="3"
                                   placeholder="Optional notes about this entry..."></textarea>
-                        <span asp-validation-for="Notes" class="text-danger small"></span>
+                        <span asp-validation-for="Notes" class="invalid-feedback"></span>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="form-group">
                         <label class="form-label">Evidence File</label>
                         <input type="file" name="evidenceFile" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx" />
                         <small class="text-muted">Accepted: PDF, Images, Word, Excel</small>
@@ -106,14 +107,23 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card card-outline card-info">
+        <div class="card card-info">
             <div class="card-header">
-                <h5 class="card-title mb-0"><i class="fas fa-info-circle me-1"></i>Entry Info</h5>
+                <h3 class="card-title"><i class="fas fa-info-circle"></i> Entry Info</h3>
             </div>
-            <div class="card-body small">
-                <p class="mb-2"><i class="fas fa-calendar text-info me-1"></i> Default period is the current month/year.</p>
-                <p class="mb-2"><i class="fas fa-calculator text-info me-1"></i> Achievement = Actual / Target &times; 100%</p>
-                <p class="mb-0"><i class="fas fa-file text-info me-1"></i> Upload supporting evidence documents.</p>
+            <div class="card-body">
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-calendar text-info me-1"></i> Default period</span>
+                    <span class="detail-value">Current month/year</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-calculator text-info me-1"></i> Achievement</span>
+                    <span class="detail-value">Actual / Target &times; 100%</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-file text-info me-1"></i> Evidence</span>
+                    <span class="detail-value">Upload supporting documents</span>
+                </div>
             </div>
         </div>
     </div>

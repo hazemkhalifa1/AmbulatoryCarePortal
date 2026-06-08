@@ -10,15 +10,39 @@
     var totalPages = totalCount > 0 ? (int)Math.Ceiling((double)totalCount / pageSize) : 1;
 }
 
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-users mr-2"></i>
-                    @(isArabic ? "إدارة الموظفين" : "Staff Management")
-                </h3>
-                <div class="card-tools">
+<div class="fade-in">
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="kpi-card">
+                <div class="kpi-icon primary"><i class="fas fa-users"></i></div>
+                <div class="kpi-label">@(isArabic ? "إجمالي الموظفين" : "Total Staff")</div>
+                <div class="kpi-value">@totalCount</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="kpi-card">
+                <div class="kpi-icon success"><i class="fas fa-check-circle"></i></div>
+                <div class="kpi-label">@(isArabic ? "ممتثلون" : "Compliant")</div>
+                <div class="kpi-value">@ViewBag.CompliantCount</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="kpi-card">
+                <div class="kpi-icon danger"><i class="fas fa-times-circle"></i></div>
+                <div class="kpi-label">@(isArabic ? "غير ممتثلين" : "Non-Compliant")</div>
+                <div class="kpi-value">@ViewBag.NonCompliantCount</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-users"></i>
+                @(isArabic ? "إدارة الموظفين" : "Staff Management")
+            </h3>
+            <div class="card-tools">
+                <div class="btn-group">
                     <a asp-action="Create" class="btn btn-sm btn-primary">
                         <i class="fas fa-plus"></i> @(isArabic ? "إضافة موظف" : "Add Staff")
                     </a>
@@ -30,171 +54,175 @@
                     </a>
                 </div>
             </div>
+        </div>
 
-            <div class="card-body">
-                <form method="get" asp-action="Index" class="mb-3">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <input type="text" name="searchTerm" class="form-control"
-                                       placeholder="@(isArabic ? "بحث بالاسم أو البريد..." : "Search by name or email...")"
-                                       value="@ViewBag.SearchTerm" />
-                                <button type="submit" class="btn btn-info">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <select name="complianceFilter" class="form-select" onchange="this.form.submit()">
-                                <option value="">@(isArabic ? "جميع حالات الامتثال" : "All Compliance")</option>
-                                <option value="Compliant" selected="@(ViewBag.ComplianceFilter == "Compliant")">
-                                    @(isArabic ? "ممتثل" : "Compliant")
-                                </option>
-                                <option value="Non-Compliant" selected="@(ViewBag.ComplianceFilter == "Non-Compliant")">
-                                    @(isArabic ? "غير ممتثل" : "Non-Compliant")
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select name="departmentFilter" class="form-select" onchange="this.form.submit()">
-                                <option value="">@(isArabic ? "جميع الأقسام" : "All Departments")</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <a asp-action="Index" class="btn btn-secondary w-100">
-                                <i class="fas fa-redo"></i> @(isArabic ? "إعادة" : "Reset")
-                            </a>
+        <div class="card-body">
+            <form method="get" asp-action="Index" class="mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label">@(isArabic ? "بحث" : "Search")</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" name="searchTerm" class="form-control"
+                                   placeholder="@(isArabic ? "بحث بالاسم أو البريد..." : "Search by name or email...")"
+                                   value="@ViewBag.SearchTerm" />
+                            <button type="submit" class="btn btn-info">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
                     </div>
-                </form>
+                    <div class="col-md-3">
+                        <label class="form-label">@(isArabic ? "حالة الامتثال" : "Compliance")</label>
+                        <select name="complianceFilter" class="form-control" onchange="this.form.submit()">
+                            <option value="">@(isArabic ? "جميع حالات الامتثال" : "All Compliance")</option>
+                            <option value="Compliant" selected="@(ViewBag.ComplianceFilter == "Compliant")">
+                                @(isArabic ? "ممتثل" : "Compliant")
+                            </option>
+                            <option value="Non-Compliant" selected="@(ViewBag.ComplianceFilter == "Non-Compliant")">
+                                @(isArabic ? "غير ممتثل" : "Non-Compliant")
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">@(isArabic ? "القسم" : "Department")</label>
+                        <select name="departmentFilter" class="form-control" onchange="this.form.submit()">
+                            <option value="">@(isArabic ? "جميع الأقسام" : "All Departments")</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <a asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="fas fa-redo"></i> @(isArabic ? "إعادة" : "Reset")
+                        </a>
+                    </div>
+                </div>
+            </form>
 
-                <div class="table-responsive">
-                    <table class="table table-hover table-striped align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>@(isArabic ? "الاسم" : "Name")</th>
-                                <th>@(isArabic ? "الاسم" : "Name")</th>
-                                <th>@(isArabic ? "النوع" : "Staff Type")</th>
-                                <th>@(isArabic ? "القسم" : "Department")</th>
-                                <th>@(isArabic ? "الحالة" : "Status")</th>
-                                <th>@(isArabic ? "الوثائق" : "Documents")</th>
-                                <th>@(isArabic ? "حالة الامتثال" : "Compliance")</th>
-                                <th>@(isArabic ? "آخر تحديث" : "Last Update")</th>
-                                <th>@(isArabic ? "الإجراءات" : "Actions")</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.Any())
-                            {
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>
-                                            <strong>@item.Staff.FullNameEn</strong>
-                                            @if (!string.IsNullOrEmpty(item.Staff.FullNameAr))
-                                            {
-                                                <br /><small class="text-muted" dir="rtl">@item.Staff.FullNameAr</small>
-                                            }
-                                        </td>
-                                        <td><span class="badge bg-info">@item.Staff.StaffType</span></td>
-                                        <td>@item.Staff.DepartmentName</td>
-                                        <td>
-                                            @if (item.Staff.IsActive)
-                                            {
-                                                <span class="badge bg-success">@(isArabic ? "نشط" : "Active")</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-danger">@(isArabic ? "غير نشط" : "Inactive")</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-info" title="Total">@item.TotalDocuments</span>
-                                            <span class="badge bg-success" title="Valid">@item.ValidDocuments</span>
-                                            @if (item.ExpiringDocuments > 0)
-                                            {
-                                                <span class="badge bg-warning" title="Expiring">@item.ExpiringDocuments</span>
-                                            }
-                                            @if (item.ExpiredDocuments > 0)
-                                            {
-                                                <span class="badge bg-danger" title="Expired">@item.ExpiredDocuments</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (item.ComplianceStatus == "Compliant")
-                                            {
-                                                <span class="badge badge-success">
-                                                    <i class="fas fa-check-circle"></i> @(isArabic ? "ممتثل" : "Compliant")
-                                                </span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge badge-danger">
-                                                    <i class="fas fa-times-circle"></i> @(isArabic ? "غير ممتثل" : "Non-Compliant")
-                                                </span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (item.LastDocumentUpdate > DateTime.MinValue)
-                                            {
-                                                <small>@item.LastDocumentUpdate.ToString("dd/MM/yyyy")</small>
-                                            }
-                                            else
-                                            {
-                                                <small class="text-muted">-</small>
-                                            }
-                                        </td>
-                                        <td>
-                                            <a asp-action="Details" asp-route-id="@item.Staff.Id" class="btn btn-sm btn-info" title="View Details">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
+            <div class="table-container">
+                <table class="table table-hover" id="staffTable">
+                    <thead>
+                        <tr>
+                            <th>@(isArabic ? "الاسم" : "Name")</th>
+                            <th>@(isArabic ? "النوع" : "Staff Type")</th>
+                            <th>@(isArabic ? "القسم" : "Department")</th>
+                            <th>@(isArabic ? "الحالة" : "Status")</th>
+                            <th>@(isArabic ? "الوثائق" : "Documents")</th>
+                            <th>@(isArabic ? "حالة الامتثال" : "Compliance")</th>
+                            <th>@(isArabic ? "آخر تحديث" : "Last Update")</th>
+                            <th>@(isArabic ? "الإجراءات" : "Actions")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            @foreach (var item in Model)
                             {
                                 <tr>
-                                    <td colspan="9" class="text-center text-muted py-4">
-                                        <i class="fas fa-users fa-2x d-block mb-2"></i>
-                                        @(isArabic ? "لا يوجد موظفون" : "No staff found.")
-                                        <a asp-action="Create">@(isArabic ? "إضافة موظف جديد" : "Add a new staff member")</a>
+                                    <td>
+                                        <strong>@item.Staff.FullNameEn</strong>
+                                        @if (!string.IsNullOrEmpty(item.Staff.FullNameAr))
+                                        {
+                                            <br /><small class="text-muted" dir="rtl">@item.Staff.FullNameAr</small>
+                                        }
+                                    </td>
+                                    <td><span class="badge badge-info">@item.Staff.StaffType</span></td>
+                                    <td>@item.Staff.DepartmentName</td>
+                                    <td>
+                                        @if (item.Staff.IsActive)
+                                        {
+                                            <span class="badge badge-success">@(isArabic ? "نشط" : "Active")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-danger">@(isArabic ? "غير نشط" : "Inactive")</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-info" title="Total">@item.TotalDocuments</span>
+                                        <span class="badge badge-success" title="Valid">@item.ValidDocuments</span>
+                                        @if (item.ExpiringDocuments > 0)
+                                        {
+                                            <span class="badge badge-warning" title="Expiring">@item.ExpiringDocuments</span>
+                                        }
+                                        @if (item.ExpiredDocuments > 0)
+                                        {
+                                            <span class="badge badge-danger" title="Expired">@item.ExpiredDocuments</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.ComplianceStatus == "Compliant")
+                                        {
+                                            <span class="badge badge-success">
+                                                <i class="fas fa-check-circle"></i> @(isArabic ? "ممتثل" : "Compliant")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-danger">
+                                                <i class="fas fa-times-circle"></i> @(isArabic ? "غير ممتثل" : "Non-Compliant")
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.LastDocumentUpdate > DateTime.MinValue)
+                                        {
+                                            <small>@item.LastDocumentUpdate.ToString("dd/MM/yyyy")</small>
+                                        }
+                                        else
+                                        {
+                                            <small class="text-muted">-</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <a asp-action="Details" asp-route-id="@item.Staff.Id" class="btn btn-sm btn-info" title="View Details" aria-label="View details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             }
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-state">
+                                        <i class="fas fa-users empty-icon"></i>
+                                        <h4>@(isArabic ? "لا يوجد موظفون" : "No Staff Found")</h4>
+                                        <p>@(isArabic ? "لم يتم العثور على موظفين مطابقين لبحثك." : "No staff members match your search criteria.")</p>
+                                        <a asp-action="Create" class="btn btn-primary">@(isArabic ? "إضافة موظف جديد" : "Add a New Staff Member")</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
 
-            <div class="card-footer clearfix">
-                <div class="float-start">
-                    <small class="text-muted">
-                        @(isArabic ? "عرض" : "Showing") @Model.Count @(isArabic ? "من" : "of") @totalCount
-                    </small>
+            <div class="table-footer">
+                <div class="pagination-info">
+                    @(isArabic ? "عرض" : "Showing") @Model.Count @(isArabic ? "من" : "of") @totalCount
                 </div>
                 @if (totalPages > 1)
                 {
-                    <nav class="float-end">
-                        <ul class="pagination pagination-sm m-0">
-                            <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
-                                <a class="page-link" href="?page=@(currentPage - 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter">
-                                    &laquo;
-                                </a>
+                    <ul class="pagination">
+                        <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="?page=@(currentPage - 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter" aria-label="Previous">
+                                &laquo;
+                            </a>
+                        </li>
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="?page=@i&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter">@i</a>
                             </li>
-                            @for (int i = 1; i <= totalPages; i++)
-                            {
-                                <li class="page-item @(i == currentPage ? "active" : "")">
-                                    <a class="page-link" href="?page=@i&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter">@i</a>
-                                </li>
-                            }
-                            <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
-                                <a class="page-link" href="?page=@(currentPage + 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter">
-                                    &raquo;
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                        }
+                        <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                            <a class="page-link" href="?page=@(currentPage + 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter" aria-label="Next">
+                                &raquo;
+                            </a>
+                        </li>
+                    </ul>
                 }
             </div>
         </div>

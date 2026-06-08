@@ -4,31 +4,27 @@
     ViewData["Title"] = "Checklist Management";
 }
 
-<div class="row mb-3">
+<div class="row fade-in">
     <div class="col-sm-6">
         <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Create New Checklist
+            <i class="fas fa-plus me-1"></i> Create New Checklist
         </a>
     </div>
     <div class="col-sm-6 text-sm-end">
         <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-sync-alt"></i> Refresh
+            <i class="fas fa-sync-alt me-1"></i> Refresh
         </a>
     </div>
 </div>
 
-<div class="card card-primary card-outline">
+<div class="card card-primary">
     <div class="card-header">
-        <h3 class="card-title">
-            <i class="fas fa-clipboard-list"></i> All Checklists
-        </h3>
+        <h3 class="card-title"><i class="fas fa-clipboard-list"></i> All Checklists</h3>
         <div class="card-tools">
-            <div class="input-group input-group-sm" style="width: 200px;">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search..." value="@ViewBag.SearchTerm">
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-default" onclick="applyFilters()">
-                        <i class="fas fa-search"></i>
-                    </button>
+            <div class="table-toolbar">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control" data-table-search="checklistTable" id="searchInput" placeholder="Search..." value="@ViewBag.SearchTerm" aria-label="Search checklists">
                 </div>
             </div>
         </div>
@@ -36,35 +32,39 @@
     <div class="card-body">
         <div class="row mb-3">
             <div class="col-md-4">
-                <label class="form-label small text-muted">Frequency</label>
-                <select id="frequencyFilter" class="form-select form-select-sm" onchange="applyFilters()">
-                    <option value="">All Frequencies</option>
-                    <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">Daily</option>
-                    <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">Weekly</option>
-                    <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">Monthly</option>
-                </select>
+                <div class="form-group">
+                    <label class="form-label small">Frequency</label>
+                    <select id="frequencyFilter" class="form-select" onchange="applyFilters()" aria-label="Filter by frequency">
+                        <option value="">All Frequencies</option>
+                        <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">Daily</option>
+                        <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">Weekly</option>
+                        <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">Monthly</option>
+                    </select>
+                </div>
             </div>
             <div class="col-md-4">
-                <label class="form-label small text-muted">Status</label>
-                <select id="statusFilter" class="form-select form-select-sm" onchange="applyFilters()">
-                    <option value="">All Status</option>
-                    <option value="active" selected="@(ViewBag.StatusFilter == "active")">Active</option>
-                    <option value="inactive" selected="@(ViewBag.StatusFilter == "inactive")">Inactive</option>
-                </select>
+                <div class="form-group">
+                    <label class="form-label small">Status</label>
+                    <select id="statusFilter" class="form-select" onchange="applyFilters()" aria-label="Filter by status">
+                        <option value="">All Status</option>
+                        <option value="active" selected="@(ViewBag.StatusFilter == "active")">Active</option>
+                        <option value="inactive" selected="@(ViewBag.StatusFilter == "inactive")">Inactive</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover table-striped">
+        <div class="table-container">
+            <table class="table table-hover" id="checklistTable">
                 <thead>
                     <tr>
                         <th>Template Name</th>
                         <th>Frequency</th>
-                        <th>Total Rounds</th>
-                        <th>Completed Rounds</th>
-                        <th>Completion %</th>
+                        <th class="text-center">Total Rounds</th>
+                        <th class="text-center">Completed Rounds</th>
+                        <th class="text-center">Completion %</th>
                         <th>Last Executed</th>
-                        <th>Actions</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -85,24 +85,25 @@
                                 <td>
                                     @if (item.Template.Frequency.ToString() == "Daily")
                                     {
-                                        <span class="badge bg-info">@item.Template.Frequency</span>
+                                        <span class="badge badge-info">@item.Template.Frequency</span>
                                     }
                                     else if (item.Template.Frequency.ToString() == "Weekly")
                                     {
-                                        <span class="badge bg-warning">@item.Template.Frequency</span>
+                                        <span class="badge badge-warning">@item.Template.Frequency</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">@item.Template.Frequency</span>
+                                        <span class="badge badge-secondary">@item.Template.Frequency</span>
                                     }
                                 </td>
                                 <td class="text-center">@item.TotalRounds</td>
                                 <td class="text-center">@item.CompletedRounds</td>
                                 <td style="min-width: 120px;">
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="progress progress-xs flex-grow-1" style="height: 8px;">
+                                        <div class="progress flex-grow-1" style="height: 8px;">
                                             <div class="progress-bar @(item.CompletionRate >= 80 ? "bg-success" : item.CompletionRate >= 50 ? "bg-warning" : "bg-danger")"
-                                                 style="width: @item.CompletionRate%"></div>
+                                                 style="width: @item.CompletionRate%" role="progressbar"
+                                                 aria-valuenow="@item.CompletionRate" aria-valuemin="0" aria-valuemax="100" aria-label="Completion @item.CompletionRate%"></div>
                                         </div>
                                         <small class="text-nowrap">@item.CompletionRate%</small>
                                     </div>
@@ -117,23 +118,26 @@
                                         <span>@item.LastExecutedDate.ToString("yyyy-MM-dd")</span>
                                     }
                                 </td>
-                                <td class="text-nowrap">
-                                    <a asp-action="Execute" asp-route-templateId="@item.Template.Id"
-                                       class="btn btn-sm btn-success" title="Execute">
-                                        <i class="fas fa-play"></i>
-                                    </a>
-                                    <a asp-action="ViewHistory" asp-route-templateId="@item.Template.Id"
-                                       class="btn btn-sm btn-info" title="View History">
-                                        <i class="fas fa-history"></i>
-                                    </a>
-                                    <button type="button" class="btn btn-sm btn-warning" title="Analytics"
-                                            onclick="showAnalytics(@item.Template.Id)">
-                                        <i class="fas fa-chart-bar"></i>
-                                    </button>
-                                    <a asp-action="Export" asp-route-templateId="@item.Template.Id" asp-route-format="excel"
-                                       class="btn btn-sm btn-secondary" title="Export">
-                                        <i class="fas fa-download"></i>
-                                    </a>
+                                <td class="text-center">
+                                    <div class="actions-cell">
+                                        <a asp-action="Execute" asp-route-templateId="@item.Template.Id"
+                                           class="btn btn-sm btn-success" title="Execute" aria-label="Execute @item.Template.Name">
+                                            <i class="fas fa-play"></i>
+                                        </a>
+                                        <a asp-action="ViewHistory" asp-route-templateId="@item.Template.Id"
+                                           class="btn btn-sm btn-info" title="View History" aria-label="View history for @item.Template.Name">
+                                            <i class="fas fa-history"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-warning" title="Analytics"
+                                                aria-label="Show analytics for @item.Template.Name"
+                                                onclick="showAnalytics(@item.Template.Id)">
+                                            <i class="fas fa-chart-bar"></i>
+                                        </button>
+                                        <a asp-action="Export" asp-route-templateId="@item.Template.Id" asp-route-format="excel"
+                                           class="btn btn-sm btn-secondary" title="Export" aria-label="Export @item.Template.Name">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -141,9 +145,13 @@
                     else
                     {
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-4">
-                                <i class="fas fa-clipboard-list fa-2x mb-2 d-block"></i>
-                                No checklists found. Click "Create New Checklist" to get started.
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <i class="fas fa-clipboard-list empty-icon"></i>
+                                    <h4>No Checklists Found</h4>
+                                    <p>No checklists found. Click "Create New Checklist" to get started.</p>
+                                    <a asp-action="Create" class="btn btn-primary">Create New Checklist</a>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -153,31 +161,34 @@
 
         @if (ViewBag.TotalPages > 1)
         {
-            <nav>
-                <ul class="pagination pagination-sm justify-content-center">
+            <div class="table-footer">
+                <div class="pagination-info">Showing @Model.Count of @ViewBag.TotalCount total checklists</div>
+                <ul class="pagination">
                     @for (int p = 1; p <= ViewBag.TotalPages; p++)
                     {
                         <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
-                            <a class="page-link" href="javascript:void(0)" onclick="goToPage(@p)">@p</a>
+                            <a class="page-link" href="javascript:void(0)" onclick="goToPage(@p)" aria-label="Page @p">@p</a>
                         </li>
                     }
                 </ul>
-            </nav>
+            </div>
         }
-
-        <div class="text-muted small">
-            Showing @Model.Count of @ViewBag.TotalCount total checklists
-        </div>
+        else
+        {
+            <div class="text-muted small mt-3">
+                Showing @Model.Count of @ViewBag.TotalCount total checklists
+            </div>
+        }
     </div>
 </div>
 
 <!-- Analytics Modal -->
-<div class="modal fade" id="analyticsModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="analyticsModal" tabindex="-1" aria-hidden="true" aria-labelledby="analyticsModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-chart-bar"></i> Checklist Analytics</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="analyticsModalLabel"><i class="fas fa-chart-bar"></i> Checklist Analytics</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="analyticsBody">
                 <div class="text-center py-4">
@@ -218,39 +229,39 @@
                     const html = `
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="info-box bg-info">
-                                    <span class="info-box-icon"><i class="fas fa-clipboard-list"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Total Rounds</span>
-                                        <span class="info-box-number">${data.totalRounds}</span>
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>${data.totalRounds}</h3>
+                                        <p>Total Rounds</p>
                                     </div>
+                                    <div class="icon"><i class="fas fa-clipboard-list"></i></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="info-box bg-success">
-                                    <span class="info-box-icon"><i class="fas fa-check-circle"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Completed Rounds</span>
-                                        <span class="info-box-number">${data.completedRounds}</span>
+                                <div class="small-box bg-success">
+                                    <div class="inner">
+                                        <h3>${data.completedRounds}</h3>
+                                        <p>Completed Rounds</p>
                                     </div>
+                                    <div class="icon"><i class="fas fa-check-circle"></i></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="info-box bg-warning">
-                                    <span class="info-box-icon"><i class="fas fa-check-double"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Approved Rounds</span>
-                                        <span class="info-box-number">${data.approvedRounds}</span>
+                                <div class="small-box bg-warning">
+                                    <div class="inner">
+                                        <h3>${data.approvedRounds}</h3>
+                                        <p>Approved Rounds</p>
                                     </div>
+                                    <div class="icon"><i class="fas fa-check-double"></i></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="info-box bg-danger">
-                                    <span class="info-box-icon"><i class="fas fa-calendar"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Last Executed</span>
-                                        <span class="info-box-number">${data.lastExecutedDate ? new Date(data.lastExecutedDate).toLocaleDateString() : 'N/A'}</span>
+                                <div class="small-box bg-danger">
+                                    <div class="inner">
+                                        <h3>${data.lastExecutedDate ? new Date(data.lastExecutedDate).toLocaleDateString() : 'N/A'}</h3>
+                                        <p>Last Executed</p>
                                     </div>
+                                    <div class="icon"><i class="fas fa-calendar"></i></div>
                                 </div>
                             </div>
                         </div>
@@ -258,7 +269,7 @@
                             <div class="col-md-6">
                                 <h6>Completion Rate</h6>
                                 <div class="progress" style="height: 20px;">
-                                    <div class="progress-bar bg-success" style="width: ${data.completionRate}%">
+                                    <div class="progress-bar bg-success" style="width: ${data.completionRate}%" role="progressbar" aria-valuenow="${data.completionRate}" aria-valuemin="0" aria-valuemax="100">
                                         ${data.completionRate}%
                                     </div>
                                 </div>
@@ -266,7 +277,7 @@
                             <div class="col-md-6">
                                 <h6>Approval Rate</h6>
                                 <div class="progress" style="height: 20px;">
-                                    <div class="progress-bar bg-info" style="width: ${data.approvalRate}%">
+                                    <div class="progress-bar bg-info" style="width: ${data.approvalRate}%" role="progressbar" aria-valuenow="${data.approvalRate}" aria-valuemin="0" aria-valuemax="100">
                                         ${data.approvalRate}%
                                     </div>
                                 </div>
