@@ -10,7 +10,7 @@ using AmbulatoryCarePortal.Presentation.ViewModels;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,DepartmentHead")]
+[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
 public class KPIManagementController : Controller
 {
     private readonly IKPIService _kpiService;

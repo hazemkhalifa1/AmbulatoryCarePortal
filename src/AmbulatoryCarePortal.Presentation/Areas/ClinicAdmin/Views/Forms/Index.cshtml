@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Forms Library";
     var searchTerm = ViewBag.SearchTerm as string ?? "";
-    var canManage = User.IsInRole("ClinicAdmin") || User.IsInRole("HospitalAdmin");
+    var canManage = User.IsInRole("ClinicAdmin");
 }
 
 <div class="fade-in">

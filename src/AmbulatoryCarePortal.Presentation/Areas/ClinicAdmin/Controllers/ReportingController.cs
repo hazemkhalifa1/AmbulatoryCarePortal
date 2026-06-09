@@ -7,7 +7,7 @@ using AmbulatoryCarePortal.Presentation.ViewModels;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ComplianceOfficer,Auditor")]
+[Authorize(Roles = "ClinicAdmin")]
 public class ReportingController : Controller
 {
     private readonly IReportingService _reportingService;
@@ -51,7 +51,7 @@ public class ReportingController : Controller
                 DisplayName = "Compliance Report",
                 Description = "Complete compliance status, policies, checklists, and recommendations",
                 SupportedFormats = new[] { "PDF", "Excel", "CSV" },
-                RequiredRoles = new[] { "ClinicAdmin", "ComplianceOfficer", "Auditor" }
+                RequiredRoles = new[] { "ClinicAdmin" }
             },
             new ReportTypeOptionViewModel
             {
@@ -59,7 +59,7 @@ public class ReportingController : Controller
                 DisplayName = "KPI Performance Report",
                 Description = "KPI achievement rates, trends, and performance analysis",
                 SupportedFormats = new[] { "PDF", "Excel", "CSV" },
-                RequiredRoles = new[] { "ClinicAdmin", "ComplianceOfficer" }
+                RequiredRoles = new[] { "ClinicAdmin" }
             },
             new ReportTypeOptionViewModel
             {
@@ -67,7 +67,7 @@ public class ReportingController : Controller
                 DisplayName = "Audit Trail Report",
                 Description = "Complete audit trail, user actions, and system events",
                 SupportedFormats = new[] { "PDF", "Excel", "CSV" },
-                RequiredRoles = new[] { "Auditor", "ComplianceOfficer" }
+                RequiredRoles = new[] { "ClinicAdmin" }
             },
             new ReportTypeOptionViewModel
             {
@@ -75,7 +75,7 @@ public class ReportingController : Controller
                 DisplayName = "Checklist Execution Report",
                 Description = "Checklist completion rates, trends, and analysis",
                 SupportedFormats = new[] { "PDF", "Excel", "CSV" },
-                RequiredRoles = new[] { "ClinicAdmin", "ComplianceOfficer" }
+                RequiredRoles = new[] { "ClinicAdmin" }
             },
             new ReportTypeOptionViewModel
             {
@@ -83,7 +83,7 @@ public class ReportingController : Controller
                 DisplayName = "HR & Staff Report",
                 Description = "Staff directory, document status, and compliance",
                 SupportedFormats = new[] { "PDF", "Excel", "CSV" },
-                RequiredRoles = new[] { "ClinicAdmin", "HRManager" }
+                RequiredRoles = new[] { "ClinicAdmin" }
             }
         };
 
@@ -202,7 +202,7 @@ public class ReportingController : Controller
     /// Generate audit report
     /// </summary>
     [HttpGet]
-    [Authorize(Roles = "Auditor,ComplianceOfficer")]
+    [Authorize(Roles = "ClinicAdmin,ClinicViewer")]
     public IActionResult AuditReportBuilder()
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
@@ -221,7 +221,7 @@ public class ReportingController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "Auditor,ComplianceOfficer")]
+    [Authorize(Roles = "ClinicAdmin,ClinicViewer")]
     public async Task<IActionResult> GenerateAuditReport(ReportGeneratorViewModel model)
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
@@ -307,7 +307,7 @@ public class ReportingController : Controller
     /// Generate HR report
     /// </summary>
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin,HRManager")]
+    [Authorize(Roles = "ClinicAdmin")]
     public IActionResult HRReportBuilder()
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
@@ -326,7 +326,7 @@ public class ReportingController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin,HRManager")]
+    [Authorize(Roles = "ClinicAdmin")]
     public async Task<IActionResult> GenerateHRReport(ReportGeneratorViewModel model)
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");

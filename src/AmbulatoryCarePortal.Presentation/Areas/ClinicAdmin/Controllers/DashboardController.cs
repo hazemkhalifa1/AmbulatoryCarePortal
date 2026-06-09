@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Presentation.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,DepartmentUser")]
+[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
 public class DashboardController : Controller
 {
     private readonly IClinicService _clinicService;
@@ -40,7 +40,7 @@ public class DashboardController : Controller
             return NotFound();
 
         ViewBag.PageTitle = "Clinic Dashboard";
-        
+
         return View(clinic);
     }
 
@@ -53,7 +53,7 @@ public class DashboardController : Controller
         var policies = await _policyDocumentService.GetClinicPoliciesAsync(clinicId.Value, page, pageSize);
         ViewBag.PageTitle = "Policy Documents";
         ViewBag.ClinicId = clinicId;
-        
+
         return View(policies);
     }
 
@@ -66,7 +66,7 @@ public class DashboardController : Controller
         var kpis = await _kpiService.GetClinicKPIsAsync(clinicId.Value);
         ViewBag.PageTitle = "KPI Monitoring";
         ViewBag.ClinicId = clinicId;
-        
+
         return View(kpis);
     }
 
@@ -79,7 +79,7 @@ public class DashboardController : Controller
         var staff = await _hrService.GetClinicStaffAsync(clinicId.Value, page, pageSize);
         ViewBag.PageTitle = "HR Staff Management";
         ViewBag.ClinicId = clinicId;
-        
+
         return View(staff);
     }
 
@@ -92,7 +92,7 @@ public class DashboardController : Controller
         var expiringDocs = await _hrService.GetExpiringDocumentsAsync(clinicId.Value, 30);
         ViewBag.PageTitle = "Expiring Documents";
         ViewBag.ClinicId = clinicId;
-        
+
         return View(expiringDocs);
     }
 

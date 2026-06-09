@@ -13,7 +13,7 @@ using ChecklistAnswerEnum = AmbulatoryCarePortal.Domain.Enums.ChecklistAnswer;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,DepartmentHead,DepartmentUser")]
+[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
 public class ChecklistManagementController : Controller
 {
     private readonly IChecklistService _checklistService;
@@ -342,7 +342,7 @@ public class ChecklistManagementController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = "DepartmentHead,ComplianceOfficer")]
+    [Authorize(Roles = "ClinicAdmin")]
     public async Task<IActionResult> Approve(int roundId)
     {
         var round = await _unitOfWork.Repository<ChecklistRound>().GetByIdAsync(roundId);

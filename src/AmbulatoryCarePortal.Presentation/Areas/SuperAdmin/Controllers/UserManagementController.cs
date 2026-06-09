@@ -1,11 +1,12 @@
+using AmbulatoryCarePortal.Application.Interfaces;
+using AmbulatoryCarePortal.Domain.Entities;
+using AmbulatoryCarePortal.Infrastructure.Data;
+using AmbulatoryCarePortal.Infrastructure.Data.Seed;
+using AmbulatoryCarePortal.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using AmbulatoryCarePortal.Application.Interfaces;
-using AmbulatoryCarePortal.Domain.Entities;
-using AmbulatoryCarePortal.Presentation.ViewModels;
-using AmbulatoryCarePortal.Infrastructure.Data.Seed;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers;
 
@@ -16,17 +17,20 @@ public class UserManagementController : Controller
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly AppDbContext _dbContext;
     private readonly ILogger<UserManagementController> _logger;
 
     public UserManagementController(
         UserManager<AppUser> userManager,
         RoleManager<IdentityRole> roleManager,
         IUnitOfWork unitOfWork,
+        AppDbContext dbContext,
         ILogger<UserManagementController> logger)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _unitOfWork = unitOfWork;
+        _dbContext = dbContext;
         _logger = logger;
     }
 
@@ -75,6 +79,7 @@ public class UserManagementController : Controller
         {
             AvailableRoles = await GetAvailableRolesAsync(),
             AvailableClinics = await GetAvailableClinicsAsync(),
+            AvailableDepartments = await GetAvailableDepartmentsAsync(),
             IsActive = true
         };
 
@@ -189,29 +194,64 @@ public class UserManagementController : Controller
         user.ClinicId = model.ClinicId;
         user.DepartmentId = model.DepartmentId;
 
-        var result = await _userManager.UpdateAsync(user);
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        IdentityResult result;
 
-        if (result.Succeeded)
+        if (!string.IsNullOrEmpty(model.SelectedRole) &&
+            !currentRoles.Contains(model.SelectedRole))
         {
-            // Update role
-            var currentRoles = await _userManager.GetRolesAsync(user);
-            if (!string.IsNullOrEmpty(model.SelectedRole) && 
-                !currentRoles.Contains(model.SelectedRole))
+            // Batch all role changes + user property updates in a single SaveChangesAsync
+            // to avoid the timeout caused by multiple individual saves per UserManager call.
+
+            // Remove all current role assignments directly via DbContext
+            var userRoles = await _dbContext.Set<IdentityUserRole<string>>()
+                .Where(ur => ur.UserId == user.Id)
+                .ToListAsync();
+
+            _dbContext.Set<IdentityUserRole<string>>().RemoveRange(userRoles);
+
+            // Add the new role assignment
+            var role = await _roleManager.FindByNameAsync(model.SelectedRole);
+            if (role != null)
             {
-                await _userManager.RemoveFromRolesAsync(user, currentRoles);
-                await _userManager.AddToRoleAsync(user, model.SelectedRole);
+                _dbContext.Set<IdentityUserRole<string>>().Add(new IdentityUserRole<string>
+                {
+                    UserId = user.Id,
+                    RoleId = role.Id
+                });
             }
+
+            // Update the user's concurrency stamp so Identity's change tracking is consistent
+            user.ConcurrencyStamp = Guid.NewGuid().ToString();
+
+            // Mark the user entity as modified
+            _dbContext.Entry(user).State = EntityState.Modified;
+
+            // Single save for all changes
+            await _dbContext.SaveChangesAsync();
 
             _logger.LogInformation($"User {user.Email} updated with role {model.SelectedRole}");
             TempData["SuccessMessage"] = "User updated successfully!";
-
             return RedirectToAction(nameof(Index));
         }
 
-        model.AvailableRoles = await GetAvailableRolesAsync();
-        model.AvailableClinics = await GetAvailableClinicsAsync();
+        // No role change — just update user properties
+        result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
 
-        return View(model);
+            model.AvailableRoles = await GetAvailableRolesAsync();
+            model.AvailableClinics = await GetAvailableClinicsAsync();
+            return View(model);
+        }
+
+        _logger.LogInformation($"User {user.Email} updated");
+        TempData["SuccessMessage"] = "User updated successfully!";
+        return RedirectToAction(nameof(Index));
     }
 
     /// <summary>
@@ -306,8 +346,8 @@ public class UserManagementController : Controller
         return roles.Select(role => new RoleOptionViewModel
         {
             RoleName = role.Name,
-            Description = RoleDescriptions.Descriptions.ContainsKey(role.Name) 
-                ? RoleDescriptions.Descriptions[role.Name] 
+            Description = RoleDescriptions.Descriptions.ContainsKey(role.Name)
+                ? RoleDescriptions.Descriptions[role.Name]
                 : "No description available",
             Permissions = RoleDescriptions.ResponsibilitiesByRole.ContainsKey(role.Name)
                 ? RoleDescriptions.ResponsibilitiesByRole[role.Name]
@@ -328,6 +368,17 @@ public class UserManagementController : Controller
             Name = c.Name,
             NameAr = c.NameAr,
             CityEn = c.CityEn
+        }).ToList();
+    }
+
+    private async Task<List<DepartmentViewModel>> GetAvailableDepartmentsAsync()
+    {
+        var departments = await _unitOfWork.Repository<Department>().GetAllAsync();
+        return departments.Select(d => new DepartmentViewModel
+        {
+            Id = d.Id,
+            Name = d.NameEn,
+            ClinicId = d.ClinicId
         }).ToList();
     }
 }

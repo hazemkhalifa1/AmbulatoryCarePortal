@@ -3,7 +3,7 @@
 @{
     var form = ViewBag.Form as AmbulatoryCarePortal.Application.DTOs.FormDto;
     ViewData["Title"] = $"Versions - {form?.Title}";
-    var canUpload = User.IsInRole("ClinicAdmin") || User.IsInRole("HospitalAdmin") || User.IsInRole("DepartmentUser");
+    var canUpload = User.IsInRole("ClinicAdmin");
 }
 
 <div class="fade-in">

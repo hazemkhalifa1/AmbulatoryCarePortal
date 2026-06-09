@@ -180,18 +180,6 @@ public class ReportingService : IReportingService
             {
                 "Compliance Report", "KPI Report", "Checklist Report", "HR Report"
             },
-            "ComplianceOfficer" => new List<string>
-            {
-                "Compliance Report", "Audit Report", "Checklist Report"
-            },
-            "HRManager" => new List<string>
-            {
-                "HR Report"
-            },
-            "Auditor" => new List<string>
-            {
-                "Audit Report", "Compliance Report"
-            },
             _ => new List<string>()
         };
 

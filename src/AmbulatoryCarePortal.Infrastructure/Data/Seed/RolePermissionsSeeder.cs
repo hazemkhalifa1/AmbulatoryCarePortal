@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using AmbulatoryCarePortal.Domain.Enums;
+using System.Security.Claims;
 
 namespace AmbulatoryCarePortal.Infrastructure.Data.Seed;
 
@@ -7,7 +7,7 @@ public static class RolePermissionsSeeder
 {
     public static class Permissions
     {
-        // Clinic Management Permissions
+        // Clinic Management
         public const string CreateClinic = "clinics.create";
         public const string ReadClinic = "clinics.read";
         public const string UpdateClinic = "clinics.update";
@@ -15,7 +15,7 @@ public static class RolePermissionsSeeder
         public const string ViewComplianceScore = "clinics.compliance.view";
         public const string ExportClinicData = "clinics.export";
 
-        // Policy Permissions
+        // Policy
         public const string CreatePolicy = "policies.create";
         public const string ReadPolicy = "policies.read";
         public const string UpdatePolicy = "policies.update";
@@ -23,7 +23,7 @@ public static class RolePermissionsSeeder
         public const string UploadEvidence = "policies.evidence.upload";
         public const string ApprovePolicy = "policies.approve";
 
-        // KPI Permissions
+        // KPI
         public const string CreateKPI = "kpis.create";
         public const string ReadKPI = "kpis.read";
         public const string UpdateKPI = "kpis.update";
@@ -31,14 +31,14 @@ public static class RolePermissionsSeeder
         public const string EnterKPIData = "kpis.data.enter";
         public const string ExportKPIReport = "kpis.export";
 
-        // Checklist Permissions
+        // Checklist
         public const string CreateChecklist = "checklists.create";
         public const string ReadChecklist = "checklists.read";
         public const string ExecuteChecklist = "checklists.execute";
         public const string ApproveChecklist = "checklists.approve";
         public const string ViewChecklistHistory = "checklists.history.view";
 
-        // HR Permissions
+        // HR
         public const string ManageStaff = "staff.manage";
         public const string ViewStaff = "staff.view";
         public const string ManageDocuments = "documents.manage";
@@ -74,103 +74,15 @@ public static class RolePermissionsSeeder
 
     public static async Task SeedRolesWithPermissionsAsync(RoleManager<IdentityRole> roleManager)
     {
-        // SuperAdmin Role - Full system access
-        await CreateOrUpdateRoleAsync(roleManager, "SuperAdmin", new[]
-        {
-            Permissions.CreateClinic, Permissions.ReadClinic, Permissions.UpdateClinic, Permissions.DeleteClinic,
-            Permissions.ViewComplianceScore, Permissions.ExportClinicData,
-            Permissions.CreatePolicy, Permissions.ReadPolicy, Permissions.UpdatePolicy, Permissions.DeletePolicy,
-            Permissions.UploadEvidence, Permissions.ApprovePolicy,
-            Permissions.CreateKPI, Permissions.ReadKPI, Permissions.UpdateKPI, Permissions.DeleteKPI,
-            Permissions.EnterKPIData, Permissions.ExportKPIReport,
-            Permissions.CreateChecklist, Permissions.ReadChecklist, Permissions.ExecuteChecklist,
-            Permissions.ApproveChecklist, Permissions.ViewChecklistHistory,
-            Permissions.ManageStaff, Permissions.ViewStaff, Permissions.ManageDocuments,
-            Permissions.UploadDocuments, Permissions.VerifyDocuments, Permissions.ExpiryNotifications,
-            Permissions.ViewAuditLog, Permissions.ExportAuditLog, Permissions.ManageNotifications,
-            Permissions.SendNotifications, Permissions.ManageUsers, Permissions.CreateUser,
-            Permissions.EditUser, Permissions.DeleteUser, Permissions.ManageRoles,
-            Permissions.ViewDashboard, Permissions.GenerateReports, Permissions.ExportReports,
-            Permissions.ViewAnalytics, Permissions.ConfigureSystem, Permissions.ViewSystemSettings,
-            Permissions.ManageEmailSettings, Permissions.BackupSystem
-        });
-
-        // ClinicAdmin Role - Full clinic management
-        await CreateOrUpdateRoleAsync(roleManager, "ClinicAdmin", new[]
-        {
-            Permissions.ReadClinic, Permissions.UpdateClinic, Permissions.ViewComplianceScore,
-            Permissions.ExportClinicData, Permissions.CreatePolicy, Permissions.ReadPolicy,
-            Permissions.UpdatePolicy, Permissions.UploadEvidence, Permissions.ApprovePolicy,
-            Permissions.CreateKPI, Permissions.ReadKPI, Permissions.UpdateKPI, Permissions.EnterKPIData,
-            Permissions.ExportKPIReport, Permissions.CreateChecklist, Permissions.ReadChecklist,
-            Permissions.ExecuteChecklist, Permissions.ApproveChecklist, Permissions.ViewChecklistHistory,
-            Permissions.ManageStaff, Permissions.ViewStaff, Permissions.ManageDocuments,
-            Permissions.UploadDocuments, Permissions.VerifyDocuments, Permissions.ExpiryNotifications,
-            Permissions.ViewAuditLog, Permissions.ManageUsers, Permissions.ViewDashboard,
-            Permissions.GenerateReports, Permissions.ExportReports, Permissions.ViewAnalytics,
-            Permissions.ViewSystemSettings
-        });
-
-        // DepartmentHead Role - Department management
-        await CreateOrUpdateRoleAsync(roleManager, "DepartmentHead", new[]
-        {
-            Permissions.ReadClinic, Permissions.ViewComplianceScore, Permissions.ReadPolicy,
-            Permissions.UpdatePolicy, Permissions.UploadEvidence, Permissions.CreateKPI,
-            Permissions.ReadKPI, Permissions.UpdateKPI, Permissions.EnterKPIData,
-            Permissions.CreateChecklist, Permissions.ReadChecklist, Permissions.ExecuteChecklist,
-            Permissions.ViewChecklistHistory, Permissions.ViewStaff, Permissions.UploadDocuments,
-            Permissions.ExpiryNotifications, Permissions.ViewAuditLog, Permissions.ViewDashboard,
-            Permissions.GenerateReports
-        });
-
-        // DepartmentUser Role - Basic department operations
-        await CreateOrUpdateRoleAsync(roleManager, "DepartmentUser", new[]
-        {
-            Permissions.ReadClinic, Permissions.ReadPolicy, Permissions.UploadEvidence,
-            Permissions.ReadKPI, Permissions.EnterKPIData, Permissions.ReadChecklist,
-            Permissions.ExecuteChecklist, Permissions.ViewStaff, Permissions.UploadDocuments,
-            Permissions.ViewDashboard
-        });
-
-        // Auditor Role - Read-only audit access
-        await CreateOrUpdateRoleAsync(roleManager, "Auditor", new[]
-        {
-            Permissions.ReadClinic, Permissions.ViewComplianceScore, Permissions.ReadPolicy,
-            Permissions.ReadKPI, Permissions.ReadChecklist, Permissions.ViewChecklistHistory,
-            Permissions.ViewStaff, Permissions.ViewAuditLog, Permissions.ExportAuditLog,
-            Permissions.ViewDashboard, Permissions.GenerateReports, Permissions.ExportReports,
-            Permissions.ViewAnalytics
-        });
-
-        // Viewer Role - Limited read-only access
-        await CreateOrUpdateRoleAsync(roleManager, "Viewer", new[]
-        {
-            Permissions.ReadClinic, Permissions.ViewComplianceScore, Permissions.ReadPolicy,
-            Permissions.ReadKPI, Permissions.ReadChecklist, Permissions.ViewDashboard
-        });
-
-        // HRManager Role - HR-specific management
-        await CreateOrUpdateRoleAsync(roleManager, "HRManager", new[]
-        {
-            Permissions.ManageStaff, Permissions.ViewStaff, Permissions.ManageDocuments,
-            Permissions.UploadDocuments, Permissions.VerifyDocuments, Permissions.ExpiryNotifications,
-            Permissions.ViewAuditLog, Permissions.ViewDashboard, Permissions.GenerateReports,
-            Permissions.ExportReports
-        });
-
-        // Compliance Officer Role - Compliance monitoring
-        await CreateOrUpdateRoleAsync(roleManager, "ComplianceOfficer", new[]
-        {
-            Permissions.ReadClinic, Permissions.ViewComplianceScore, Permissions.ReadPolicy,
-            Permissions.ApprovePolicy, Permissions.ReadKPI, Permissions.ReadChecklist,
-            Permissions.ApproveChecklist, Permissions.ViewChecklistHistory, Permissions.ViewAuditLog,
-            Permissions.ViewDashboard, Permissions.GenerateReports, Permissions.ExportReports,
-            Permissions.ViewAnalytics
-        });
+        await CreateOrUpdateRoleWithPermissionsAsync(roleManager, "SuperAdmin", GetAllPermissions());
+        await CreateOrUpdateRoleWithPermissionsAsync(roleManager, "ClinicAdmin", GetClinicAdminPermissions());
+        await CreateOrUpdateRoleWithPermissionsAsync(roleManager, "ClinicViewer", GetClinicViewerPermissions());
     }
 
-    private static async Task CreateOrUpdateRoleAsync(RoleManager<IdentityRole> roleManager, 
-        string roleName, string[] permissions)
+    private static async Task CreateOrUpdateRoleWithPermissionsAsync(
+        RoleManager<IdentityRole> roleManager,
+        string roleName,
+        string[] permissions)
     {
         var role = await roleManager.FindByNameAsync(roleName);
         if (role == null)
@@ -178,18 +90,98 @@ public static class RolePermissionsSeeder
             role = new IdentityRole(roleName);
             await roleManager.CreateAsync(role);
         }
+
+        var existingClaims = await roleManager.GetClaimsAsync(role);
+        var permissionClaims = existingClaims.Where(c => c.Type == "Permission").ToList();
+
+        foreach (var claim in permissionClaims)
+        {
+            if (!permissions.Contains(claim.Value))
+            {
+                await roleManager.RemoveClaimAsync(role, claim);
+            }
+        }
+
+        foreach (var permission in permissions)
+        {
+            if (!permissionClaims.Any(c => c.Value == permission))
+            {
+                await roleManager.AddClaimAsync(role, new Claim("Permission", permission));
+            }
+        }
     }
+
+    private static string[] GetAllPermissions() => new[]
+    {
+        Permissions.CreateClinic, Permissions.ReadClinic,
+        Permissions.UpdateClinic, Permissions.DeleteClinic,
+        Permissions.ViewComplianceScore, Permissions.ExportClinicData,
+        Permissions.CreatePolicy, Permissions.ReadPolicy,
+        Permissions.UpdatePolicy, Permissions.DeletePolicy,
+        Permissions.UploadEvidence, Permissions.ApprovePolicy,
+        Permissions.CreateKPI, Permissions.ReadKPI,
+        Permissions.UpdateKPI, Permissions.DeleteKPI,
+        Permissions.EnterKPIData, Permissions.ExportKPIReport,
+        Permissions.CreateChecklist, Permissions.ReadChecklist,
+        Permissions.ExecuteChecklist, Permissions.ApproveChecklist,
+        Permissions.ViewChecklistHistory,
+        Permissions.ManageStaff, Permissions.ViewStaff,
+        Permissions.ManageDocuments, Permissions.UploadDocuments,
+        Permissions.VerifyDocuments, Permissions.ExpiryNotifications,
+        Permissions.ViewAuditLog, Permissions.ExportAuditLog,
+        Permissions.ManageNotifications, Permissions.SendNotifications,
+        Permissions.ManageUsers, Permissions.CreateUser,
+        Permissions.EditUser, Permissions.DeleteUser, Permissions.ManageRoles,
+        Permissions.ViewDashboard, Permissions.GenerateReports,
+        Permissions.ExportReports, Permissions.ViewAnalytics,
+        Permissions.ConfigureSystem, Permissions.ViewSystemSettings,
+        Permissions.ManageEmailSettings, Permissions.BackupSystem
+    };
+
+    private static string[] GetClinicAdminPermissions() => new[]
+    {
+        Permissions.ReadClinic, Permissions.UpdateClinic,
+        Permissions.ViewComplianceScore, Permissions.ExportClinicData,
+        Permissions.CreatePolicy, Permissions.ReadPolicy,
+        Permissions.UpdatePolicy, Permissions.UploadEvidence,
+        Permissions.ApprovePolicy,
+        Permissions.CreateKPI, Permissions.ReadKPI,
+        Permissions.UpdateKPI, Permissions.EnterKPIData,
+        Permissions.ExportKPIReport,
+        Permissions.CreateChecklist, Permissions.ReadChecklist,
+        Permissions.ExecuteChecklist, Permissions.ApproveChecklist,
+        Permissions.ViewChecklistHistory,
+        Permissions.ManageStaff, Permissions.ViewStaff,
+        Permissions.ManageDocuments, Permissions.UploadDocuments,
+        Permissions.VerifyDocuments, Permissions.ExpiryNotifications,
+        Permissions.ViewAuditLog,
+        Permissions.SendNotifications,
+        Permissions.ViewDashboard, Permissions.GenerateReports,
+        Permissions.ExportReports, Permissions.ViewAnalytics,
+        Permissions.ViewSystemSettings
+    };
+
+    private static string[] GetClinicViewerPermissions() => new[]
+    {
+        Permissions.ReadClinic,
+        Permissions.ViewComplianceScore,
+        Permissions.ReadPolicy,
+        Permissions.ReadKPI,
+        Permissions.ReadChecklist,
+        Permissions.ViewChecklistHistory,
+        Permissions.ViewStaff,
+        Permissions.ViewDashboard,
+        Permissions.ViewAnalytics,
+        Permissions.ViewAuditLog
+    };
 }
 
-/// <summary>
-/// Role Descriptions for UI Display
-/// </summary>
 public static class RoleDescriptions
 {
     public static readonly Dictionary<string, string> Descriptions = new()
     {
         {
-            "SuperAdmin", 
+            "SuperAdmin",
             "Full system access. Manage clinics, users, roles, and system configuration. View all reports and audit logs."
         },
         {
@@ -197,28 +189,8 @@ public static class RoleDescriptions
             "Manage clinic operations including policies, KPIs, checklists, staff, and compliance monitoring. Generate clinic reports."
         },
         {
-            "DepartmentHead",
-            "Manage department policies, KPIs, and checklists. Supervise department staff and monitor compliance within the department."
-        },
-        {
-            "DepartmentUser",
-            "Execute checklists, enter KPI data, upload documents, and support department operations."
-        },
-        {
-            "Auditor",
-            "View-only access to audit logs, compliance data, and system reports. No modification permissions."
-        },
-        {
-            "Viewer",
-            "Limited read-only access to clinic dashboard and basic compliance information."
-        },
-        {
-            "HRManager",
-            "Manage HR staff records, employee documents, and expiry notifications. Monitor HR compliance."
-        },
-        {
-            "ComplianceOfficer",
-            "Monitor and enforce compliance standards. Approve policies and checklists. Generate compliance reports."
+            "ClinicViewer",
+            "Read-only access to clinic dashboard, compliance scores, policies, KPIs, checklists, and staff information. No modification permissions."
         }
     };
 
@@ -228,7 +200,7 @@ public static class RoleDescriptions
             "SuperAdmin", new[]
             {
                 "System administration and configuration",
-                "Clinic management and approval",
+                "Clinic management (create, update, delete)",
                 "User and role management",
                 "System-wide compliance oversight",
                 "Backup and system maintenance",
@@ -238,76 +210,21 @@ public static class RoleDescriptions
         {
             "ClinicAdmin", new[]
             {
-                "Clinic operations management",
+                "Clinic operations management (update clinic details)",
                 "Staff and document management",
-                "Policy and checklist administration",
+                "Policy and checklist administration (create, update, approve)",
                 "KPI definition and monitoring",
-                "User management within clinic",
-                "Clinic compliance monitoring"
+                "Clinic compliance monitoring",
+                "Report generation"
             }
         },
         {
-            "DepartmentHead", new[]
-            {
-                "Department operations oversight",
-                "Staff supervision",
-                "Policy implementation within department",
-                "KPI monitoring and reporting",
-                "Checklist execution oversight",
-                "Document management"
-            }
-        },
-        {
-            "DepartmentUser", new[]
-            {
-                "Daily checklist execution",
-                "KPI data entry",
-                "Document uploads",
-                "Policy compliance",
-                "Team support",
-                "Evidence documentation"
-            }
-        },
-        {
-            "Auditor", new[]
-            {
-                "Audit trail review",
-                "Compliance verification",
-                "Report generation",
-                "System monitoring",
-                "Documentation review",
-                "No modifications allowed"
-            }
-        },
-        {
-            "Viewer", new[]
+            "ClinicViewer", new[]
             {
                 "Dashboard viewing",
-                "Basic compliance information access",
-                "Report reading",
-                "No modification permissions"
-            }
-        },
-        {
-            "HRManager", new[]
-            {
-                "Staff record management",
-                "Document verification",
-                "Expiry monitoring",
-                "HR compliance oversight",
-                "Staff onboarding",
-                "Certification tracking"
-            }
-        },
-        {
-            "ComplianceOfficer", new[]
-            {
-                "Compliance monitoring",
-                "Policy approval",
-                "Checklist approval",
-                "Standards enforcement",
-                "Report generation",
-                "Compliance recommendations"
+                "Read-only access to compliance data",
+                "View policies, KPIs, checklists, and staff",
+                "No modifications allowed"
             }
         }
     };

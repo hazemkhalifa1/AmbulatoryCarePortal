@@ -6,7 +6,7 @@ using AmbulatoryCarePortal.Presentation.Extensions;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "HospitalAdmin,ClinicAdmin,DepartmentUser,Auditor,Viewer")]
+[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
 public class NotificationsController : Controller
 {
     private readonly INotificationService _notificationService;

@@ -1,5 +1,3 @@
-using AmbulatoryCarePortal.Domain.Entities;
-
 namespace AmbulatoryCarePortal.Presentation.ViewModels;
 
 /// <summary>
@@ -7,7 +5,7 @@ namespace AmbulatoryCarePortal.Presentation.ViewModels;
 /// </summary>
 public class UserRoleManagementViewModel
 {
-    public string UserId { get; set; }
+    public string? UserId { get; set; }
     public string Email { get; set; }
     public string FullName { get; set; }
     public string PhoneNumber { get; set; }
@@ -17,7 +15,7 @@ public class UserRoleManagementViewModel
     public string SelectedRole { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? LastLoginAt { get; set; }
-    
+
     public List<RoleOptionViewModel> AvailableRoles { get; set; } = new();
     public List<ClinicViewModel> AvailableClinics { get; set; } = new();
     public List<DepartmentViewModel> AvailableDepartments { get; set; } = new();

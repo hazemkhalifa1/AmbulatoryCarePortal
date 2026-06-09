@@ -10,7 +10,7 @@ using AmbulatoryCarePortal.Presentation.ViewModels;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,DepartmentHead")]
+[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
 public class PolicyManagementController : Controller
 {
     private readonly IPolicyDocumentService _policyService;
@@ -372,7 +372,7 @@ public class PolicyManagementController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = "ComplianceOfficer,ClinicAdmin")]
+    [Authorize(Roles = "ClinicAdmin")]
     public async Task<IActionResult> Approve(int id)
     {
         var policy = await _unitOfWork.Repository<PolicyDocument>().GetByIdAsync(id);

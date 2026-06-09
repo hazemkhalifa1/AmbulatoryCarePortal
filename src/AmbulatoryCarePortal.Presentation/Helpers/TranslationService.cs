@@ -151,6 +151,8 @@ public class TranslationService : ITranslationService
             ["Nav.MainMenu"] = "Main Menu",
             ["Nav.Staff"] = "Staff",
             ["Nav.Communication"] = "Communication",
+            ["Nav.ManageUsers"] = "User Mangement",
+
             ["Nav.System"] = "System",
 
             ["User.MyProfile"] = "My Profile",
@@ -259,6 +261,7 @@ public class TranslationService : ITranslationService
             ["Nav.AuditLogs"] = "سجلات التدقيق",
             ["Nav.MainMenu"] = "القائمة الرئيسية",
             ["Nav.Staff"] = "الموظفين",
+            ["Nav.ManageUsers"] = "إدارة المستخدمين",
             ["Nav.Communication"] = "التواصل",
             ["Nav.System"] = "النظام",
 

@@ -16,7 +16,13 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         if (User.Identity?.IsAuthenticated ?? false)
-            return RedirectToAction("Index", "Dashboard", new { area = "SuperAdmin" });
+        {
+            if (User.IsInRole("SuperAdmin"))
+                return RedirectToAction("Index", "Dashboard", new { area = "SuperAdmin" });
+
+            if (User.IsInRole("ClinicAdmin") || User.IsInRole("ClinicViewer"))
+                return RedirectToAction("Index", "Dashboard", new { area = "ClinicAdmin" });
+        }
 
         return RedirectToAction("Login", "Account");
     }

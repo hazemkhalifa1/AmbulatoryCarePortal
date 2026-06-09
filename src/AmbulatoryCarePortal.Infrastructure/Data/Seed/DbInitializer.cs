@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using AmbulatoryCarePortal.Domain.Entities;
-using AmbulatoryCarePortal.Domain.Enums;
 using AmbulatoryCarePortal.Infrastructure.Data;
 
 namespace AmbulatoryCarePortal.Infrastructure.Data.Seed;
@@ -26,22 +25,14 @@ public static class DbInitializer
         await SeedAdminUserAsync(userManager, dbContext);
 
         // Seed initial clinics and departments
-        await SeedInitialDataAsync(dbContext);
+        await DepartmentSeeder.SeedDepartmentsAsync(dbContext, "admin@cbahi-portal.com");
 
         await dbContext.SaveChangesAsync();
     }
 
     private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
     {
-        var roles = new[] { "SuperAdmin", "HospitalAdmin", "ClinicAdmin", "DepartmentHead", "DepartmentUser", "ComplianceOfficer", "HRManager", "Auditor", "Viewer" };
-
-        foreach (var role in roles)
-        {
-            if (!await roleManager.RoleExistsAsync(role))
-            {
-                await roleManager.CreateAsync(new IdentityRole(role));
-            }
-        }
+        await RolePermissionsSeeder.SeedRolesWithPermissionsAsync(roleManager);
     }
 
     private static async Task SeedAdminUserAsync(UserManager<AppUser> userManager, AppDbContext dbContext)
@@ -71,58 +62,4 @@ public static class DbInitializer
         }
     }
 
-    private static async Task SeedInitialDataAsync(AppDbContext dbContext)
-    {
-        // Check if data already seeded
-        if (await dbContext.Clinics.AnyAsync())
-            return;
-
-        // Seed initial clinic
-        var clinic = new Clinic
-        {
-            Name = "Demo Clinic",
-            NameAr = "العيادة التجريبية",
-            CityEn = "Riyadh",
-            CityAr = "الرياض",
-            ClinicType = ClinicType.Ambulatory,
-            LicenseNumber = "LIC-001",
-            LicenseExpiry = DateTime.Now.AddYears(2),
-            IsActive = true,
-            ComplianceScore = 0,
-            CreatedAt = DateTime.UtcNow,
-            CreatedBy = "admin@cbahi-portal.com"
-        };
-
-        await dbContext.Clinics.AddAsync(clinic);
-        await dbContext.SaveChangesAsync();
-
-        // Seed departments for ambulatory care
-        var departmentCodes = new[]
-        {
-            (DepartmentCodeEnum.LD, "Leadership of the Organization", "قيادة المنظمة"),
-            (DepartmentCodeEnum.PC, "Provision of Care", "تقديم الرعاية"),
-            (DepartmentCodeEnum.LB, "Laboratory", "المختبر"),
-            (DepartmentCodeEnum.RD, "Radiology Department", "قسم الأشعات"),
-            (DepartmentCodeEnum.DN, "Dental", "الأسنان"),
-            (DepartmentCodeEnum.MM, "Medication Management", "إدارة الأدوية"),
-            (DepartmentCodeEnum.MOI, "Management of Information", "إدارة المعلومات"),
-            (DepartmentCodeEnum.IPC, "Infection Prevention and Control", "الوقاية من العدوى والتحكم بها"),
-            (DepartmentCodeEnum.FMS, "Facility Management and Safety", "إدارة المرافق والسلامة"),
-            (DepartmentCodeEnum.DPU, "Dialysis Patient Unit", "وحدة مرضى غسيل الكلى"),
-            (DepartmentCodeEnum.DA, "Dental Anesthesia", "تخدير الأسنان")
-        };
-
-        var departments = departmentCodes.Select(dc => new Department
-        {
-            NameEn = dc.Item2,
-            NameAr = dc.Item3,
-            DepartmentCode = dc.Item1,
-            ClinicId = clinic.Id,
-            CreatedAt = DateTime.UtcNow,
-            CreatedBy = "admin@cbahi-portal.com"
-        }).ToList();
-
-        await dbContext.Departments.AddRangeAsync(departments);
-        await dbContext.SaveChangesAsync();
-    }
 }

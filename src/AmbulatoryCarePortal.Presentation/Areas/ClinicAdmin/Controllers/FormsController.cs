@@ -7,7 +7,7 @@ using AmbulatoryCarePortal.Presentation.Extensions;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "HospitalAdmin,ClinicAdmin,DepartmentUser,Auditor,Viewer")]
+[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
 public class FormsController : Controller
 {
     private readonly IFormService _formService;
@@ -41,7 +41,7 @@ public class FormsController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin,HospitalAdmin")]
+    [Authorize(Roles = "ClinicAdmin")]
     public IActionResult Create()
     {
         ViewBag.PageTitle = "Add Form";
@@ -50,7 +50,7 @@ public class FormsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin,HospitalAdmin")]
+    [Authorize(Roles = "ClinicAdmin")]
     public async Task<IActionResult> Create(CreateFormDto dto)
     {
         if (!ModelState.IsValid)
@@ -90,7 +90,7 @@ public class FormsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin,HospitalAdmin")]
+    [Authorize(Roles = "ClinicAdmin")]
     public async Task<IActionResult> Delete(int id)
     {
         try
@@ -109,7 +109,7 @@ public class FormsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin,HospitalAdmin,DepartmentUser")]
+    [Authorize(Roles = "ClinicAdmin")]
     public async Task<IActionResult> UploadVersion(int formId, IFormFile file, string? notes)
     {
         if (file == null || file.Length == 0)

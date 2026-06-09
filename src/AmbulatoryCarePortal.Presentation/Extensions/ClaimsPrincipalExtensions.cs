@@ -50,8 +50,13 @@ public static class ClaimsPrincipalExtensions
         return principal.HasRole("ClinicAdmin");
     }
 
-    public static bool IsAuditor(this ClaimsPrincipal principal)
+    public static bool IsClinicViewer(this ClaimsPrincipal principal)
     {
-        return principal.HasRole("Auditor");
+        return principal.HasRole("ClinicViewer");
+    }
+
+    public static bool HasPermission(this ClaimsPrincipal principal, string permission)
+    {
+        return principal.HasClaim("Permission", permission);
     }
 }

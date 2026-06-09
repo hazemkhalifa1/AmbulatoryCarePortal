@@ -76,6 +76,12 @@
                                     <p>@Localizer.T("Nav.ManageClinics")</p>
                                 </a>
                             </li>
+                            <li class="nav-item" role="none">
+                                <a href="/SuperAdmin/UserManagement" class="nav-link" role="menuitem">
+                                    <i class="fa-solid fa-user"></i>
+                                    <p>@Localizer.T("Nav.ManageUsers")</p>
+                                </a>
+                            </li>
                             <li class="nav-header" role="presentation">@Localizer.T("Nav.System")</li>
                             <li class="nav-item" role="none">
                                 <a href="/SuperAdmin/Dashboard/AuditLog" class="nav-link" role="menuitem">
@@ -84,7 +90,7 @@
                                 </a>
                             </li>
                         }
-                        else if (User.IsInRole("HospitalAdmin") || User.IsInRole("ClinicAdmin") || User.IsInRole("DepartmentUser") || User.IsInRole("Auditor") || User.IsInRole("Viewer"))
+                        else if (User.IsInRole("ClinicAdmin") || User.IsInRole("ClinicViewer"))
                         {
                             <li class="nav-header" role="presentation">@Localizer.T("Nav.MainMenu")</li>
                             <li class="nav-item" role="none">
@@ -131,12 +137,15 @@
                                     <p>@Localizer.T("Nav.Notifications")</p>
                                 </a>
                             </li>
-                            <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/Reporting" class="nav-link" role="menuitem">
-                                    <i class="nav-icon fas fa-chart-bar"></i>
-                                    <p>@Localizer.T("Nav.Reports")</p>
-                                </a>
-                            </li>
+                            @if (User.HasClaim("Permission", "reports.generate"))
+                            {
+                                <li class="nav-item" role="none">
+                                    <a href="/ClinicAdmin/Reporting" class="nav-link" role="menuitem">
+                                        <i class="nav-icon fas fa-chart-bar"></i>
+                                        <p>@Localizer.T("Nav.Reports")</p>
+                                    </a>
+                                </li>
+                            }
                         }
                     </ul>
                 </nav>

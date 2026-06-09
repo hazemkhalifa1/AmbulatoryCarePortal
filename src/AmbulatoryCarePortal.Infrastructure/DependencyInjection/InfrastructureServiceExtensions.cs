@@ -21,6 +21,7 @@ public static class InfrastructureServiceExtensions
 
             options.UseSqlServer(connectionString, sqlOptions =>
             {
+                sqlOptions.CommandTimeout(120);
                 sqlOptions.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName);
                 sqlOptions.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: null);
             });
