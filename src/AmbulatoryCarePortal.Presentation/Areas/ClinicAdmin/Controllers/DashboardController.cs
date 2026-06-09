@@ -1,6 +1,7 @@
 using AmbulatoryCarePortal.Application.Interfaces;
-using AmbulatoryCarePortal.Presentation.Extensions;
+using AmbulatoryCarePortal.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
@@ -13,6 +14,7 @@ public class DashboardController : Controller
     private readonly IPolicyDocumentService _policyDocumentService;
     private readonly IKPIService _kpiService;
     private readonly IHrService _hrService;
+    private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<DashboardController> _logger;
 
     public DashboardController(
@@ -20,18 +22,22 @@ public class DashboardController : Controller
         IPolicyDocumentService policyDocumentService,
         IKPIService kpiService,
         IHrService hrService,
-        ILogger<DashboardController> logger)
+        ILogger<DashboardController> logger,
+        UserManager<AppUser> userManager)
     {
         _clinicService = clinicService;
         _policyDocumentService = policyDocumentService;
         _kpiService = kpiService;
         _hrService = hrService;
         _logger = logger;
+        _userManager = userManager;
     }
 
     public async Task<IActionResult> Index()
     {
-        var clinicId = User.GetClinicId();
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId;
+
         if (!clinicId.HasValue)
             return Unauthorized();
 
@@ -46,7 +52,8 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> Policies(int page = 1, int pageSize = 10)
     {
-        var clinicId = User.GetClinicId();
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId;
         if (!clinicId.HasValue)
             return Unauthorized();
 
@@ -59,7 +66,8 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> KPIs()
     {
-        var clinicId = User.GetClinicId();
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId;
         if (!clinicId.HasValue)
             return Unauthorized();
 
@@ -72,7 +80,8 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> Staff(int page = 1, int pageSize = 10)
     {
-        var clinicId = User.GetClinicId();
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId;
         if (!clinicId.HasValue)
             return Unauthorized();
 
@@ -85,7 +94,8 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> ExpiringDocuments()
     {
-        var clinicId = User.GetClinicId();
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId;
         if (!clinicId.HasValue)
             return Unauthorized();
 
@@ -99,7 +109,8 @@ public class DashboardController : Controller
     [HttpPost]
     public async Task<IActionResult> UpdateComplianceScore()
     {
-        var clinicId = User.GetClinicId();
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId;
         if (!clinicId.HasValue)
             return Unauthorized();
 

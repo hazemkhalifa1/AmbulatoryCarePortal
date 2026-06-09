@@ -1,7 +1,7 @@
 using AmbulatoryCarePortal.Application.Common;
+using AmbulatoryCarePortal.Application.DTOs;
 using AmbulatoryCarePortal.Application.DTOs.Clinic;
 using AmbulatoryCarePortal.Application.DTOs.PolicyDocument;
-using AmbulatoryCarePortal.Application.DTOs;
 
 namespace AmbulatoryCarePortal.Application.Interfaces;
 

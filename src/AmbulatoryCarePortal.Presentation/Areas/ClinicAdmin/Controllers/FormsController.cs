@@ -1,8 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using AmbulatoryCarePortal.Application.DTOs;
 using AmbulatoryCarePortal.Application.Interfaces;
+using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Presentation.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
@@ -11,20 +13,24 @@ namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 public class FormsController : Controller
 {
     private readonly IFormService _formService;
+    private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<FormsController> _logger;
 
     public FormsController(
         IFormService formService,
-        ILogger<FormsController> logger)
+        ILogger<FormsController> logger,
+        UserManager<AppUser> userManager)
     {
         _formService = formService;
         _logger = logger;
+        _userManager = userManager;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index(string searchTerm = "")
     {
-        var clinicId = User.GetClinicId() ?? 0;
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId ?? 0;
         var forms = await _formService.GetClinicFormsAsync(clinicId);
 
         if (!string.IsNullOrEmpty(searchTerm))
@@ -61,7 +67,8 @@ public class FormsController : Controller
 
         try
         {
-            dto.ClinicId = User.GetClinicId() ?? 0;
+            var user = await _userManager.GetUserAsync(User);
+            dto.ClinicId = user?.ClinicId ?? 0;
             var formId = await _formService.CreateFormAsync(dto);
             TempData["SuccessMessage"] = "Form created successfully";
             return RedirectToAction(nameof(Index));

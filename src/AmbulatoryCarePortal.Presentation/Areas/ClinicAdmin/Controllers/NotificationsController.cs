@@ -1,7 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using AmbulatoryCarePortal.Application.Interfaces;
+using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Presentation.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
@@ -10,21 +12,25 @@ namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 public class NotificationsController : Controller
 {
     private readonly INotificationService _notificationService;
+    private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<NotificationsController> _logger;
 
     public NotificationsController(
         INotificationService notificationService,
-        ILogger<NotificationsController> logger)
+        ILogger<NotificationsController> logger,
+        UserManager<AppUser> userManager)
     {
         _notificationService = notificationService;
         _logger = logger;
+        _userManager = userManager;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var userId = User.GetUserId();
-        var clinicId = User.GetClinicId() ?? 0;
+        var user = await _userManager.GetUserAsync(User);
+        var userId = user?.Id;
+        var clinicId = user?.ClinicId ?? 0;
         var notifications = await _notificationService.GetUserNotificationsAsync(userId);
         ViewBag.UnreadCount = await _notificationService.GetUnreadCountAsync(clinicId, userId);
         ViewBag.PageTitle = "Notifications";

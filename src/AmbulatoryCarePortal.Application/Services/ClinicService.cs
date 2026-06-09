@@ -1,9 +1,9 @@
 using AmbulatoryCarePortal.Application.Common;
-using AmbulatoryCarePortal.Application.Interfaces;
-using AutoMapper;
 using AmbulatoryCarePortal.Application.DTOs.Clinic;
+using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -120,7 +120,7 @@ public class ClinicService : IClinicService
     public async Task<decimal> CalculateComplianceScoreAsync(int clinicId)
     {
         var totalPolicies = await _unitOfWork.Repository<PolicyDocument>().CountAsync(x => x.ClinicId == clinicId);
-        
+
         if (totalPolicies == 0)
             return 0;
 
