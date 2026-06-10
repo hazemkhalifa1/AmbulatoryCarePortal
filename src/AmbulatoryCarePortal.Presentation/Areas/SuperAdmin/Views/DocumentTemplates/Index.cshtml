@@ -1,0 +1,259 @@
+@model PagedResult<DocumentTemplateDto>
+
+@{
+    ViewData["Title"] = "Document Templates";
+    var currentPage = Model.PageNumber;
+    var totalPages = Model.TotalPages;
+    var totalCount = Model.TotalCount;
+    var searchTerm = (string?)ViewBag.SearchTerm;
+}
+
+<div class="fade-in">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-file me-2"></i>Document Templates</h3>
+            <div class="card-tools">
+                <a asp-action="Create" class="btn btn-success btn-sm" aria-label="Create new template">
+                    <i class="fas fa-plus"></i> Create New Template
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="Filter templates">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-text"><i class="fas fa-search"></i></div>
+                            <input type="text" name="searchTerm" class="form-control" placeholder="Search by code, title, department..." value="@searchTerm" aria-label="Search templates" />
+                            <button type="submit" class="btn btn-primary" aria-label="Search">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            @if (!string.IsNullOrEmpty(searchTerm))
+                            {
+                                <a asp-action="Index" class="btn btn-secondary" aria-label="Clear filters">
+                                    <i class="fas fa-times"></i> Clear
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <small class="text-muted">@totalCount template(s)</small>
+                    </div>
+                </div>
+            </form>
+
+            <div class="table-container">
+                <table class="table table-hover" role="table" aria-label="Document templates">
+                    <thead>
+                        <tr>
+                            <th scope="col">Standard Code</th>
+                            <th scope="col">Title (EN)</th>
+                            <th scope="col">Title (AR)</th>
+                            <th scope="col">Department Category</th>
+                            <th scope="col">Template File</th>
+                            <th scope="col">Active</th>
+                            <th scope="col" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Data.Any())
+                        {
+                            @foreach (var template in Model.Data)
+                            {
+                                <tr>
+                                    <td><span class="badge badge-info">@template.StandardCode</span></td>
+                                    <td>@template.TitleEn</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(template.TitleAr))
+                                        {
+                                            <span dir="rtl">@template.TitleAr</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">&mdash;</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(template.DepartmentCategory))
+                                        {
+                                            @template.DepartmentCategory
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">&mdash;</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(template.TemplateFilePath))
+                                        {
+                                            <span class="badge badge-success"><i class="fas fa-check"></i> Uploaded</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-secondary"><i class="fas fa-times"></i> No file</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (template.IsActive)
+                                        {
+                                            <span class="badge badge-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-secondary">Inactive</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="actions-cell">
+                                            <a asp-action="Edit" asp-route-id="@template.Id" class="btn btn-sm btn-warning" title="Edit" aria-label="Edit template">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-info" title="Assign to All Clinics" aria-label="Assign to all clinics"
+                                                    data-bs-toggle="modal" data-bs-target="#assignModal"
+                                                    data-template-id="@template.Id" data-template-code="@template.StandardCode">
+                                                <i class="fas fa-hospital"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger" title="Delete" aria-label="Delete template"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                    data-template-id="@template.Id" data-template-code="@template.StandardCode">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fas fa-file fa-3x mb-2"></i><br />
+                                    No document templates found.
+                                    @if (!string.IsNullOrEmpty(searchTerm))
+                                    {
+                                        <span>Try adjusting your search.</span>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="Create">Create the first template</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @if (totalPages > 1)
+                {
+                    <div class="table-footer">
+                        <div class="pagination-info">
+                            Page @currentPage of @totalPages (@totalCount total)
+                        </div>
+                        <nav aria-label="Template table pagination">
+                            <ul class="pagination">
+                                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                    <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-searchTerm="@searchTerm" aria-label="First page">
+                                        <i class="fas fa-angle-double-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" aria-label="Previous page">
+                                        <i class="fas fa-angle-left"></i>
+                                    </a>
+                                </li>
+                                @for (var i = 1; i <= totalPages; i++)
+                                {
+                                    <li class="page-item @(i == currentPage ? "active" : "")">
+                                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchTerm="@searchTerm" aria-label="Page @i">@i</a>
+                                    </li>
+                                }
+                                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" aria-label="Next page">
+                                        <i class="fas fa-angle-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@totalPages" asp-route-searchTerm="@searchTerm" aria-label="Last page">
+                                        <i class="fas fa-angle-double-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalTitle"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-action="Delete" id="deleteForm">
+                <input type="hidden" name="id" id="deleteTemplateId" value="" />
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the document template:</p>
+                    <p class="fw-bold text-danger" id="deleteTemplateCode"></p>
+                    <p class="text-muted small">This action cannot be undone. The template will be soft-deleted.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Assign to All Clinics Modal -->
+<div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="assignModalTitle"><i class="fas fa-hospital me-2"></i>Assign to All Clinics</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-action="AssignToAllClinics" id="assignForm">
+                <input type="hidden" name="id" id="assignTemplateId" value="" />
+                <div class="modal-body">
+                    <p>Assign this template to all active clinics?</p>
+                    <p class="fw-bold text-info" id="assignTemplateCode"></p>
+                    <p class="text-muted small">ClinicDocument records will be created for each active clinic. Existing assignments will not be duplicated.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-info"><i class="fas fa-check me-1"></i>Assign</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    document.getElementById('deleteTemplateId').value = button.getAttribute('data-template-id');
+                    document.getElementById('deleteTemplateCode').textContent = button.getAttribute('data-template-code');
+                });
+            }
+
+            var assignModal = document.getElementById('assignModal');
+            if (assignModal) {
+                assignModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    document.getElementById('assignTemplateId').value = button.getAttribute('data-template-id');
+                    document.getElementById('assignTemplateCode').textContent = button.getAttribute('data-template-code');
+                });
+            }
+        });
+    </script>
+}

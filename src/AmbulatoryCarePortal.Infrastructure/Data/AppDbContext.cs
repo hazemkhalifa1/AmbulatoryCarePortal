@@ -26,6 +26,9 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<HrDocument> HrDocuments { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<AuditTrail> AuditTrails { get; set; }
+    public DbSet<DocumentTemplate> DocumentTemplates { get; set; }
+    public DbSet<ClinicDocument> ClinicDocuments { get; set; }
+    public DbSet<ClinicDocumentAttachment> ClinicDocumentAttachments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,5 +60,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
         modelBuilder.Entity<HrDocument>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<Notification>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<AuditTrail>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<DocumentTemplate>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<ClinicDocument>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<ClinicDocumentAttachment>().HasQueryFilter(x => !x.IsDeleted);
     }
 }

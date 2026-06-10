@@ -1,5 +1,6 @@
 using AutoMapper;
 using AmbulatoryCarePortal.Application.DTOs.Clinic;
+using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.DTOs.PolicyDocument;
 using AmbulatoryCarePortal.Application.DTOs;
 using AmbulatoryCarePortal.Domain.Entities;
@@ -85,6 +86,18 @@ public class MappingProfile : Profile
         CreateMap<Form, FormDto>();
 
         CreateMap<FormVersion, FormVersionDto>();
+
+        // Document Template Mappings
+        CreateMap<DocumentTemplate, CreateDocumentTemplateDto>().ReverseMap();
+        CreateMap<DocumentTemplate, UpdateDocumentTemplateDto>().ReverseMap();
+        CreateMap<DocumentTemplate, DocumentTemplateDto>();
+
+        // ClinicDocument Mappings
+        CreateMap<ClinicDocument, ClinicDocumentDto>();
+        CreateMap<ClinicDocument, ClinicDocumentDetailDto>();
+
+        // ClinicDocumentAttachment Mappings
+        CreateMap<ClinicDocumentAttachment, ClinicDocumentAttachmentDto>();
 
         // User Mappings
         CreateMap<AppUser, UserDto>();

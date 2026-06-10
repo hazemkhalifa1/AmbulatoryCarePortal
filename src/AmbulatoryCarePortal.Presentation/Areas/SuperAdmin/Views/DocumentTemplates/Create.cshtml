@@ -1,0 +1,71 @@
+@model CreateDocumentTemplateDto
+
+@{
+    ViewData["Title"] = "Create Document Template";
+}
+
+<div class="fade-in">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-plus me-2"></i>Create Document Template</h3>
+        </div>
+        <form method="post" asp-action="Create" enctype="multipart/form-data" role="form" aria-label="Create template form">
+            @Html.AntiForgeryToken()
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="StandardCode" class="form-label">Standard Code <span class="text-danger">*</span></label>
+                            <input asp-for="StandardCode" class="form-control" placeholder="e.g. LD1, FMS07" required aria-required="true" />
+                            <span asp-validation-for="StandardCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="DepartmentCategory" class="form-label">Department Category</label>
+                            <input asp-for="DepartmentCategory" class="form-control" placeholder="e.g. Leadership, FMS, LAB" />
+                            <span asp-validation-for="DepartmentCategory" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="TitleEn" class="form-label">Title (English) <span class="text-danger">*</span></label>
+                            <input asp-for="TitleEn" class="form-control" placeholder="Document title in English" required aria-required="true" />
+                            <span asp-validation-for="TitleEn" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="TitleAr" class="form-label">Title (Arabic)</label>
+                            <input asp-for="TitleAr" class="form-control" placeholder="Document title in Arabic" dir="rtl" />
+                            <span asp-validation-for="TitleAr" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Optional description..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="templateFile" class="form-label">Template File (.docx)</label>
+                    <input type="file" name="templateFile" class="form-control" accept=".docx" aria-label="Template .docx file" />
+                    <small class="text-muted">Upload a .docx file with placeholders like {{ClinicName}}, {{LicenseNumber}}, etc.</small>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Create</button>
+                <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times me-1"></i>Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -150,6 +150,7 @@ public class TranslationService : ITranslationService
             ["Nav.AuditLogs"] = "Audit Logs",
             ["Nav.MainMenu"] = "Main Menu",
             ["Nav.Staff"] = "Staff",
+            ["Nav.ManageDocuments"] = "Documents Managment",
             ["Nav.Communication"] = "Communication",
             ["Nav.ManageUsers"] = "User Mangement",
 
@@ -261,6 +262,7 @@ public class TranslationService : ITranslationService
             ["Nav.AuditLogs"] = "سجلات التدقيق",
             ["Nav.MainMenu"] = "القائمة الرئيسية",
             ["Nav.Staff"] = "الموظفين",
+            ["Nav.ManageDocuments"] = "اداره الاوراق",
             ["Nav.ManageUsers"] = "إدارة المستخدمين",
             ["Nav.Communication"] = "التواصل",
             ["Nav.System"] = "النظام",

@@ -1,0 +1,87 @@
+@model UpdateDocumentTemplateDto
+
+@{
+    ViewData["Title"] = "Edit Document Template";
+    var templateFilePath = (string?)ViewBag.TemplateFilePath;
+}
+
+<div class="fade-in">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-edit me-2"></i>Edit Document Template</h3>
+        </div>
+        <form method="post" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" role="form" aria-label="Edit template form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="StandardCode" class="form-label">Standard Code <span class="text-danger">*</span></label>
+                            <input asp-for="StandardCode" class="form-control" required aria-required="true" />
+                            <span asp-validation-for="StandardCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="DepartmentCategory" class="form-label">Department Category</label>
+                            <input asp-for="DepartmentCategory" class="form-control" />
+                            <span asp-validation-for="DepartmentCategory" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="TitleEn" class="form-label">Title (English) <span class="text-danger">*</span></label>
+                            <input asp-for="TitleEn" class="form-control" required aria-required="true" />
+                            <span asp-validation-for="TitleEn" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="TitleAr" class="form-label">Title (Arabic)</label>
+                            <input asp-for="TitleAr" class="form-control" dir="rtl" />
+                            <span asp-validation-for="TitleAr" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="templateFile" class="form-label">Template File (.docx)</label>
+                    <input type="file" name="templateFile" class="form-control" accept=".docx" aria-label="Template .docx file" />
+                    @if (!string.IsNullOrEmpty(templateFilePath))
+                    {
+                        <small class="text-muted">
+                            Current file: <a href="@templateFilePath" target="_blank">@System.IO.Path.GetFileName(templateFilePath)</a>
+                        </small>
+                        <br />
+                    }
+                    <small class="text-muted">Leave empty to keep the existing file. Upload a .docx file with placeholders like {{ClinicName}}, {{LicenseNumber}}, etc.</small>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save</button>
+                <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times me-1"></i>Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

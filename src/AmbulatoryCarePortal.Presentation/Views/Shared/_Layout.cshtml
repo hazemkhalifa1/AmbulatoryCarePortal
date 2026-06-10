@@ -77,6 +77,12 @@
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
+                                <a href="/SuperAdmin/DocumentTemplates" class="nav-link" role="menuitem">
+                                    <i class="nav-icon fas fa-file"></i>
+                                    <p>@Localizer.T("Nav.ManageDocuments")</p>
+                                </a>
+                            </li>
+                            <li class="nav-item" role="none">
                                 <a href="/SuperAdmin/UserManagement" class="nav-link" role="menuitem">
                                     <i class="fa-solid fa-user"></i>
                                     <p>@Localizer.T("Nav.ManageUsers")</p>
@@ -97,6 +103,12 @@
                                 <a href="/ClinicAdmin/Dashboard" class="nav-link" role="menuitem">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <p>@Localizer.T("Nav.Dashboard")</p>
+                                </a>
+                            </li>
+                            <li class="nav-item" role="none">
+                                <a href="/ClinicAdmin/ClinicDocuments" class="nav-link" role="menuitem">
+                                    <i class="nav-icon fas fa-file"></i>
+                                    <p>@Localizer.T("Nav.Documents")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
@@ -231,6 +243,8 @@
                                     var iconMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                                     {
                                         { "dashboard", "fa-tachometer-alt" },
+                                        { "document", "fa-file" },
+                                        { "template", "fa-file" },
                                         { "polic", "fa-file-shield" },
                                         { "kpi", "fa-chart-line" },
                                         { "checklist", "fa-clipboard-check" },

@@ -87,6 +87,22 @@ public class ClinicService : IClinicService
             await CreateDentalDepartmentsAsync(clinic.Id);
         }
 
+        // Auto-assign active document templates to the new clinic
+        var activeTemplates = await _unitOfWork.Repository<DocumentTemplate>().FindAsync(t => t.IsActive);
+        if (activeTemplates.Any())
+        {
+            var clinicDocuments = activeTemplates.Select(t => new ClinicDocument
+            {
+                ClinicId = clinic.Id,
+                DocumentTemplateId = t.Id,
+                DocumentStatus = Domain.Enums.ClinicDocumentStatus.NeedsReview,
+                CreatedAt = DateTime.UtcNow
+            }).ToList();
+
+            await _unitOfWork.Repository<ClinicDocument>().AddRangeAsync(clinicDocuments);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
         return clinic.Id;
     }
 

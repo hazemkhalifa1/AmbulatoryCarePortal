@@ -3,6 +3,7 @@ using FluentValidation;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Application.Mappings;
 using AmbulatoryCarePortal.Application.Services;
+using AmbulatoryCarePortal.Application.Validators;
 
 namespace AmbulatoryCarePortal.Application.DependencyInjection;
 
@@ -35,6 +36,10 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IBulkOperationsService, BulkOperationsService>();
         services.AddScoped<IDataExportService, DataExportService>();
         services.AddScoped<IFormService, FormService>();
+
+        // Document services
+        services.AddScoped<IDocumentTemplateService, DocumentTemplateService>();
+        services.AddScoped<IClinicDocumentService, ClinicDocumentService>();
 
         // Background services
         services.AddHostedService<NotificationBackgroundService>();

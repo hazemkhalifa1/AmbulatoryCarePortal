@@ -1,0 +1,161 @@
+@model List<ClinicDocumentDto>
+
+@{
+    ViewData["Title"] = "Documents";
+    var searchTerm = (string?)ViewBag.SearchTerm;
+    var statusFilter = (string?)ViewBag.StatusFilter;
+}
+
+<div class="fade-in">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-file me-2"></i>Documents</h3>
+            <div class="card-tools">
+                <span class="text-muted small me-3">@Model.Count document(s)</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="Filter documents">
+                <div class="row mb-3">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <div class="input-group-text"><i class="fas fa-search"></i></div>
+                            <input type="text" name="searchTerm" class="form-control" placeholder="Search document, clinic, KPI..." value="@searchTerm" aria-label="Search documents" />
+                            <button type="submit" class="btn btn-primary" aria-label="Search">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            @if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter))
+                            {
+                                <a asp-action="Index" class="btn btn-secondary" aria-label="Clear filters">
+                                    <i class="fas fa-times"></i> Clear
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="statusFilter" class="form-select" onchange="document.getElementById('filterForm').submit()" aria-label="Filter by status">
+                            <option value="">All Statuses</option>
+                            <option value="Complete" selected="@(statusFilter == "Complete")">Complete</option>
+                            <option value="NeedsReview" selected="@(statusFilter == "NeedsReview")">Needs Review</option>
+                            <option value="MissingAttachment" selected="@(statusFilter == "MissingAttachment")">Missing Attachment</option>
+                            <option value="Expired" selected="@(statusFilter == "Expired")">Expired</option>
+                            <option value="Draft" selected="@(statusFilter == "Draft")">Draft</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <div class="table-container">
+                <table class="table table-hover" role="table" aria-label="Clinic documents">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Document</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">View</th>
+                            <th scope="col">Attach</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Expiry</th>
+                            <th scope="col" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            @foreach (var doc in Model)
+                            {
+                                <tr>
+                                    <td><span class="badge badge-info">@doc.StandardCode</span></td>
+                                    <td>
+                                        <span class="fw-bold">@doc.TitleEn</span>
+                                        @if (!string.IsNullOrEmpty(doc.TitleAr))
+                                        {
+                                            <br /><small class="text-muted" dir="rtl">@doc.TitleAr</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(doc.DepartmentCategory))
+                                        {
+                                            @doc.DepartmentCategory
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">&mdash;</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-action="Download" asp-route-id="@doc.Id" class="btn btn-sm btn-outline-primary" title="Download filled document" aria-label="Download document">
+                                            <i class="fas fa-file-word"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@doc.Id" class="text-decoration-none" title="@doc.AttachmentCount attachment(s)" aria-label="View attachments">
+                                            <i class="fas fa-paperclip"></i>
+                                            <span class="badge bg-secondary">@doc.AttachmentCount</span>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var statusBadge = doc.DocumentStatus switch
+                                            {
+                                                ClinicDocumentStatus.Complete => "success",
+                                                ClinicDocumentStatus.NeedsReview => "warning",
+                                                ClinicDocumentStatus.MissingAttachment => "danger",
+                                                ClinicDocumentStatus.Expired => "secondary",
+                                                ClinicDocumentStatus.Draft => "info",
+                                                _ => "secondary"
+                                            };
+                                            var statusLabel = doc.DocumentStatus switch
+                                            {
+                                                ClinicDocumentStatus.Complete => "Complete",
+                                                ClinicDocumentStatus.NeedsReview => "Needs Review",
+                                                ClinicDocumentStatus.MissingAttachment => "Missing Attachment",
+                                                ClinicDocumentStatus.Expired => "Expired",
+                                                ClinicDocumentStatus.Draft => "Draft",
+                                                _ => doc.DocumentStatus.ToString()
+                                            };
+                                        }
+                                        <span class="badge badge-@statusBadge">@statusLabel</span>
+                                    </td>
+                                    <td>
+                                        @if (doc.ExpiryDate.HasValue)
+                                        {
+                                            <span>@doc.ExpiryDate.Value.ToString("yyyy-MM-dd")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">&mdash;</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="actions-cell">
+                                            <a asp-action="Details" asp-route-id="@doc.Id" class="btn btn-sm btn-info" title="Details" aria-label="View details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Download" asp-route-id="@doc.Id" class="btn btn-sm btn-success" title="Download" aria-label="Download document">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    <i class="fas fa-file fa-3x mb-2"></i><br />
+                                    No documents found.
+                                    @if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter))
+                                    {
+                                        <span>Try adjusting your filters.</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
