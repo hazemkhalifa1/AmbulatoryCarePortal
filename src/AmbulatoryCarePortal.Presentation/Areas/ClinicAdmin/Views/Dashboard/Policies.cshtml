@@ -110,10 +110,11 @@
                                     <a href="@Url.Action("Edit", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="@Url.Action("Delete", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")"
-                                       onclick="return confirm('@Localizer.T("Alert.ConfirmDelete")')">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
+                                    <form method="post" asp-area="ClinicAdmin" asp-controller="PolicyManagement" asp-action="Delete" asp-route-id="@doc.Id" style="display: inline;" onsubmit="return confirm('@Localizer.T("Alert.ConfirmDelete")')">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
                                         </div>
                                     </td>
                                 </tr>

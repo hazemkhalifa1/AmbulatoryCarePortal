@@ -1,8 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using AmbulatoryCarePortal.Application.Interfaces;
+using AmbulatoryCarePortal.Application.DTOs.Clinic;
 
 namespace AmbulatoryCarePortal.Presentation.ViewModels;
+
+public class SuperAdminDashboardViewModel
+{
+    public DashboardMetricsViewModel Metrics { get; set; } = new();
+    public List<ClinicDto> RecentClinics { get; set; } = new();
+}
 
 public class CreateClinicViewModel
 {

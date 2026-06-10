@@ -35,10 +35,37 @@ public class DashboardController : Controller
     public async Task<IActionResult> Index()
     {
         var clinics = await _clinicService.GetAllClinicsAsync(1, 10);
-        ViewBag.TotalClinics = clinics.TotalCount;
+
+        // Aggregate metrics across all clinics for dashboard KPI cards
+        var allClinics = await _unitOfWork.Repository<Clinic>().GetAllAsync();
+        var allPolicies = await _unitOfWork.Repository<PolicyDocument>().GetAllAsync();
+
+        var avgCompliance = allClinics.Any()
+            ? Math.Round(allClinics.Average(c => c.ComplianceScore), 1)
+            : 0m;
+
+        var pendingReviews = allPolicies.Count(p =>
+            p.DocumentStatus == DocumentStatus.NeedsReview ||
+            p.DocumentStatus == DocumentStatus.Pending);
+
+        var overdueItems = allPolicies.Count(p =>
+            p.DocumentStatus == DocumentStatus.Expired);
+
+        var viewModel = new SuperAdminDashboardViewModel
+        {
+            Metrics = new DashboardMetricsViewModel
+            {
+                TotalClinics = allClinics.Count(),
+                AverageCompliance = avgCompliance,
+                PendingApprovals = pendingReviews,
+                OverdueItems = overdueItems
+            },
+            RecentClinics = clinics.Data
+        };
+
         ViewBag.PageTitle = _localizer.T("Page.Dashboard");
 
-        return View(clinics.Data);
+        return View(viewModel);
     }
 
     public async Task<IActionResult> Clinics(int page = 1, int pageSize = 10)

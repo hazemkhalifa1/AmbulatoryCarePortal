@@ -1,4 +1,4 @@
-@model List<ClinicDto>
+@model SuperAdminDashboardViewModel
 
 @{
     ViewData["Title"] = Localizer.T("Page.Dashboard");
@@ -27,7 +27,7 @@
             <div class="stat-card-body">
                 <div class="stat-card-icon"><i class="fas fa-hospital"></i></div>
                 <div class="stat-card-content">
-                    <h3>@ViewBag.TotalClinics</h3>
+                    <h3>@Model.Metrics.TotalClinics</h3>
                     <p>@Localizer.T("Dashboard.TotalClinics")</p>
                 </div>
             </div>
@@ -41,11 +41,11 @@
             <div class="stat-card-body">
                 <div class="stat-card-icon"><i class="fas fa-chart-pie"></i></div>
                 <div class="stat-card-content">
-                    <h3>85<sup style="font-size: 16px">%</sup></h3>
+                    <h3>@Model.Metrics.AverageCompliance.ToString("F0")<sup style="font-size: 16px">%</sup></h3>
                     <p>@Localizer.T("Dashboard.AvgCompliance")</p>
                 </div>
             </div>
-            <a href="#" class="stat-card-footer">
+            <a href="/SuperAdmin/Dashboard/Clinics" class="stat-card-footer">
                 @Localizer.T("Button.ViewDetails") <i class="fas fa-arrow-right ms-1"></i>
             </a>
         </div>
@@ -55,11 +55,11 @@
             <div class="stat-card-body">
                 <div class="stat-card-icon"><i class="fas fa-exclamation-triangle"></i></div>
                 <div class="stat-card-content">
-                    <h3>12</h3>
+                    <h3>@Model.Metrics.PendingApprovals</h3>
                     <p>@Localizer.T("Dashboard.PendingReviews")</p>
                 </div>
             </div>
-            <a href="#" class="stat-card-footer">
+            <a href="/SuperAdmin/Dashboard/Clinics" class="stat-card-footer">
                 @Localizer.T("Button.ViewDetails") <i class="fas fa-arrow-right ms-1"></i>
             </a>
         </div>
@@ -69,11 +69,11 @@
             <div class="stat-card-body">
                 <div class="stat-card-icon"><i class="fas fa-calendar-times"></i></div>
                 <div class="stat-card-content">
-                    <h3>5</h3>
+                    <h3>@Model.Metrics.OverdueItems</h3>
                     <p>@Localizer.T("Dashboard.OverdueItems")</p>
                 </div>
             </div>
-            <a href="#" class="stat-card-footer">
+            <a href="/SuperAdmin/Dashboard/Clinics" class="stat-card-footer">
                 @Localizer.T("Button.ViewDetails") <i class="fas fa-arrow-right ms-1"></i>
             </a>
         </div>
@@ -93,7 +93,7 @@
                 </div>
             </div>
             <div class="card-body p-0">
-                @if (Model.Any())
+                @if (Model.RecentClinics.Any())
                 {
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
@@ -106,7 +106,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var clinic in Model.Take(5))
+                                @foreach (var clinic in Model.RecentClinics.Take(5))
                                 {
                                     <tr>
                                         <td>

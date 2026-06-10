@@ -145,11 +145,14 @@
                         </a>
                     </div>
                     <div class="col-md-6">
-                        <a href="/SuperAdmin/DocumentTemplates/AssignToAllClinics/@Model.Id" class="action-btn action-btn-primary">
-                            <i class="fas fa-file-upload"></i>
-                            <span>@Localizer.T("Clinic.AssignTemplates")</span>
-                            <small>@Localizer.T("Dashboard.Action.LinkTemplates")</small>
-                        </a>
+                        <form method="post" asp-area="SuperAdmin" asp-controller="DocumentTemplates" asp-action="AssignToAllClinics" asp-route-id="@Model.Id" style="margin: 0; padding: 0;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="action-btn action-btn-primary" style="width: 100%; cursor: pointer; font-family: inherit; font-size: inherit; line-height: inherit; text-align: inherit;">
+                                <i class="fas fa-file-upload"></i>
+                                <span>@Localizer.T("Clinic.AssignTemplates")</span>
+                                <small>@Localizer.T("Dashboard.Action.LinkTemplates")</small>
+                            </button>
+                        </form>
                     </div>
                     <div class="col-md-6">
                         <a href="/SuperAdmin/Dashboard/Clinics" class="action-btn action-btn-secondary">
