@@ -11,7 +11,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1 class="audit-hero-title"><i class="fas fa-history me-2"></i>@Localizer.T("Page.AuditLog")</h1>
-                <p class="audit-hero-subtitle mb-0">Comprehensive activity log with real-time monitoring and search</p>
+                <p class="audit-hero-subtitle mb-0">@Localizer.T("Audit.Subtitle")</p>
             </div>
             <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinicId" class="btn btn-light btn-lg">
                 <i class="fas fa-arrow-left me-2"></i>@Localizer.T("Common.Back")
@@ -30,7 +30,7 @@
                 </div>
                 <div class="stat-card-content">
                     <h3>@Model.TotalCount</h3>
-                    <p>Total Entries</p>
+                    <p>@Localizer.T("Audit.TotalEntries")</p>
                 </div>
             </div>
         </div>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="stat-card-content">
                     <h3>@Model.Data.Count(d => d.ActionType == AuditActionType.Create)</h3>
-                    <p>Creations</p>
+                    <p>@Localizer.T("Audit.Creations")</p>
                 </div>
             </div>
         </div>
@@ -56,7 +56,7 @@
                 </div>
                 <div class="stat-card-content">
                     <h3>@Model.Data.Count(d => d.ActionType == AuditActionType.Update)</h3>
-                    <p>Updates</p>
+                    <p>@Localizer.T("Audit.Updates")</p>
                 </div>
             </div>
         </div>
@@ -69,7 +69,7 @@
                 </div>
                 <div class="stat-card-content">
                     <h3>@Model.Data.Count(d => d.ActionType == AuditActionType.Delete)</h3>
-                    <p>Deletions</p>
+                    <p>@Localizer.T("Audit.Deletions")</p>
                 </div>
             </div>
         </div>
@@ -86,20 +86,20 @@
                                 <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("Search.Placeholder")" value="@Context.Request.Query["searchTerm"]" />
             </div>
             <div class="col-md-2">
-                <label class="form-label">Action Type</label>
+                <label class="form-label">@Localizer.T("Audit.ActionType")</label>
                 <select name="actionTypeFilter" class="form-select">
                     <option value="">@Localizer.T("Common.All")</option>
                     <option value="Create" selected="@(Context.Request.Query["actionTypeFilter"] == "Create")">@Localizer.T("Common.Create")</option>
-                    <option value="Update" selected="@(Context.Request.Query["actionTypeFilter"] == "Update")">Update</option>
+                    <option value="Update" selected="@(Context.Request.Query["actionTypeFilter"] == "Update")">@Localizer.T("Audit.Update")</option>
                     <option value="Delete" selected="@(Context.Request.Query["actionTypeFilter"] == "Delete")">@Localizer.T("Common.Delete")</option>
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label">From</label>
+                <label class="form-label">@Localizer.T("Audit.From")</label>
                 <input type="date" name="dateFrom" class="form-control" value="@Context.Request.Query["dateFrom"]" />
             </div>
             <div class="col-md-2">
-                <label class="form-label">To</label>
+                <label class="form-label">@Localizer.T("Audit.To")</label>
                 <input type="date" name="dateTo" class="form-control" value="@Context.Request.Query["dateTo"]" />
             </div>
             <div class="col-md-3">
@@ -126,11 +126,11 @@
                     <thead>
                         <tr>
                             <th>@Localizer.T("Common.Date")</th>
-                            <th>Action</th>
+                            <th>@Localizer.T("Audit.Action")</th>
                             <th>@Localizer.T("Common.Description")</th>
-                            <th>Target</th>
-                            <th>User</th>
-                            <th>IP Address</th>
+                            <th>@Localizer.T("Audit.Target")</th>
+                            <th>@Localizer.T("Audit.User")</th>
+                            <th>@Localizer.T("Audit.IP")</th>
                             <th>@Localizer.T("Common.Details")</th>
                         </tr>
                     </thead>
@@ -146,13 +146,13 @@
                                             <span class="badge badge-audit badge-create"><i class="fas fa-plus-circle me-1"></i>@Localizer.T("Common.Create")</span>
                                             break;
                                         case AuditActionType.Update:
-                                            <span class="badge badge-audit badge-update"><i class="fas fa-edit me-1"></i>Update</span>
+                                            <span class="badge badge-audit badge-update"><i class="fas fa-edit me-1"></i>@Localizer.T("Audit.Update")</span>
                                             break;
                                         case AuditActionType.Delete:
                                             <span class="badge badge-audit badge-delete"><i class="fas fa-trash me-1"></i>@Localizer.T("Common.Delete")</span>
                                             break;
                                         case AuditActionType.Login:
-                                            <span class="badge badge-audit badge-login"><i class="fas fa-sign-in-alt me-1"></i>Login</span>
+                                            <span class="badge badge-audit badge-login"><i class="fas fa-sign-in-alt me-1"></i>@Localizer.T("Audit.Login")</span>
                                             break;
                                         default:
                                             <span class="badge badge-audit badge-default">@log.ActionType</span>
@@ -177,49 +177,49 @@
                                                 <div class="modal-body">
                                                     <div class="audit-detail-grid">
                                                         <div class="audit-detail-item">
-                                                            <span class="detail-label">Date</span>
+                                                            <span class="detail-label">@Localizer.T("Audit.Date")</span>
                                                             <span class="detail-value">@log.ActionDate.ToString("dd/MM/yyyy HH:mm:ss")</span>
                                                         </div>
                                                         <div class="audit-detail-item">
-                                                            <span class="detail-label">Action</span>
+                                                            <span class="detail-label">@Localizer.T("Audit.Action")</span>
                                                             <span class="detail-value">@log.ActionType</span>
                                                         </div>
                                                         <div class="audit-detail-item">
-                                                            <span class="detail-label">Description</span>
+                                                            <span class="detail-label">@Localizer.T("Audit.Description")</span>
                                                             <span class="detail-value">@log.Description</span>
                                                         </div>
                                                         <div class="audit-detail-item">
-                                                            <span class="detail-label">Target Type</span>
+                                                            <span class="detail-label">@Localizer.T("Audit.TargetType")</span>
                                                             <span class="detail-value">@log.TargetObjectType</span>
                                                         </div>
                                                         <div class="audit-detail-item">
-                                                            <span class="detail-label">Target ID</span>
+                                                            <span class="detail-label">@Localizer.T("Audit.TargetId")</span>
                                                             <span class="detail-value">@log.TargetObjectId</span>
                                                         </div>
                                                         <div class="audit-detail-item">
-                                                            <span class="detail-label">User</span>
+                                                            <span class="detail-label">@Localizer.T("Audit.User")</span>
                                                             <span class="detail-value">@log.UserName</span>
                                                         </div>
                                                         <div class="audit-detail-item">
-                                                            <span class="detail-label">Clinic</span>
+                                                            <span class="detail-label">@Localizer.T("Audit.Clinic")</span>
                                                             <span class="detail-value">@log.ClinicName</span>
                                                         </div>
                                                         <div class="audit-detail-item">
-                                                            <span class="detail-label">IP Address</span>
+                                                            <span class="detail-label">@Localizer.T("Audit.IP")</span>
                                                             <span class="detail-value"><code>@log.IpAddress</code></span>
                                                         </div>
                                                     </div>
                                                     @if (!string.IsNullOrEmpty(log.OldValues))
                                                     {
                                                         <div class="mt-3">
-                                                            <h6>Old Values</h6>
+                                                            <h6>@Localizer.T("Audit.OldValues")</h6>
                                                             <pre class="audit-pre">@log.OldValues</pre>
                                                         </div>
                                                     }
                                                     @if (!string.IsNullOrEmpty(log.NewValues))
                                                     {
                                                         <div class="mt-3">
-                                                            <h6>New Values</h6>
+                                                            <h6>@Localizer.T("Audit.NewValues")</h6>
                                                             <pre class="audit-pre">@log.NewValues</pre>
                                                         </div>
                                                     }

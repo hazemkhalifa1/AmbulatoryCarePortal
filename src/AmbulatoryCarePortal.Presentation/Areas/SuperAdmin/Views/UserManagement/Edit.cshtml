@@ -16,7 +16,7 @@
                     <input type="hidden" asp-for="UserId" />
 
                     <div class="form-group">
-                        <label asp-for="Email" class="form-label">Email <span class="required">*</span></label>
+                        <label asp-for="Email" class="form-label">@Localizer.T("User.Email") <span class="required">*</span></label>
                         <div class="input-group">
                             <div class="input-group-text"><i class="fas fa-envelope"></i></div>
                             <input asp-for="Email" class="form-control" type="email" required aria-required="true" />
@@ -25,7 +25,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="FullName" class="form-label">Full Name <span class="required">*</span></label>
+                        <label asp-for="FullName" class="form-label">@Localizer.T("User.FullName") <span class="required">*</span></label>
                         <div class="input-group">
                             <div class="input-group-text"><i class="fas fa-user"></i></div>
                             <input asp-for="FullName" class="form-control" required aria-required="true" />
@@ -34,7 +34,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                        <label asp-for="PhoneNumber" class="form-label">@Localizer.T("User.Phone")</label>
                         <div class="input-group">
                             <div class="input-group-text"><i class="fas fa-phone"></i></div>
                             <input asp-for="PhoneNumber" class="form-control" />
@@ -42,9 +42,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="SelectedRole" class="form-label">Role <span class="required">*</span></label>
+                        <label asp-for="SelectedRole" class="form-label">@Localizer.T("User.Role") <span class="required">*</span></label>
                         <select asp-for="SelectedRole" class="form-control" required aria-required="true">
-                            <option value="">-- Select Role --</option>
+                            <option value="">@Localizer.T("User.SelectRole")</option>
                             @if (Model.AvailableRoles != null)
                             {
                                 @foreach (var role in Model.AvailableRoles)
@@ -58,9 +58,9 @@
                     @if (Model.AvailableClinics != null && Model.AvailableClinics.Any())
                     {
                         <div class="form-group">
-                            <label asp-for="ClinicId" class="form-label">Clinic</label>
+                            <label asp-for="ClinicId" class="form-label">@Localizer.T("User.Clinic")</label>
                             <select asp-for="ClinicId" class="form-control">
-                                <option value="">-- Select Clinic --</option>
+                                <option value="">@Localizer.T("User.SelectClinic")</option>
                                 @foreach (var clinic in Model.AvailableClinics)
                                 {
                                     <option value="@clinic.Id" selected="@(clinic.Id == Model.ClinicId)">@clinic.Name</option>
@@ -77,26 +77,26 @@
                     </div>
 
                     <hr />
-                    <h5><i class="fas fa-key"></i> Password Management</h5>
+                    <h5><i class="fas fa-key"></i> @Localizer.T("User.PasswordManagement")</h5>
                     <div class="form-group">
-                        <label class="form-label">New Password</label>
+                        <label class="form-label">@Localizer.T("User.NewPassword")</label>
                         <div class="input-group">
                             <div class="input-group-text"><i class="fas fa-lock"></i></div>
-                            <input id="newPassword" type="password" class="form-control" aria-label="New password" />
+                            <input id="newPassword" type="password" class="form-control" aria-label="@Localizer.T("User.NewPassword")" />
                         </div>
-                        <button type="button" class="btn btn-sm btn-info mt-2" onclick="resetPassword()" aria-label="Reset password">
-                            <i class="fas fa-key"></i> Reset Password
+                        <button type="button" class="btn btn-sm btn-info mt-2" onclick="resetPassword()" aria-label="@Localizer.T("User.ResetPassword")">
+                            <i class="fas fa-key"></i> @Localizer.T("User.ResetPassword")
                         </button>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Created</label>
+                        <label class="form-label">@Localizer.T("User.Created")</label>
                         <p class="form-control-static">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
                     </div>
                     @if (Model.LastLoginAt.HasValue)
                     {
                         <div class="form-group">
-                            <label class="form-label">Last Login</label>
+                            <label class="form-label">@Localizer.T("User.LastLogin")</label>
                             <p class="form-control-static">@Model.LastLoginAt.Value.ToString("dd/MM/yyyy HH:mm")</p>
                         </div>
                     }
@@ -116,10 +116,10 @@
         function resetPassword() {
             var newPassword = document.getElementById('newPassword').value;
             if (!newPassword || newPassword.length < 8) {
-                alert('Password must be at least 8 characters.');
+                alert('@Localizer.T("Validation.PasswordMinLength")');
                 return;
             }
-            if (confirm('Are you sure you want to reset the password for @Model.Email?')) {
+            if (confirm('@Localizer.T("User.ConfirmPasswordReset") @Model.Email?')) {
                 var form = document.createElement('form');
                 form.method = 'post';
                 form.action = '/SuperAdmin/UserManagement/ResetPassword/@Model.UserId';

@@ -142,7 +142,7 @@
                                 @for (int i = 1; i <= Model.TotalPages; i++)
                                 {
                                     <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                        <a href="?page=@i&pageSize=@Model.PageSize" class="page-link" aria-label="Page @i" aria-current="@(i == Model.PageNumber ? "page" : null)">@i</a>
+                                        <a href="?page=@i&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Page") @i" aria-current="@(i == Model.PageNumber ? "page" : null)">@i</a>
                                     </li>
                                 }
 

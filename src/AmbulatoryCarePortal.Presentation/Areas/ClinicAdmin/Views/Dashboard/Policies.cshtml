@@ -57,25 +57,25 @@
                                         @switch (doc.DocumentStatus)
                                         {
                                             case DocumentStatus.Draft:
-                                                <span class="badge badge-secondary">Draft</span>
+                                                <span class="badge badge-secondary">@Localizer.T("Policy.Draft")</span>
                                                 break;
                                             case DocumentStatus.NeedsReview:
-                                                <span class="badge badge-info">Needs Review</span>
+                                                <span class="badge badge-info">@Localizer.T("Policy.NeedsReview")</span>
                                                 break;
                                             case DocumentStatus.Pending:
-                                                <span class="badge badge-warning">Pending</span>
+                                                <span class="badge badge-warning">@Localizer.T("Policy.Pending")</span>
                                                 break;
                                             case DocumentStatus.Approved:
-                                                <span class="badge badge-success">Approved</span>
+                                                <span class="badge badge-success">@Localizer.T("Policy.Approved")</span>
                                                 break;
                                             case DocumentStatus.Complete:
-                                                <span class="badge badge-primary">Complete</span>
+                                                <span class="badge badge-primary">@Localizer.T("Policy.Complete")</span>
                                                 break;
                                             case DocumentStatus.MissingAttachment:
-                                                <span class="badge badge-danger">Missing Attachment</span>
+                                                <span class="badge badge-danger">@Localizer.T("Policy.MissingAttachment")</span>
                                                 break;
                                             case DocumentStatus.Expired:
-                                                <span class="badge badge-secondary">Expired</span>
+                                                <span class="badge badge-secondary">@Localizer.T("Policy.Expired")</span>
                                                 break;
                                             default:
                                                 <span class="badge badge-secondary">@doc.DocumentStatus</span>
@@ -90,16 +90,16 @@
                                             @doc.ExpiryDate.Value.ToString("dd/MM/yyyy")
                                             if (doc.ExpiryDate.Value <= DateTime.UtcNow)
                                             {
-                                                <br /><span class="badge badge-danger">Expired</span>
+                                                <br /><span class="badge badge-danger">@Localizer.T("Policy.Expired")</span>
                                             }
                                             else if (doc.ExpiryDate.Value <= DateTime.UtcNow.AddDays(30))
                                             {
-                                                <br /><span class="badge badge-warning">Expiring Soon</span>
+                                                <br /><span class="badge badge-warning">@Localizer.T("Policy.ExpiringSoon")</span>
                                             }
                                         }
                                         else
                                         {
-                                            <span class="text-muted">N/A</span>
+                                            <span class="text-muted">@Localizer.T("Policy.NA")</span>
                                         }
                                     </td>
                                     <td>

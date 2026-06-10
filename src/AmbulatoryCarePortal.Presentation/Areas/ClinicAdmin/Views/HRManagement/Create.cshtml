@@ -86,7 +86,7 @@
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                        <input asp-for="Email" class="form-control" type="email" placeholder="email@example.com" />
+                                        <input asp-for="Email" class="form-control" type="email" placeholder="@Localizer.T("HR.EmailPlaceholder")" />
                                     </div>
                                     <span asp-validation-for="Email" class="invalid-feedback"></span>
                                 </div>
@@ -98,7 +98,7 @@
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                        <input asp-for="PhoneNumber" class="form-control" placeholder="+966 5X XXX XXXX" />
+                                        <input asp-for="PhoneNumber" class="form-control" placeholder="@Localizer.T("HR.PhonePlaceholder")" />
                                     </div>
                                     <span asp-validation-for="PhoneNumber" class="invalid-feedback"></span>
                                 </div>

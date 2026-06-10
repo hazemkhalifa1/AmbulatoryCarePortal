@@ -1,26 +1,26 @@
 @model List<KPIComparisonViewModel>
 
 @{
-    ViewData["Title"] = "Compare KPIs";
+    ViewData["Title"] = @Localizer.T("Page.CompareKPIs");
 }
 
 <div class="row fade-in">
     <div class="col-sm-6">
-        <h3><i class="fas fa-arrows-alt-h text-warning me-2"></i>Compare KPIs</h3>
+        <h3><i class="fas fa-arrows-alt-h text-warning me-2"></i>@Localizer.T("Page.CompareKPIs")</h3>
     </div>
     <div class="col-sm-6 text-end">
         <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i>Back to List
+            <i class="fas fa-arrow-left me-1"></i>@Localizer.T("HR.BackToList")
         </a>
     </div>
 </div>
 
 <div class="card card-warning">
     <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-chart-simple"></i> KPI Performance Comparison</h3>
+        <h3 class="card-title"><i class="fas fa-chart-simple"></i> @Localizer.T("Page.CompareKPIs")</h3>
         <div class="card-tools">
-            <span class="badge badge-success me-1"><i class="fas fa-check-circle"></i> On Target</span>
-            <span class="badge badge-danger"><i class="fas fa-exclamation-circle"></i> Below Target</span>
+            <span class="badge badge-success me-1"><i class="fas fa-check-circle"></i> @Localizer.T("KPI.OnTarget")</span>
+            <span class="badge badge-danger"><i class="fas fa-exclamation-circle"></i> @Localizer.T("KPI.BelowTarget")</span>
         </div>
     </div>
     <div class="card-body p-0">
@@ -28,12 +28,12 @@
             <table class="table table-hover" id="compareTable">
                 <thead>
                     <tr>
-                        <th style="width:50px;">#</th>
-                        <th>KPI Name</th>
-                        <th class="text-end">Target</th>
-                        <th class="text-end">Actual</th>
-                        <th class="text-center">Achievement %</th>
-                        <th class="text-center">Status</th>
+                        <th style="width:50px;">@Localizer.T("KPI.ItemNumber")</th>
+                        <th>@Localizer.T("KPI.KPIName")</th>
+                        <th class="text-end">@Localizer.T("KPI.TargetValue")</th>
+                        <th class="text-end">@Localizer.T("KPI.Actual")</th>
+                        <th class="text-center">@Localizer.T("KPI.AchievementPercent")</th>
+                        <th class="text-center">@Localizer.T("Common.Status")</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,7 +66,7 @@
                                         <div class="progress flex-grow-1" style="height:10px;">
                                             <div class="progress-bar @barColor" role="progressbar"
                                                  style="width:@Math.Min(item.AchievementPercentage, 100)%"
-                                                 aria-valuenow="@item.AchievementPercentage" aria-valuemin="0" aria-valuemax="100" aria-label="Achievement @item.AchievementPercentage.ToString("N2")%">
+                                                 aria-valuenow="@item.AchievementPercentage" aria-valuemin="0" aria-valuemax="100" aria-label="@Localizer.T("KPI.AchievementPercent") @item.AchievementPercentage.ToString("N2")%">
                                             </div>
                                         </div>
                                         <span class="fw-bold text-nowrap" style="min-width:70px;">
@@ -78,13 +78,13 @@
                                     @if (isOnTarget)
                                     {
                                         <span class="badge badge-success fs-6 px-3 py-2">
-                                            <i class="fas fa-check-circle me-1"></i>On Target
+                                            <i class="fas fa-check-circle me-1"></i>@Localizer.T("KPI.OnTarget")
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="badge badge-danger fs-6 px-3 py-2">
-                                            <i class="fas fa-exclamation-circle me-1"></i>Below Target
+                                            <i class="fas fa-exclamation-circle me-1"></i>@Localizer.T("KPI.BelowTarget")
                                         </span>
                                     }
                                 </td>
@@ -98,9 +98,9 @@
                             <td colspan="6">
                                 <div class="empty-state">
                                     <i class="fas fa-chart-simple empty-icon"></i>
-                                    <h4>No KPIs Available</h4>
-                                    <p>No KPIs available for comparison.</p>
-                                    <a asp-action="Index" class="btn btn-primary">View KPIs</a>
+                                    <h4>@Localizer.T("KPI.NoKPIsMatch")</h4>
+                                    <p>@Localizer.T("KPI.NoKPIsMatch")</p>
+                                    <a asp-action="Index" class="btn btn-primary">@Localizer.T("Common.View")</a>
                                 </div>
                             </td>
                         </tr>
@@ -114,15 +114,15 @@
         <div class="card-footer">
             <div class="row text-center small">
                 <div class="col-md-4">
-                    <span class="text-muted">Total KPIs:</span>
+                    <span class="text-muted">@Localizer.T("KPI.TotalKPIs"):</span>
                     <span class="fw-semibold ms-1">@Model.Count</span>
                 </div>
                 <div class="col-md-4">
-                    <span class="text-muted">On Target:</span>
+                    <span class="text-muted">@Localizer.T("KPI.OnTargetCount"):</span>
                     <span class="fw-semibold text-success ms-1">@Model.Count(m => m.Status == "On Target")</span>
                 </div>
                 <div class="col-md-4">
-                    <span class="text-muted">Below Target:</span>
+                    <span class="text-muted">@Localizer.T("KPI.BelowTargetCount"):</span>
                     <span class="fw-semibold text-danger ms-1">@Model.Count(m => m.Status == "Below Target")</span>
                 </div>
             </div>

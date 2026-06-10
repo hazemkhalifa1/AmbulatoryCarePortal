@@ -246,7 +246,7 @@
                                                         <form method="post" asp-action="VerifyDocument" style="display:inline">
                                                             @Html.AntiForgeryToken()
                                                             <input type="hidden" name="documentId" value="@doc.Id" />
-                                                            <button type="submit" class="btn btn-sm btn-success" title="Verify" aria-label="Verify document">
+                                                            <button type="submit" class="btn btn-sm btn-success" title="@Localizer.T("HR.Verify")" aria-label="@Localizer.T("HR.VerifyDocument")">
                                                                 <i class="fas fa-check-circle"></i>
                                                             </button>
                                                         </form>

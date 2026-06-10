@@ -1,19 +1,19 @@
 @model KPIAnalyticsViewModel
 
 @{
-    ViewData["Title"] = "KPI Analytics";
+    ViewData["Title"] = @Localizer.T("Page.KPIAnalytics");
 }
 
 <div class="row fade-in">
     <div class="col-sm-6">
-        <h3><i class="fas fa-chart-bar text-info me-2"></i>KPI Analytics</h3>
+        <h3><i class="fas fa-chart-bar text-info me-2"></i>@Localizer.T("Page.KPIAnalytics")</h3>
     </div>
     <div class="col-sm-6 text-end">
         <a asp-action="EnterData" asp-route-kpiId="@Model.KPI.Id" class="btn btn-success me-1">
-            <i class="fas fa-pen me-1"></i>Enter Data
+            <i class="fas fa-pen me-1"></i>@Localizer.T("Page.EnterKPIData")
         </a>
         <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i>Back to List
+            <i class="fas fa-arrow-left me-1"></i>@Localizer.T("HR.BackToList")
         </a>
     </div>
 </div>
@@ -32,26 +32,26 @@
         <div class="row">
             <div class="col-md-3">
                 <div class="detail-row">
-                    <span class="detail-label">Target Value</span>
+                    <span class="detail-label">@Localizer.T("KPI.TargetValue")</span>
                     <span class="detail-value fs-5 fw-bold">@Model.KPI.TargetValue.ToString("N2")</span>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="detail-row">
-                    <span class="detail-label">Frequency</span>
+                    <span class="detail-label">@Localizer.T("Common.Frequency")</span>
                     <span class="detail-value"><span class="badge badge-secondary fs-6">@Model.KPI.Frequency</span></span>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="detail-row">
-                    <span class="detail-label">Total Entries</span>
+                    <span class="detail-label">@Localizer.T("KPI.TotalEntries")</span>
                     <span class="detail-value fs-5 fw-bold">@Model.TotalEntries</span>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="detail-row">
-                    <span class="detail-label">Last Entry</span>
-                    <span class="detail-value fw-bold">@(Model.LastEntryDate != DateTime.MinValue ? Model.LastEntryDate.ToString("MMM dd, yyyy") : "N/A")</span>
+                    <span class="detail-label">@Localizer.T("KPI.LastEntry")</span>
+                    <span class="detail-value fw-bold">@(Model.LastEntryDate != DateTime.MinValue ? Model.LastEntryDate.ToString("MMM dd, yyyy") : Localizer.T("HR.NA"))</span>
                 </div>
             </div>
         </div>
@@ -63,7 +63,7 @@
         <div class="small-box bg-success">
             <div class="inner">
                 <h3>@Model.AverageAchievement.ToString("N2")%</h3>
-                <p>Average Achievement</p>
+                <p>@Localizer.T("KPI.AverageAchievement")</p>
             </div>
             <div class="icon"><i class="fas fa-percentage"></i></div>
         </div>
@@ -72,7 +72,7 @@
         <div class="small-box bg-info">
             <div class="inner">
                 <h3>@Model.HighestAchievement.ToString("N2")%</h3>
-                <p>Highest Achievement</p>
+                <p>@Localizer.T("KPI.HighestAchievement")</p>
             </div>
             <div class="icon"><i class="fas fa-arrow-up"></i></div>
         </div>
@@ -81,7 +81,7 @@
         <div class="small-box bg-warning">
             <div class="inner">
                 <h3>@Model.LowestAchievement.ToString("N2")%</h3>
-                <p>Lowest Achievement</p>
+                <p>@Localizer.T("KPI.LowestAchievement")</p>
             </div>
             <div class="icon"><i class="fas fa-arrow-down"></i></div>
         </div>
@@ -104,7 +104,7 @@
                     }
                     @(Model.TrendPercentage >= 0 ? "+" : "")@Model.TrendPercentage.ToString("N2")%
                 </h3>
-                <p>Trend (@Model.Trend)</p>
+                <p>@Localizer.T("KPI.Trend") (@Model.Trend)</p>
             </div>
             <div class="icon">
                 @if (Model.Trend == "Increasing")
@@ -126,19 +126,19 @@
 
 <div class="card card-info">
     <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-table"></i> Entry History</h3>
+        <h3 class="card-title"><i class="fas fa-table"></i> @Localizer.T("KPI.EntryHistory")</h3>
     </div>
     <div class="card-body p-0">
         <div class="table-container">
             <table class="table table-hover" id="entryHistoryTable">
                 <thead>
                     <tr>
-                        <th>Period</th>
-                        <th class="text-end">Actual Value</th>
-                        <th class="text-end">Target Value</th>
-                        <th class="text-center">Achievement %</th>
-                        <th>Notes</th>
-                        <th class="text-center">Actions</th>
+                        <th>@Localizer.T("Common.Period")</th>
+                        <th class="text-end">@Localizer.T("KPI.ActualValue")</th>
+                        <th class="text-end">@Localizer.T("KPI.TargetValue")</th>
+                        <th class="text-center">@Localizer.T("KPI.AchievementPercent")</th>
+                        <th>@Localizer.T("Common.Description")</th>
+                        <th class="text-center">@Localizer.T("Common.Actions")</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -162,7 +162,7 @@
                                         <div class="progress flex-grow-1" style="height:6px;">
                                             <div class="progress-bar @barColor" role="progressbar"
                                                  style="width:@Math.Min(pct, 100)%"
-                                                 aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100" aria-label="Achievement @pct.ToString("N2")%">
+                                                 aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100" aria-label="@Localizer.T("KPI.AchievementPercent") @pct.ToString("N2")%">
                                             </div>
                                         </div>
                                         <small class="text-nowrap fw-semibold">@pct.ToString("N2")%</small>
@@ -172,7 +172,7 @@
                                 <td class="text-center">
                                     <div class="actions-cell">
                                         <a asp-action="Export" asp-route-kpiId="@Model.KPI.Id" asp-route-format="excel"
-                                           class="btn btn-sm btn-secondary" title="Export" aria-label="Export entry">
+                                           class="btn btn-sm btn-secondary" title="@Localizer.T("KPI.Export")" aria-label="@Localizer.T("KPI.Export")">
                                             <i class="fas fa-download"></i>
                                         </a>
                                     </div>
@@ -186,9 +186,9 @@
                             <td colspan="6">
                                 <div class="empty-state">
                                     <i class="fas fa-database empty-icon"></i>
-                                    <h4>No Entries Recorded</h4>
-                                    <p>No entries recorded yet for this KPI.</p>
-                                    <a asp-action="EnterData" asp-route-kpiId="@Model.KPI.Id" class="btn btn-success">Enter First Data Entry</a>
+                                    <h4>@Localizer.T("KPI.NoEntries")</h4>
+                                    <p>@Localizer.T("KPI.NoEntries")</p>
+                                    <a asp-action="EnterData" asp-route-kpiId="@Model.KPI.Id" class="btn btn-success">@Localizer.T("Page.EnterKPIData")</a>
                                 </div>
                             </td>
                         </tr>
@@ -200,7 +200,7 @@
     @if (Model.TotalEntries > 12)
     {
         <div class="card-footer text-center text-muted small">
-            Showing latest 12 of @Model.TotalEntries entries
+            @Localizer.T("KPI.LatestEntriesNote", Model.TotalEntries)
         </div>
     }
 </div>

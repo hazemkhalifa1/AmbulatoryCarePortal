@@ -1,13 +1,13 @@
 @model CreateChecklistViewModel
 
 @{
-    ViewData["Title"] = "Create Checklist";
+    ViewData["Title"] = Localizer.T("Page.CreateChecklist");
 }
 
 <div class="row fade-in">
     <div class="col-sm-6">
         <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i> Back to List
+            <i class="fas fa-arrow-left me-1"></i> @Localizer.T("HR.BackToList")
         </a>
     </div>
 </div>
@@ -17,7 +17,7 @@
         <div class="col-md-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-clipboard-list"></i> Checklist Details</h3>
+                    <h3 class="card-title"><i class="fas fa-clipboard-list"></i> @Localizer.T("Checklist.TemplateLabel")</h3>
                 </div>
                 <div class="card-body">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
@@ -25,14 +25,14 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="Name" class="form-label">Name <span class="required">*</span></label>
-                                <input asp-for="Name" class="form-control" placeholder="Enter checklist name" required>
+                                <label asp-for="Name" class="form-label">@Localizer.T("Common.Name") <span class="required">*</span></label>
+                                <input asp-for="Name" class="form-control" placeholder="@Localizer.T("Checklist.NamePlaceholder")" required>
                                 <span asp-validation-for="Name" class="invalid-feedback"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="NameAr" class="form-label">Name (Arabic) <span dir="rtl">الاسم</span></label>
+                                <label asp-for="NameAr" class="form-label">@Localizer.T("Checklist.NameAr") <span dir="rtl">الاسم</span></label>
                                 <input asp-for="NameAr" class="form-control" placeholder="أدخل اسم القائمة" dir="rtl">
                                 <span asp-validation-for="NameAr" class="invalid-feedback"></span>
                             </div>
@@ -42,9 +42,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="Frequency" class="form-label">Frequency <span class="required">*</span></label>
+                                <label asp-for="Frequency" class="form-label">@Localizer.T("Common.Frequency") <span class="required">*</span></label>
                                 <select asp-for="Frequency" class="form-select">
-                                    <option value="">-- Select Frequency --</option>
+                                    <option value="">@Localizer.T("Checklist.SelectFrequency")</option>
                                     @if (Model.Frequencies.Any())
                                     {
                                         @foreach (var freq in Model.Frequencies)
@@ -54,9 +54,9 @@
                                     }
                                     else
                                     {
-                                        <option value="Daily">Daily</option>
-                                        <option value="Weekly">Weekly</option>
-                                        <option value="Monthly">Monthly</option>
+                                        <option value="Daily">@Localizer.T("Checklist.Daily")</option>
+                                        <option value="Weekly">@Localizer.T("Checklist.Weekly")</option>
+                                        <option value="Monthly">@Localizer.T("Checklist.Monthly")</option>
                                     }
                                 </select>
                                 <span asp-validation-for="Frequency" class="invalid-feedback"></span>
@@ -64,9 +64,9 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="DepartmentId" class="form-label">Department</label>
+                                <label asp-for="DepartmentId" class="form-label">@Localizer.T("HR.Department")</label>
                                 <select asp-for="DepartmentId" class="form-select">
-                                    <option value="">-- All Departments --</option>
+                                    <option value="">@Localizer.T("Common.All")</option>
                                     @if (Model.AvailableDepartments.Any())
                                     {
                                         @foreach (var dept in Model.AvailableDepartments)
@@ -81,8 +81,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Description" class="form-label">Description</label>
-                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Optional description..."></textarea>
+                        <label asp-for="Description" class="form-label">@Localizer.T("Common.Description")</label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="@Localizer.T("Checklist.DescriptionPlaceholder")"></textarea>
                         <span asp-validation-for="Description" class="invalid-feedback"></span>
                     </div>
                 </div>
@@ -92,10 +92,10 @@
 
     <div class="card card-primary">
         <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-list"></i> Checklist Items</h3>
+            <h3 class="card-title"><i class="fas fa-list"></i> @Localizer.T("Checklist.Items")</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-primary btn-sm" onclick="addItem()">
-                    <i class="fas fa-plus"></i> Add Item
+                    <i class="fas fa-plus"></i> @Localizer.T("Checklist.AddItem")
                 </button>
             </div>
         </div>
@@ -105,10 +105,10 @@
                     <thead>
                         <tr>
                             <th style="width: 50px;">#</th>
-                            <th>Question Text <span class="required">*</span></th>
-                            <th>Question Text (Arabic)</th>
-                            <th style="width: 80px;">Order</th>
-                            <th style="width: 80px;">Weight</th>
+                            <th>@Localizer.T("Checklist.QuestionText") <span class="required">*</span></th>
+                            <th>@Localizer.T("Checklist.QuestionTextAr")</th>
+                            <th style="width: 80px;">@Localizer.T("Checklist.Order")</th>
+                            <th style="width: 80px;">@Localizer.T("Checklist.Weight")</th>
                             <th style="width: 50px;"></th>
                         </tr>
                     </thead>
@@ -117,8 +117,8 @@
                             <td colspan="6">
                                 <div class="empty-state">
                                     <i class="fas fa-plus-circle empty-icon"></i>
-                                    <h4>No Items Added</h4>
-                                    <p>Click "Add Item" to add checklist questions.</p>
+                                    <h4>@Localizer.T("Checklist.NoItems")</h4>
+                                    <p>@Localizer.T("Checklist.NoItemsMessage")</p>
                                 </div>
                             </td>
                         </tr>
@@ -129,9 +129,9 @@
         <div class="card-footer">
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save me-1"></i> Create Checklist
+                    <i class="fas fa-save me-1"></i> @Localizer.T("Checklist.CreateChecklist")
                 </button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <a asp-action="Index" class="btn btn-outline-secondary">@Localizer.T("Common.Cancel")</a>
             </div>
         </div>
     </div>
@@ -149,7 +149,7 @@
                 <tr class="item-row" data-index="${itemIndex}">
                     <td class="item-counter text-center align-middle">${itemIndex + 1}</td>
                     <td>
-                        <input type="text" name="Items[${itemIndex}].QuestionText" class="form-control form-control-sm" placeholder="Enter question" required>
+                        <input type="text" name="Items[${itemIndex}].QuestionText" class="form-control form-control-sm" placeholder="@Localizer.T("Checklist.QuestionPlaceholder")" required>
                     </td>
                     <td>
                         <input type="text" name="Items[${itemIndex}].QuestionTextAr" class="form-control form-control-sm" placeholder="أدخل السؤال" dir="rtl">
@@ -161,7 +161,7 @@
                         <input type="number" name="Items[${itemIndex}].Weight" class="form-control form-control-sm" value="1" min="1" max="100">
                     </td>
                     <td class="text-center align-middle">
-                        <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)" aria-label="Remove item">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)" aria-label="@Localizer.T("Checklist.RemoveItem")">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -198,7 +198,7 @@
             const rows = $('.item-row').length;
             if (rows === 0) {
                 e.preventDefault();
-                alert('Please add at least one checklist item.');
+                alert('@Localizer.T("Checklist.AddItemRequired")');
                 return false;
             }
         });

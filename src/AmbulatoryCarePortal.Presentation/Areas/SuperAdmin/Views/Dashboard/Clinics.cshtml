@@ -28,7 +28,7 @@
                 <div class="stat-card-icon"><i class="fas fa-hospital"></i></div>
                 <div class="stat-card-content">
                     <h3>@Model.TotalCount</h3>
-                    <p>Total Clinics</p>
+                    <p>@Localizer.T("Dashboard.TotalClinics")</p>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
                 <div class="stat-card-icon"><i class="fas fa-chart-line"></i></div>
                 <div class="stat-card-content">
                     <h3>@(Model.Data.Any() ? Model.Data.Average(c => c.ComplianceScore).ToString("F0") : "0")%</h3>
-                    <p>Avg Compliance</p>
+                    <p>@Localizer.T("Dashboard.AvgCompliance")</p>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@
                 <div class="stat-card-icon"><i class="fas fa-exclamation-circle"></i></div>
                 <div class="stat-card-content">
                     <h3>@Model.Data.Count(c => c.ComplianceScore < 60)</h3>
-                    <p>Needs Attention</p>
+                    <p>@Localizer.T("Dashboard.NeedsAttention")</p>
                 </div>
             </div>
         </div>
@@ -71,7 +71,7 @@
 <!-- Clinics Table -->
 <div class="card clinics-card">
     <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-list me-2"></i>All Clinics</h3>
+        <h3 class="card-title"><i class="fas fa-list me-2"></i>@Localizer.T("Dashboard.AllClinics")</h3>
         <div class="card-tools">
             <div class="search-box">
                 <i class="fas fa-search search-icon"></i>
@@ -86,9 +86,9 @@
                     <tr>
                         <th>@Localizer.T("Common.Name")</th>
                         <th>@Localizer.T("Common.Type")</th>
-                        <th>City</th>
-                        <th>License</th>
-                        <th>Compliance</th>
+                        <th>@Localizer.T("Common.City")</th>
+                        <th>@Localizer.T("Clinic.LicenseNumber")</th>
+                        <th>@Localizer.T("Dashboard.Compliance")</th>
                         <th>@Localizer.T("Common.Status")</th>
                         <th class="text-center">@Localizer.T("Common.Actions")</th>
                     </tr>
@@ -111,7 +111,7 @@
                                     <div>@clinic.LicenseNumber</div>
                                     @if (clinic.LicenseExpiry.HasValue)
                                     {
-                                        <small class="text-muted">Exp: @clinic.LicenseExpiry.Value.ToString("dd/MM/yyyy")</small>
+                                        <small class="text-muted">@Localizer.T("Common.Expiry"): @clinic.LicenseExpiry.Value.ToString("dd/MM/yyyy")</small>
                                     }
                                 </td>
                                 <td>

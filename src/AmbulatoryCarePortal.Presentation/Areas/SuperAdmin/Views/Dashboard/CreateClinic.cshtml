@@ -30,27 +30,27 @@
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-info-circle me-2"></i>
-                            <span>Basic Information</span>
+                            <span>@Localizer.T("Form.BasicInformation")</span>
                         </div>
                         <div class="form-section-body">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="Name" class="form-label">Name (English) <span class="text-danger">*</span></label>
+                                    <label asp-for="Name" class="form-label">@Localizer.T("Form.NameEn") <span class="text-danger">*</span></label>
                                     <input asp-for="Name" class="form-control" placeholder="@Localizer.T("Clinic.NameEnPlaceholder")" required aria-required="true" />
                                     <span asp-validation-for="Name" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="NameAr" class="form-label">Name (Arabic)</label>
+                                    <label asp-for="NameAr" class="form-label">@Localizer.T("Form.NameAr")</label>
                                     <input asp-for="NameAr" class="form-control" placeholder="@Localizer.T("Clinic.NameArPlaceholder")" dir="rtl" />
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="CityEn" class="form-label">City (English)</label>
+                                    <label asp-for="CityEn" class="form-label">@Localizer.T("Form.CityEn")</label>
                                     <input asp-for="CityEn" class="form-control" placeholder="@Localizer.T("Clinic.CityEnPlaceholder")" />
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="CityAr" class="form-label">City (Arabic)</label>
+                                    <label asp-for="CityAr" class="form-label">@Localizer.T("Form.CityAr")</label>
                                     <input asp-for="CityAr" class="form-control" placeholder="@Localizer.T("Clinic.CityArPlaceholder")" dir="rtl" />
                                 </div>
                             </div>
@@ -61,13 +61,13 @@
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-tag me-2"></i>
-                            <span>Classification</span>
+                            <span>@Localizer.T("Form.Classification")</span>
                         </div>
                         <div class="form-section-body">
                             <div class="mb-3">
-                                <label asp-for="ClinicType" class="form-label">Clinic Type <span class="text-danger">*</span></label>
+                                <label asp-for="ClinicType" class="form-label">@Localizer.T("Clinic.Type") <span class="text-danger">*</span></label>
                                 <select asp-for="ClinicType" class="form-select" asp-items="Html.GetEnumSelectList<ClinicType>()" required aria-required="true">
-                                    <option value="">-- Select Clinic Type --</option>
+                                    <option value="">@Localizer.T("Form.SelectClinicType")</option>
                                 </select>
                                 <span asp-validation-for="ClinicType" class="text-danger"></span>
                             </div>
@@ -78,16 +78,16 @@
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-certificate me-2"></i>
-                            <span>License Information</span>
+                            <span>@Localizer.T("Form.LicenseInformation")</span>
                         </div>
                         <div class="form-section-body">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="LicenseNumber" class="form-label">License Number</label>
+                                    <label asp-for="LicenseNumber" class="form-label">@Localizer.T("Clinic.LicenseNumber")</label>
                                     <input asp-for="LicenseNumber" class="form-control" placeholder="@Localizer.T("Clinic.LicensePlaceholder")" />
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="LicenseExpiry" class="form-label">License Expiry Date</label>
+                                    <label asp-for="LicenseExpiry" class="form-label">@Localizer.T("Clinic.LicenseExpiry")</label>
                                     <input asp-for="LicenseExpiry" type="date" class="form-control" />
                                 </div>
                             </div>

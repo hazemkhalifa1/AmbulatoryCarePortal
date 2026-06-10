@@ -1,7 +1,7 @@
 @model List<ReportTypeOptionViewModel>
 
 @{
-    ViewData["Title"] = "Reporting Center";
+    ViewData["Title"] = Localizer.T("Page.ReportingCenter");
     var getIcon = (string type) => type switch
     {
         "Compliance" => "fa-shield-halved",
@@ -36,7 +36,7 @@
         <div class="col-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-print"></i>Available Reports</h3>
+                    <h3 class="card-title"><i class="fas fa-print"></i>@Localizer.T("Report.AvailableReports")</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -63,7 +63,7 @@
                                     </div>
                                     <div class="card-footer bg-transparent border-top-0">
                                         <a asp-action="@getBuilderAction(report.Type)" class="btn btn-@(getColor(report.Type)) btn-block">
-                                            <i class="fas fa-file-export"></i> Generate Report
+                                            <i class="fas fa-file-export"></i> @Localizer.T("Report.GenerateReport")
                                         </a>
                                     </div>
                                 </div>
@@ -79,7 +79,7 @@
         <div class="col-12">
             <div class="card card-secondary">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-envelope"></i>Email Report</h3>
+                    <h3 class="card-title"><i class="fas fa-envelope"></i>@Localizer.T("Report.EmailReport")</h3>
                 </div>
                 <form method="post" asp-action="EmailReport">
                     @Html.AntiForgeryToken()
@@ -87,9 +87,9 @@
                         <div class="row align-items-end">
                             <div class="col-md-4 mb-3 mb-md-0">
                                 <div class="form-group">
-                                    <label for="reportType" class="form-label">Report Type <span class="required">*</span></label>
+                                    <label for="reportType" class="form-label">@Localizer.T("Report.ReportType") <span class="required">*</span></label>
                                     <select name="reportType" id="reportType" class="form-control" required>
-                                        <option value="">— Select Report —</option>
+                                        <option value="">@Localizer.T("Report.SelectReport")</option>
                                         @foreach (var report in Model)
                                         {
                                             <option value="@report.Type">@report.DisplayName</option>
@@ -99,7 +99,7 @@
                             </div>
                             <div class="col-md-5 mb-3 mb-md-0">
                                 <div class="form-group">
-                                    <label for="recipients" class="form-label">Recipients (comma-separated) <span class="required">*</span></label>
+                                    <label for="recipients" class="form-label">@Localizer.T("Report.Recipients") <span class="required">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                         <input type="text" name="recipients" id="recipients" class="form-control" placeholder="email1@example.com, email2@example.com" required />
@@ -108,7 +108,7 @@
                             </div>
                             <div class="col-md-3">
                                 <button type="submit" class="btn btn-secondary w-100">
-                                    <i class="fas fa-paper-plane"></i> Send Report
+                                    <i class="fas fa-paper-plane"></i> @Localizer.T("Report.SendReport")
                                 </button>
                             </div>
                         </div>

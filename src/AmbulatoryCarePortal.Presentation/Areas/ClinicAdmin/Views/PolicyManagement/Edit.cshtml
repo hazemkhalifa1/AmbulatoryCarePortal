@@ -11,7 +11,7 @@
                 <div class="card-header">
                     <h3 class="card-title"><i class="fas fa-edit me-2"></i>@Localizer.T("Common.Edit")</h3>
                     <div class="card-tools">
-                        <span class="badge badge-primary">Version @Model.VersionNumber</span>
+                        <span class="badge badge-primary">@Localizer.T("Policy.Version", Model.VersionNumber)</span>
                     </div>
                 </div>
                 <form method="post" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" role="form" aria-label="@Localizer.T("Common.Edit")">

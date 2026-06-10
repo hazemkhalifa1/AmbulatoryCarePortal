@@ -1,16 +1,16 @@
 @model CreateKPIViewModel
 
 @{
-    ViewData["Title"] = "Create New KPI";
+    ViewData["Title"] = @Localizer.T("Page.CreateKPI");
 }
 
 <div class="row fade-in">
     <div class="col-sm-6">
-        <h3><i class="fas fa-plus-circle text-primary me-2"></i>Create New KPI</h3>
+        <h3><i class="fas fa-plus-circle text-primary me-2"></i>@Localizer.T("Page.CreateKPI")</h3>
     </div>
     <div class="col-sm-6 text-end">
         <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i>Back to List
+            <i class="fas fa-arrow-left me-1"></i>@Localizer.T("HR.BackToList")
         </a>
     </div>
 </div>
@@ -22,20 +22,20 @@
         <div class="col-md-8">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-info-circle"></i> KPI Details</h3>
+                    <h3 class="card-title"><i class="fas fa-info-circle"></i> @Localizer.T("KPI.KPIDetails")</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="Name" class="form-label">Name <span class="required">*</span></label>
-                                <input asp-for="Name" class="form-control" placeholder="Enter KPI name in English" />
+                                <label asp-for="Name" class="form-label">@Localizer.T("Common.Name") <span class="required">*</span></label>
+                                <input asp-for="Name" class="form-control" placeholder="@Localizer.T("KPI.NameEnPlaceholder")" />
                                 <span asp-validation-for="Name" class="invalid-feedback"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="NameAr" class="form-label">Name (Arabic)</label>
+                                <label asp-for="NameAr" class="form-label">@Localizer.T("Common.Name") (Arabic)</label>
                                 <input asp-for="NameAr" class="form-control" placeholder="أدخل اسم المؤشر" dir="rtl" />
                                 <span asp-validation-for="NameAr" class="invalid-feedback"></span>
                             </div>
@@ -44,16 +44,16 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="TargetValue" class="form-label">Target Value <span class="required">*</span></label>
+                                <label asp-for="TargetValue" class="form-label">@Localizer.T("KPI.TargetValue") <span class="required">*</span></label>
                                 <input asp-for="TargetValue" class="form-control" type="number" step="0.01" min="0" />
                                 <span asp-validation-for="TargetValue" class="invalid-feedback"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="Frequency" class="form-label">Frequency <span class="required">*</span></label>
+                                <label asp-for="Frequency" class="form-label">@Localizer.T("Common.Frequency") <span class="required">*</span></label>
                                 <select asp-for="Frequency" class="form-select">
-                                    <option value="">-- Select Frequency --</option>
+                                    <option value="">@Localizer.T("KPI.SelectFrequency")</option>
                                     @foreach (var freq in Model.Frequencies)
                                     {
                                         <option value="@freq">@freq</option>
@@ -64,9 +64,9 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label asp-for="DepartmentId" class="form-label">Department <span class="required">*</span></label>
+                        <label asp-for="DepartmentId" class="form-label">@Localizer.T("HR.Department") <span class="required">*</span></label>
                         <select asp-for="DepartmentId" class="form-select">
-                            <option value="">-- Select Department --</option>
+                            <option value="">@Localizer.T("KPI.SelectDepartment")</option>
                             @foreach (var dept in Model.AvailableDepartments)
                             {
                                 <option value="@dept.Id">@dept.Name</option>
@@ -80,31 +80,31 @@
         <div class="col-md-4">
             <div class="card card-info">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-cog"></i> Advanced Settings</h3>
+                    <h3 class="card-title"><i class="fas fa-cog"></i> @Localizer.T("KPI.AdvancedSettings")</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label asp-for="CalculationFormula" class="form-label">Calculation Formula</label>
+                        <label asp-for="CalculationFormula" class="form-label">@Localizer.T("KPI.CalculationFormula")</label>
                         <textarea asp-for="CalculationFormula" class="form-control" rows="3"
-                                  placeholder="e.g., (Numerator / Denominator) * 100"></textarea>
+                                  placeholder="@Localizer.T("KPI.FormulaPlaceholder")"></textarea>
                         <span asp-validation-for="CalculationFormula" class="invalid-feedback"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="EvidenceRequired" class="form-label">Evidence Required</label>
+                        <label asp-for="EvidenceRequired" class="form-label">@Localizer.T("KPI.EvidenceRequired")</label>
                         <textarea asp-for="EvidenceRequired" class="form-control" rows="3"
-                                  placeholder="Describe what evidence is needed"></textarea>
+                                  placeholder="@Localizer.T("KPI.EvidenceRequired")"></textarea>
                         <span asp-validation-for="EvidenceRequired" class="invalid-feedback"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="EscalationRule" class="form-label">Escalation Rule</label>
+                        <label asp-for="EscalationRule" class="form-label">@Localizer.T("KPI.EscalationRule")</label>
                         <textarea asp-for="EscalationRule" class="form-control" rows="3"
-                                  placeholder="e.g., Escalate if below 50% for 2 consecutive months"></textarea>
+                                  placeholder="@Localizer.T("KPI.EscalationPlaceholder")"></textarea>
                         <span asp-validation-for="EscalationRule" class="invalid-feedback"></span>
                     </div>
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary btn-block">
-                        <i class="fas fa-save"></i> Create KPI
+                        <i class="fas fa-save"></i> @Localizer.T("Button.Create")
                     </button>
                 </div>
             </div>

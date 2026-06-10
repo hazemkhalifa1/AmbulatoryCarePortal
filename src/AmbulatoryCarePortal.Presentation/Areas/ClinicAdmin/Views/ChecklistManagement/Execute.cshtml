@@ -2,13 +2,13 @@
 @model ExecuteChecklistViewModel
 
 @{
-    ViewData["Title"] = "Execute Checklist";
+    ViewData["Title"] = Localizer.T("Page.ExecuteChecklist");
 }
 
 <div class="row fade-in">
     <div class="col-sm-6">
         <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i> Back to List
+            <i class="fas fa-arrow-left me-1"></i> @Localizer.T("HR.BackToList")
         </a>
     </div>
 </div>
@@ -38,23 +38,23 @@
                             {
                                 <p class="text-muted small mb-2" dir="rtl">@Model.Items[i].QuestionTextAr</p>
                             }
-                            <div class="btn-group btn-group-sm" role="group" aria-label="Answer options for question @(i+1)">
+                            <div class="btn-group btn-group-sm" role="group" aria-label="@Localizer.T("Checklist.QuestionText") @(i+1)">
                                 <input type="radio" class="btn-check" name="Items[@i].Answer" id="answer_@(i)_yes" value="Yes"
                                        @(Model.Items[i].Answer == ChecklistAnswer.Yes ? "checked" : "")>
                                 <label class="btn btn-outline-success" for="answer_@(i)_yes">
-                                    <i class="fas fa-check-circle"></i> Yes
+                                    <i class="fas fa-check-circle"></i> @Localizer.T("Checklist.Yes")
                                 </label>
 
                                 <input type="radio" class="btn-check" name="Items[@i].Answer" id="answer_@(i)_no" value="No"
                                        @(Model.Items[i].Answer == ChecklistAnswer.No ? "checked" : "")>
                                 <label class="btn btn-outline-danger" for="answer_@(i)_no">
-                                    <i class="fas fa-times-circle"></i> No
+                                    <i class="fas fa-times-circle"></i> @Localizer.T("Checklist.No")
                                 </label>
 
                                 <input type="radio" class="btn-check" name="Items[@i].Answer" id="answer_@(i)_na" value="NA"
                                        @(Model.Items[i].Answer == ChecklistAnswer.NA ? "checked" : "")>
                                 <label class="btn btn-outline-secondary" for="answer_@(i)_na">
-                                    <i class="fas fa-minus-circle"></i> N/A
+                                    <i class="fas fa-minus-circle"></i> @Localizer.T("Checklist.YesNoNA")
                                 </label>
                             </div>
                             <input type="hidden" name="Items[@i].ItemId" value="@Model.Items[i].ItemId" />
@@ -64,7 +64,7 @@
                         </div>
                         <div class="col-md-5">
                             <textarea name="Items[@i].Notes" class="form-control form-control-sm" rows="2"
-                                      placeholder="Notes for this item..." aria-label="Notes for question @(i+1)">@Model.Items[i].Notes</textarea>
+                                      placeholder="@Localizer.T("Checklist.ItemNotesPlaceholder")" aria-label="@Localizer.T("Checklist.ItemNotesPlaceholder") @(i+1)">@Model.Items[i].Notes</textarea>
                         </div>
                     </div>
                 </div>
@@ -74,31 +74,31 @@
     else
     {
         <div class="alert alert-warning">
-            <i class="fas fa-exclamation-triangle me-1"></i> This checklist has no items defined.
+            <i class="fas fa-exclamation-triangle me-1"></i> @Localizer.T("Checklist.NoItemsDefined")
         </div>
     }
 
     <div class="card card-secondary">
         <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-paperclip"></i> Additional Details</h3>
+            <h3 class="card-title"><i class="fas fa-paperclip"></i> @Localizer.T("Checklist.AdditionalDetails")</h3>
         </div>
         <div class="card-body">
             <div class="form-group">
-                <label for="Notes" class="form-label">Overall Notes</label>
-                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Overall notes for this execution..."></textarea>
+                <label for="Notes" class="form-label">@Localizer.T("Checklist.OverallNotes")</label>
+                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="@Localizer.T("Checklist.OverallNotesPlaceholder")"></textarea>
             </div>
             <div class="form-group">
-                <label for="evidenceFile" class="form-label">Evidence File</label>
-                <input type="file" name="evidenceFile" id="evidenceFile" class="form-control" aria-label="Upload evidence file">
-                <div class="form-text text-muted small">Upload supporting evidence (PDF, images, etc.)</div>
+                <label for="evidenceFile" class="form-label">@Localizer.T("Checklist.EvidenceFile")</label>
+                <input type="file" name="evidenceFile" id="evidenceFile" class="form-control" aria-label="@Localizer.T("Checklist.UploadEvidenceHelp")">
+                <div class="form-text text-muted small">@Localizer.T("Checklist.UploadEvidenceHelp")</div>
             </div>
         </div>
         <div class="card-footer">
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-success">
-                    <i class="fas fa-check me-1"></i> Submit Execution
+                    <i class="fas fa-check me-1"></i> @Localizer.T("Checklist.SubmitExecution")
                 </button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <a asp-action="Index" class="btn btn-outline-secondary">@Localizer.T("Common.Cancel")</a>
             </div>
         </div>
     </div>

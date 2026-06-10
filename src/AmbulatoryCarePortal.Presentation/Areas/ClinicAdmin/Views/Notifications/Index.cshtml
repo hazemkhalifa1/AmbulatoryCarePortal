@@ -1,7 +1,7 @@
 @model List<object>
 
 @{
-    ViewData["Title"] = "Notifications";
+    ViewData["Title"] = Localizer.T("Page.Notifications");
     var unreadCount = ViewBag.UnreadCount as int? ?? 0;
 }
 
@@ -11,10 +11,10 @@
             <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-bell"></i> Notifications
+                        <i class="fas fa-bell"></i> @Localizer.T("Page.Notifications")
                         @if (unreadCount > 0)
                         {
-                            <span class="badge badge-warning">@unreadCount unread</span>
+                            <span class="badge badge-warning">@unreadCount @Localizer.T("Common.Unread")</span>
                         }
                     </h3>
                     <div class="card-tools">
@@ -22,7 +22,7 @@
                         {
                             <form method="post" action="/ClinicAdmin/Notifications/MarkAllRead" style="display:inline">
                                 <button type="submit" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-check-double"></i> Mark All Read
+                                    <i class="fas fa-check-double"></i> @Localizer.T("Button.MarkAllRead")
                                 </button>
                             </form>
                         }
@@ -62,7 +62,7 @@
                                             @if (!isRead)
                                             {
                                                 <form method="post" action="/ClinicAdmin/Notifications/MarkRead/@notification.Id" style="display:inline">
-                                                    <button type="submit" class="btn btn-sm btn-outline-primary mark-read-btn" aria-label="Mark as read">
+                                                    <button type="submit" class="btn btn-sm btn-outline-primary mark-read-btn" aria-label="@Localizer.T("Common.MarkAsRead")">
                                                         <i class="fas fa-check"></i>
                                                     </button>
                                                 </form>
@@ -77,8 +77,8 @@
                     {
                         <div class="empty-state">
                             <i class="fas fa-bell-slash empty-icon"></i>
-                            <h4>No Notifications</h4>
-                            <p>You're all caught up! There are no notifications to display.</p>
+                            <h4>@Localizer.T("Empty.NoNotifications")</h4>
+                            <p>@Localizer.T("Empty.NoNotificationsMessage")</p>
                         </div>
                     }
                 </div>

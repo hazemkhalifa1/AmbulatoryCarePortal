@@ -1,7 +1,7 @@
 @model List<ClinicDocumentDto>
 
 @{
-    ViewData["Title"] = "Documents";
+    ViewData["Title"] = @Localizer.T("Page.ClinicDocuments");
     var searchTerm = (string?)ViewBag.SearchTerm;
     var statusFilter = (string?)ViewBag.StatusFilter;
 }
@@ -9,54 +9,54 @@
 <div class="fade-in">
     <div class="card card-primary">
         <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-file me-2"></i>Documents</h3>
+            <h3 class="card-title"><i class="fas fa-file me-2"></i>@Localizer.T("Page.ClinicDocumentsList")</h3>
             <div class="card-tools">
-                <span class="text-muted small me-3">@Model.Count document(s)</span>
+                <span class="text-muted small me-3">@Model.Count @Localizer.T("Doc.AttachmentCount")</span>
             </div>
         </div>
         <div class="card-body">
-            <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="Filter documents">
+            <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="@Localizer.T("Doc.FilterDocuments")">
                 <div class="row mb-3">
                     <div class="col-md-5">
                         <div class="input-group">
                             <div class="input-group-text"><i class="fas fa-search"></i></div>
-                            <input type="text" name="searchTerm" class="form-control" placeholder="Search document, clinic, KPI..." value="@searchTerm" aria-label="Search documents" />
-                            <button type="submit" class="btn btn-primary" aria-label="Search">
+                            <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("Doc.SearchPlaceholder")" value="@searchTerm" aria-label="@Localizer.T("Doc.SearchDocuments")" />
+                            <button type="submit" class="btn btn-primary" aria-label="@Localizer.T("Common.Search")">
                                 <i class="fas fa-search"></i>
                             </button>
                             @if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter))
                             {
-                                <a asp-action="Index" class="btn btn-secondary" aria-label="Clear filters">
-                                    <i class="fas fa-times"></i> Clear
+                                <a asp-action="Index" class="btn btn-secondary" aria-label="@Localizer.T("Doc.ClearFilters")">
+                                    <i class="fas fa-times"></i> @Localizer.T("Common.Clear")
                                 </a>
                             }
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <select name="statusFilter" class="form-select" onchange="document.getElementById('filterForm').submit()" aria-label="Filter by status">
-                            <option value="">All Statuses</option>
-                            <option value="Complete" selected="@(statusFilter == "Complete")">Complete</option>
-                            <option value="NeedsReview" selected="@(statusFilter == "NeedsReview")">Needs Review</option>
-                            <option value="MissingAttachment" selected="@(statusFilter == "MissingAttachment")">Missing Attachment</option>
-                            <option value="Expired" selected="@(statusFilter == "Expired")">Expired</option>
-                            <option value="Draft" selected="@(statusFilter == "Draft")">Draft</option>
+                        <select name="statusFilter" class="form-select" onchange="document.getElementById('filterForm').submit()" aria-label="@Localizer.T("Doc.FilterByStatus")">
+                            <option value="">@Localizer.T("Doc.AllStatuses")</option>
+                            <option value="Complete" selected="@(statusFilter == "Complete")">@Localizer.T("Doc.Complete")</option>
+                            <option value="NeedsReview" selected="@(statusFilter == "NeedsReview")">@Localizer.T("Doc.NeedsReview")</option>
+                            <option value="MissingAttachment" selected="@(statusFilter == "MissingAttachment")">@Localizer.T("Doc.MissingAttachment")</option>
+                            <option value="Expired" selected="@(statusFilter == "Expired")">@Localizer.T("Doc.Expired")</option>
+                            <option value="Draft" selected="@(statusFilter == "Draft")">@Localizer.T("Doc.Draft")</option>
                         </select>
                     </div>
                 </div>
             </form>
 
             <div class="table-container">
-                <table class="table table-hover" role="table" aria-label="Clinic documents">
+                <table class="table table-hover" role="table" aria-label="@Localizer.T("Page.ClinicDocuments")">
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Document</th>
-                            <th scope="col">Department</th>
-                            <th scope="col">View</th>
-                            <th scope="col">Attach</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Expiry</th>
-                            <th scope="col" class="text-center">Actions</th>
+                            <th scope="col">@Localizer.T("Doc.StandardCode")</th>
+                            <th scope="col">@Localizer.T("Doc.DocumentHeading")</th>
+                            <th scope="col">@Localizer.T("Doc.DepartmentHeading")</th>
+                            <th scope="col">@Localizer.T("Doc.ViewHeading")</th>
+                            <th scope="col">@Localizer.T("Doc.AttachHeading")</th>
+                            <th scope="col">@Localizer.T("Common.Status")</th>
+                            <th scope="col">@Localizer.T("Doc.ExpiryDate")</th>
+                            <th scope="col" class="text-center">@Localizer.T("Common.Actions")</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,12 +84,12 @@
                                         }
                                     </td>
                                     <td>
-                                        <a asp-action="Download" asp-route-id="@doc.Id" class="btn btn-sm btn-outline-primary" title="Download filled document" aria-label="Download document">
+                                        <a asp-action="Download" asp-route-id="@doc.Id" class="btn btn-sm btn-outline-primary" title="@Localizer.T("Doc.DownloadFilled")" aria-label="@Localizer.T("Doc.DownloadTitle")">
                                             <i class="fas fa-file-word"></i>
                                         </a>
                                     </td>
                                     <td>
-                                        <a asp-action="Details" asp-route-id="@doc.Id" class="text-decoration-none" title="@doc.AttachmentCount attachment(s)" aria-label="View attachments">
+                                        <a asp-action="Details" asp-route-id="@doc.Id" class="text-decoration-none" title="@doc.AttachmentCount @Localizer.T("Doc.AttachmentCount")" aria-label="@Localizer.T("Doc.ViewAttachments")">
                                             <i class="fas fa-paperclip"></i>
                                             <span class="badge bg-secondary">@doc.AttachmentCount</span>
                                         </a>
@@ -129,10 +129,10 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="actions-cell">
-                                            <a asp-action="Details" asp-route-id="@doc.Id" class="btn btn-sm btn-info" title="Details" aria-label="View details">
+                                            <a asp-action="Details" asp-route-id="@doc.Id" class="btn btn-sm btn-info" title="@Localizer.T("Doc.ViewDetails")" aria-label="@Localizer.T("Doc.ViewDetails")">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a asp-action="Download" asp-route-id="@doc.Id" class="btn btn-sm btn-success" title="Download" aria-label="Download document">
+                                            <a asp-action="Download" asp-route-id="@doc.Id" class="btn btn-sm btn-success" title="@Localizer.T("Button.Download")" aria-label="@Localizer.T("Doc.DownloadTitle")">
                                                 <i class="fas fa-download"></i>
                                             </a>
                                         </div>
@@ -145,10 +145,10 @@
                             <tr>
                                 <td colspan="8" class="text-center text-muted py-4">
                                     <i class="fas fa-file fa-3x mb-2"></i><br />
-                                    No documents found.
+                                    @Localizer.T("Empty.NoDocuments")
                                     @if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter))
                                     {
-                                        <span>Try adjusting your filters.</span>
+                                        <span>@Localizer.T("Empty.NoDocumentsMessage")</span>
                                     }
                                 </td>
                             </tr>

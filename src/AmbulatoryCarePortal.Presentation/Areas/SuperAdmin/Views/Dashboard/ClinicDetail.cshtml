@@ -39,7 +39,7 @@
                 <div class="stat-card-icon"><i class="fas fa-users"></i></div>
                 <div class="stat-card-content">
                     <h3>@Model.UserCount</h3>
-                    <p>Users</p>
+                    <p>@Localizer.T("Clinic.Users")</p>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
                 <div class="stat-card-icon"><i class="fas fa-building"></i></div>
                 <div class="stat-card-content">
                     <h3>@Model.DepartmentCount</h3>
-                    <p>Departments</p>
+                    <p>@Localizer.T("Clinic.Departments")</p>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@
                 <div class="stat-card-icon"><i class="fas fa-file-pdf"></i></div>
                 <div class="stat-card-content">
                     <h3>@Model.PolicyDocumentCount</h3>
-                    <p>Policies</p>
+                    <p>@Localizer.T("Clinic.Policies")</p>
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@
                 <div class="stat-card-icon"><i class="fas fa-exclamation-triangle"></i></div>
                 <div class="stat-card-content">
                     <h3>@Model.OpenGapCount</h3>
-                    <p>Open Gaps</p>
+                    <p>@Localizer.T("Clinic.OpenGaps")</p>
                 </div>
             </div>
         </div>
@@ -93,19 +93,19 @@
                         <span class="detail-value">@Model.ClinicType</span>
                     </div>
                     <div class="detail-item">
-                        <span class="detail-label">City</span>
+                        <span class="detail-label">@Localizer.T("Common.City")</span>
                         <span class="detail-value">@(Model.CityEn ?? Model.CityAr)</span>
                     </div>
                     <div class="detail-item">
-                        <span class="detail-label">License Number</span>
+                        <span class="detail-label">@Localizer.T("Clinic.LicenseNumber")</span>
                         <span class="detail-value">@Model.LicenseNumber</span>
                     </div>
                     <div class="detail-item">
-                        <span class="detail-label">License Expiry</span>
-                        <span class="detail-value">@(Model.LicenseExpiry?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                        <span class="detail-label">@Localizer.T("Clinic.LicenseExpiry")</span>
+                        <span class="detail-value">@(Model.LicenseExpiry?.ToString("dd/MM/yyyy") ?? Localizer.T("HR.NA"))</span>
                     </div>
                     <div class="detail-item">
-                        <span class="detail-label">Compliance Score</span>
+                        <span class="detail-label">@Localizer.T("Clinic.ComplianceScore")</span>
                         <span class="detail-value">
                             <div class="progress compliance-progress">
                                 <div class="progress-bar @(Model.ComplianceScore >= 80 ? "bg-success" : Model.ComplianceScore >= 60 ? "bg-warning" : "bg-danger")"
@@ -126,7 +126,7 @@
     <div class="col-lg-7 mb-4">
         <div class="card action-card h-100">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-bolt me-2"></i>Quick Actions</h3>
+                <h3 class="card-title"><i class="fas fa-bolt me-2"></i>@Localizer.T("Dashboard.QuickActions")</h3>
             </div>
             <div class="card-body">
                 <div class="row g-3">
@@ -134,28 +134,28 @@
                         <a href="/SuperAdmin/Dashboard/AuditLog?clinicId=@Model.Id" class="action-btn action-btn-warning">
                             <i class="fas fa-history"></i>
                             <span>@Localizer.T("Common.View") @Localizer.T("Page.AuditLog")</span>
-                            <small>Review all activities</small>
+                            <small>@Localizer.T("Dashboard.Action.ReviewAllActivities")</small>
                         </a>
                     </div>
                     <div class="col-md-6">
                         <a href="/SuperAdmin/UserManagement/Create?clinicId=@Model.Id" class="action-btn action-btn-info">
                             <i class="fas fa-user-plus"></i>
                             <span>@Localizer.T("Button.Add")</span>
-                            <small>Assign personnel</small>
+                            <small>@Localizer.T("Dashboard.Action.AssignPersonnel")</small>
                         </a>
                     </div>
                     <div class="col-md-6">
                         <a href="/SuperAdmin/DocumentTemplates/AssignToAllClinics/@Model.Id" class="action-btn action-btn-primary">
                             <i class="fas fa-file-upload"></i>
-                            <span>Assign Templates</span>
-                            <small>Link document templates</small>
+                            <span>@Localizer.T("Clinic.AssignTemplates")</span>
+                            <small>@Localizer.T("Dashboard.Action.LinkTemplates")</small>
                         </a>
                     </div>
                     <div class="col-md-6">
                         <a href="/SuperAdmin/Dashboard/Clinics" class="action-btn action-btn-secondary">
                             <i class="fas fa-arrow-left"></i>
                             <span>@Localizer.T("Common.Back")</span>
-                            <small>Return to list</small>
+                            <small>@Localizer.T("Dashboard.Action.ReturnToList")</small>
                         </a>
                     </div>
                 </div>

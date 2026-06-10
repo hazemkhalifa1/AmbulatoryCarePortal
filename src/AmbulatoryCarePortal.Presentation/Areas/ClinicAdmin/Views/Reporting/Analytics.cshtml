@@ -1,7 +1,7 @@
 @model AnalyticsViewModel
 
 @{
-    ViewData["Title"] = $"{Model.AnalyticsType} Analytics";
+    ViewData["Title"] = Localizer.T("Report.AnalyticsTitle", Model.AnalyticsType);
     var insightBadge = (string type) => type switch
     {
         "Success" => "success",
@@ -31,7 +31,7 @@
         <div class="col-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-chart-pie"></i>@Model.AnalyticsType Analytics Dashboard</h3>
+                    <h3 class="card-title"><i class="fas fa-chart-pie"></i>@Model.AnalyticsType @Localizer.T("Report.AnalyticsDashboard")</h3>
                 </div>
             </div>
         </div>
@@ -65,7 +65,7 @@
     {
         <div class="row">
             <div class="col-12 mb-3">
-                <h4><i class="fas fa-lightbulb"></i> Insights & Recommendations</h4>
+                <h4><i class="fas fa-lightbulb"></i> @Localizer.T("Report.Insights")</h4>
             </div>
             @foreach (var insight in Model.Insights)
             {
@@ -84,7 +84,7 @@
                             {
                                 <div class="alert alert-@insightBadge(insight.Type) mb-0 py-2" role="alert">
                                     <i class="fas fa-lightbulb"></i>
-                                    <strong>Recommendation:</strong> @insight.Recommendation
+                                    <strong>@Localizer.T("Report.Recommendation"):</strong> @insight.Recommendation
                                 </div>
                             }
                         </div>
@@ -98,7 +98,7 @@
     {
         <div class="row">
             <div class="col-12 mb-3">
-                <h4><i class="fas fa-chart-line"></i> Performance Trends</h4>
+                <h4><i class="fas fa-chart-line"></i> @Localizer.T("Report.PerformanceTrends")</h4>
             </div>
             <div class="col-12">
                 <div class="card card-secondary">
@@ -107,10 +107,10 @@
                             <table class="table table-hover" id="trendsTable">
                                 <thead>
                                     <tr>
-                                        <th>Metric</th>
-                                        <th>Change %</th>
-                                        <th>Direction</th>
-                                        <th>Period</th>
+                                        <th>@Localizer.T("Report.Metric")</th>
+                                        <th>@Localizer.T("Report.ChangePercent")</th>
+                                        <th>@Localizer.T("Report.Direction")</th>
+                                        <th>@Localizer.T("Report.Period")</th>
                                     </tr>
                                 </thead>
                                 <tbody>

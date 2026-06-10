@@ -49,7 +49,7 @@
                             @foreach (var doc in Model.OrderBy(d => d.DaysUntilExpiry))
                             {
                                 var statusClass = doc.DaysUntilExpiry <= 0 ? "critical" : doc.DaysUntilExpiry <= 7 ? "urgent" : "upcoming";
-                                var statusLabel = doc.DaysUntilExpiry <= 0 ? "Expired" : doc.DaysUntilExpiry <= 7 ? "Critical" : doc.DaysUntilExpiry <= 14 ? "Urgent" : "Upcoming";
+                                var statusLabel = doc.DaysUntilExpiry <= 0 ? Localizer.T("HR.Expired") : doc.DaysUntilExpiry <= 7 ? Localizer.T("HR.Critical") : doc.DaysUntilExpiry <= 14 ? Localizer.T("HR.Urgent") : Localizer.T("HR.Upcoming");
 
                                 <tr class="doc-row" data-status="@statusClass">
                                     <td>
@@ -59,31 +59,31 @@
                                         @switch (doc.DocumentType)
                                         {
                                             case HrDocumentType.ID:
-                                                <span class="badge badge-secondary">ID</span>
+                                                <span class="badge badge-secondary">@Localizer.T("HR.DocType.ID")</span>
                                                 break;
                                             case HrDocumentType.CV:
-                                                <span class="badge badge-info">CV</span>
+                                                <span class="badge badge-info">@Localizer.T("HR.DocType.CV")</span>
                                                 break;
                                             case HrDocumentType.EducationCert:
-                                                <span class="badge badge-primary">Education Cert</span>
+                                                <span class="badge badge-primary">@Localizer.T("HR.DocType.EducationCert")</span>
                                                 break;
                                             case HrDocumentType.License:
-                                                <span class="badge badge-warning">License</span>
+                                                <span class="badge badge-warning">@Localizer.T("HR.DocType.License")</span>
                                                 break;
                                             case HrDocumentType.Training:
-                                                <span class="badge badge-success">Training</span>
+                                                <span class="badge badge-success">@Localizer.T("HR.DocType.Training")</span>
                                                 break;
                                             case HrDocumentType.Competency:
-                                                <span class="badge badge-info">Competency</span>
+                                                <span class="badge badge-info">@Localizer.T("HR.DocType.Competency")</span>
                                                 break;
                                             case HrDocumentType.RadiationSafety:
-                                                <span class="badge badge-danger">Radiation Safety</span>
+                                                <span class="badge badge-danger">@Localizer.T("HR.DocType.RadiationSafety")</span>
                                                 break;
                                             case HrDocumentType.JobDescription:
-                                                <span class="badge badge-secondary">Job Description</span>
+                                                <span class="badge badge-secondary">@Localizer.T("HR.DocType.JobDescription")</span>
                                                 break;
                                             case HrDocumentType.Orientation:
-                                                <span class="badge badge-primary">Orientation</span>
+                                                <span class="badge badge-primary">@Localizer.T("HR.DocType.Orientation")</span>
                                                 break;
                                             default:
                                                 <span class="badge badge-secondary">@doc.DocumentType</span>
