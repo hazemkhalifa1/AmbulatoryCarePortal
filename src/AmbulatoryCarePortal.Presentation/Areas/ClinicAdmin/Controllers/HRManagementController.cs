@@ -5,6 +5,7 @@ using AmbulatoryCarePortal.Application.DTOs;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
+using AmbulatoryCarePortal.Presentation.Helpers;
 using AmbulatoryCarePortal.Presentation.ViewModels;
 using HRStaffDto = AmbulatoryCarePortal.Application.DTOs.HrStaffDto;
 using HRDocumentDto = AmbulatoryCarePortal.Application.DTOs.HrDocumentDto;
@@ -20,19 +21,22 @@ public class HRManagementController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILogger<HRManagementController> _logger;
+    private readonly ITranslationService _localizer;
 
     public HRManagementController(
         IHrService hrService,
         IEmailService emailService,
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        ILogger<HRManagementController> logger)
+        ILogger<HRManagementController> logger,
+        ITranslationService localizer)
     {
         _hrService = hrService;
         _emailService = emailService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -173,7 +177,7 @@ public class HRManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation($"Staff record created for {staff.FirstName} {staff.LastName} by {userId}");
-        TempData["SuccessMessage"] = "Staff record created successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.StaffCreated");
 
         return RedirectToAction(nameof(Index));
     }
@@ -221,7 +225,7 @@ public class HRManagementController : Controller
 
         if (documentFile == null || documentFile.Length == 0)
         {
-            TempData["ErrorMessage"] = "Please select a document file to upload";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.NoFileSelected");
             return RedirectToAction(nameof(Details), new { id = staffId });
         }
 
@@ -269,7 +273,7 @@ public class HRManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation($"Document uploaded for staff {staffId} by {userId}");
-        TempData["SuccessMessage"] = "Document uploaded successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.DocumentUploaded");
 
         return RedirectToAction(nameof(Details), new { id = staffId });
     }
@@ -313,7 +317,7 @@ public class HRManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation($"Document {documentId} verified by {userId}");
-        TempData["SuccessMessage"] = "Document verified successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.DocumentVerified");
 
         return RedirectToAction(nameof(Details), new { id = document.HrStaffId });
     }

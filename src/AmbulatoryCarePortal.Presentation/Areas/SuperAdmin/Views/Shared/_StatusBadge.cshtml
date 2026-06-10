@@ -1,0 +1,7 @@
+@model (bool IsActive, string Size)
+@{
+    var size = Model.Size ?? "sm";
+    var sizeClass = size == "md" ? "um-avatar-md" : "um-avatar-sm";
+}
+<span class="um-status-dot @(Model.IsActive ? "active" : "inactive")"></span>
+<span class="um-status-label @(Model.IsActive ? "active" : "inactive")">@(Model.IsActive ? Localizer.T("Common.Active") : Localizer.T("Common.Inactive"))</span>

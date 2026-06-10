@@ -6,6 +6,7 @@ using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Application.Interfaces.Repositories;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
+using AmbulatoryCarePortal.Presentation.Helpers;
 using AmbulatoryCarePortal.Presentation.ViewModels;
 using ChecklistAnswerEntity = AmbulatoryCarePortal.Domain.Entities.ChecklistAnswer;
 using ChecklistAnswerEnum = AmbulatoryCarePortal.Domain.Enums.ChecklistAnswer;
@@ -20,17 +21,20 @@ public class ChecklistManagementController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILogger<ChecklistManagementController> _logger;
+    private readonly ITranslationService _localizer;
 
     public ChecklistManagementController(
         IChecklistService checklistService,
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        ILogger<ChecklistManagementController> logger)
+        ILogger<ChecklistManagementController> logger,
+        ITranslationService localizer)
     {
         _checklistService = checklistService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -177,7 +181,7 @@ public class ChecklistManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation("Checklist template {Name} created by {UserId}", template.Name, userId);
-        TempData["SuccessMessage"] = "Checklist template created successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.ChecklistCreated");
 
         return RedirectToAction(nameof(Index));
     }
@@ -294,7 +298,7 @@ public class ChecklistManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation("Checklist {Name} executed by {UserId}", template.Name, userId);
-        TempData["SuccessMessage"] = "Checklist executed successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.ChecklistExecuted");
 
         return RedirectToAction(nameof(ViewHistory), new { templateId });
     }
@@ -373,7 +377,7 @@ public class ChecklistManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation("Checklist round {RoundId} approved by {UserId}", roundId, userId);
-        TempData["SuccessMessage"] = "Checklist approved successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.ChecklistApproved");
 
         return RedirectToAction(nameof(ViewHistory), new { templateId = round.ChecklistTemplateId });
     }

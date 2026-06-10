@@ -21,4 +21,6 @@ public interface IGenericRepository<T> where T : BaseEntity
     void SoftDelete(T entity);
     void SoftDeleteRange(IEnumerable<T> entities);
     Task<PagedResult<T>> GetPagedAsync(int pageNumber, int pageSize, Expression<Func<T, bool>>? predicate = null, Expression<Func<T, object>>? orderBy = null, bool ascending = true, bool includeDeleted = false);
+    Task<PagedResult<T>> GetPagedWithIncludesAsync(int pageNumber, int pageSize, Expression<Func<T, bool>>? predicate = null, Expression<Func<T, object>>? orderBy = null, bool ascending = true, bool includeDeleted = false, params Expression<Func<T, object>>[] includes);
+    Task<IEnumerable<T>> FindWithIncludesAsync(Expression<Func<T, bool>> predicate, bool includeDeleted = false, params Expression<Func<T, object>>[] includes);
 }

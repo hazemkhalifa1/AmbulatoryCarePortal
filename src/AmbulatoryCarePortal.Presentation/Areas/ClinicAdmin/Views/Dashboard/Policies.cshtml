@@ -1,19 +1,19 @@
 @model AmbulatoryCarePortal.Application.Common.PagedResult<PolicyDocumentDto>
 
 @{
-    ViewData["Title"] = ViewBag.PageTitle ?? "Policy Documents";
+    ViewData["Title"] = ViewBag.PageTitle ?? Localizer.T("Page.PolicyDocuments");
 }
 
 <div class="fade-in">
     <div class="card card-primary">
         <div class="card-header">
             <h3 class="card-title">
-                <i class="fas fa-file-alt"></i> All Policy Documents
-                <small class="ml-2 text-muted" dir="rtl">وثائق السياسات</small>
+                    <i class="fas fa-file-alt"></i> @Localizer.T("Page.PolicyDocuments")
+                <small class="ml-2 text-muted" dir="rtl">@Localizer.T("Nav.Documents")</small>
             </h3>
             <div class="card-tools">
-                <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-primary" aria-label="Add new policy">
-                    <i class="fas fa-plus"></i> Add Policy
+                <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-primary" aria-label="@Localizer.T("Button.Create")">
+                    <i class="fas fa-plus"></i> @Localizer.T("Button.Create")
                 </a>
             </div>
         </div>
@@ -23,20 +23,20 @@
                 <div class="table-toolbar">
                     <div class="search-box">
                         <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="form-control" id="tableSearch" data-table-search="policiesTable" placeholder="Search policies..." aria-label="Search policies" />
+                        <input type="text" class="form-control" id="tableSearch" data-table-search="policiesTable" placeholder="@Localizer.T("Policy.SearchPlaceholder")" aria-label="@Localizer.T("Policy.SearchPlaceholder")" />
                     </div>
                 </div>
 
-                <table class="table table-hover" id="policiesTable" role="table" aria-label="Policy documents">
+                <table class="table table-hover" id="policiesTable" role="table" aria-label="@Localizer.T("Page.PolicyDocuments")">
                     <thead>
                         <tr>
-                            <th scope="col">Title</th>
-                            <th scope="col">Standard Code</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Department</th>
-                            <th scope="col">Version</th>
-                            <th scope="col">Expiry Date</th>
-                            <th scope="col">Actions</th>
+                            <th scope="col">@Localizer.T("Common.Title")</th>
+                            <th scope="col">@Localizer.T("Policy.StandardCode")</th>
+                            <th scope="col">@Localizer.T("Common.Status")</th>
+                            <th scope="col">@Localizer.T("HR.Department")</th>
+                            <th scope="col">@Localizer.T("Common.Version")</th>
+                            <th scope="col">@Localizer.T("Common.Expiry")</th>
+                            <th scope="col">@Localizer.T("Common.Actions")</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -104,14 +104,14 @@
                                     </td>
                                     <td>
                                         <div class="actions-cell">
-                                            <a href="@Url.Action("Details", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-info" title="View" aria-label="View policy details">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="@Url.Action("Edit", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-warning" title="Edit" aria-label="Edit policy">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="@Url.Action("Delete", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-danger" title="Delete" aria-label="Delete policy"
-                                               onclick="return confirm('Are you sure you want to delete this policy?')">
+                                    <a href="@Url.Action("Details", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")"
+                                       onclick="return confirm('@Localizer.T("Alert.ConfirmDelete")')">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
@@ -124,8 +124,8 @@
                             <tr>
                                 <td colspan="7" class="text-center text-muted py-4">
                                     <i class="fas fa-file-alt fa-2x mb-2 d-block"></i>
-                                    No policy documents found.
-                                    <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })">Create one</a>
+                                    @Localizer.T("Empty.NoPolicies")
+                                    <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })">@Localizer.T("Button.Create")</a>
                                 </td>
                             </tr>
                         }
@@ -134,8 +134,8 @@
 
                 <div class="table-footer">
                     <div class="pagination-info">
-                        Showing <strong>@Model.Data.Count</strong> of <strong>@Model.TotalCount</strong> policies
-                        (Page @Model.PageNumber of @Model.TotalPages)
+                        @Localizer.T("Common.Showing") <strong>@Model.Data.Count</strong> @Localizer.T("Common.Of") <strong>@Model.TotalCount</strong> @Localizer.T("Page.PolicyDocuments")
+                        (@Localizer.T("Common.Page") @Model.PageNumber @Localizer.T("Common.Of") @Model.TotalPages)
                     </div>
 
                     @if (Model.TotalPages > 1)
@@ -143,21 +143,21 @@
                         <nav aria-label="Policies table pagination">
                             <ul class="pagination">
                                 <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                                    <a href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" class="page-link" aria-label="Previous page">
-                                        <i class="fas fa-chevron-left"></i> Previous
+                                    <a href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Previous")">
+                                        <i class="fas fa-chevron-left"></i> @Localizer.T("Common.Previous")
                                     </a>
                                 </li>
 
                                 @for (int i = 1; i <= Model.TotalPages; i++)
                                 {
                                     <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                        <a href="?page=@i&pageSize=@Model.PageSize" class="page-link" aria-label="Page @i" aria-current="@(i == Model.PageNumber ? "page" : null)">@i</a>
+                                        <a href="?page=@i&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Page") @i" aria-current="@(i == Model.PageNumber ? "page" : null)">@i</a>
                                     </li>
                                 }
 
                                 <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                                    <a href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" class="page-link" aria-label="Next page">
-                                        Next <i class="fas fa-chevron-right"></i>
+                                    <a href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Next")">
+                                        @Localizer.T("Common.Next") <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
                             </ul>

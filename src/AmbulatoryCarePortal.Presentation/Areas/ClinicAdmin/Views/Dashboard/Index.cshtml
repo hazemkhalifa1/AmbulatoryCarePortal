@@ -1,70 +1,70 @@
 @model ClinicDetailDto
 
 @{
-    ViewData["Title"] = ViewBag.PageTitle ?? "Clinic Dashboard";
+    ViewData["Title"] = ViewBag.PageTitle ?? Localizer.T("Page.ClinicDashboard");
 }
 
 <div class="row fade-in">
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-info" aria-label="Clinic Name">
+        <div class="small-box bg-info" aria-label="@Localizer.T("Clinic.Name")">
             <div class="inner">
                 <h3>@Model.Name</h3>
-                <p>Clinic Name</p>
+                <p>@Localizer.T("Clinic.Name")</p>
                 <p class="text-white-50 mb-0" dir="rtl">@Model.NameAr</p>
             </div>
             <div class="icon">
                 <i class="fas fa-hospital"></i>
             </div>
-            <a href="@Url.Action("Policies")" class="small-box-footer" aria-label="View clinic policies">
-                More info <i class="fas fa-arrow-circle-right"></i>
+            <a href="@Url.Action("Policies")" class="small-box-footer" aria-label="@Localizer.T("Common.View")">
+                @Localizer.T("Common.Details") <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
 
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-success" aria-label="Clinic City">
+        <div class="small-box bg-success" aria-label="@Localizer.T("Common.City")">
             <div class="inner">
                 <h3>@Model.CityEn</h3>
-                <p>City</p>
+                <p>@Localizer.T("Clinic.City")</p>
                 <p class="text-white-50 mb-0" dir="rtl">@Model.CityAr</p>
             </div>
             <div class="icon">
                 <i class="fas fa-map-marker-alt"></i>
             </div>
-            <a href="@Url.Action("Staff")" class="small-box-footer" aria-label="View staff">
-                More info <i class="fas fa-arrow-circle-right"></i>
+            <a href="@Url.Action("Staff")" class="small-box-footer" aria-label="@Localizer.T("Common.View")">
+                @Localizer.T("Common.Details") <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
 
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-warning" aria-label="Clinic Type">
+        <div class="small-box bg-warning" aria-label="@Localizer.T("Clinic.Type")">
             <div class="inner">
                 <h3>@Model.ClinicType</h3>
-                <p>Clinic Type</p>
-                <p class="text-white-50 mb-0" dir="rtl">نوع العيادة</p>
+                <p>@Localizer.T("Clinic.Type")</p>
+                <p class="text-white-50 mb-0" dir="rtl">@Localizer.T("Clinic.Type")</p>
             </div>
             <div class="icon">
                 <i class="fas fa-tag"></i>
             </div>
-            <a href="@Url.Action("KPIs")" class="small-box-footer" aria-label="View KPIs">
-                More info <i class="fas fa-arrow-circle-right"></i>
+            <a href="@Url.Action("KPIs")" class="small-box-footer" aria-label="@Localizer.T("Common.View")">
+                @Localizer.T("Common.Details") <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
 
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger" aria-label="Compliance Score">
+        <div class="small-box bg-danger" aria-label="@Localizer.T("Clinic.ComplianceScore")">
             <div class="inner">
                 <h3>@Model.ComplianceScore.ToString("F1")%</h3>
-                <p>Compliance Score</p>
-                <p class="text-white-50 mb-0" dir="rtl">نسبة الامتثال</p>
+                <p>@Localizer.T("Clinic.ComplianceScore")</p>
+                <p class="text-white-50 mb-0" dir="rtl">@Localizer.T("Clinic.ComplianceScore")</p>
             </div>
             <div class="icon">
                 <i class="fas fa-shield-alt"></i>
             </div>
-            <a href="#" class="small-box-footer" onclick="updateComplianceScore()" aria-label="Recalculate compliance score">
-                Recalculate <i class="fas fa-sync-alt"></i>
+            <a href="#" class="small-box-footer" onclick="updateComplianceScore()" aria-label="@Localizer.T("Common.Refresh")">
+                @Localizer.T("Common.Refresh") <i class="fas fa-sync-alt"></i>
             </a>
         </div>
     </div>
@@ -75,12 +75,12 @@
         <div class="card card-primary">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-shield-alt"></i> Compliance Score
-                    <small class="ml-2 text-muted">نسبة الامتثال</small>
+                    <i class="fas fa-shield-alt"></i> @Localizer.T("Clinic.ComplianceScore")
+                    <small class="ml-2 text-muted">@Localizer.T("Clinic.ComplianceScore")</small>
                 </h3>
                 <div class="card-tools">
-                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="updateComplianceScore()" aria-label="Recalculate compliance score">
-                        <i class="fas fa-sync-alt"></i> Recalculate
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="updateComplianceScore()" aria-label="@Localizer.T("Common.Refresh")">
+                        <i class="fas fa-sync-alt"></i> @Localizer.T("Common.Refresh")
                     </button>
                 </div>
             </div>
@@ -91,12 +91,12 @@
                         <h2 class="mt-2 mb-0">
                             <span id="complianceValue">@Model.ComplianceScore.ToString("F1")</span>%
                         </h2>
-                        <p class="text-muted mb-0">Overall Compliance</p>
-                        <p class="text-muted small" dir="rtl">الامتثال العام</p>
+                        <p class="text-muted mb-0">@Localizer.T("Clinic.OverallCompliance")</p>
+                        <p class="text-muted small" dir="rtl">@Localizer.T("Clinic.OverallCompliance")</p>
                     </div>
                     <div class="col-md-8">
                         <div class="progress-group mb-3">
-                            <span class="progress-text">Compliance Score</span>
+                            <span class="progress-text">@Localizer.T("Clinic.ComplianceScore")</span>
                             <span class="float-right"><b>@Model.ComplianceScore.ToString("F1")%</b></span>
                             <div class="progress progress-sm">
                                 <div class="progress-bar bg-@(Model.ComplianceScore >= 80 ? "success" : Model.ComplianceScore >= 60 ? "warning" : "danger")"
@@ -109,7 +109,7 @@
                             <div class="col-6">
                                 <div class="info-box">
                                     <div class="info-box-content">
-                                        <span class="info-box-text">Clinic Name</span>
+                                        <span class="info-box-text">@Localizer.T("Clinic.Name")</span>
                                         <span class="info-box-number">@Model.Name</span>
                                         <span dir="rtl">@Model.NameAr</span>
                                     </div>
@@ -118,7 +118,7 @@
                             <div class="col-6">
                                 <div class="info-box">
                                     <div class="info-box-content">
-                                        <span class="info-box-text">City</span>
+                                        <span class="info-box-text">@Localizer.T("Clinic.City")</span>
                                         <span class="info-box-number">@Model.CityEn</span>
                                         <span dir="rtl">@Model.CityAr</span>
                                     </div>
@@ -130,11 +130,11 @@
                             <div class="col-6">
                                 <div class="info-box">
                                     <div class="info-box-content">
-                                        <span class="info-box-text">License</span>
+                                        <span class="info-box-text">@Localizer.T("Clinic.License")</span>
                                         <span class="info-box-number">@Model.LicenseNumber</span>
                                         @if (Model.LicenseExpiry.HasValue)
                                         {
-                                            <small>Exp: @Model.LicenseExpiry.Value.ToString("dd/MM/yyyy")</small>
+                                            <small>@Localizer.T("Common.Expiry"): @Model.LicenseExpiry.Value.ToString("dd/MM/yyyy")</small>
                                         }
                                     </div>
                                 </div>
@@ -142,15 +142,15 @@
                             <div class="col-6">
                                 <div class="info-box">
                                     <div class="info-box-content">
-                                        <span class="info-box-text">Status</span>
+                                        <span class="info-box-text">@Localizer.T("Common.Status")</span>
                                         <span class="info-box-number">
                                             @if (Model.IsActive)
                                             {
-                                                <span class="badge badge-success">Active</span>
+                                                <span class="badge badge-success">@Localizer.T("Common.Active")</span>
                                             }
                                             else
                                             {
-                                                <span class="badge badge-danger">Inactive</span>
+                                                <span class="badge badge-danger">@Localizer.T("Common.Inactive")</span>
                                             }
                                         </span>
                                     </div>
@@ -167,22 +167,22 @@
         <div class="card card-warning">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-bolt"></i> Quick Actions
-                    <small class="ml-2 text-muted" dir="rtl">إجراءات سريعة</small>
+                    <i class="fas fa-bolt"></i> @Localizer.T("Common.QuickActions")
+                    <small class="ml-2 text-muted" dir="rtl">@Localizer.T("Common.QuickActions")</small>
                 </h3>
             </div>
             <div class="card-body">
-                <a href="@Url.Action("Policies")" class="btn btn-info btn-block mb-2" aria-label="Manage policies">
-                    <i class="fas fa-file-alt"></i> Manage Policies
+                <a href="@Url.Action("Policies")" class="btn btn-info btn-block mb-2" aria-label="@Localizer.T("Nav.Policies")">
+                    <i class="fas fa-file-alt"></i> @Localizer.T("Nav.Policies")
                 </a>
-                <a href="@Url.Action("KPIs")" class="btn btn-success btn-block mb-2" aria-label="View KPIs">
-                    <i class="fas fa-chart-line"></i> View KPIs
+                <a href="@Url.Action("KPIs")" class="btn btn-success btn-block mb-2" aria-label="@Localizer.T("Nav.KPIMonitoring")">
+                    <i class="fas fa-chart-line"></i> @Localizer.T("Nav.KPIMonitoring")
                 </a>
-                <a href="@Url.Action("Staff")" class="btn btn-primary btn-block mb-2" aria-label="Staff management">
-                    <i class="fas fa-users"></i> Staff Management
+                <a href="@Url.Action("Staff")" class="btn btn-primary btn-block mb-2" aria-label="@Localizer.T("Nav.Staff")">
+                    <i class="fas fa-users"></i> @Localizer.T("Nav.Staff")
                 </a>
-                <a href="@Url.Action("ExpiringDocuments")" class="btn btn-warning btn-block" aria-label="Expiring documents">
-                    <i class="fas fa-clock"></i> Expiring Documents
+                <a href="@Url.Action("ExpiringDocuments")" class="btn btn-warning btn-block" aria-label="@Localizer.T("HR.ExpiringDocuments")">
+                    <i class="fas fa-clock"></i> @Localizer.T("HR.ExpiringDocuments")
                 </a>
             </div>
         </div>
@@ -190,16 +190,16 @@
         <div class="card card-secondary">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-info-circle"></i> License Information
+                    <i class="fas fa-info-circle"></i> @Localizer.T("Clinic.LicenseInformation")
                 </h3>
             </div>
             <div class="card-body">
                 <div class="detail-row">
-                    <span class="detail-label">License #</span>
+                    <span class="detail-label">@Localizer.T("Clinic.LicenseNumber")</span>
                     <span class="detail-value">@Model.LicenseNumber</span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Expiry</span>
+                    <span class="detail-label">@Localizer.T("Common.Expiry")</span>
                     <span class="detail-value">
                         @if (Model.LicenseExpiry.HasValue)
                         {
@@ -207,24 +207,24 @@
                         }
                         else
                         {
-                            <span class="text-muted">N/A</span>
+                            <span class="text-muted">@Localizer.T("HR.NA")</span>
                         }
                     </span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Type</span>
+                    <span class="detail-label">@Localizer.T("Common.Type")</span>
                     <span class="detail-value">@Model.ClinicType</span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Status</span>
+                    <span class="detail-label">@Localizer.T("Common.Status")</span>
                     <span class="detail-value">
                         @if (Model.IsActive)
                         {
-                            <span class="badge badge-success">Active</span>
+                            <span class="badge badge-success">@Localizer.T("Common.Active")</span>
                         }
                         else
                         {
-                            <span class="badge badge-danger">Inactive</span>
+                            <span class="badge badge-danger">@Localizer.T("Common.Inactive")</span>
                         }
                     </span>
                 </div>
@@ -276,10 +276,10 @@
                     renderGauge(response.score);
                     location.reload();
                 } else {
-                    alert(response.message || 'Error updating compliance score');
+                    alert(response.message || '@Localizer.T("Alert.ErrorUpdating")');
                 }
             }).fail(function () {
-                alert('An error occurred while updating the compliance score.');
+                alert('@Localizer.T("Alert.ErrorOccurred")');
             });
         }
     </script>

@@ -5,6 +5,7 @@ using AmbulatoryCarePortal.Application.DTOs.PolicyDocument;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
+using AmbulatoryCarePortal.Presentation.Helpers;
 using AmbulatoryCarePortal.Presentation.ViewModels;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
@@ -17,17 +18,20 @@ public class PolicyManagementController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILogger<PolicyManagementController> _logger;
+    private readonly ITranslationService _localizer;
 
     public PolicyManagementController(
         IPolicyDocumentService policyService,
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        ILogger<PolicyManagementController> logger)
+        ILogger<PolicyManagementController> logger,
+        ITranslationService localizer)
     {
         _policyService = policyService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -146,7 +150,7 @@ public class PolicyManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation("Policy {Title} created by {UserId}", policy.Title, userId);
-        TempData["SuccessMessage"] = "Policy created successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.PolicyCreated");
 
         return RedirectToAction(nameof(Index));
     }
@@ -233,7 +237,7 @@ public class PolicyManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation("Policy {Title} updated by {UserId}", policy.Title, userId);
-        TempData["SuccessMessage"] = "Policy updated successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.PolicyUpdated");
 
         return RedirectToAction(nameof(Details), new { id });
     }
@@ -283,7 +287,7 @@ public class PolicyManagementController : Controller
 
         if (evidenceFile == null || evidenceFile.Length == 0)
         {
-            TempData["ErrorMessage"] = "Please select a file to upload.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.NoFileSelected");
             return RedirectToAction(nameof(Details), new { id = policyId });
         }
 
@@ -328,7 +332,7 @@ public class PolicyManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation("Evidence uploaded for policy {PolicyId} by {UserId}", policyId, userId);
-        TempData["SuccessMessage"] = "Evidence uploaded successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.EvidenceUploaded");
 
         return RedirectToAction(nameof(Details), new { id = policyId });
     }
@@ -366,7 +370,7 @@ public class PolicyManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation("Policy {Title} deleted by {UserId}", policy.Title, userId);
-        TempData["SuccessMessage"] = "Policy deleted successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.PolicyDeleted");
 
         return RedirectToAction(nameof(Index));
     }
@@ -405,7 +409,7 @@ public class PolicyManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation("Policy {Title} approved by {UserId}", policy.Title, userId);
-        TempData["SuccessMessage"] = "Policy approved successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.PolicyApproved");
 
         return RedirectToAction(nameof(Details), new { id });
     }

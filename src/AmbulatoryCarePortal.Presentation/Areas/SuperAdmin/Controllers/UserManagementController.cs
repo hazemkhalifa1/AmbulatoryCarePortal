@@ -1,8 +1,10 @@
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
+using AmbulatoryCarePortal.Domain.Enums;
 using AmbulatoryCarePortal.Infrastructure.Data;
 using AmbulatoryCarePortal.Infrastructure.Data.Seed;
 using AmbulatoryCarePortal.Presentation.ViewModels;
+using AmbulatoryCarePortal.Presentation.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,19 +21,22 @@ public class UserManagementController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly AppDbContext _dbContext;
     private readonly ILogger<UserManagementController> _logger;
+    private readonly ITranslationService _localizer;
 
     public UserManagementController(
         UserManager<AppUser> userManager,
         RoleManager<IdentityRole> roleManager,
         IUnitOfWork unitOfWork,
         AppDbContext dbContext,
-        ILogger<UserManagementController> logger)
+        ILogger<UserManagementController> logger,
+        ITranslationService localizer)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _unitOfWork = unitOfWork;
         _dbContext = dbContext;
         _logger = logger;
+        _localizer = localizer;
     }
 
     /// <summary>
@@ -113,14 +118,28 @@ public class UserManagementController : Controller
 
         if (result.Succeeded)
         {
-            // Assign role if selected
             if (!string.IsNullOrEmpty(model.SelectedRole))
             {
                 await _userManager.AddToRoleAsync(user, model.SelectedRole);
             }
 
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var auditLog = new AuditTrail
+            {
+                ActionType = AuditActionType.Create,
+                TargetObjectId = 0,
+                TargetObjectType = nameof(AppUser),
+                Description = $"Created user: {user.Email}",
+                CreatedBy = userId,
+                ActionDate = DateTime.UtcNow,
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+            };
+
+            await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
+            await _unitOfWork.SaveChangesAsync();
+
             _logger.LogInformation($"User {user.Email} created with role {model.SelectedRole}");
-            TempData["SuccessMessage"] = "User created successfully!";
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.UserCreated");
 
             return RedirectToAction(nameof(Index));
         }
@@ -200,17 +219,12 @@ public class UserManagementController : Controller
         if (!string.IsNullOrEmpty(model.SelectedRole) &&
             !currentRoles.Contains(model.SelectedRole))
         {
-            // Batch all role changes + user property updates in a single SaveChangesAsync
-            // to avoid the timeout caused by multiple individual saves per UserManager call.
-
-            // Remove all current role assignments directly via DbContext
             var userRoles = await _dbContext.Set<IdentityUserRole<string>>()
                 .Where(ur => ur.UserId == user.Id)
                 .ToListAsync();
 
             _dbContext.Set<IdentityUserRole<string>>().RemoveRange(userRoles);
 
-            // Add the new role assignment
             var role = await _roleManager.FindByNameAsync(model.SelectedRole);
             if (role != null)
             {
@@ -221,21 +235,30 @@ public class UserManagementController : Controller
                 });
             }
 
-            // Update the user's concurrency stamp so Identity's change tracking is consistent
             user.ConcurrencyStamp = Guid.NewGuid().ToString();
-
-            // Mark the user entity as modified
             _dbContext.Entry(user).State = EntityState.Modified;
-
-            // Single save for all changes
             await _dbContext.SaveChangesAsync();
 
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var auditLog = new AuditTrail
+            {
+                ActionType = AuditActionType.Update,
+                TargetObjectId = 0,
+                TargetObjectType = nameof(AppUser),
+                Description = $"Updated user: {user.Email}",
+                CreatedBy = userId,
+                ActionDate = DateTime.UtcNow,
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+            };
+
+            await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
+            await _unitOfWork.SaveChangesAsync();
+
             _logger.LogInformation($"User {user.Email} updated with role {model.SelectedRole}");
-            TempData["SuccessMessage"] = "User updated successfully!";
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.UserUpdated");
             return RedirectToAction(nameof(Index));
         }
 
-        // No role change — just update user properties
         result = await _userManager.UpdateAsync(user);
         if (!result.Succeeded)
         {
@@ -249,8 +272,23 @@ public class UserManagementController : Controller
             return View(model);
         }
 
+        var editUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var editAuditLog = new AuditTrail
+        {
+            ActionType = AuditActionType.Update,
+            TargetObjectId = 0,
+            TargetObjectType = nameof(AppUser),
+            Description = $"Updated user: {user.Email}",
+            CreatedBy = editUserId,
+            ActionDate = DateTime.UtcNow,
+            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+        };
+
+        await _unitOfWork.Repository<AuditTrail>().AddAsync(editAuditLog);
+        await _unitOfWork.SaveChangesAsync();
+
         _logger.LogInformation($"User {user.Email} updated");
-        TempData["SuccessMessage"] = "User updated successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.UserUpdated");
         return RedirectToAction(nameof(Index));
     }
 
@@ -264,10 +302,9 @@ public class UserManagementController : Controller
         if (user == null)
             return NotFound();
 
-        // Prevent deleting the current admin
         if (user.Id == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
         {
-            TempData["ErrorMessage"] = "Cannot delete your own account!";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.UserDeleteOwn");
             return RedirectToAction(nameof(Index));
         }
 
@@ -275,12 +312,27 @@ public class UserManagementController : Controller
 
         if (result.Succeeded)
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var auditLog = new AuditTrail
+            {
+                ActionType = AuditActionType.Delete,
+                TargetObjectId = 0,
+                TargetObjectType = nameof(AppUser),
+                Description = $"Deleted user: {user.Email}",
+                CreatedBy = userId,
+                ActionDate = DateTime.UtcNow,
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+            };
+
+            await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
+            await _unitOfWork.SaveChangesAsync();
+
             _logger.LogInformation($"User {user.Email} deleted");
-            TempData["SuccessMessage"] = "User deleted successfully!";
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.UserDeleted");
         }
         else
         {
-            TempData["ErrorMessage"] = "Failed to delete user!";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.UserDeleteFailed");
         }
 
         return RedirectToAction(nameof(Index));
@@ -302,11 +354,11 @@ public class UserManagementController : Controller
         if (result.Succeeded)
         {
             _logger.LogInformation($"Password reset for user {user.Email}");
-            TempData["SuccessMessage"] = "Password reset successfully!";
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.UserPasswordReset");
         }
         else
         {
-            TempData["ErrorMessage"] = "Failed to reset password!";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.UserPasswordResetFailed");
         }
 
         return RedirectToAction(nameof(Edit), new { id });
@@ -355,9 +407,6 @@ public class UserManagementController : Controller
         }).ToList();
     }
 
-    /// <summary>
-    /// Get available clinics for dropdown
-    /// </summary>
     private async Task<List<ClinicViewModel>> GetAvailableClinicsAsync()
     {
         var clinics = await _unitOfWork.Repository<Clinic>().GetAllAsync(false);

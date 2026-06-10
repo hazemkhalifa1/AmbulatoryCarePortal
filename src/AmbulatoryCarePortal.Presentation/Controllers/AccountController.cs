@@ -1,5 +1,6 @@
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Presentation.ViewModels;
+using AmbulatoryCarePortal.Presentation.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +12,18 @@ public class AccountController : Controller
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<AccountController> _logger;
+    private readonly ITranslationService _localizer;
 
     public AccountController(
         SignInManager<AppUser> signInManager,
         UserManager<AppUser> userManager,
-        ILogger<AccountController> logger)
+        ILogger<AccountController> logger,
+        ITranslationService localizer)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -58,11 +62,11 @@ public class AccountController : Controller
             if (result.IsLockedOut)
             {
                 _logger.LogWarning($"User {model.Email} account locked.");
-                ModelState.AddModelError(string.Empty, "Account locked. Please try again later.");
+                ModelState.AddModelError(string.Empty, _localizer.T("Alert.Error.LoginLocked"));
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                ModelState.AddModelError(string.Empty, _localizer.T("Alert.Error.LoginFailed"));
             }
         }
 
@@ -96,7 +100,7 @@ public class AccountController : Controller
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
         {
-            TempData["SuccessMessage"] = "If your email is registered, you will receive a password reset link.";
+            TempData["SuccessMessage"] = _localizer.T("Alert.Info.PasswordResetSent");
             return RedirectToAction(nameof(Login));
         }
 
@@ -104,7 +108,7 @@ public class AccountController : Controller
         var callbackUrl = Url.Action(nameof(ResetPassword), "Account", new { email = user.Email, code }, Request.Scheme);
 
         _logger.LogInformation($"Password reset link sent to {user.Email}");
-        TempData["SuccessMessage"] = "Password reset link has been sent to your email.";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.PasswordResetEmail");
 
         return RedirectToAction(nameof(Login));
     }

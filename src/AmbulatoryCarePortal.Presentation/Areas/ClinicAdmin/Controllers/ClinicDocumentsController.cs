@@ -4,6 +4,7 @@ using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
+using AmbulatoryCarePortal.Presentation.Helpers;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
@@ -14,15 +15,18 @@ public class ClinicDocumentsController : Controller
     private readonly IClinicDocumentService _clinicDocumentService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ClinicDocumentsController> _logger;
+    private readonly ITranslationService _localizer;
 
     public ClinicDocumentsController(
         IClinicDocumentService clinicDocumentService,
         IUnitOfWork unitOfWork,
-        ILogger<ClinicDocumentsController> logger)
+        ILogger<ClinicDocumentsController> logger,
+        ITranslationService localizer)
     {
         _clinicDocumentService = clinicDocumentService;
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -68,7 +72,7 @@ public class ClinicDocumentsController : Controller
         var result = await _clinicDocumentService.DownloadDocumentAsync(id);
         if (result == null)
         {
-            TempData["ErrorMessage"] = "Template file not found. Please contact the administrator.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.TemplateFileNotFound");
             return RedirectToAction(nameof(Index));
         }
 
@@ -90,7 +94,7 @@ public class ClinicDocumentsController : Controller
 
         if (evidenceFile == null || evidenceFile.Length == 0)
         {
-            TempData["ErrorMessage"] = "Please select a file to upload.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.NoFileSelected");
             return RedirectToAction(nameof(Details), new { id = clinicDocumentId });
         }
 
@@ -115,7 +119,7 @@ public class ClinicDocumentsController : Controller
 
         if (!uploaded)
         {
-            TempData["ErrorMessage"] = "Failed to upload evidence.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.EvidenceAttachFailed");
             return RedirectToAction(nameof(Details), new { id = clinicDocumentId });
         }
 
@@ -135,7 +139,7 @@ public class ClinicDocumentsController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation("Evidence uploaded for clinic document {DocumentId} by {UserId}", clinicDocumentId, userId);
-        TempData["SuccessMessage"] = "Evidence uploaded successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.EvidenceUploaded");
 
         return RedirectToAction(nameof(Details), new { id = clinicDocumentId });
     }
@@ -158,7 +162,7 @@ public class ClinicDocumentsController : Controller
         var deleted = await _clinicDocumentService.DeleteAttachmentAsync(attachmentId);
         if (!deleted)
         {
-            TempData["ErrorMessage"] = "Failed to delete attachment.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.AttachmentDeleteFailed");
             return RedirectToAction(nameof(Details), new { id = attachment.ClinicDocumentId });
         }
 
@@ -177,7 +181,7 @@ public class ClinicDocumentsController : Controller
         await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
         await _unitOfWork.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = "Attachment deleted successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.AttachmentDeleted");
         return RedirectToAction(nameof(Details), new { id = attachment.ClinicDocumentId });
     }
 
@@ -195,7 +199,7 @@ public class ClinicDocumentsController : Controller
         var updated = await _clinicDocumentService.UpdateStatusAsync(id, status);
         if (!updated)
         {
-            TempData["ErrorMessage"] = "Failed to update status.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.StatusUpdateFailed");
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -214,7 +218,7 @@ public class ClinicDocumentsController : Controller
         await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
         await _unitOfWork.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = $"Document status updated to {status}";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Info.StatusUpdated", status);
         return RedirectToAction(nameof(Details), new { id });
     }
 }

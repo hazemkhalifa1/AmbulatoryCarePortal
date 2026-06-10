@@ -2,6 +2,7 @@ using AmbulatoryCarePortal.Application.DTOs;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Presentation.Extensions;
+using AmbulatoryCarePortal.Presentation.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,15 +16,18 @@ public class FormsController : Controller
     private readonly IFormService _formService;
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<FormsController> _logger;
+    private readonly ITranslationService _localizer;
 
     public FormsController(
         IFormService formService,
         ILogger<FormsController> logger,
-        UserManager<AppUser> userManager)
+        UserManager<AppUser> userManager,
+        ITranslationService localizer)
     {
         _formService = formService;
         _logger = logger;
         _userManager = userManager;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -42,7 +46,7 @@ public class FormsController : Controller
         }
 
         ViewBag.SearchTerm = searchTerm;
-        ViewBag.PageTitle = "Forms Library";
+        ViewBag.PageTitle = _localizer.T("Page.FormsLibrary");
         return View(forms);
     }
 
@@ -50,7 +54,7 @@ public class FormsController : Controller
     [Authorize(Roles = "ClinicAdmin")]
     public IActionResult Create()
     {
-        ViewBag.PageTitle = "Add Form";
+        ViewBag.PageTitle = _localizer.T("Page.AddForm");
         return View(new CreateFormDto());
     }
 
@@ -61,7 +65,7 @@ public class FormsController : Controller
     {
         if (!ModelState.IsValid)
         {
-            ViewBag.PageTitle = "Add Form";
+            ViewBag.PageTitle = _localizer.T("Page.AddForm");
             return View(dto);
         }
 
@@ -70,14 +74,14 @@ public class FormsController : Controller
             var user = await _userManager.GetUserAsync(User);
             dto.ClinicId = user?.ClinicId ?? 0;
             var formId = await _formService.CreateFormAsync(dto);
-            TempData["SuccessMessage"] = "Form created successfully";
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.FormCreated");
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating form");
             ModelState.AddModelError(string.Empty, "An error occurred while creating the form");
-            ViewBag.PageTitle = "Add Form";
+            ViewBag.PageTitle = _localizer.T("Page.AddForm");
             return View(dto);
         }
     }
@@ -91,7 +95,7 @@ public class FormsController : Controller
 
         var versions = await _formService.GetFormVersionHistoryAsync(id);
         ViewBag.Form = form;
-        ViewBag.PageTitle = $"Versions - {form.Title}";
+        ViewBag.PageTitle = _localizer.T("Page.Versions", form.Title);
         return View(versions);
     }
 
@@ -103,12 +107,12 @@ public class FormsController : Controller
         try
         {
             await _formService.DeleteFormAsync(id);
-            TempData["SuccessMessage"] = "Form deleted successfully";
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.FormDeleted");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting form");
-            TempData["ErrorMessage"] = "An error occurred while deleting the form";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.FormDeleteFailed");
         }
 
         return RedirectToAction(nameof(Index));
@@ -121,7 +125,7 @@ public class FormsController : Controller
     {
         if (file == null || file.Length == 0)
         {
-            TempData["ErrorMessage"] = "Please select a file to upload";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.NoFileSelected");
             return RedirectToAction(nameof(Versions), new { id = formId });
         }
 
@@ -129,13 +133,13 @@ public class FormsController : Controller
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
         if (!allowedExtensions.Contains(extension))
         {
-            TempData["ErrorMessage"] = "Only PDF, Word, and Excel files are allowed";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.InvalidFileType");
             return RedirectToAction(nameof(Versions), new { id = formId });
         }
 
         if (file.Length > 20 * 1024 * 1024)
         {
-            TempData["ErrorMessage"] = "File size must not exceed 20MB";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.FileTooLarge");
             return RedirectToAction(nameof(Versions), new { id = formId });
         }
 
@@ -156,12 +160,12 @@ public class FormsController : Controller
             var userId = User.GetUserId();
             await _formService.UploadNewVersionAsync(formId, relativePath, userId, notes);
 
-            TempData["SuccessMessage"] = "New version uploaded successfully";
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.FileUploaded");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error uploading form version");
-            TempData["ErrorMessage"] = "An error occurred while uploading the file";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.FileUploadFailed");
         }
 
         return RedirectToAction(nameof(Versions), new { id = formId });

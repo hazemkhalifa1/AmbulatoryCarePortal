@@ -5,6 +5,7 @@ using AmbulatoryCarePortal.Application.DTOs;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
+using AmbulatoryCarePortal.Presentation.Helpers;
 using AmbulatoryCarePortal.Presentation.ViewModels;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
@@ -18,19 +19,22 @@ public class KPIManagementController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILogger<KPIManagementController> _logger;
+    private readonly ITranslationService _localizer;
 
     public KPIManagementController(
         IKPIService kpiService,
         IAnalyticsService analyticsService,
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        ILogger<KPIManagementController> logger)
+        ILogger<KPIManagementController> logger,
+        ITranslationService localizer)
     {
         _kpiService = kpiService;
         _analyticsService = analyticsService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -154,7 +158,7 @@ public class KPIManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation($"KPI {kpi.Name} created by {userId}");
-        TempData["SuccessMessage"] = "KPI created successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.KPICreated");
 
         return RedirectToAction(nameof(Index));
     }
@@ -250,7 +254,7 @@ public class KPIManagementController : Controller
         await _unitOfWork.SaveChangesAsync();
 
         _logger.LogInformation($"KPI data entered for {kpi.Name} by {userId}");
-        TempData["SuccessMessage"] = "KPI data recorded successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.KPIDataRecorded");
 
         return RedirectToAction(nameof(ViewAnalytics), new { id = model.KPIId });
     }

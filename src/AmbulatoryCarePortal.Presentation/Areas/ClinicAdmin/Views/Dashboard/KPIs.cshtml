@@ -1,19 +1,19 @@
 @model List<KPIDto>
 
 @{
-    ViewData["Title"] = ViewBag.PageTitle ?? "KPI Monitoring";
+    ViewData["Title"] = ViewBag.PageTitle ?? Localizer.T("Page.KPIMonitoring");
 }
 
 <div class="fade-in">
     <div class="card card-success">
         <div class="card-header">
             <h3 class="card-title">
-                <i class="fas fa-chart-line"></i> KPI Monitoring
-                <small class="ml-2 text-muted" dir="rtl">مراقبة مؤشرات الأداء</small>
+                    <i class="fas fa-chart-line"></i> @Localizer.T("Page.KPIMonitoring")
+                <small class="ml-2 text-muted" dir="rtl">@Localizer.T("Nav.KPIMonitoring")</small>
             </h3>
             <div class="card-tools">
-                <a href="@Url.Action("Create", "KPIManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-success" aria-label="Create new KPI">
-                    <i class="fas fa-plus"></i> Create New KPI
+                <a href="@Url.Action("Create", "KPIManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-success" aria-label="@Localizer.T("Button.Create")">
+                    <i class="fas fa-plus"></i> @Localizer.T("KPI.CreateNew")
                 </a>
             </div>
         </div>
@@ -23,19 +23,19 @@
                 <div class="table-toolbar">
                     <div class="search-box">
                         <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="form-control" id="tableSearch" data-table-search="kpisTable" placeholder="Search KPIs..." aria-label="Search KPIs" />
+                        <input type="text" class="form-control" id="tableSearch" data-table-search="kpisTable" placeholder="@Localizer.T("KPI.SearchPlaceholder")" aria-label="@Localizer.T("KPI.SearchPlaceholder")" />
                     </div>
                 </div>
 
-                <table class="table table-hover" id="kpisTable" role="table" aria-label="KPI metrics">
+                <table class="table table-hover" id="kpisTable" role="table" aria-label="@Localizer.T("Page.KPIMonitoring")">
                     <thead>
                         <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Target Value</th>
-                            <th scope="col">Current Value</th>
-                            <th scope="col">Achievement</th>
-                            <th scope="col">Frequency</th>
-                            <th scope="col">Actions</th>
+                            <th scope="col">@Localizer.T("Common.Name")</th>
+                            <th scope="col">@Localizer.T("KPI.TargetValue")</th>
+                            <th scope="col">@Localizer.T("KPI.CurrentValue")</th>
+                            <th scope="col">@Localizer.T("KPI.Achievement")</th>
+                            <th scope="col">@Localizer.T("Common.Frequency")</th>
+                            <th scope="col">@Localizer.T("Common.Actions")</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -85,13 +85,13 @@
                                     </td>
                                     <td>
                                         <div class="actions-cell">
-                                            <a href="@Url.Action("Details", "KPIManagement", new { area = "ClinicAdmin", id = kpi.Id })" class="btn btn-sm btn-info" title="View" aria-label="View KPI details">
+                                            <a href="@Url.Action("Details", "KPIManagement", new { area = "ClinicAdmin", id = kpi.Id })" class="btn btn-sm btn-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="@Url.Action("Edit", "KPIManagement", new { area = "ClinicAdmin", id = kpi.Id })" class="btn btn-sm btn-warning" title="Edit" aria-label="Edit KPI">
+                                            <a href="@Url.Action("Edit", "KPIManagement", new { area = "ClinicAdmin", id = kpi.Id })" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="@Url.Action("Entries", "KPIManagement", new { area = "ClinicAdmin", kpiId = kpi.Id })" class="btn btn-sm btn-primary" title="Entries" aria-label="View KPI entries">
+                                            <a href="@Url.Action("Entries", "KPIManagement", new { area = "ClinicAdmin", kpiId = kpi.Id })" class="btn btn-sm btn-primary" title="@Localizer.T("KPI.Entries")" aria-label="@Localizer.T("KPI.Entries")">
                                                 <i class="fas fa-table"></i>
                                             </a>
                                         </div>
@@ -104,8 +104,8 @@
                             <tr>
                                 <td colspan="6" class="text-center text-muted py-4">
                                     <i class="fas fa-chart-line fa-2x mb-2 d-block"></i>
-                                    No KPIs found.
-                                    <a href="@Url.Action("Create", "KPIManagement", new { area = "ClinicAdmin" })">Create your first KPI</a>
+                                    @Localizer.T("Empty.NoKPIs")
+                                    <a href="@Url.Action("Create", "KPIManagement", new { area = "ClinicAdmin" })">@Localizer.T("KPI.CreateNew")</a>
                                 </td>
                             </tr>
                         }
@@ -114,7 +114,7 @@
 
                 <div class="table-footer">
                     <div class="pagination-info">
-                        Showing <strong>@Model.Count</strong> KPI(s)
+                        @Localizer.T("Common.Showing") <strong>@Model.Count</strong> @Localizer.T("KPI.KPIs")
                     </div>
                 </div>
             </div>

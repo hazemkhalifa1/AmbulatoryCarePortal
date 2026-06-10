@@ -2365,3 +2365,840 @@ html[dir="rtl"] .main-footer .developer-branding {
         left: 0.75rem;
     }
 }
+
+/* ============================================================
+   27. HERO BANNERS
+   ============================================================ */
+.dashboard-hero,
+.clinics-hero,
+.clinic-detail-hero,
+.audit-hero,
+.create-clinic-hero,
+.template-hero {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    border-radius: var(--radius-lg);
+    padding: 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.dashboard-hero::before,
+.clinics-hero::before,
+.clinic-detail-hero::before,
+.audit-hero::before,
+.create-clinic-hero::before,
+.template-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+}
+
+.dashboard-hero::after,
+.clinics-hero::after,
+.clinic-detail-hero::after,
+.audit-hero::after,
+.create-clinic-hero::after,
+.template-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    pointer-events: none;
+}
+
+.hero-content,
+.audit-hero-content,
+.template-hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title,
+.audit-hero-title,
+.template-hero-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.hero-subtitle,
+.audit-hero-subtitle,
+.template-hero-subtitle {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+}
+
+.hero-content .btn-light,
+.audit-hero-content .btn-light,
+.template-hero-content .btn-light {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--color-white);
+    font-weight: 500;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+}
+
+.hero-content .btn-light:hover,
+.audit-hero-content .btn-light:hover,
+.template-hero-content .btn-light:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: var(--color-white);
+    transform: translateY(-1px);
+}
+
+/* ============================================================
+   28. STAT CARDS
+   ============================================================ */
+.stat-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-slow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-card-body {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.stat-card-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.stat-card-info .stat-card-icon {
+    background: var(--color-primary-lighter);
+    color: var(--color-primary);
+}
+
+.stat-card-success .stat-card-icon {
+    background: #E8F8E0;
+    color: var(--color-accent);
+}
+
+.stat-card-warning .stat-card-icon {
+    background: #FFF3E0;
+    color: #F39C12;
+}
+
+.stat-card-danger .stat-card-icon {
+    background: #FDE8E8;
+    color: #E74C3C;
+}
+
+.stat-card-content h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    color: var(--color-text);
+}
+
+.stat-card-content p {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin: 0.125rem 0 0;
+    font-weight: 500;
+}
+
+.stat-card-footer {
+    display: block;
+    padding: 0.625rem 1.5rem;
+    background: var(--color-bg);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-align: center;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.stat-card-footer:hover {
+    background: var(--color-primary-lighter);
+    color: var(--color-primary);
+}
+
+/* ============================================================
+   29. FORM SECTIONS
+   ============================================================ */
+.form-section {
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.form-section-header {
+    background: var(--color-bg-alt);
+    padding: 0.875rem 1.25rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+}
+
+.form-section-body {
+    padding: 1.25rem;
+}
+
+.form-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: none;
+}
+
+/* ============================================================
+   30. FILE UPLOAD AREA
+   ============================================================ */
+.upload-area {
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--color-bg-alt);
+}
+
+.upload-area:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-lighter);
+}
+
+.upload-area.has-file {
+    border-style: solid;
+    border-color: var(--color-accent);
+    background: var(--color-accent-light);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    color: var(--color-primary-light);
+    margin-bottom: 1rem;
+}
+
+.upload-area h5 {
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.25rem;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--color-white);
+    border-radius: var(--radius-sm);
+}
+
+.file-icon {
+    font-size: 2rem;
+    color: var(--color-primary);
+}
+
+.file-details {
+    flex: 1;
+    text-align: left;
+}
+
+.file-name {
+    font-weight: 600;
+    display: block;
+    font-size: 0.9rem;
+}
+
+.file-size {
+    font-size: 0.8rem;
+}
+
+/* ============================================================
+   31. ACTION BUTTONS
+   ============================================================ */
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: var(--radius-md);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+    transition: var(--transition-slow);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.action-btn i {
+    font-size: 1.75rem;
+    flex-shrink: 0;
+}
+
+.action-btn span {
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: block;
+}
+
+.action-btn small {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    display: block;
+    font-weight: 400;
+}
+
+.action-btn-primary i { color: var(--color-primary); }
+.action-btn-primary:hover { border-color: var(--color-primary); background: var(--color-primary-lighter); }
+
+.action-btn-info i { color: var(--color-info); }
+.action-btn-info:hover { border-color: var(--color-info); background: #E8F4FD; }
+
+.action-btn-warning i { color: #F39C12; }
+.action-btn-warning:hover { border-color: #F39C12; background: #FFF3E0; }
+
+.action-btn-success i { color: var(--color-accent); }
+.action-btn-success:hover { border-color: var(--color-accent); background: var(--color-accent-light); }
+
+.action-btn-secondary i { color: var(--color-text-secondary); }
+.action-btn-secondary:hover { border-color: var(--color-text-muted); background: var(--color-bg-alt); }
+
+/* ============================================================
+   32. AUDIT LOG SPECIFIC
+   ============================================================ */
+.audit-filter-card {
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+}
+
+.audit-table-card {
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: none;
+}
+
+.audit-table thead th {
+    background: var(--color-bg-alt);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-secondary);
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.audit-table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+}
+
+.audit-date {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.audit-description {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.audit-user {
+    font-weight: 500;
+}
+
+.audit-ip {
+    font-size: 0.8rem;
+    padding: 0.15rem 0.4rem;
+    background: var(--color-bg);
+    border-radius: 4px;
+}
+
+.badge-audit {
+    padding: 0.35rem 0.65rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.badge-create {
+    background: #E8F8E0;
+    color: #5DA830;
+}
+
+.badge-update {
+    background: #FFF3E0;
+    color: #E67E22;
+}
+
+.badge-delete {
+    background: #FDE8E8;
+    color: #C0392B;
+}
+
+.badge-login {
+    background: #E8F4FD;
+    color: #2980B9;
+}
+
+.badge-default {
+    background: var(--color-bg-alt);
+    color: var(--color-text-secondary);
+}
+
+.target-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: var(--color-primary-lighter);
+    color: var(--color-primary);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.audit-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.audit-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.audit-detail-item .detail-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.audit-detail-item .detail-value {
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.audit-pre {
+    background: var(--color-bg-alt);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* ============================================================
+   33. DETAIL & ACTION CARDS
+   ============================================================ */
+.detail-card,
+.action-card,
+.recent-clinics-card,
+.quick-actions-card,
+.clinics-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: none;
+}
+
+.detail-card .card-header,
+.action-card .card-header,
+.recent-clinics-card .card-header,
+.quick-actions-card .card-header,
+.clinics-card .card-header,
+.audit-table-card .card-header {
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-border);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.detail-card .card-title,
+.action-card .card-title,
+.recent-clinics-card .card-title,
+.quick-actions-card .card-title,
+.clinics-card .card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.detail-item .detail-label {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+.detail-item .detail-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: right;
+}
+
+.compliance-progress {
+    height: 6px;
+    border-radius: 3px;
+}
+
+.compliance-progress .progress-bar {
+    border-radius: 3px;
+}
+
+/* ============================================================
+   34. TABLE ENHANCEMENTS
+   ============================================================ */
+.clinics-table thead th {
+    background: var(--color-bg-alt);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-secondary);
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.clinics-table td {
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+}
+
+.clinic-name-cell strong {
+    display: block;
+    font-size: 0.95rem;
+}
+
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: var(--color-primary-lighter);
+    color: var(--color-primary);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.375rem;
+}
+
+.action-buttons .btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   35. SIDEBAR ENHANCEMENTS & COMPACT BRANDING
+   ============================================================ */
+.brand-link .brand-compact {
+    display: none;
+}
+
+.sidebar-mini.sidebar-collapse .brand-link .brand-full {
+    display: none;
+}
+
+.sidebar-mini.sidebar-collapse .brand-link .brand-compact {
+    display: inline;
+    font-size: 1rem;
+}
+
+.sidebar-mini.sidebar-collapse .brand-link small {
+    display: none;
+}
+
+.main-sidebar .nav-sidebar .nav-item .nav-link {
+    border-radius: 0 20px 20px 0;
+    margin: 1px 8px 1px 0;
+    padding: 0.65rem 1rem;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.main-sidebar .nav-sidebar .nav-item .nav-link:hover {
+    background: var(--color-primary-lighter);
+    color: var(--color-primary);
+}
+
+.main-sidebar .nav-sidebar .nav-item .nav-link.active {
+    background: var(--color-primary);
+    color: var(--color-white);
+    box-shadow: 0 2px 8px rgba(26, 58, 107, 0.25);
+}
+
+.main-sidebar .nav-sidebar .nav-item .nav-link i {
+    font-size: 1.1rem;
+}
+
+.sidebar-mini.sidebar-collapse .main-sidebar .nav-sidebar .nav-item .nav-link {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: 2px auto;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-mini.sidebar-collapse .nav-sidebar .nav-item .nav-link p {
+    display: none;
+}
+
+.sidebar-mini.sidebar-collapse .nav-sidebar .nav-item .nav-link .nav-icon {
+    margin: 0;
+}
+
+.main-sidebar .nav-sidebar .nav-header {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    padding: 1rem 1rem 0.375rem;
+    font-weight: 700;
+}
+
+/* Tooltip on collapsed sidebar */
+.sidebar-mini.sidebar-collapse .main-sidebar .nav-sidebar .nav-item {
+    position: relative;
+}
+
+.sidebar-mini.sidebar-collapse .main-sidebar .nav-sidebar .nav-item .nav-link:hover::after {
+    content: attr(data-title);
+    position: absolute;
+    left: 52px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--color-primary-dark);
+    color: var(--color-white);
+    padding: 0.375rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    font-weight: 500;
+}
+
+/* Active indicator */
+.main-sidebar .nav-sidebar .nav-item .nav-link.active::before,
+.sidebar-mini.sidebar-collapse .main-sidebar .nav-sidebar .nav-item .nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    background: var(--color-primary);
+    border-radius: 0 3px 3px 0;
+}
+
+/* ============================================================
+   36. RTL OVERRIDES FOR SECTIONS 27-35
+   ============================================================ */
+html[dir="rtl"] .dashboard-hero::before,
+html[dir="rtl"] .clinics-hero::before,
+html[dir="rtl"] .clinic-detail-hero::before,
+html[dir="rtl"] .audit-hero::before,
+html[dir="rtl"] .create-clinic-hero::before,
+html[dir="rtl"] .template-hero::before {
+    right: auto;
+    left: -20%;
+}
+
+html[dir="rtl"] .dashboard-hero::after,
+html[dir="rtl"] .clinics-hero::after,
+html[dir="rtl"] .clinic-detail-hero::after,
+html[dir="rtl"] .audit-hero::after,
+html[dir="rtl"] .create-clinic-hero::after,
+html[dir="rtl"] .template-hero::after {
+    left: auto;
+    right: -10%;
+}
+
+html[dir="rtl"] .stat-card-body {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .file-details {
+    text-align: right;
+}
+
+html[dir="rtl"] .action-btn {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .detail-item .detail-value {
+    text-align: left;
+}
+
+html[dir="rtl"] .detail-item {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .main-sidebar .nav-sidebar .nav-item .nav-link {
+    border-radius: 20px 0 0 20px;
+    margin: 1px 0 1px 8px;
+}
+
+html[dir="rtl"] .main-sidebar .nav-sidebar .nav-item .nav-link.active::before,
+html[dir="rtl"] .sidebar-mini.sidebar-collapse .main-sidebar .nav-sidebar .nav-item .nav-link.active::before {
+    left: auto;
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+html[dir="rtl"] .sidebar-mini.sidebar-collapse .main-sidebar .nav-sidebar .nav-item .nav-link:hover::after {
+    left: auto;
+    right: 52px;
+}
+
+html[dir="rtl"] .audit-detail-grid {
+    direction: rtl;
+}
+
+html[dir="rtl"] .compliance-progress {
+    direction: ltr;
+}
+
+html[dir="rtl"] .action-buttons {
+    flex-direction: row-reverse;
+    justify-content: center;
+}
+
+/* Fix header ms-auto in RTL */
+html[dir="rtl"] .navbar-nav.ms-auto {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+/* Animation direction for RTL */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+html[dir="rtl"] .slide-in {
+    animation-name: slideInRtl;
+}
+
+@keyframes slideInRtl {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Input group border-radius fix in RTL */
+html[dir="rtl"] .input-group > .form-control:not(:last-child) {
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+html[dir="rtl"] .input-group > .form-control:not(:first-child) {
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+/* Badge positioning in RTL */
+html[dir="rtl"] .navbar-badge {
+    right: auto;
+    left: 0;
+}
+
+/* Text alignment in RTL */
+html[dir="rtl"] .text-right {
+    text-align: left !important;
+}
+
+html[dir="rtl"] .text-left {
+    text-align: right !important;
+}

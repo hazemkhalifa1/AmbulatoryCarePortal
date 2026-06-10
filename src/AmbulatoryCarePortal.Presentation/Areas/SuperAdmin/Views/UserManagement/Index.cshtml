@@ -1,7 +1,7 @@
 @model List<AmbulatoryCarePortal.Presentation.ViewModels.UserRoleManagementViewModel>
 
 @{
-    ViewData["Title"] = "User Management";
+    ViewData["Title"] = Localizer.T("Page.UserManagement");
     var totalCount = ViewBag.TotalCount as int? ?? 0;
     var currentPage = ViewBag.CurrentPage as int? ?? 1;
 }
@@ -10,10 +10,10 @@
     <div class="col-12">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-users"></i> All Users (@totalCount)</h3>
+                <h3 class="card-title"><i class="fas fa-users"></i> @Localizer.T("Common.All") @Localizer.T("Page.UserManagement") (@totalCount)</h3>
                 <div class="card-tools">
-                    <a href="/SuperAdmin/UserManagement/Create" class="btn btn-sm btn-primary" aria-label="Add new user">
-                        <i class="fas fa-plus"></i> Add User
+                    <a href="/SuperAdmin/UserManagement/Create" class="btn btn-sm btn-primary" aria-label="@Localizer.T("Button.Add")">
+                        <i class="fas fa-plus"></i> @Localizer.T("Button.Add")
                     </a>
                 </div>
             </div>
@@ -24,7 +24,7 @@
                         <div class="table-toolbar">
                             <div class="search-box">
                                 <i class="fas fa-search search-icon"></i>
-                                <input type="text" class="form-control" data-table-search="userTable" placeholder="Search users..." aria-label="Search users">
+                                <input type="text" class="form-control" data-table-search="userTable" placeholder="@Localizer.T("Search.Users")" aria-label="@Localizer.T("Search.Users")">
                             </div>
                         </div>
                         <table class="table table-hover" id="userTable">
@@ -34,10 +34,10 @@
                                     <th>Full Name</th>
                                     <th>Phone</th>
                                     <th>Role</th>
-                                    <th>Active</th>
+                                    <th>@Localizer.T("Common.Active")</th>
                                     <th>Created</th>
                                     <th>Last Login</th>
-                                    <th>Actions</th>
+                                    <th>@Localizer.T("Common.Actions")</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -51,25 +51,25 @@
                                         <td>
                                             @if (user.IsActive)
                                             {
-                                                <span class="badge badge-success">Active</span>
+                                                <span class="badge badge-success">@Localizer.T("Common.Active")</span>
                                             }
                                             else
                                             {
-                                                <span class="badge badge-danger">Inactive</span>
+                                                <span class="badge badge-danger">@Localizer.T("Common.Inactive")</span>
                                             }
                                         </td>
                                         <td>@user.CreatedAt.ToString("dd/MM/yyyy")</td>
                                         <td>@(user.LastLoginAt?.ToString("dd/MM/yyyy HH:mm") ?? "Never")</td>
                                         <td>
                                             <div class="actions-cell">
-                                                <a href="/SuperAdmin/UserManagement/Edit/@user.UserId" class="btn btn-sm btn-warning" title="Edit" aria-label="Edit user">
+                                                <a href="/SuperAdmin/UserManagement/Edit/@user.UserId" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="/SuperAdmin/UserManagement/ActivityLog?userId=@user.UserId" class="btn btn-sm btn-info" title="Activity Log" aria-label="View user activity log">
+                                                <a href="/SuperAdmin/UserManagement/ActivityLog?userId=@user.UserId" class="btn btn-sm btn-info" title="@Localizer.T("Page.AuditLog")" aria-label="@Localizer.T("Page.AuditLog")">
                                                     <i class="fas fa-history"></i>
                                                 </a>
                                                 <form method="post" action="/SuperAdmin/UserManagement/Delete/@user.UserId" style="display:inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete" aria-label="Delete user">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
@@ -85,9 +85,9 @@
                 {
                     <div class="empty-state">
                         <i class="fas fa-users empty-icon"></i>
-                        <h4>No Users Found</h4>
-                        <p>Get started by creating your first user.</p>
-                        <a href="/SuperAdmin/UserManagement/Create" class="btn btn-primary">Create User</a>
+                        <h4>@Localizer.T("Empty.NoUsers")</h4>
+                        <p>@Localizer.T("Empty.NoUsersMessage")</p>
+                        <a href="/SuperAdmin/UserManagement/Create" class="btn btn-primary">@Localizer.T("Button.Create")</a>
                     </div>
                 }
             </div>
@@ -99,7 +99,7 @@
                         <ul class="pagination">
                             @if (currentPage > 1)
                             {
-                                <li class="page-item"><a href="?page=@(currentPage - 1)" class="page-link" aria-label="Previous page">Previous</a></li>
+                                <li class="page-item"><a href="?page=@(currentPage - 1)" class="page-link" aria-label="@Localizer.T("Common.Previous")">@Localizer.T("Common.Previous")</a></li>
                             }
                             @for (int i = 1; i <= Math.Ceiling((double)totalCount / 10); i++)
                             {
@@ -109,7 +109,7 @@
                             }
                             @if (currentPage < Math.Ceiling((double)totalCount / 10))
                             {
-                                <li class="page-item"><a href="?page=@(currentPage + 1)" class="page-link" aria-label="Next page">Next</a></li>
+                                <li class="page-item"><a href="?page=@(currentPage + 1)" class="page-link" aria-label="@Localizer.T("Common.Next")">@Localizer.T("Common.Next")</a></li>
                             }
                         </ul>
                     </div>

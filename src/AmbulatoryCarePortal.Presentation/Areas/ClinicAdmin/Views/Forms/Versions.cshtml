@@ -2,7 +2,7 @@
 
 @{
     var form = ViewBag.Form as AmbulatoryCarePortal.Application.DTOs.FormDto;
-    ViewData["Title"] = $"Versions - {form?.Title}";
+    ViewData["Title"] = $"{Localizer.T("Common.Versions")} - {form?.Title}";
     var canUpload = User.IsInRole("ClinicAdmin");
 }
 
@@ -21,7 +21,7 @@
                     </h3>
                     <div class="card-tools">
                         <a href="/ClinicAdmin/Forms" class="btn btn-sm btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Back to Forms
+                            <i class="fas fa-arrow-left"></i> @Localizer.T("Common.Back")
                         </a>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                     {
                         <div class="card card-info mb-4">
                             <div class="card-header">
-                                <h5 class="card-title"><i class="fas fa-upload"></i> Upload New Version</h5>
+                                <h5 class="card-title"><i class="fas fa-upload"></i> @Localizer.T("Common.Upload")</h5>
                             </div>
                             <div class="card-body">
                                 <form method="post" action="/ClinicAdmin/Forms/UploadVersion" enctype="multipart/form-data">
@@ -38,20 +38,20 @@
                                     <div class="row align-items-end">
                                         <div class="col-md-5">
                                             <div class="form-group">
-                                                <label class="form-label">File <span class="required">*</span></label>
+                                                <label class="form-label">@Localizer.T("Common.File") <span class="required">*</span></label>
                                                 <input type="file" name="file" class="form-control" required accept=".pdf,.doc,.docx,.xlsx,.xls" />
-                                                <small class="text-muted">Allowed: PDF, Word, Excel (max 20MB)</small>
+                                                <small class="text-muted">@Localizer.T("Form.AllowedFileTypes")</small>
                                             </div>
                                         </div>
                                         <div class="col-md-5">
                                             <div class="form-group">
-                                                <label class="form-label">Version Notes</label>
-                                                <input type="text" name="notes" class="form-control" placeholder="Version notes (optional)" />
+                                                <label class="form-label">@Localizer.T("Common.VersionNotes")</label>
+                                                <input type="text" name="notes" class="form-control" placeholder="@Localizer.T("Common.OptionalNotes")" />
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <button type="submit" class="btn btn-primary btn-block">
-                                                <i class="fas fa-upload"></i> Upload
+                                                <i class="fas fa-upload"></i> @Localizer.T("Common.Upload")
                                             </button>
                                         </div>
                                     </div>
@@ -66,10 +66,10 @@
                             <table class="table table-hover" id="versionsTable">
                                 <thead>
                                     <tr>
-                                        <th>Version</th>
-                                        <th>Uploaded At</th>
-                                        <th>Notes</th>
-                                        <th>Actions</th>
+                                        <th>@Localizer.T("Common.Version")</th>
+                                        <th>@Localizer.T("Common.UploadedAt")</th>
+                                        <th>@Localizer.T("Common.Notes")</th>
+                                        <th>@Localizer.T("Common.Actions")</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -83,10 +83,10 @@
                                                 <div class="actions-cell">
                                                     @if (!string.IsNullOrEmpty(version.FilePath))
                                                     {
-                                                        <a href="@version.FilePath" target="_blank" class="btn btn-sm btn-info" aria-label="View version">
+                                                        <a href="@version.FilePath" target="_blank" class="btn btn-sm btn-info" aria-label="@Localizer.T("Common.View")">
                                                             <i class="fas fa-eye"></i>
                                                         </a>
-                                                        <a href="@version.FilePath" download class="btn btn-sm btn-success" aria-label="Download version">
+                                                        <a href="@version.FilePath" download class="btn btn-sm btn-success" aria-label="@Localizer.T("Common.Download")">
                                                             <i class="fas fa-download"></i>
                                                         </a>
                                                     }
@@ -102,8 +102,8 @@
                     {
                         <div class="empty-state">
                             <i class="fas fa-file-alt empty-icon"></i>
-                            <h4>No Version History</h4>
-                            <p>This form does not have any versions yet. Upload the first version to get started.</p>
+                            <h4>@Localizer.T("Empty.NoData")</h4>
+                            <p>@Localizer.T("Form.NoVersionsMessage")</p>
                         </div>
                     }
                 </div>

@@ -145,4 +145,53 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
             PageSize = pageSize
         };
     }
+
+    public async Task<PagedResult<T>> GetPagedWithIncludesAsync(int pageNumber, int pageSize, Expression<Func<T, bool>>? predicate = null, Expression<Func<T, object>>? orderBy = null, bool ascending = true, bool includeDeleted = false, params Expression<Func<T, object>>[] includes)
+    {
+        var query = _dbSet.AsQueryable();
+        if (includeDeleted)
+            query = query.IgnoreQueryFilters();
+
+        if (includes != null)
+        {
+            foreach (var include in includes)
+                query = query.Include(include);
+        }
+
+        if (predicate != null)
+            query = query.Where(predicate);
+
+        var totalCount = await query.CountAsync();
+
+        if (orderBy != null)
+            query = ascending ? query.OrderBy(orderBy) : query.OrderByDescending(orderBy);
+
+        var data = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<T>
+        {
+            Data = data,
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+    }
+
+    public async Task<IEnumerable<T>> FindWithIncludesAsync(Expression<Func<T, bool>> predicate, bool includeDeleted = false, params Expression<Func<T, object>>[] includes)
+    {
+        var query = _dbSet.Where(predicate);
+        if (includeDeleted)
+            query = query.IgnoreQueryFilters();
+
+        if (includes != null)
+        {
+            foreach (var include in includes)
+                query = query.Include(include);
+        }
+
+        return await query.ToListAsync();
+    }
 }

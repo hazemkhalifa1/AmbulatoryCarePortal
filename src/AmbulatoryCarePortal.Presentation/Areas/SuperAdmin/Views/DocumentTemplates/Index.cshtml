@@ -1,7 +1,7 @@
 @model PagedResult<DocumentTemplateDto>
 
 @{
-    ViewData["Title"] = "Document Templates";
+    ViewData["Title"] = Localizer.T("Page.DocumentTemplates");
     var currentPage = Model.PageNumber;
     var totalPages = Model.TotalPages;
     var totalCount = Model.TotalCount;
@@ -11,10 +11,10 @@
 <div class="fade-in">
     <div class="card card-primary">
         <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-file me-2"></i>Document Templates</h3>
+            <h3 class="card-title"><i class="fas fa-file me-2"></i>@Localizer.T("Page.DocumentTemplates")</h3>
             <div class="card-tools">
-                <a asp-action="Create" class="btn btn-success btn-sm" aria-label="Create new template">
-                    <i class="fas fa-plus"></i> Create New Template
+                <a asp-action="Create" class="btn btn-success btn-sm" aria-label="@Localizer.T("Button.Create")">
+                    <i class="fas fa-plus"></i> @Localizer.T("Button.Create")
                 </a>
             </div>
         </div>
@@ -24,14 +24,14 @@
                     <div class="col-md-6">
                         <div class="input-group">
                             <div class="input-group-text"><i class="fas fa-search"></i></div>
-                            <input type="text" name="searchTerm" class="form-control" placeholder="Search by code, title, department..." value="@searchTerm" aria-label="Search templates" />
-                            <button type="submit" class="btn btn-primary" aria-label="Search">
-                                <i class="fas fa-search"></i>
+                            <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("Search.Templates")" value="@searchTerm" aria-label="@Localizer.T("Search.Templates")" />
+                            <button type="submit" class="btn btn-primary" aria-label="@Localizer.T("Common.Search")">
+                                <i class="fas fa-search"></i> @Localizer.T("Common.Search")
                             </button>
                             @if (!string.IsNullOrEmpty(searchTerm))
                             {
-                                <a asp-action="Index" class="btn btn-secondary" aria-label="Clear filters">
-                                    <i class="fas fa-times"></i> Clear
+                                <a asp-action="Index" class="btn btn-secondary" aria-label="@Localizer.T("Common.Clear")">
+                                    <i class="fas fa-times"></i> @Localizer.T("Common.Clear")
                                 </a>
                             }
                         </div>
@@ -51,8 +51,8 @@
                             <th scope="col">Title (AR)</th>
                             <th scope="col">Department Category</th>
                             <th scope="col">Template File</th>
-                            <th scope="col">Active</th>
-                            <th scope="col" class="text-center">Actions</th>
+                            <th scope="col">@Localizer.T("Common.Active")</th>
+                            <th scope="col" class="text-center">@Localizer.T("Common.Actions")</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -96,16 +96,16 @@
                                     <td>
                                         @if (template.IsActive)
                                         {
-                                            <span class="badge badge-success">Active</span>
+                                            <span class="badge badge-success">@Localizer.T("Common.Active")</span>
                                         }
                                         else
                                         {
-                                            <span class="badge badge-secondary">Inactive</span>
+                                            <span class="badge badge-secondary">@Localizer.T("Common.Inactive")</span>
                                         }
                                     </td>
                                     <td class="text-center">
                                         <div class="actions-cell">
-                                            <a asp-action="Edit" asp-route-id="@template.Id" class="btn btn-sm btn-warning" title="Edit" aria-label="Edit template">
+                                            <a asp-action="Edit" asp-route-id="@template.Id" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <button type="button" class="btn btn-sm btn-info" title="Assign to All Clinics" aria-label="Assign to all clinics"
@@ -113,7 +113,7 @@
                                                     data-template-id="@template.Id" data-template-code="@template.StandardCode">
                                                 <i class="fas fa-hospital"></i>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-danger" title="Delete" aria-label="Delete template"
+                                            <button type="button" class="btn btn-sm btn-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")"
                                                     data-bs-toggle="modal" data-bs-target="#deleteModal"
                                                     data-template-id="@template.Id" data-template-code="@template.StandardCode">
                                                 <i class="fas fa-trash"></i>
@@ -128,14 +128,14 @@
                             <tr>
                                 <td colspan="7" class="text-center text-muted py-4">
                                     <i class="fas fa-file fa-3x mb-2"></i><br />
-                                    No document templates found.
+                                    @Localizer.T("Empty.NoTemplates")
                                     @if (!string.IsNullOrEmpty(searchTerm))
                                     {
-                                        <span>Try adjusting your search.</span>
+                                        <span>@Localizer.T("Common.NoData")</span>
                                     }
                                     else
                                     {
-                                        <a asp-action="Create">Create the first template</a>
+                                        <a asp-action="Create">@Localizer.T("Button.Create")</a>
                                     }
                                 </td>
                             </tr>
@@ -147,17 +147,17 @@
                 {
                     <div class="table-footer">
                         <div class="pagination-info">
-                            Page @currentPage of @totalPages (@totalCount total)
+                            @Localizer.T("Common.Page") @currentPage @Localizer.T("Common.Of") @totalPages (@totalCount total)
                         </div>
                         <nav aria-label="Template table pagination">
                             <ul class="pagination">
                                 <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-searchTerm="@searchTerm" aria-label="First page">
+                                    <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-searchTerm="@searchTerm" aria-label="@Localizer.T("Common.Page") 1">
                                         <i class="fas fa-angle-double-left"></i>
                                     </a>
                                 </li>
                                 <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" aria-label="Previous page">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" aria-label="@Localizer.T("Common.Previous")">
                                         <i class="fas fa-angle-left"></i>
                                     </a>
                                 </li>
@@ -168,7 +168,7 @@
                                     </li>
                                 }
                                 <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" aria-label="Next page">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" aria-label="@Localizer.T("Common.Next")">
                                         <i class="fas fa-angle-right"></i>
                                     </a>
                                 </li>
@@ -191,8 +191,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteModalTitle"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title" id="deleteModalTitle"><i class="fas fa-exclamation-triangle me-2"></i>@Localizer.T("Common.Confirm")</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
             </div>
             <form method="post" asp-action="Delete" id="deleteForm">
                 <input type="hidden" name="id" id="deleteTemplateId" value="" />
@@ -202,8 +202,8 @@
                     <p class="text-muted small">This action cannot be undone. The template will be soft-deleted.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Button.Cancel")</button>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>@Localizer.T("Common.Delete")</button>
                 </div>
             </form>
         </div>
@@ -226,8 +226,8 @@
                     <p class="text-muted small">ClinicDocument records will be created for each active clinic. Existing assignments will not be duplicated.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-info"><i class="fas fa-check me-1"></i>Assign</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Button.Cancel")</button>
+                    <button type="submit" class="btn btn-info"><i class="fas fa-check me-1"></i>@Localizer.T("Common.Submit")</button>
                 </div>
             </form>
         </div>

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using AmbulatoryCarePortal.Application.Interfaces;
+using AmbulatoryCarePortal.Domain.Enums;
 
 namespace AmbulatoryCarePortal.Presentation.Middleware;
 
@@ -19,13 +20,25 @@ public class AuditMiddleware
     {
         var sw = Stopwatch.StartNew();
 
+        await _next(context);
+
+        sw.Stop();
+
         if (context.User.Identity?.IsAuthenticated == true &&
-            context.Request.Method != "GET" &&
-            !context.Request.Path.StartsWithSegments("/Account"))
+            context.Request.Method != "GET")
         {
             var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var clinicId = context.User.FindFirst("ClinicId")?.Value;
             var ipAddress = context.Connection.RemoteIpAddress?.ToString();
+
+            var actionType = context.Request.Method switch
+            {
+                "POST" => AuditActionType.Create,
+                "PUT" => AuditActionType.Update,
+                "PATCH" => AuditActionType.Update,
+                "DELETE" => AuditActionType.Delete,
+                _ => AuditActionType.Create
+            };
 
             _ = Task.Run(async () =>
             {
@@ -33,8 +46,8 @@ public class AuditMiddleware
                 {
                     await auditService.LogActionAsync(
                         int.TryParse(clinicId, out var cid) ? cid : 0,
-                        context.Request.Method,
-                        $"{context.Request.Method} {context.Request.Path}",
+                        actionType.ToString(),
+                        $"{context.Request.Method} {context.Request.Path} ({sw.ElapsedMilliseconds}ms)",
                         "HTTP",
                         null,
                         userId,
@@ -47,8 +60,5 @@ public class AuditMiddleware
                 }
             });
         }
-
-        await _next(context);
-        sw.Stop();
     }
 }

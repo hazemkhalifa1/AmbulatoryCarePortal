@@ -1,14 +1,14 @@
 @model AmbulatoryCarePortal.Presentation.ViewModels.UserRoleManagementViewModel
 
 @{
-    ViewData["Title"] = "Edit User";
+    ViewData["Title"] = Localizer.T("Page.EditUser");
 }
 
 <div class="row fade-in">
     <div class="col-md-8 offset-md-2">
         <div class="card card-warning">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-user-edit"></i> Edit User - @Model.Email</h3>
+                <h3 class="card-title"><i class="fas fa-user-edit"></i> @Localizer.T("Page.EditUser") - @Model.Email</h3>
             </div>
             <form method="post" asp-action="Edit" asp-route-id="@Model.UserId" aria-label="Edit user form">
                 <div class="card-body">
@@ -72,7 +72,7 @@
                     <div class="form-group">
                         <div class="form-check">
                             <input asp-for="IsActive" class="form-check-input" />
-                            <label asp-for="IsActive" class="form-check-label">Active</label>
+                            <label asp-for="IsActive" class="form-check-label">@Localizer.T("Common.Active")</label>
                         </div>
                     </div>
 
@@ -102,8 +102,8 @@
                     }
                 </div>
                 <div class="card-footer">
-                    <button type="submit" class="btn btn-warning"><i class="fas fa-save"></i> Update User</button>
-                    <a href="/SuperAdmin/UserManagement" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-warning"><i class="fas fa-save"></i> @Localizer.T("Button.Save")</button>
+                    <a href="/SuperAdmin/UserManagement" class="btn btn-secondary">@Localizer.T("Button.Cancel")</a>
                 </div>
             </form>
         </div>

@@ -1,0 +1,22 @@
+@model string
+@{
+    var role = Model ?? "None";
+    var icon = role switch
+    {
+        "SuperAdmin" => "fa-shield-alt",
+        "ClinicAdmin" => "fa-user-md",
+        "ClinicViewer" => "fa-eye",
+        _ => "fa-user"
+    };
+    var cssClass = role switch
+    {
+        "SuperAdmin" => "um-role-superadmin",
+        "ClinicAdmin" => "um-role-admin",
+        "ClinicViewer" => "um-role-viewer",
+        _ => "um-role-none"
+    };
+}
+<span class="um-role-badge @cssClass">
+    <i class="fas @icon"></i>
+    @role
+</span>

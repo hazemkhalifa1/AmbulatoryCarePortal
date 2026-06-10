@@ -1,7 +1,7 @@
 @model CreatePolicyDocumentViewModel
 
 @{
-    ViewData["Title"] = "Create Policy Document";
+    ViewData["Title"] = Localizer.T("Policy.CreatePolicy");
 }
 
 <div class="fade-in">
@@ -9,31 +9,31 @@
         <div class="col-md-8 offset-md-2">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-plus-circle me-2"></i>Create Policy Document</h3>
+                    <h3 class="card-title"><i class="fas fa-plus-circle me-2"></i>@Localizer.T("Policy.CreatePolicy")</h3>
                 </div>
-                <form method="post" asp-action="Create" enctype="multipart/form-data" role="form" aria-label="Create policy document form">
+                <form method="post" asp-action="Create" enctype="multipart/form-data" role="form" aria-label="@Localizer.T("Policy.CreatePolicy")">
                     @Html.AntiForgeryToken()
 
                     <div class="card-body">
                         @if (!ViewData.ModelState.IsValid)
                         {
                             <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="@Localizer.T("Common.Close")"></button>
                             </div>
                         }
 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="Title" class="form-label">Title <span class="text-danger">*</span></label>
-                                    <input asp-for="Title" class="form-control" placeholder="Enter policy title" required aria-required="true" />
+                                    <label asp-for="Title" class="form-label">@Localizer.T("Common.Title") <span class="text-danger">*</span></label>
+                                    <input asp-for="Title" class="form-control" placeholder="@Localizer.T("Policy.TitlePlaceholder")" required aria-required="true" />
                                     <span asp-validation-for="Title" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="TitleAr" class="form-label">Arabic Title</label>
-                                    <input asp-for="TitleAr" class="form-control" placeholder="أدخل عنوان السياسة" dir="rtl" />
+                                    <label asp-for="TitleAr" class="form-label">@Localizer.T("Common.ArabicTitle")</label>
+                                    <input asp-for="TitleAr" class="form-control" placeholder="@Localizer.T("Common.ArabicTitle")" dir="rtl" />
                                     <span asp-validation-for="TitleAr" class="text-danger"></span>
                                 </div>
                             </div>
@@ -42,16 +42,16 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="StandardCode" class="form-label">Standard Code</label>
-                                    <input asp-for="StandardCode" class="form-control" placeholder="e.g. CBAHI-STD-001" />
+                                    <label asp-for="StandardCode" class="form-label">@Localizer.T("Policy.StandardCode")</label>
+                                    <input asp-for="StandardCode" class="form-control" placeholder="@Localizer.T("Policy.StandardCodePlaceholder")" />
                                     <span asp-validation-for="StandardCode" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="DepartmentId" class="form-label">Department <span class="text-danger">*</span></label>
+                                    <label asp-for="DepartmentId" class="form-label">@Localizer.T("HR.Department") <span class="text-danger">*</span></label>
                                     <select asp-for="DepartmentId" class="form-select" required aria-required="true">
-                                        <option value="">&mdash; Select Department &mdash;</option>
+                                        <option value="">@Localizer.T("HR.SelectDepartment")</option>
                                         @foreach (var dept in Model.AvailableDepartments)
                                         {
                                             <option value="@dept.Id">@dept.Name</option>
@@ -65,16 +65,16 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="ExpiryDate" class="form-label">Expiry Date</label>
+                                    <label asp-for="ExpiryDate" class="form-label">@Localizer.T("Common.Expiry")</label>
                                     <input asp-for="ExpiryDate" class="form-control" type="date" />
                                     <span asp-validation-for="ExpiryDate" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="policyFile" class="form-label">Policy File (PDF)</label>
+                                    <label for="policyFile" class="form-label">@Localizer.T("Policy.PolicyFile")</label>
                                     <input type="file" name="policyFile" class="form-control" accept=".pdf" aria-describedby="fileHelp" />
-                                    <small id="fileHelp" class="text-muted">Upload the official policy document in PDF format.</small>
+                                    <small id="fileHelp" class="text-muted">@Localizer.T("Policy.FileHelp")</small>
                                 </div>
                             </div>
                         </div>
@@ -82,11 +82,11 @@
 
                     <div class="card-footer">
                         <div class="d-flex justify-content-between">
-                            <a asp-action="Index" class="btn btn-secondary" aria-label="Cancel and return to list">
-                                <i class="fas fa-arrow-left me-1"></i> Cancel
+                            <a asp-action="Index" class="btn btn-secondary" aria-label="@Localizer.T("Common.Cancel")">
+                                <i class="fas fa-arrow-left me-1"></i> @Localizer.T("Common.Cancel")
                             </a>
-                            <button type="submit" class="btn btn-primary" aria-label="Create policy">
-                                <i class="fas fa-save me-1"></i> Create Policy
+                            <button type="submit" class="btn btn-primary" aria-label="@Localizer.T("Button.Create")">
+                                <i class="fas fa-save me-1"></i> @Localizer.T("Button.Create")
                             </button>
                         </div>
                     </div>

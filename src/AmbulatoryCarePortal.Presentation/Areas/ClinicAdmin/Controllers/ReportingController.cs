@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using AmbulatoryCarePortal.Application.Interfaces;
+using AmbulatoryCarePortal.Presentation.Helpers;
 using AmbulatoryCarePortal.Presentation.ViewModels;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
@@ -16,6 +17,7 @@ public class ReportingController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILogger<ReportingController> _logger;
+    private readonly ITranslationService _localizer;
 
     public ReportingController(
         IReportingService reportingService,
@@ -23,7 +25,8 @@ public class ReportingController : Controller
         IEmailService emailService,
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        ILogger<ReportingController> logger)
+        ILogger<ReportingController> logger,
+        ITranslationService localizer)
     {
         _reportingService = reportingService;
         _analyticsService = analyticsService;
@@ -31,6 +34,7 @@ public class ReportingController : Controller
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
+        _localizer = localizer;
     }
 
     /// <summary>
@@ -141,7 +145,7 @@ public class ReportingController : Controller
         catch (Exception ex)
         {
             _logger.LogError($"Error generating compliance report: {ex.Message}");
-            TempData["ErrorMessage"] = "Failed to generate report. Please try again.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.ReportFailed");
             return RedirectToAction(nameof(Index));
         }
     }
@@ -193,7 +197,7 @@ public class ReportingController : Controller
         catch (Exception ex)
         {
             _logger.LogError($"Error generating KPI report: {ex.Message}");
-            TempData["ErrorMessage"] = "Failed to generate report. Please try again.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.ReportFailed");
             return RedirectToAction(nameof(Index));
         }
     }
@@ -246,7 +250,7 @@ public class ReportingController : Controller
         catch (Exception ex)
         {
             _logger.LogError($"Error generating audit report: {ex.Message}");
-            TempData["ErrorMessage"] = "Failed to generate report. Please try again.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.ReportFailed");
             return RedirectToAction(nameof(Index));
         }
     }
@@ -298,7 +302,7 @@ public class ReportingController : Controller
         catch (Exception ex)
         {
             _logger.LogError($"Error generating checklist report: {ex.Message}");
-            TempData["ErrorMessage"] = "Failed to generate report. Please try again.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.ReportFailed");
             return RedirectToAction(nameof(Index));
         }
     }
@@ -351,7 +355,7 @@ public class ReportingController : Controller
         catch (Exception ex)
         {
             _logger.LogError($"Error generating HR report: {ex.Message}");
-            TempData["ErrorMessage"] = "Failed to generate report. Please try again.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.ReportFailed");
             return RedirectToAction(nameof(Index));
         }
     }
@@ -388,13 +392,13 @@ public class ReportingController : Controller
                 }
 
                 _logger.LogInformation($"{reportType} report sent to {recipientList.Count} recipients");
-                TempData["SuccessMessage"] = "Report sent successfully!";
+                TempData["SuccessMessage"] = _localizer.T("Alert.Success.ReportSent");
             }
         }
         catch (Exception ex)
         {
             _logger.LogError($"Error sending report: {ex.Message}");
-            TempData["ErrorMessage"] = "Failed to send report. Please try again.";
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.ReportSendFailed");
         }
 
         return RedirectToAction(nameof(Index));

@@ -1,138 +1,179 @@
-@model List<AmbulatoryCarePortal.Application.DTOs.Clinic.ClinicDto>
+@model List<ClinicDto>
 
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = Localizer.T("Page.Dashboard");
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row fade-in">
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-info">
-            <div class="inner">
-                <h3>@ViewBag.TotalClinics</h3>
-                <p>Total Clinics</p>
+<!-- Hero Banner -->
+<div class="dashboard-hero mb-4">
+    <div class="hero-content">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="hero-title"><i class="fas fa-tachometer-alt me-2"></i>@Localizer.T("Page.ExecutiveDashboard")</h1>
+                <p class="hero-subtitle mb-0">@Localizer.T("Executive.Subtitle")</p>
             </div>
-            <div class="icon">
-                <i class="fas fa-hospital"></i>
-            </div>
-            <a href="/SuperAdmin/Dashboard/Clinics" class="small-box-footer" aria-label="View all clinics">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
-            <div class="inner">
-                <h3>85<sup style="font-size: 20px">%</sup></h3>
-                <p>Average Compliance</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-chart-pie"></i>
-            </div>
-            <a href="#" class="small-box-footer" aria-label="View compliance details">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-warning">
-            <div class="inner">
-                <h3>12</h3>
-                <p>Pending Reviews</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <a href="#" class="small-box-footer" aria-label="View pending reviews">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>5</h3>
-                <p>Overdue Items</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-calendar-times"></i>
-            </div>
-            <a href="#" class="small-box-footer" aria-label="View overdue items">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="/SuperAdmin/Dashboard/CreateClinic" class="btn btn-light btn-lg">
+                <i class="fas fa-plus me-2"></i>@Localizer.T("Button.Add")
+            </a>
         </div>
     </div>
 </div>
 
-<div class="row fade-in">
-    <div class="col-md-6">
-        <div class="card card-primary">
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-info">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-hospital"></i></div>
+                <div class="stat-card-content">
+                    <h3>@ViewBag.TotalClinics</h3>
+                    <p>Total Clinics</p>
+                </div>
+            </div>
+            <a href="/SuperAdmin/Dashboard/Clinics" class="stat-card-footer">
+                @Localizer.T("Button.ViewDetails") <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-success">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-chart-pie"></i></div>
+                <div class="stat-card-content">
+                    <h3>85<sup style="font-size: 16px">%</sup></h3>
+                    <p>Avg Compliance</p>
+                </div>
+            </div>
+            <a href="#" class="stat-card-footer">
+                @Localizer.T("Button.ViewDetails") <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-warning">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-card-content">
+                    <h3>12</h3>
+                    <p>Pending Reviews</p>
+                </div>
+            </div>
+            <a href="#" class="stat-card-footer">
+                @Localizer.T("Button.ViewDetails") <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-danger">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-calendar-times"></i></div>
+                <div class="stat-card-content">
+                    <h3>5</h3>
+                    <p>Overdue Items</p>
+                </div>
+            </div>
+            <a href="#" class="stat-card-footer">
+                @Localizer.T("Button.ViewDetails") <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Clinics -->
+    <div class="col-md-7 mb-4">
+        <div class="card recent-clinics-card">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-hospital-alt"></i> Recent Clinics</h3>
+                <h3 class="card-title"><i class="fas fa-clock me-2"></i>Recent Clinics</h3>
                 <div class="card-tools">
-                    <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-sm btn-primary">
-                        <i class="fas fa-list"></i> View All
+                    <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-sm btn-outline-primary">
+                        @Localizer.T("Common.ViewAll") <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
             </div>
             <div class="card-body p-0">
-                <div class="table-container">
-                    <table class="table table-hover" id="recentClinicsTable">
-                        <thead>
-                            <tr>
-                                <th>Clinic Name</th>
-                                <th>City</th>
-                                <th>Compliance</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.Any())
-                            {
+                @if (Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Clinic Name</th>
+                                    <th>City</th>
+                                    <th>Compliance</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 @foreach (var clinic in Model.Take(5))
                                 {
                                     <tr>
-                                        <td><strong>@clinic.Name</strong></td>
+                                        <td>
+                                            <strong>@clinic.Name</strong>
+                                            <small class="text-muted d-block">@clinic.NameAr</small>
+                                        </td>
                                         <td>@clinic.CityEn</td>
                                         <td>
-                                            <div class="progress progress-xs">
-                                                <div class="progress-bar bg-success" style="width: @clinic.ComplianceScore%"></div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="progress compliance-progress flex-grow-1" style="max-width: 100px;">
+                                                    <div class="progress-bar bg-success" style="width: @clinic.ComplianceScore%"></div>
+                                                </div>
+                                                <small class="text-muted">@clinic.ComplianceScore%</small>
                                             </div>
-                                            <small>@clinic.ComplianceScore%</small>
                                         </td>
-                                        <td>
-                                            <div class="actions-cell">
-                                                <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinic.Id" class="btn btn-sm btn-info" aria-label="View clinic details">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </div>
+                                        <td class="text-center">
+                                            <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinic.Id" class="btn btn-sm btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">No clinics found</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="fas fa-hospital empty-icon"></i>
+                        <h4>@Localizer.T("Empty.NoClinics")</h4>
+                        <p>@Localizer.T("Empty.NoClinicsMessage")</p>
+                    </div>
+                }
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="card card-warning">
+    <!-- Quick Actions -->
+    <div class="col-md-5 mb-4">
+        <div class="card quick-actions-card">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-bolt"></i> Quick Actions</h3>
+                <h3 class="card-title"><i class="fas fa-bolt me-2"></i>Quick Actions</h3>
             </div>
             <div class="card-body">
-                <a href="/SuperAdmin/Dashboard/CreateClinic" class="btn btn-primary btn-block mb-2" aria-label="Add new clinic">
-                    <i class="fas fa-plus"></i> Add New Clinic
-                </a>
-                <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-info btn-block mb-2" aria-label="View all clinics">
-                    <i class="fas fa-list"></i> View All Clinics
-                </a>
-                <a href="/SuperAdmin/Dashboard/AuditLog" class="btn btn-warning btn-block" aria-label="View audit log">
-                    <i class="fas fa-history"></i> View Audit Log
-                </a>
+                <div class="d-grid gap-3">
+                    <a href="/SuperAdmin/Dashboard/CreateClinic" class="action-btn action-btn-primary">
+                        <i class="fas fa-plus"></i>
+                        <span>@Localizer.T("Button.Add")</span>
+                        <small>Register a facility</small>
+                    </a>
+                    <a href="/SuperAdmin/Dashboard/Clinics" class="action-btn action-btn-info">
+                        <i class="fas fa-list"></i>
+                        <span>@Localizer.T("Common.ViewAll")</span>
+                        <small>Browse facilities</small>
+                    </a>
+                    <a href="/SuperAdmin/Dashboard/AuditLog?clinicId=1" class="action-btn action-btn-warning">
+                        <i class="fas fa-history"></i>
+                        <span>@Localizer.T("Common.View") @Localizer.T("Page.AuditLog")</span>
+                        <small>Review activities</small>
+                    </a>
+                    <a href="/SuperAdmin/UserManagement" class="action-btn action-btn-success">
+                        <i class="fas fa-users"></i>
+                        <span>@Localizer.T("Page.UserManagement")</span>
+                        <small>User administration</small>
+                    </a>
+                </div>
             </div>
         </div>
     </div>

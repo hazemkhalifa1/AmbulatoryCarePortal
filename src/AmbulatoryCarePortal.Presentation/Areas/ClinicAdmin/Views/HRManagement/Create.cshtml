@@ -2,7 +2,7 @@
 @using System.Globalization
 
 @{
-    ViewData["Title"] = "Add Staff Member";
+    ViewData["Title"] = Localizer.T("Page.AddStaff");
     var isArabic = CultureInfo.CurrentCulture.Name.StartsWith("ar");
 }
 
@@ -13,7 +13,7 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-user-plus"></i>
-                        @(isArabic ? "إضافة موظف جديد" : "Add New Staff Member")
+                        @Localizer.T("HR.AddNewStaffMember")
                     </h3>
                 </div>
 
@@ -25,7 +25,7 @@
                         {
                             <div class="alert alert-danger" role="alert">
                                 <i class="fas fa-exclamation-circle"></i>
-                                @(isArabic ? "يرجى تصحيح الأخطاء أدناه." : "Please correct the errors below.")
+                                @Localizer.T("Alert.CorrectErrors")
                                 <div asp-validation-summary="All" class="mt-2"></div>
                             </div>
                         }
@@ -34,18 +34,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="FirstName" class="form-label">
-                                        @(isArabic ? "الاسم الأول" : "First Name") <span class="required">*</span>
+                                        @Localizer.T("HR.FirstName") <span class="required">*</span>
                                     </label>
-                                    <input asp-for="FirstName" class="form-control" placeholder="@(isArabic ? "الاسم الأول" : "First name")" />
+                                    <input asp-for="FirstName" class="form-control" placeholder="@Localizer.T("HR.FirstName")" />
                                     <span asp-validation-for="FirstName" class="invalid-feedback"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="LastName" class="form-label">
-                                        @(isArabic ? "اسم العائلة" : "Last Name") <span class="required">*</span>
+                                        @Localizer.T("HR.LastName") <span class="required">*</span>
                                     </label>
-                                    <input asp-for="LastName" class="form-control" placeholder="@(isArabic ? "اسم العائلة" : "Last name")" />
+                                    <input asp-for="LastName" class="form-control" placeholder="@Localizer.T("HR.LastName")" />
                                     <span asp-validation-for="LastName" class="invalid-feedback"></span>
                                 </div>
                             </div>
@@ -55,19 +55,19 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="NationalId" class="form-label">
-                                        @(isArabic ? "رقم الهوية" : "National ID")
+                                        @Localizer.T("HR.NationalID")
                                     </label>
-                                    <input asp-for="NationalId" class="form-control" placeholder="@(isArabic ? "رقم الهوية" : "National ID")" />
+                                    <input asp-for="NationalId" class="form-control" placeholder="@Localizer.T("HR.NationalID")" />
                                     <span asp-validation-for="NationalId" class="invalid-feedback"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="StaffType" class="form-label">
-                                        @(isArabic ? "نوع الموظف" : "Staff Type") <span class="required">*</span>
+                                        @Localizer.T("HR.StaffType") <span class="required">*</span>
                                     </label>
                                     <select asp-for="StaffType" class="form-control">
-                                        <option value="">-- @(isArabic ? "اختر" : "Select") --</option>
+                                        <option value="">-- @Localizer.T("HR.Select") --</option>
                                         @foreach (var type in Model.StaffTypes)
                                         {
                                             <option value="@type">@type</option>
@@ -82,7 +82,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="Email" class="form-label">
-                                        @(isArabic ? "البريد الإلكتروني" : "Email") <span class="required">*</span>
+                                        @Localizer.T("HR.Email") <span class="required">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
@@ -94,7 +94,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="PhoneNumber" class="form-label">
-                                        @(isArabic ? "رقم الهاتف" : "Phone Number")
+                                        @Localizer.T("HR.PhoneNumber")
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-phone"></i></span>
@@ -109,19 +109,19 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="PositionTitle" class="form-label">
-                                        @(isArabic ? "المسمى الوظيفي" : "Position Title") <span class="required">*</span>
+                                        @Localizer.T("HR.PositionTitle") <span class="required">*</span>
                                     </label>
-                                    <input asp-for="PositionTitle" class="form-control" placeholder="@(isArabic ? "المسمى الوظيفي" : "e.g. Senior Nurse")" />
+                                    <input asp-for="PositionTitle" class="form-control" placeholder="@Localizer.T("HR.PositionTitlePlaceholder")" />
                                     <span asp-validation-for="PositionTitle" class="invalid-feedback"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="DepartmentId" class="form-label">
-                                        @(isArabic ? "القسم" : "Department") <span class="required">*</span>
+                                        @Localizer.T("HR.Department") <span class="required">*</span>
                                     </label>
                                     <select asp-for="DepartmentId" class="form-control">
-                                        <option value="">-- @(isArabic ? "اختر القسم" : "Select Department") --</option>
+                                        <option value="">-- @Localizer.T("HR.SelectDepartment") --</option>
                                         @foreach (var dept in Model.AvailableDepartments)
                                         {
                                             <option value="@dept.Id">@dept.Name</option>
@@ -136,7 +136,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="JoinDate" class="form-label">
-                                        @(isArabic ? "تاريخ الالتحاق" : "Join Date") <span class="required">*</span>
+                                        @Localizer.T("HR.JoinDate") <span class="required">*</span>
                                     </label>
                                     <input asp-for="JoinDate" class="form-control" type="date"
                                            value="@Model.JoinDate.ToString("yyyy-MM-dd")" />
@@ -148,10 +148,10 @@
 
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> @(isArabic ? "حفظ" : "Save")
+                            <i class="fas fa-save"></i> @Localizer.T("HR.Save")
                         </button>
                         <a asp-action="Index" class="btn btn-secondary">
-                            <i class="fas fa-times"></i> @(isArabic ? "إلغاء" : "Cancel")
+                            <i class="fas fa-times"></i> @Localizer.T("HR.Cancel")
                         </a>
                     </div>
                 </form>

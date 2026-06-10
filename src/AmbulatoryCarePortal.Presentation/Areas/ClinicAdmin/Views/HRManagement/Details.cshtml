@@ -1,10 +1,8 @@
 @model HRStaffDetailsViewModel
-@using System.Globalization
 @using AmbulatoryCarePortal.Domain.Enums
 
 @{
     ViewData["Title"] = Model.Staff.FullNameEn;
-    var isArabic = CultureInfo.CurrentCulture.Name.StartsWith("ar");
     var docTypes = Enum.GetValues<HrDocumentType>();
 }
 
@@ -28,40 +26,40 @@
                     <hr />
 
                     <div class="detail-row">
-                        <span class="detail-label"><i class="fas fa-building"></i> @(isArabic ? "القسم" : "Department")</span>
+                        <span class="detail-label"><i class="fas fa-building"></i> @Localizer.T("HR.Department")</span>
                         <span class="detail-value">@Model.Staff.DepartmentName</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label"><i class="fas fa-tag"></i> @(isArabic ? "النوع" : "Type")</span>
+                        <span class="detail-label"><i class="fas fa-tag"></i> @Localizer.T("Common.Type")</span>
                         <span class="detail-value"><span class="badge badge-info">@Model.Staff.StaffType</span></span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label"><i class="fas fa-check-circle"></i> @(isArabic ? "الحالة" : "Status")</span>
+                        <span class="detail-label"><i class="fas fa-check-circle"></i> @Localizer.T("Common.Status")</span>
                         <span class="detail-value">
                             @if (Model.Staff.IsActive)
                             {
-                                <span class="badge badge-success">@(isArabic ? "نشط" : "Active")</span>
+                                <span class="badge badge-success">@Localizer.T("HR.Active")</span>
                             }
                             else
                             {
-                                <span class="badge badge-danger">@(isArabic ? "غير نشط" : "Inactive")</span>
+                                <span class="badge badge-danger">@Localizer.T("HR.Inactive")</span>
                             }
                         </span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label"><i class="fas fa-file"></i> @(isArabic ? "الوثائق" : "Documents")</span>
+                        <span class="detail-label"><i class="fas fa-file"></i> @Localizer.T("HR.Documents")</span>
                         <span class="detail-value">@Model.DocumentCount</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label"><i class="fas fa-check-circle"></i> @(isArabic ? "الامتثال" : "Compliance")</span>
+                        <span class="detail-label"><i class="fas fa-check-circle"></i> @Localizer.T("HR.Compliance")</span>
                         <span class="detail-value">
                             @if (Model.ComplianceStatus == "Compliant")
                             {
-                                <span class="badge badge-success"><i class="fas fa-check"></i> @(isArabic ? "ممتثل" : "Compliant")</span>
+                                <span class="badge badge-success"><i class="fas fa-check"></i> @Localizer.T("HR.Compliant")</span>
                             }
                             else
                             {
-                                <span class="badge badge-danger"><i class="fas fa-times"></i> @(isArabic ? "غير ممتثل" : "Non-Compliant")</span>
+                                <span class="badge badge-danger"><i class="fas fa-times"></i> @Localizer.T("HR.NonCompliant")</span>
                             }
                         </span>
                     </div>
@@ -69,7 +67,7 @@
                     <hr />
 
                     <a asp-action="Index" class="btn btn-secondary btn-block">
-                        <i class="fas fa-arrow-left"></i> @(isArabic ? "عودة" : "Back to List")
+                        <i class="fas fa-arrow-left"></i> @Localizer.T("HR.BackToList")
                     </a>
                 </div>
             </div>
@@ -80,21 +78,21 @@
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-info">
                         <h3>@Model.DocumentCount</h3>
-                        <p>@(isArabic ? "إجمالي الوثائق" : "Total Documents")</p>
+                        <p>@Localizer.T("HR.TotalDocuments")</p>
                         <div class="icon"><i class="fas fa-file"></i></div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-warning">
                         <h3>@Model.ExpiringCount</h3>
-                        <p>@(isArabic ? "وشيكة الانتهاء" : "Expiring Soon")</p>
+                        <p>@Localizer.T("HR.ExpiringSoon")</p>
                         <div class="icon"><i class="fas fa-clock"></i></div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-danger">
                         <h3>@Model.ExpiredCount</h3>
-                        <p>@(isArabic ? "منتهية" : "Expired")</p>
+                        <p>@Localizer.T("HR.Expired")</p>
                         <div class="icon"><i class="fas fa-calendar-times"></i></div>
                     </div>
                 </div>
@@ -104,11 +102,11 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-file-alt"></i>
-                        @(isArabic ? "الوثائق" : "Documents")
+                        @Localizer.T("HR.Documents")
                     </h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#uploadSection" aria-expanded="@((ViewBag.ShowUpload == true ? "true" : "false"))">
-                            <i class="fas fa-upload"></i> @(isArabic ? "رفع وثيقة" : "Upload Document")
+                            <i class="fas fa-upload"></i> @Localizer.T("HR.Upload")
                         </button>
                     </div>
                 </div>
@@ -122,21 +120,21 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">@(isArabic ? "اسم الوثيقة" : "Document Name") <span class="required">*</span></label>
+                                        <label class="form-label">@Localizer.T("HR.DocumentName") <span class="required">*</span></label>
                                         <input name="DocumentName" class="form-control" required />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">@(isArabic ? "اسم الوثيقة (عربي)" : "Document Name (Arabic)")</label>
+                                        <label class="form-label">@Localizer.T("HR.DocumentNameAr")</label>
                                         <input name="DocumentNameAr" class="form-control" dir="rtl" />
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="form-label">@(isArabic ? "نوع الوثيقة" : "Document Type") <span class="required">*</span></label>
+                                        <label class="form-label">@Localizer.T("HR.DocumentType") <span class="required">*</span></label>
                                         <select name="DocumentType" class="form-control">
-                                            <option value="">-- @(isArabic ? "اختر" : "Select") --</option>
+                                            <option value="">-- @Localizer.T("HR.Select") --</option>
                                             @foreach (var dt in docTypes)
                                             {
                                                 <option value="@dt">@dt</option>
@@ -146,26 +144,26 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="form-label">@(isArabic ? "تاريخ الإصدار" : "Issue Date")</label>
+                                        <label class="form-label">@Localizer.T("HR.IssueDate")</label>
                                         <input name="IssueDate" class="form-control" type="date" />
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="form-label">@(isArabic ? "تاريخ الانتهاء" : "Expiry Date")</label>
+                                        <label class="form-label">@Localizer.T("HR.ExpiryDate")</label>
                                         <input name="ExpiryDate" class="form-control" type="date" />
                                     </div>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="form-group">
-                                        <label class="form-label">@(isArabic ? "الملف" : "File") <span class="required">*</span></label>
+                                        <label class="form-label">@Localizer.T("HR.File") <span class="required">*</span></label>
                                         <input name="documentFile" class="form-control" type="file" required />
                                     </div>
                                 </div>
                                 <div class="col-md-4 d-flex align-items-end">
                                     <div class="form-group w-100">
                                         <button type="submit" class="btn btn-success btn-block">
-                                            <i class="fas fa-upload"></i> @(isArabic ? "رفع" : "Upload")
+                                            <i class="fas fa-upload"></i> @Localizer.T("HR.Upload")
                                         </button>
                                     </div>
                                 </div>
@@ -179,12 +177,12 @@
                         <table class="table table-hover" id="documentsTable">
                             <thead>
                                 <tr>
-                                    <th>@(isArabic ? "اسم الوثيقة" : "Document Name")</th>
-                                    <th>@(isArabic ? "النوع" : "Type")</th>
-                                    <th>@(isArabic ? "تاريخ الانتهاء" : "Expiry Date")</th>
-                                    <th>@(isArabic ? "الأيام المتبقية" : "Days Left")</th>
-                                    <th>@(isArabic ? "تم التحقق" : "Verified")</th>
-                                    <th>@(isArabic ? "الإجراءات" : "Actions")</th>
+                                    <th>@Localizer.T("HR.DocumentName")</th>
+                                    <th>@Localizer.T("HR.DocumentType")</th>
+                                    <th>@Localizer.T("HR.ExpiryDate")</th>
+                                    <th>@Localizer.T("HR.DaysLeft")</th>
+                                    <th>@Localizer.T("HR.Verified")</th>
+                                    <th>@Localizer.T("HR.Actions")</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -203,7 +201,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <span class="text-muted">@(isArabic ? "غير محدد" : "N/A")</span>
+                                                    <span class="text-muted">@Localizer.T("HR.NA")</span>
                                                 }
                                             </td>
                                             <td>
@@ -211,19 +209,19 @@
                                                 {
                                                     if (daysLeft < 0)
                                                     {
-                                                        <span class="badge badge-danger">@(Math.Abs(daysLeft.Value)) @(isArabic ? "يوم متجاوز" : "days overdue")</span>
+                                                        <span class="badge badge-danger">@(Math.Abs(daysLeft.Value)) @Localizer.T("HR.DaysOverdue")</span>
                                                     }
                                                     else if (daysLeft <= 7)
                                                     {
-                                                        <span class="badge badge-warning">@daysLeft @(isArabic ? "يوم" : "days")</span>
+                                                        <span class="badge badge-warning">@daysLeft @Localizer.T("HR.Days")</span>
                                                     }
                                                     else if (daysLeft <= 30)
                                                     {
-                                                        <span class="badge badge-info">@daysLeft @(isArabic ? "يوم" : "days")</span>
+                                                        <span class="badge badge-info">@daysLeft @Localizer.T("HR.Days")</span>
                                                     }
                                                     else
                                                     {
-                                                        <span class="badge badge-success">@daysLeft @(isArabic ? "يوم" : "days")</span>
+                                                        <span class="badge badge-success">@daysLeft @Localizer.T("HR.Days")</span>
                                                     }
                                                 }
                                                 else
@@ -238,7 +236,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <span class="badge badge-warning"><i class="fas fa-clock"></i> @(isArabic ? "قيد الانتظار" : "Pending")</span>
+                                                    <span class="badge badge-warning"><i class="fas fa-clock"></i> @Localizer.T("HR.Pending")</span>
                                                 }
                                             </td>
                                             <td>
@@ -264,10 +262,10 @@
                                         <td colspan="6">
                                             <div class="empty-state">
                                                 <i class="fas fa-file empty-icon"></i>
-                                                <h4>@(isArabic ? "لا توجد وثائق" : "No Documents")</h4>
-                                                <p>@(isArabic ? "لا توجد وثائق مرفوعة لهذا الموظف." : "No documents uploaded for this staff member.")</p>
+                                                <h4>@Localizer.T("HR.NoDocuments")</h4>
+                                                <p>@Localizer.T("HR.NoDocumentsMessage")</p>
                                                 <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#uploadSection">
-                                                    <i class="fas fa-upload"></i> @(isArabic ? "رفع وثيقة" : "Upload Document")
+                            <i class="fas fa-upload"></i> @Localizer.T("HR.Upload")
                                                 </button>
                                             </div>
                                         </td>

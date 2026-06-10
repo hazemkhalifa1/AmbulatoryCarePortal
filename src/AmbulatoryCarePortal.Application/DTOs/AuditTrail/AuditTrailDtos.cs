@@ -6,6 +6,7 @@ public class AuditTrailDto
 {
     public int Id { get; set; }
     public int ClinicId { get; set; }
+    public string? ClinicName { get; set; }
     public AuditActionType ActionType { get; set; }
     public int? TargetObjectId { get; set; }
     public string TargetObjectType { get; set; } = string.Empty;

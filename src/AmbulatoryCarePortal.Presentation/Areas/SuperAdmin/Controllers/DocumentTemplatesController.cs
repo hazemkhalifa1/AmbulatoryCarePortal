@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
+using AmbulatoryCarePortal.Presentation.Helpers;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers;
 
@@ -13,15 +14,18 @@ public class DocumentTemplatesController : Controller
     private readonly IDocumentTemplateService _templateService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<DocumentTemplatesController> _logger;
+    private readonly ITranslationService _localizer;
 
     public DocumentTemplatesController(
         IDocumentTemplateService templateService,
         IUnitOfWork unitOfWork,
-        ILogger<DocumentTemplatesController> logger)
+        ILogger<DocumentTemplatesController> logger,
+        ITranslationService localizer)
     {
         _templateService = templateService;
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -30,7 +34,7 @@ public class DocumentTemplatesController : Controller
         var pagedResult = await _templateService.GetAllTemplatesAsync(page, pageSize, searchTerm);
 
         ViewBag.SearchTerm = searchTerm;
-        ViewBag.PageTitle = "Document Templates";
+        ViewBag.PageTitle = _localizer.T("Page.DocumentTemplates");
 
         return View(pagedResult);
     }
@@ -38,7 +42,7 @@ public class DocumentTemplatesController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        ViewBag.PageTitle = "Create Document Template";
+        ViewBag.PageTitle = _localizer.T("Page.CreateDocumentTemplate");
         return View();
     }
 
@@ -48,7 +52,7 @@ public class DocumentTemplatesController : Controller
     {
         if (!ModelState.IsValid)
         {
-            ViewBag.PageTitle = "Create Document Template";
+            ViewBag.PageTitle = _localizer.T("Page.CreateDocumentTemplate");
             return View(dto);
         }
 
@@ -86,14 +90,14 @@ public class DocumentTemplatesController : Controller
             await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
             await _unitOfWork.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Document template created successfully!";
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.TemplateCreated");
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating document template");
-            ModelState.AddModelError(string.Empty, "An error occurred while creating the template.");
-            ViewBag.PageTitle = "Create Document Template";
+            ModelState.AddModelError(string.Empty, _localizer.T("Alert.Error.TemplateCreateFailed"));
+            ViewBag.PageTitle = _localizer.T("Page.CreateDocumentTemplate");
             return View(dto);
         }
     }
@@ -117,7 +121,7 @@ public class DocumentTemplatesController : Controller
         };
 
         ViewBag.TemplateFilePath = template.TemplateFilePath;
-        ViewBag.PageTitle = "Edit Document Template";
+        ViewBag.PageTitle = _localizer.T("Page.EditDocumentTemplate");
 
         return View(dto);
     }
@@ -131,7 +135,7 @@ public class DocumentTemplatesController : Controller
 
         if (!ModelState.IsValid)
         {
-            ViewBag.PageTitle = "Edit Document Template";
+            ViewBag.PageTitle = _localizer.T("Page.EditDocumentTemplate");
             return View(dto);
         }
 
@@ -179,14 +183,14 @@ public class DocumentTemplatesController : Controller
             await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
             await _unitOfWork.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Document template updated successfully!";
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.TemplateUpdated");
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating document template");
-            ModelState.AddModelError(string.Empty, "An error occurred while updating the template.");
-            ViewBag.PageTitle = "Edit Document Template";
+            ModelState.AddModelError(string.Empty, _localizer.T("Alert.Error.TemplateUpdateFailed"));
+            ViewBag.PageTitle = _localizer.T("Page.EditDocumentTemplate");
             return View(dto);
         }
     }
@@ -214,7 +218,7 @@ public class DocumentTemplatesController : Controller
         await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
         await _unitOfWork.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = "Document template deleted successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.TemplateDeleted");
         return RedirectToAction(nameof(Index));
     }
 
@@ -224,7 +228,7 @@ public class DocumentTemplatesController : Controller
     {
         await _templateService.AssignToAllClinicsAsync(id);
 
-        TempData["SuccessMessage"] = "Template assigned to all active clinics successfully!";
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.TemplateAssigned");
         return RedirectToAction(nameof(Index));
     }
 }

@@ -2,7 +2,7 @@
 @using System.Globalization
 
 @{
-    ViewData["Title"] = "Staff Management";
+    ViewData["Title"] = Localizer.T("Page.StaffManagement");
     var isArabic = CultureInfo.CurrentCulture.Name.StartsWith("ar");
     var totalCount = ViewBag.TotalCount ?? 0;
     var currentPage = ViewBag.CurrentPage ?? 1;
@@ -15,21 +15,21 @@
         <div class="col-md-4">
             <div class="kpi-card">
                 <div class="kpi-icon primary"><i class="fas fa-users"></i></div>
-                <div class="kpi-label">@(isArabic ? "إجمالي الموظفين" : "Total Staff")</div>
+                <div class="kpi-label">@Localizer.T("HR.TotalStaff")</div>
                 <div class="kpi-value">@totalCount</div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="kpi-card">
                 <div class="kpi-icon success"><i class="fas fa-check-circle"></i></div>
-                <div class="kpi-label">@(isArabic ? "ممتثلون" : "Compliant")</div>
+                <div class="kpi-label">@Localizer.T("HR.Compliant")</div>
                 <div class="kpi-value">@ViewBag.CompliantCount</div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="kpi-card">
                 <div class="kpi-icon danger"><i class="fas fa-times-circle"></i></div>
-                <div class="kpi-label">@(isArabic ? "غير ممتثلين" : "Non-Compliant")</div>
+                <div class="kpi-label">@Localizer.T("HR.NonCompliant")</div>
                 <div class="kpi-value">@ViewBag.NonCompliantCount</div>
             </div>
         </div>
@@ -39,18 +39,18 @@
         <div class="card-header">
             <h3 class="card-title">
                 <i class="fas fa-users"></i>
-                @(isArabic ? "إدارة الموظفين" : "Staff Management")
+                @Localizer.T("Page.StaffManagement")
             </h3>
             <div class="card-tools">
                 <div class="btn-group">
                     <a asp-action="Create" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> @(isArabic ? "إضافة موظف" : "Add Staff")
+                        <i class="fas fa-plus"></i> @Localizer.T("HR.AddStaff")
                     </a>
                     <a asp-action="ExpiringDocuments" class="btn btn-sm btn-warning">
-                        <i class="fas fa-exclamation-triangle"></i> @(isArabic ? "الوثائق المنتهية" : "Expiring Documents")
+                        <i class="fas fa-exclamation-triangle"></i> @Localizer.T("HR.ExpiringDocuments")
                     </a>
                     <a asp-action="NonCompliantStaff" class="btn btn-sm btn-danger">
-                        <i class="fas fa-times-circle"></i> @(isArabic ? "غير الملتزمين" : "Non-Compliant Staff")
+                        <i class="fas fa-times-circle"></i> @Localizer.T("HR.NonCompliantStaff")
                     </a>
                 </div>
             </div>
@@ -60,11 +60,11 @@
             <form method="get" asp-action="Index" class="mb-4">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4">
-                        <label class="form-label">@(isArabic ? "بحث" : "Search")</label>
+                        <label class="form-label">@Localizer.T("Common.Search")</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                             <input type="text" name="searchTerm" class="form-control"
-                                   placeholder="@(isArabic ? "بحث بالاسم أو البريد..." : "Search by name or email...")"
+                                   placeholder="@Localizer.T("HR.SearchPlaceholder")"
                                    value="@ViewBag.SearchTerm" />
                             <button type="submit" class="btn btn-info">
                                 <i class="fas fa-search"></i>
@@ -72,26 +72,26 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">@(isArabic ? "حالة الامتثال" : "Compliance")</label>
+                        <label class="form-label">@Localizer.T("HR.ComplianceStatus")</label>
                         <select name="complianceFilter" class="form-control" onchange="this.form.submit()">
-                            <option value="">@(isArabic ? "جميع حالات الامتثال" : "All Compliance")</option>
+                            <option value="">@Localizer.T("HR.AllCompliance")</option>
                             <option value="Compliant" selected="@(ViewBag.ComplianceFilter == "Compliant")">
-                                @(isArabic ? "ممتثل" : "Compliant")
+                                @Localizer.T("HR.Compliant")
                             </option>
                             <option value="Non-Compliant" selected="@(ViewBag.ComplianceFilter == "Non-Compliant")">
-                                @(isArabic ? "غير ممتثل" : "Non-Compliant")
+                                @Localizer.T("HR.NonCompliant")
                             </option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">@(isArabic ? "القسم" : "Department")</label>
+                        <label class="form-label">@Localizer.T("HR.Department")</label>
                         <select name="departmentFilter" class="form-control" onchange="this.form.submit()">
-                            <option value="">@(isArabic ? "جميع الأقسام" : "All Departments")</option>
+                            <option value="">@Localizer.T("HR.AllDepartments")</option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <a asp-action="Index" class="btn btn-secondary w-100">
-                            <i class="fas fa-redo"></i> @(isArabic ? "إعادة" : "Reset")
+                            <i class="fas fa-redo"></i> @Localizer.T("Common.Reset")
                         </a>
                     </div>
                 </div>
@@ -101,14 +101,14 @@
                 <table class="table table-hover" id="staffTable">
                     <thead>
                         <tr>
-                            <th>@(isArabic ? "الاسم" : "Name")</th>
-                            <th>@(isArabic ? "النوع" : "Staff Type")</th>
-                            <th>@(isArabic ? "القسم" : "Department")</th>
-                            <th>@(isArabic ? "الحالة" : "Status")</th>
-                            <th>@(isArabic ? "الوثائق" : "Documents")</th>
-                            <th>@(isArabic ? "حالة الامتثال" : "Compliance")</th>
-                            <th>@(isArabic ? "آخر تحديث" : "Last Update")</th>
-                            <th>@(isArabic ? "الإجراءات" : "Actions")</th>
+                            <th>@Localizer.T("HR.Name")</th>
+                            <th>@Localizer.T("HR.StaffType")</th>
+                            <th>@Localizer.T("HR.Department")</th>
+                            <th>@Localizer.T("HR.Status")</th>
+                            <th>@Localizer.T("HR.Documents")</th>
+                            <th>@Localizer.T("HR.ComplianceStatus")</th>
+                            <th>@Localizer.T("HR.LastUpdate")</th>
+                            <th>@Localizer.T("HR.Actions")</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,36 +129,36 @@
                                     <td>
                                         @if (item.Staff.IsActive)
                                         {
-                                            <span class="badge badge-success">@(isArabic ? "نشط" : "Active")</span>
+                                            <span class="badge badge-success">@Localizer.T("HR.Active")</span>
                                         }
                                         else
                                         {
-                                            <span class="badge badge-danger">@(isArabic ? "غير نشط" : "Inactive")</span>
+                                            <span class="badge badge-danger">@Localizer.T("HR.Inactive")</span>
                                         }
                                     </td>
                                     <td>
-                                        <span class="badge badge-info" title="Total">@item.TotalDocuments</span>
-                                        <span class="badge badge-success" title="Valid">@item.ValidDocuments</span>
+                                        <span class="badge badge-info" title="@Localizer.T("HR.TotalDocuments")">@item.TotalDocuments</span>
+                                        <span class="badge badge-success" title="@Localizer.T("HR.Verified")">@item.ValidDocuments</span>
                                         @if (item.ExpiringDocuments > 0)
                                         {
-                                            <span class="badge badge-warning" title="Expiring">@item.ExpiringDocuments</span>
+                                            <span class="badge badge-warning" title="@Localizer.T("HR.ExpiringSoon")">@item.ExpiringDocuments</span>
                                         }
                                         @if (item.ExpiredDocuments > 0)
                                         {
-                                            <span class="badge badge-danger" title="Expired">@item.ExpiredDocuments</span>
+                                            <span class="badge badge-danger" title="@Localizer.T("Common.Expired")">@item.ExpiredDocuments</span>
                                         }
                                     </td>
                                     <td>
                                         @if (item.ComplianceStatus == "Compliant")
                                         {
                                             <span class="badge badge-success">
-                                                <i class="fas fa-check-circle"></i> @(isArabic ? "ممتثل" : "Compliant")
+                                                <i class="fas fa-check-circle"></i> @Localizer.T("HR.Compliant")
                                             </span>
                                         }
                                         else
                                         {
                                             <span class="badge badge-danger">
-                                                <i class="fas fa-times-circle"></i> @(isArabic ? "غير ممتثل" : "Non-Compliant")
+                                                <i class="fas fa-times-circle"></i> @Localizer.T("HR.NonCompliant")
                                             </span>
                                         }
                                     </td>
@@ -174,7 +174,7 @@
                                     </td>
                                     <td>
                                         <div class="actions-cell">
-                                            <a asp-action="Details" asp-route-id="@item.Staff.Id" class="btn btn-sm btn-info" title="View Details" aria-label="View details">
+                                            <a asp-action="Details" asp-route-id="@item.Staff.Id" class="btn btn-sm btn-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                         </div>
@@ -188,9 +188,9 @@
                                 <td colspan="8">
                                     <div class="empty-state">
                                         <i class="fas fa-users empty-icon"></i>
-                                        <h4>@(isArabic ? "لا يوجد موظفون" : "No Staff Found")</h4>
-                                        <p>@(isArabic ? "لم يتم العثور على موظفين مطابقين لبحثك." : "No staff members match your search criteria.")</p>
-                                        <a asp-action="Create" class="btn btn-primary">@(isArabic ? "إضافة موظف جديد" : "Add a New Staff Member")</a>
+                                        <h4>@Localizer.T("HR.NoStaffFound")</h4>
+                                        <p>@Localizer.T("HR.NoStaffFoundMessage")</p>
+                                        <a asp-action="Create" class="btn btn-primary">@Localizer.T("HR.AddNewStaffMember")</a>
                                     </div>
                                 </td>
                             </tr>
@@ -201,13 +201,13 @@
 
             <div class="table-footer">
                 <div class="pagination-info">
-                    @(isArabic ? "عرض" : "Showing") @Model.Count @(isArabic ? "من" : "of") @totalCount
+                    @Localizer.T("HR.Showing") @Model.Count @Localizer.T("HR.Of") @totalCount
                 </div>
                 @if (totalPages > 1)
                 {
                     <ul class="pagination">
                         <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
-                            <a class="page-link" href="?page=@(currentPage - 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter" aria-label="Previous">
+                            <a class="page-link" href="?page=@(currentPage - 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter" aria-label="@Localizer.T("Common.Previous")">
                                 &laquo;
                             </a>
                         </li>
@@ -218,7 +218,7 @@
                             </li>
                         }
                         <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
-                            <a class="page-link" href="?page=@(currentPage + 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter" aria-label="Next">
+                            <a class="page-link" href="?page=@(currentPage + 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter" aria-label="@Localizer.T("Common.Next")">
                                 &raquo;
                             </a>
                         </li>

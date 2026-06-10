@@ -1,9 +1,6 @@
 @model List<ExpiringDocumentViewModel>
-@using System.Globalization
-
 @{
-    ViewData["Title"] = "Expiring Documents";
-    var isArabic = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+    ViewData["Title"] = Localizer.T("Page.ExpiringDocuments");
 }
 
 <div class="fade-in">
@@ -13,11 +10,11 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-exclamation-triangle"></i>
-                        @(isArabic ? "الوثائق وشيكة الانتهاء" : "Expiring Documents")
+                        @Localizer.T("HR.ExpiringDocuments")
                     </h3>
                     <div class="card-tools">
                         <a asp-action="Index" class="btn btn-sm btn-secondary">
-                            <i class="fas fa-arrow-left"></i> @(isArabic ? "عودة" : "Back")
+                            <i class="fas fa-arrow-left"></i> @Localizer.T("HR.Back")
                         </a>
                     </div>
                 </div>
@@ -27,12 +24,12 @@
                         <table class="table table-hover" id="expiringTable">
                             <thead>
                                 <tr>
-                                    <th>@(isArabic ? "الوثيقة" : "Document Name")</th>
-                                    <th>@(isArabic ? "الموظف" : "Staff Name")</th>
-                                    <th>@(isArabic ? "القسم" : "Department")</th>
-                                    <th>@(isArabic ? "تاريخ الانتهاء" : "Expiry Date")</th>
-                                    <th>@(isArabic ? "الأيام المتبقية" : "Days Left")</th>
-                                    <th>@(isArabic ? "التصنيف" : "Category")</th>
+                                    <th>@Localizer.T("HR.DocumentName")</th>
+                                    <th>@Localizer.T("HR.StaffName")</th>
+                                    <th>@Localizer.T("HR.Department")</th>
+                                    <th>@Localizer.T("HR.ExpiryDate")</th>
+                                    <th>@Localizer.T("HR.DaysLeft")</th>
+                                    <th>@Localizer.T("HR.Category")</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -51,25 +48,25 @@
                                             </td>
                                             <td>
                                                 <strong>@item.DaysUntilExpiry</strong>
-                                                @(isArabic ? "يوم" : "days")
+                                                @Localizer.T("HR.Days")
                                             </td>
                                             <td>
                                                 @if (item.Category == "Critical")
                                                 {
                                                     <span class="badge badge-danger">
-                                                        <i class="fas fa-bolt"></i> @(isArabic ? "حرج" : "Critical")
+                                                        <i class="fas fa-bolt"></i> @Localizer.T("HR.Critical")
                                                     </span>
                                                 }
                                                 else if (item.Category == "Urgent")
                                                 {
                                                     <span class="badge badge-warning">
-                                                        <i class="fas fa-exclamation"></i> @(isArabic ? "عاجل" : "Urgent")
+                                                        <i class="fas fa-exclamation"></i> @Localizer.T("HR.Urgent")
                                                     </span>
                                                 }
                                                 else
                                                 {
                                                     <span class="badge badge-info">
-                                                        <i class="fas fa-info-circle"></i> @(isArabic ? "قادم" : "Upcoming")
+                                                        <i class="fas fa-info-circle"></i> @Localizer.T("HR.Upcoming")
                                                     </span>
                                                 }
                                             </td>
@@ -82,10 +79,10 @@
                                         <td colspan="6">
                                             <div class="empty-state">
                                                 <i class="fas fa-check-circle empty-icon" style="color:var(--color-success)"></i>
-                                                <h4>@(isArabic ? "لا توجد وثائق وشيكة الانتهاء" : "No Expiring Documents")</h4>
-                                                <p>@(isArabic ? "جميع الوثائق محدثة وسارية المفعول." : "All documents are up to date and valid.")</p>
+                                                <h4>@Localizer.T("Empty.NoDocuments")</h4>
+                                                <p>@Localizer.T("HR.NoDocumentsMessage")</p>
                                                 <a asp-action="Index" class="btn btn-primary">
-                                                    <i class="fas fa-arrow-left"></i> @(isArabic ? "العودة" : "Back to Staff")
+                                                    <i class="fas fa-arrow-left"></i> @Localizer.T("HR.BackToStaff")
                                                 </a>
                                             </div>
                                         </td>
@@ -101,13 +98,13 @@
                     <div class="card-footer">
                         <div class="row">
                             <div class="col-md-4">
-                                <span class="badge badge-danger"><i class="fas fa-bolt"></i> @(isArabic ? "حرج (7 أيام أو أقل)" : "Critical (7 days or less)")</span>
+                                <span class="badge badge-danger"><i class="fas fa-bolt"></i> @Localizer.T("HR.CriticalDesc")</span>
                             </div>
                             <div class="col-md-4">
-                                <span class="badge badge-warning"><i class="fas fa-exclamation"></i> @(isArabic ? "عاجل (30 يومًا أو أقل)" : "Urgent (30 days or less)")</span>
+                                <span class="badge badge-warning"><i class="fas fa-exclamation"></i> @Localizer.T("HR.UrgentDesc")</span>
                             </div>
                             <div class="col-md-4">
-                                <span class="badge badge-info"><i class="fas fa-info-circle"></i> @(isArabic ? "قادم (90 يومًا)" : "Upcoming (90 days)")</span>
+                                <span class="badge badge-info"><i class="fas fa-info-circle"></i> @Localizer.T("HR.UpcomingDesc")</span>
                             </div>
                         </div>
                     </div>

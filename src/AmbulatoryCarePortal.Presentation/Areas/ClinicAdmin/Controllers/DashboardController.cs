@@ -1,5 +1,6 @@
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
+using AmbulatoryCarePortal.Presentation.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ public class DashboardController : Controller
     private readonly IHrService _hrService;
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<DashboardController> _logger;
+    private readonly ITranslationService _localizer;
 
     public DashboardController(
         IClinicService clinicService,
@@ -23,7 +25,8 @@ public class DashboardController : Controller
         IKPIService kpiService,
         IHrService hrService,
         ILogger<DashboardController> logger,
-        UserManager<AppUser> userManager)
+        UserManager<AppUser> userManager,
+        ITranslationService localizer)
     {
         _clinicService = clinicService;
         _policyDocumentService = policyDocumentService;
@@ -31,6 +34,7 @@ public class DashboardController : Controller
         _hrService = hrService;
         _logger = logger;
         _userManager = userManager;
+        _localizer = localizer;
     }
 
     public async Task<IActionResult> Index()
@@ -45,7 +49,7 @@ public class DashboardController : Controller
         if (clinic == null)
             return NotFound();
 
-        ViewBag.PageTitle = "Clinic Dashboard";
+        ViewBag.PageTitle = _localizer.T("Page.ClinicDashboard");
 
         return View(clinic);
     }
@@ -58,7 +62,7 @@ public class DashboardController : Controller
             return Unauthorized();
 
         var policies = await _policyDocumentService.GetClinicPoliciesAsync(clinicId.Value, page, pageSize);
-        ViewBag.PageTitle = "Policy Documents";
+        ViewBag.PageTitle = _localizer.T("Page.PolicyDocuments");
         ViewBag.ClinicId = clinicId;
 
         return View(policies);
@@ -72,7 +76,7 @@ public class DashboardController : Controller
             return Unauthorized();
 
         var kpis = await _kpiService.GetClinicKPIsAsync(clinicId.Value);
-        ViewBag.PageTitle = "KPI Monitoring";
+        ViewBag.PageTitle = _localizer.T("Page.KPIMonitoring");
         ViewBag.ClinicId = clinicId;
 
         return View(kpis);
@@ -86,7 +90,7 @@ public class DashboardController : Controller
             return Unauthorized();
 
         var staff = await _hrService.GetClinicStaffAsync(clinicId.Value, page, pageSize);
-        ViewBag.PageTitle = "HR Staff Management";
+        ViewBag.PageTitle = _localizer.T("Page.StaffManagement");
         ViewBag.ClinicId = clinicId;
 
         return View(staff);
@@ -100,7 +104,7 @@ public class DashboardController : Controller
             return Unauthorized();
 
         var expiringDocs = await _hrService.GetExpiringDocumentsAsync(clinicId.Value, 30);
-        ViewBag.PageTitle = "Expiring Documents";
+        ViewBag.PageTitle = _localizer.T("Page.ExpiringDocuments");
         ViewBag.ClinicId = clinicId;
 
         return View(expiringDocs);

@@ -1,30 +1,30 @@
 @model List<ChecklistDetailViewModel>
 
 @{
-    ViewData["Title"] = "Checklist Management";
+    ViewData["Title"] = Localizer.T("Page.ChecklistManagement");
 }
 
 <div class="row fade-in">
     <div class="col-sm-6">
         <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i> Create New Checklist
+            <i class="fas fa-plus me-1"></i> @Localizer.T("Checklist.CreateChecklist")
         </a>
     </div>
     <div class="col-sm-6 text-sm-end">
         <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-sync-alt me-1"></i> Refresh
+            <i class="fas fa-sync-alt me-1"></i> @Localizer.T("Common.Refresh")
         </a>
     </div>
 </div>
 
 <div class="card card-primary">
     <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-clipboard-list"></i> All Checklists</h3>
+        <h3 class="card-title"><i class="fas fa-clipboard-list"></i> @Localizer.T("Checklist.AllChecklists")</h3>
         <div class="card-tools">
             <div class="table-toolbar">
                 <div class="search-box">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="form-control" data-table-search="checklistTable" id="searchInput" placeholder="Search..." value="@ViewBag.SearchTerm" aria-label="Search checklists">
+                    <input type="text" class="form-control" data-table-search="checklistTable" id="searchInput" placeholder="@Localizer.T("Checklist.SearchPlaceholder")" value="@ViewBag.SearchTerm" aria-label="@Localizer.T("Checklist.SearchPlaceholder")">
                 </div>
             </div>
         </div>
@@ -33,22 +33,22 @@
         <div class="row mb-3">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label class="form-label small">Frequency</label>
-                    <select id="frequencyFilter" class="form-select" onchange="applyFilters()" aria-label="Filter by frequency">
-                        <option value="">All Frequencies</option>
-                        <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">Daily</option>
-                        <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">Weekly</option>
-                        <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">Monthly</option>
+                    <label class="form-label small">@Localizer.T("Checklist.Frequency")</label>
+                    <select id="frequencyFilter" class="form-select" onchange="applyFilters()" aria-label="@Localizer.T("Checklist.Frequency")">
+                        <option value="">@Localizer.T("Common.All")</option>
+                        <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">@Localizer.T("Checklist.Daily")</option>
+                        <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">@Localizer.T("Checklist.Weekly")</option>
+                        <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">@Localizer.T("Checklist.Monthly")</option>
                     </select>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label class="form-label small">Status</label>
-                    <select id="statusFilter" class="form-select" onchange="applyFilters()" aria-label="Filter by status">
-                        <option value="">All Status</option>
-                        <option value="active" selected="@(ViewBag.StatusFilter == "active")">Active</option>
-                        <option value="inactive" selected="@(ViewBag.StatusFilter == "inactive")">Inactive</option>
+                    <label class="form-label small">@Localizer.T("Common.Status")</label>
+                    <select id="statusFilter" class="form-select" onchange="applyFilters()" aria-label="@Localizer.T("Common.Status")">
+                        <option value="">@Localizer.T("Common.All")</option>
+                        <option value="active" selected="@(ViewBag.StatusFilter == "active")">@Localizer.T("Common.Active")</option>
+                        <option value="inactive" selected="@(ViewBag.StatusFilter == "inactive")">@Localizer.T("Common.Inactive")</option>
                     </select>
                 </div>
             </div>
@@ -58,13 +58,13 @@
             <table class="table table-hover" id="checklistTable">
                 <thead>
                     <tr>
-                        <th>Template Name</th>
-                        <th>Frequency</th>
-                        <th class="text-center">Total Rounds</th>
-                        <th class="text-center">Completed Rounds</th>
-                        <th class="text-center">Completion %</th>
-                        <th>Last Executed</th>
-                        <th class="text-center">Actions</th>
+                        <th>@Localizer.T("Checklist.TemplateName")</th>
+                        <th>@Localizer.T("Checklist.Frequency")</th>
+                        <th class="text-center">@Localizer.T("Checklist.TotalRounds")</th>
+                        <th class="text-center">@Localizer.T("Checklist.CompletedRounds")</th>
+                        <th class="text-center">@Localizer.T("Checklist.CompletionPct")</th>
+                        <th>@Localizer.T("Checklist.LastExecuted")</th>
+                        <th class="text-center">@Localizer.T("Common.Actions")</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,20 +121,20 @@
                                 <td class="text-center">
                                     <div class="actions-cell">
                                         <a asp-action="Execute" asp-route-templateId="@item.Template.Id"
-                                           class="btn btn-sm btn-success" title="Execute" aria-label="Execute @item.Template.Name">
+                                           class="btn btn-sm btn-success" title="@Localizer.T("Checklist.Execute")" aria-label="@Localizer.T("Checklist.Execute")">
                                             <i class="fas fa-play"></i>
                                         </a>
                                         <a asp-action="ViewHistory" asp-route-templateId="@item.Template.Id"
-                                           class="btn btn-sm btn-info" title="View History" aria-label="View history for @item.Template.Name">
+                                           class="btn btn-sm btn-info" title="@Localizer.T("Checklist.ViewHistory")" aria-label="@Localizer.T("Checklist.ViewHistory")">
                                             <i class="fas fa-history"></i>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-warning" title="Analytics"
-                                                aria-label="Show analytics for @item.Template.Name"
+                                        <button type="button" class="btn btn-sm btn-warning" title="@Localizer.T("Checklist.Analytics")"
+                                                aria-label="@Localizer.T("Checklist.Analytics")"
                                                 onclick="showAnalytics(@item.Template.Id)">
                                             <i class="fas fa-chart-bar"></i>
                                         </button>
                                         <a asp-action="Export" asp-route-templateId="@item.Template.Id" asp-route-format="excel"
-                                           class="btn btn-sm btn-secondary" title="Export" aria-label="Export @item.Template.Name">
+                                           class="btn btn-sm btn-secondary" title="@Localizer.T("Common.Export")" aria-label="@Localizer.T("Common.Export")">
                                             <i class="fas fa-download"></i>
                                         </a>
                                     </div>
@@ -148,9 +148,9 @@
                             <td colspan="7">
                                 <div class="empty-state">
                                     <i class="fas fa-clipboard-list empty-icon"></i>
-                                    <h4>No Checklists Found</h4>
-                                    <p>No checklists found. Click "Create New Checklist" to get started.</p>
-                                    <a asp-action="Create" class="btn btn-primary">Create New Checklist</a>
+                                    <h4>@Localizer.T("Empty.NoChecklists")</h4>
+                                    <p>@Localizer.T("Checklist.NoChecklistsMessage")</p>
+                                    <a asp-action="Create" class="btn btn-primary">@Localizer.T("Checklist.CreateChecklist")</a>
                                 </div>
                             </td>
                         </tr>
@@ -162,12 +162,12 @@
         @if (ViewBag.TotalPages > 1)
         {
             <div class="table-footer">
-                <div class="pagination-info">Showing @Model.Count of @ViewBag.TotalCount total checklists</div>
+                <div class="pagination-info">@Localizer.T("Common.Showing") @Model.Count @Localizer.T("Common.Of") @ViewBag.TotalCount @Localizer.T("Checklist.TotalChecklists")</div>
                 <ul class="pagination">
                     @for (int p = 1; p <= ViewBag.TotalPages; p++)
                     {
                         <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
-                            <a class="page-link" href="javascript:void(0)" onclick="goToPage(@p)" aria-label="Page @p">@p</a>
+                            <a class="page-link" href="javascript:void(0)" onclick="goToPage(@p)" aria-label="@Localizer.T("Common.Page") @p">@p</a>
                         </li>
                     }
                 </ul>
@@ -176,7 +176,7 @@
         else
         {
             <div class="text-muted small mt-3">
-                Showing @Model.Count of @ViewBag.TotalCount total checklists
+                @Localizer.T("Common.Showing") @Model.Count @Localizer.T("Common.Of") @ViewBag.TotalCount @Localizer.T("Checklist.TotalChecklists")
             </div>
         }
     </div>
@@ -187,8 +187,8 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="analyticsModalLabel"><i class="fas fa-chart-bar"></i> Checklist Analytics</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="analyticsModalLabel"><i class="fas fa-chart-bar"></i> @Localizer.T("Checklist.Analytics")</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
             </div>
             <div class="modal-body" id="analyticsBody">
                 <div class="text-center py-4">

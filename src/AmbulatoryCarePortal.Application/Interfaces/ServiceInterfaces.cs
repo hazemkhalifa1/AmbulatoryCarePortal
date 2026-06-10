@@ -61,7 +61,10 @@ public interface IHrService
 public interface IAuditService
 {
     Task LogActionAsync(int clinicId, string actionType, string? description, string? targetObjectType, int? targetObjectId, string? userId, string? ipAddress);
-    Task<List<object>> GetAuditTrailAsync(int clinicId, int pageSize = 50);
+    Task<PagedResult<AuditTrailDto>> GetAuditTrailAsync(int clinicId, int pageNumber = 1, int pageSize = 20, string? searchTerm = null, string? actionTypeFilter = null, DateTime? dateFrom = null, DateTime? dateTo = null);
+    Task<AuditTrailDto?> GetAuditTrailByIdAsync(int id);
+    Task<int> GetAuditLogCountAsync(int clinicId);
+    Task<int> GetDistinctUserCountAsync(int clinicId);
 }
 
 public interface INotificationService

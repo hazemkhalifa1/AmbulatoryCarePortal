@@ -1,17 +1,17 @@
 @model List<AmbulatoryCarePortal.Presentation.ViewModels.AuditLogViewModel>
 
 @{
-    ViewData["Title"] = "Activity Log";
+    ViewData["Title"] = Localizer.T("Page.AuditLog");
 }
 
 <div class="row fade-in">
     <div class="col-12">
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-history"></i> User Activity</h3>
+                <h3 class="card-title"><i class="fas fa-history"></i> @Localizer.T("Page.AuditLog")</h3>
                 <div class="card-tools">
-                    <a href="/SuperAdmin/UserManagement" class="btn btn-sm btn-secondary" aria-label="Back to users list">
-                        <i class="fas fa-arrow-left"></i> Back to Users
+                    <a href="/SuperAdmin/UserManagement" class="btn btn-sm btn-secondary" aria-label="@Localizer.T("Common.Back")">
+                        <i class="fas fa-arrow-left"></i> @Localizer.T("Common.Back")
                     </a>
                 </div>
             </div>
@@ -22,17 +22,17 @@
                         <div class="table-toolbar">
                             <div class="search-box">
                                 <i class="fas fa-search search-icon"></i>
-                                <input type="text" class="form-control" data-table-search="activityLogTable" placeholder="Search activity..." aria-label="Search activity log">
+                                <input type="text" class="form-control" data-table-search="activityLogTable" placeholder="@Localizer.T("Search.Activity")" aria-label="@Localizer.T("Search.Activity")">
                             </div>
                         </div>
                         <table class="table table-hover" id="activityLogTable">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
+                                    <th>@Localizer.T("Common.Date")</th>
                                     <th>Action</th>
                                     <th>Target</th>
                                     <th>IP Address</th>
-                                    <th>Details</th>
+                                    <th>@Localizer.T("Common.Details")</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -44,15 +44,15 @@
                                         <td>@log.TargetType</td>
                                         <td>@log.IpAddress</td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#logModal@(log.Id)" aria-label="View action details">
-                                                <i class="fas fa-eye"></i> View
+                                            <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#logModal@(log.Id)" aria-label="@Localizer.T("Common.View")">
+                                                <i class="fas fa-eye"></i> @Localizer.T("Common.View")
                                             </button>
                                             <div class="modal fade" id="logModal@(log.Id)" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title">Action Details</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            <h5 class="modal-title">@Localizer.T("Common.Details")</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <div class="detail-row">
@@ -83,7 +83,7 @@
                                                             }
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Common.Close")</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -99,8 +99,8 @@
                 {
                     <div class="empty-state">
                         <i class="fas fa-history empty-icon"></i>
-                        <h4>No Activity Log Entries</h4>
-                        <p>There are no activity log entries to display.</p>
+                        <h4>@Localizer.T("Empty.NoActivity")</h4>
+                        <p>@Localizer.T("Empty.NoAuditLogsMessage")</p>
                     </div>
                 }
             </div>

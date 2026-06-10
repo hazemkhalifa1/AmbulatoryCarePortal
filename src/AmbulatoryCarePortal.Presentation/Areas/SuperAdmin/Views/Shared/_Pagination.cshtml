@@ -1,0 +1,48 @@
+@model (int CurrentPage, int TotalPages, int TotalCount, string? SearchTerm, string ActionName)
+@{
+    var currentPage = Model.CurrentPage;
+    var totalPages = Model.TotalPages;
+    var totalCount = Model.TotalCount;
+    var searchTerm = Model.SearchTerm;
+    var actionName = Model.ActionName;
+}
+@if (totalPages > 1)
+{
+    var startPage = Math.Max(1, currentPage - 2);
+    var endPage = Math.Min(totalPages, currentPage + 2);
+    <div class="um-pagination">
+        <div class="um-pag-info">
+            Showing page <strong>@currentPage</strong> of <strong>@totalPages</strong> &middot; <strong>@totalCount</strong> total
+        </div>
+        <nav aria-label="Pagination">
+            <ul class="um-pag-list">
+                <li class="um-pag-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="um-pag-link" asp-action="@actionName" asp-route-page="1" asp-route-searchTerm="@searchTerm" title="First page"><i class="fas fa-angle-double-left"></i></a>
+                </li>
+                <li class="um-pag-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="um-pag-link" asp-action="@actionName" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" title="Previous page"><i class="fas fa-angle-left"></i></a>
+                </li>
+                @if (startPage > 1)
+                {
+                    <li class="um-pag-item disabled"><span class="um-pag-link um-pag-ellipsis">...</span></li>
+                }
+                @for (var i = startPage; i <= endPage; i++)
+                {
+                    <li class="um-pag-item @(i == currentPage ? "active" : "")">
+                        <a class="um-pag-link" asp-action="@actionName" asp-route-page="@i" asp-route-searchTerm="@searchTerm">@i</a>
+                    </li>
+                }
+                @if (endPage < totalPages)
+                {
+                    <li class="um-pag-item disabled"><span class="um-pag-link um-pag-ellipsis">...</span></li>
+                }
+                <li class="um-pag-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="um-pag-link" asp-action="@actionName" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" title="Next page"><i class="fas fa-angle-right"></i></a>
+                </li>
+                <li class="um-pag-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="um-pag-link" asp-action="@actionName" asp-route-page="@totalPages" asp-route-searchTerm="@searchTerm" title="Last page"><i class="fas fa-angle-double-right"></i></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}

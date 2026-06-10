@@ -1,0 +1,13 @@
+@model (string Name, string? Email, bool IsActive)
+<div class="um-user-cell">
+    <span class="um-avatar @(Model.IsActive ? "active" : "inactive")">
+        @(Model.Name?.Substring(0, 1)?.ToUpper() ?? "?")
+    </span>
+    <div class="um-user-info">
+        <span class="um-user-name">@Model.Name</span>
+        @if (!string.IsNullOrEmpty(Model.Email))
+        {
+            <span class="um-user-email">@Model.Email</span>
+        }
+    </div>
+</div>

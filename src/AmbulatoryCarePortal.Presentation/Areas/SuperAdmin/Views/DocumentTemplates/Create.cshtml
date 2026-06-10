@@ -1,71 +1,178 @@
 @model CreateDocumentTemplateDto
 
 @{
-    ViewData["Title"] = "Create Document Template";
+    ViewData["Title"] = Localizer.T("Page.CreateDocumentTemplate");
 }
 
-<div class="fade-in">
-    <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-plus me-2"></i>Create Document Template</h3>
+<!-- Hero Banner -->
+<div class="template-hero mb-4">
+    <div class="template-hero-content">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="template-hero-title"><i class="fas fa-file-alt me-2"></i>@Localizer.T("Page.CreateDocumentTemplate")</h1>
+                <p class="template-hero-subtitle mb-0">Create a new CBAHI standard document template with metadata and file upload</p>
+            </div>
+            <a asp-action="Index" class="btn btn-light btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>@Localizer.T("Common.Back")
+            </a>
         </div>
-        <form method="post" asp-action="Create" enctype="multipart/form-data" role="form" aria-label="Create template form">
-            @Html.AntiForgeryToken()
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card template-form-card">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="StandardCode" class="form-label">Standard Code <span class="text-danger">*</span></label>
-                            <input asp-for="StandardCode" class="form-control" placeholder="e.g. LD1, FMS07" required aria-required="true" />
-                            <span asp-validation-for="StandardCode" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="DepartmentCategory" class="form-label">Department Category</label>
-                            <input asp-for="DepartmentCategory" class="form-control" placeholder="e.g. Leadership, FMS, LAB" />
-                            <span asp-validation-for="DepartmentCategory" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
+                <form method="post" asp-action="Create" enctype="multipart/form-data" role="form" aria-label="Create template form">
+                    @Html.AntiForgeryToken()
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="TitleEn" class="form-label">Title (English) <span class="text-danger">*</span></label>
-                            <input asp-for="TitleEn" class="form-control" placeholder="Document title in English" required aria-required="true" />
-                            <span asp-validation-for="TitleEn" class="text-danger"></span>
+                    <!-- Section: Standard Identification -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-tag me-2"></i>
+                            <span>Standard Identification</span>
+                        </div>
+                        <div class="form-section-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="StandardCode" class="form-label">Standard Code <span class="text-danger">*</span></label>
+                                    <input asp-for="StandardCode" class="form-control" placeholder="e.g. LD1, FMS07" required aria-required="true" />
+                                    <span asp-validation-for="StandardCode" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="DepartmentCategory" class="form-label">Department Category</label>
+                                    <select asp-for="DepartmentCategory" class="form-select">
+                                        <option value="">-- Select Category --</option>
+                                        <option value="Leadership">Leadership (LD)</option>
+                                        <option value="FMS">Facility Management (FMS)</option>
+                                        <option value="PFE">Patient & Family Education (PFE)</option>
+                                        <option value="LAB">Laboratory (LAB)</option>
+                                        <option value="RAD">Radiology (RAD)</option>
+                                        <option value="INF">Infection Control (INF)</option>
+                                        <option value="HRM">Human Resources (HRM)</option>
+                                        <option value="NURS">Nursing (NURS)</option>
+                                    </select>
+                                    <span asp-validation-for="DepartmentCategory" class="text-danger"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="TitleAr" class="form-label">Title (Arabic)</label>
-                            <input asp-for="TitleAr" class="form-control" placeholder="Document title in Arabic" dir="rtl" />
-                            <span asp-validation-for="TitleAr" class="text-danger"></span>
+
+                    <!-- Section: Title Information -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-heading me-2"></i>
+                            <span>Title Information</span>
+                        </div>
+                        <div class="form-section-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="TitleEn" class="form-label">Title (English) <span class="text-danger">*</span></label>
+                                    <input asp-for="TitleEn" class="form-control" placeholder="Document title in English" required aria-required="true" />
+                                    <span asp-validation-for="TitleEn" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="TitleAr" class="form-label">Title (Arabic)</label>
+                                    <input asp-for="TitleAr" class="form-control" placeholder="عنوان المستند بالعربية" dir="rtl" />
+                                    <span asp-validation-for="TitleAr" class="text-danger"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label">Description</label>
-                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Optional description..."></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
+                    <!-- Section: Description -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-align-left me-2"></i>
+                            <span>Description</span>
+                        </div>
+                        <div class="form-section-body">
+                            <div class="mb-3">
+                                <label asp-for="Description" class="form-label">Description (Optional)</label>
+                                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Provide a brief description of this template's purpose..."></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="templateFile" class="form-label">Template File (.docx)</label>
-                    <input type="file" name="templateFile" class="form-control" accept=".docx" aria-label="Template .docx file" />
-                    <small class="text-muted">Upload a .docx file with placeholders like {{ClinicName}}, {{LicenseNumber}}, etc.</small>
-                </div>
+                    <!-- Section: File Upload -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-upload me-2"></i>
+                            <span>Template File</span>
+                        </div>
+                        <div class="form-section-body">
+                            <div class="upload-area" id="uploadArea">
+                                <div class="upload-area-content">
+                                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                    <h5>@Localizer.T("Template.DragDropUpload")</h5>
+                                    <p class="text-muted mb-3">Supported format: .docx</p>
+                                    <input type="file" name="templateFile" class="form-control d-none" id="templateFile" accept=".docx" aria-label="Template .docx file" />
+                                    <button type="button" class="btn btn-outline-primary" id="uploadBtn">
+                                        <i class="fas fa-folder-open me-1"></i>@Localizer.T("Button.Upload")
+                                    </button>
+                                </div>
+                                <div class="upload-area-preview d-none" id="uploadPreview">
+                                    <div class="file-info">
+                                        <i class="fas fa-file-word file-icon"></i>
+                                        <div class="file-details">
+                                            <span class="file-name" id="fileName"></span>
+                                            <span class="file-size text-muted" id="fileSize"></span>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" id="removeFile">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="text-muted mt-2 d-block">Upload a .docx file with placeholders like <code>{{ClinicName}}</code>, <code>{{LicenseNumber}}</code>, etc.</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                            <i class="fas fa-save me-2"></i>@Localizer.T("Button.Create")
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>@Localizer.T("Button.Cancel")
+                        </a>
+                    </div>
+                </form>
             </div>
-            <div class="card-footer">
-                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Create</button>
-                <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times me-1"></i>Cancel</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('uploadBtn').addEventListener('click', function() {
+            document.getElementById('templateFile').click();
+        });
+
+        document.getElementById('uploadArea').addEventListener('click', function(e) {
+            if (e.target !== this && e.target.closest('#uploadBtn')) return;
+            if (e.target.closest('#removeFile')) return;
+            document.getElementById('templateFile').click();
+        });
+
+        document.getElementById('templateFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.querySelector('.upload-area-content').classList.add('d-none');
+            document.getElementById('uploadPreview').classList.remove('d-none');
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+            document.getElementById('uploadArea').classList.add('has-file');
+        });
+
+        document.getElementById('removeFile').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('templateFile').value = '';
+            document.querySelector('.upload-area-content').classList.remove('d-none');
+            document.getElementById('uploadPreview').classList.add('d-none');
+            document.getElementById('uploadArea').classList.remove('has-file');
+        });
+    </script>
 }

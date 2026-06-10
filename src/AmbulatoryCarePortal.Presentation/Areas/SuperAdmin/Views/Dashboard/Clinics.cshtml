@@ -1,146 +1,192 @@
-@model AmbulatoryCarePortal.Application.Common.PagedResult<AmbulatoryCarePortal.Application.DTOs.Clinic.ClinicDto>
+@model PagedResult<ClinicDto>
 
 @{
-    ViewData["Title"] = "Manage Clinics";
+    ViewData["Title"] = Localizer.T("Page.ManageClinics");
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row fade-in">
-    <div class="col-12">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-hospital"></i> All Clinics</h3>
-                <div class="card-tools">
-                    <a href="/SuperAdmin/Dashboard/CreateClinic" class="btn btn-sm btn-primary" aria-label="Add new clinic">
-                        <i class="fas fa-plus"></i> Add Clinic
-                    </a>
-                </div>
+<!-- Hero Banner -->
+<div class="clinics-hero mb-4">
+    <div class="hero-content">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="hero-title"><i class="fas fa-hospital me-2"></i>@Localizer.T("Page.ManageClinics")</h1>
+                <p class="hero-subtitle mb-0">@Localizer.T("Clinics.Subtitle")</p>
             </div>
+            <a href="/SuperAdmin/Dashboard/CreateClinic" class="btn btn-light btn-lg">
+                <i class="fas fa-plus me-2"></i>@Localizer.T("Button.Add")
+            </a>
+        </div>
+    </div>
+</div>
 
-            <div class="card-body p-0">
-                <div class="table-container">
-                    <div class="table-toolbar">
-                        <div class="search-box">
-                            <i class="fas fa-search search-icon"></i>
-                            <input type="text" class="form-control" data-table-search="clinicsTable" placeholder="Search clinics..." aria-label="Search clinics">
-                        </div>
-                    </div>
-                    <table class="table table-hover" id="clinicsTable">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>City</th>
-                                <th>License</th>
-                                <th>Compliance</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.Data.Any())
-                            {
-                                @foreach (var clinic in Model.Data)
-                                {
-                                    <tr>
-                                        <td>
-                                            <strong>@clinic.Name</strong><br>
-                                            <small class="text-muted">@clinic.NameAr</small>
-                                        </td>
-                                        <td>@clinic.ClinicType</td>
-                                        <td>@clinic.CityEn</td>
-                                        <td>
-                                            @clinic.LicenseNumber<br>
-                                            @if (clinic.LicenseExpiry.HasValue)
-                                            {
-                                                <small class="text-muted">Exp: @clinic.LicenseExpiry.Value.ToString("dd/MM/yyyy")</small>
-                                            }
-                                        </td>
-                                        <td>
-                                            <div class="progress progress-xs">
-                                                <div class="progress-bar @(clinic.ComplianceScore >= 80 ? "bg-success" : clinic.ComplianceScore >= 60 ? "bg-warning" : "bg-danger")" 
-                                                     style="width: @clinic.ComplianceScore%">
-                                                </div>
-                                            </div>
-                                            <small>@clinic.ComplianceScore%</small>
-                                        </td>
-                                        <td>
-                                            @if (clinic.IsActive)
-                                            {
-                                                <span class="badge badge-success">Active</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge badge-danger">Inactive</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <div class="actions-cell">
-                                                <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinic.Id" class="btn btn-sm btn-info" title="View" aria-label="View clinic details">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <a href="#" class="btn btn-sm btn-warning" title="Edit" aria-label="Edit clinic">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="#" class="btn btn-sm btn-danger" title="Delete" aria-label="Delete clinic">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="7">
-                                        <div class="empty-state">
-                                            <i class="fas fa-hospital empty-icon"></i>
-                                            <h4>No Clinics Found</h4>
-                                            <p>Get started by creating your first clinic.</p>
-                                            <a href="/SuperAdmin/Dashboard/CreateClinic" class="btn btn-primary">Create Clinic</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <div class="table-footer">
-                    <div class="pagination-info">
-                        Showing @(Model.Data.Count) of @Model.TotalCount clinics
-                    </div>
-
-                    @if (Model.TotalPages > 1)
-                    {
-                        <ul class="pagination">
-                            @if (Model.HasPreviousPage)
-                            {
-                                <li class="page-item">
-                                    <a href="?page=@(Model.PageNumber - 1)" class="page-link" aria-label="Previous page">Previous</a>
-                                </li>
-                            }
-
-                            @for (int i = 1; i <= Model.TotalPages; i++)
-                            {
-                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                    <a href="?page=@i" class="page-link" aria-label="Page @i">@i</a>
-                                </li>
-                            }
-
-                            @if (Model.HasNextPage)
-                            {
-                                <li class="page-item">
-                                    <a href="?page=@(Model.PageNumber + 1)" class="page-link" aria-label="Next page">Next</a>
-                                </li>
-                            }
-                        </ul>
-                    }
+<!-- Stats Row -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-info">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-hospital"></i></div>
+                <div class="stat-card-content">
+                    <h3>@Model.TotalCount</h3>
+                    <p>Total Clinics</p>
                 </div>
             </div>
         </div>
     </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-success">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-card-content">
+                    <h3>@Model.Data.Count(c => c.IsActive)</h3>
+                    <p>@Localizer.T("Common.Active")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-warning">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-card-content">
+                    <h3>@(Model.Data.Any() ? Model.Data.Average(c => c.ComplianceScore).ToString("F0") : "0")%</h3>
+                    <p>Avg Compliance</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-danger">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-exclamation-circle"></i></div>
+                <div class="stat-card-content">
+                    <h3>@Model.Data.Count(c => c.ComplianceScore < 60)</h3>
+                    <p>Needs Attention</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clinics Table -->
+<div class="card clinics-card">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-list me-2"></i>All Clinics</h3>
+        <div class="card-tools">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="form-control" data-table-search="clinicsTable" placeholder="@Localizer.T("Search.Clinics")" aria-label="@Localizer.T("Search.Clinics")">
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover clinics-table" id="clinicsTable">
+                <thead>
+                    <tr>
+                        <th>@Localizer.T("Common.Name")</th>
+                        <th>@Localizer.T("Common.Type")</th>
+                        <th>City</th>
+                        <th>License</th>
+                        <th>Compliance</th>
+                        <th>@Localizer.T("Common.Status")</th>
+                        <th class="text-center">@Localizer.T("Common.Actions")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Data.Any())
+                    {
+                        @foreach (var clinic in Model.Data)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="clinic-name-cell">
+                                        <strong>@clinic.Name</strong>
+                                        <small class="text-muted d-block">@clinic.NameAr</small>
+                                    </div>
+                                </td>
+                                <td><span class="type-badge">@clinic.ClinicType</span></td>
+                                <td>@clinic.CityEn</td>
+                                <td>
+                                    <div>@clinic.LicenseNumber</div>
+                                    @if (clinic.LicenseExpiry.HasValue)
+                                    {
+                                        <small class="text-muted">Exp: @clinic.LicenseExpiry.Value.ToString("dd/MM/yyyy")</small>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress compliance-progress flex-grow-1">
+                                            <div class="progress-bar @(clinic.ComplianceScore >= 80 ? "bg-success" : clinic.ComplianceScore >= 60 ? "bg-warning" : "bg-danger")"
+                                                 style="width: @clinic.ComplianceScore%">
+                                            </div>
+                                        </div>
+                                        <small class="@(clinic.ComplianceScore >= 80 ? "text-success" : clinic.ComplianceScore >= 60 ? "text-warning" : "text-danger") fw-bold">@clinic.ComplianceScore%</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (clinic.IsActive)
+                                    {
+                                        <span class="badge bg-success">@Localizer.T("Common.Active")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">@Localizer.T("Common.Inactive")</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="action-buttons justify-content-center">
+                                        <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinic.Id" class="btn btn-sm btn-outline-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinic.Id" class="btn btn-sm btn-outline-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")"
+                                                onclick="confirmDelete(@clinic.Id, '@clinic.Name')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <i class="fas fa-hospital empty-icon"></i>
+                                    <h4>@Localizer.T("Empty.NoClinics")</h4>
+                                    <p>@Localizer.T("Empty.NoClinicsMessage")</p>
+                                    <a href="/SuperAdmin/Dashboard/CreateClinic" class="btn btn-primary">@Localizer.T("Button.Create")</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.TotalPages > 1)
+    {
+        <div class="card-footer">
+            <nav>
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a href="?page=@(Model.PageNumber - 1)" class="page-link">@Localizer.T("Common.Previous")</a>
+                    </li>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a href="?page=@i" class="page-link">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a href="?page=@(Model.PageNumber + 1)" class="page-link">@Localizer.T("Common.Next")</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
 </div>

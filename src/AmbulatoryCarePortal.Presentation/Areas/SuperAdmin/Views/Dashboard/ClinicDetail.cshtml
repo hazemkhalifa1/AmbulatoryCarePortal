@@ -1,118 +1,161 @@
-@model AmbulatoryCarePortal.Application.DTOs.Clinic.ClinicDetailDto
+@model ClinicDetailDto
 
 @{
     ViewData["Title"] = Model.Name;
 }
 
-<div class="row fade-in">
-    <div class="col-md-4">
-        <div class="card card-primary">
+<!-- Hero Banner -->
+<div class="clinic-detail-hero mb-4">
+    <div class="hero-content">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <h1 class="hero-title mb-0"><i class="fas fa-clinic-medical me-2"></i>@Model.Name</h1>
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge badge-lg bg-success">@Localizer.T("Common.Active")</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-lg bg-danger">@Localizer.T("Common.Inactive")</span>
+                    }
+                </div>
+                <p class="hero-subtitle mb-0">@Model.NameAr</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-light">
+                    <i class="fas fa-arrow-left me-1"></i>@Localizer.T("Common.Back")
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-info">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-card-content">
+                    <h3>@Model.UserCount</h3>
+                    <p>Users</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-success">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-building"></i></div>
+                <div class="stat-card-content">
+                    <h3>@Model.DepartmentCount</h3>
+                    <p>Departments</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-warning">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-file-pdf"></i></div>
+                <div class="stat-card-content">
+                    <h3>@Model.PolicyDocumentCount</h3>
+                    <p>Policies</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-danger">
+            <div class="stat-card-body">
+                <div class="stat-card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-card-content">
+                    <h3>@Model.OpenGapCount</h3>
+                    <p>Open Gaps</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Details Card -->
+    <div class="col-lg-5 mb-4">
+        <div class="card detail-card h-100">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-clinic-medical"></i> @Model.Name</h3>
+                <h3 class="card-title"><i class="fas fa-info-circle me-2"></i>@Localizer.T("Page.ClinicDetail")</h3>
             </div>
             <div class="card-body">
-                <p class="text-muted text-center mb-4">@Model.NameAr</p>
-                <div class="detail-row">
-                    <span class="detail-label">Type</span>
-                    <span class="detail-value">@Model.ClinicType</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">City</span>
-                    <span class="detail-value">@(Model.CityEn ?? Model.CityAr)</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">License</span>
-                    <span class="detail-value">@Model.LicenseNumber</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">License Expiry</span>
-                    <span class="detail-value">@(Model.LicenseExpiry?.ToString("dd/MM/yyyy") ?? "N/A")</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Status</span>
-                    <span class="detail-value">
-                        @if (Model.IsActive)
-                        {
-                            <span class="badge badge-success">Active</span>
-                        }
-                        else
-                        {
-                            <span class="badge badge-danger">Inactive</span>
-                        }
-                    </span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Compliance Score</span>
-                    <span class="detail-value">
-                        <div class="progress progress-xs" style="width: 100px; display: inline-block;">
-                            <div class="progress-bar @(Model.ComplianceScore >= 80 ? "bg-success" : Model.ComplianceScore >= 60 ? "bg-warning" : "bg-danger")" style="width: @Model.ComplianceScore%"></div>
-                        </div>
-                        @Model.ComplianceScore%
-                    </span>
+                <div class="detail-list">
+                    <div class="detail-item">
+                        <span class="detail-label">@Localizer.T("Common.Type")</span>
+                        <span class="detail-value">@Model.ClinicType</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">City</span>
+                        <span class="detail-value">@(Model.CityEn ?? Model.CityAr)</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">License Number</span>
+                        <span class="detail-value">@Model.LicenseNumber</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">License Expiry</span>
+                        <span class="detail-value">@(Model.LicenseExpiry?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Compliance Score</span>
+                        <span class="detail-value">
+                            <div class="progress compliance-progress">
+                                <div class="progress-bar @(Model.ComplianceScore >= 80 ? "bg-success" : Model.ComplianceScore >= 60 ? "bg-warning" : "bg-danger")"
+                                     style="width: @Model.ComplianceScore%">
+                                </div>
+                            </div>
+                            <small class="@(Model.ComplianceScore >= 80 ? "text-success" : Model.ComplianceScore >= 60 ? "text-warning" : "text-danger")">
+                                @Model.ComplianceScore%
+                            </small>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-8">
-        <div class="row">
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>@Model.UserCount</h3>
-                        <p>Users</p>
-                    </div>
-                    <div class="icon"><i class="fas fa-users"></i></div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
-                    <div class="inner">
-                        <h3>@Model.DepartmentCount</h3>
-                        <p>Departments</p>
-                    </div>
-                    <div class="icon"><i class="fas fa-building"></i></div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-warning">
-                    <div class="inner">
-                        <h3>@Model.PolicyDocumentCount</h3>
-                        <p>Policies</p>
-                    </div>
-                    <div class="icon"><i class="fas fa-file-pdf"></i></div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-danger">
-                    <div class="inner">
-                        <h3>@Model.OpenGapCount</h3>
-                        <p>Open Gaps</p>
-                    </div>
-                    <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card card-info">
+    <!-- Quick Actions -->
+    <div class="col-lg-7 mb-4">
+        <div class="card action-card h-100">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-tasks"></i> Quick Actions</h3>
+                <h3 class="card-title"><i class="fas fa-bolt me-2"></i>Quick Actions</h3>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 mb-2">
-                        <a href="/SuperAdmin/Dashboard/AuditLog?clinicId=@Model.Id" class="btn btn-warning btn-block" aria-label="View audit log for this clinic">
-                            <i class="fas fa-history"></i> View Audit Log
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="/SuperAdmin/Dashboard/AuditLog?clinicId=@Model.Id" class="action-btn action-btn-warning">
+                            <i class="fas fa-history"></i>
+                            <span>@Localizer.T("Common.View") @Localizer.T("Page.AuditLog")</span>
+                            <small>Review all activities</small>
                         </a>
                     </div>
-                    <div class="col-md-4 mb-2">
-                        <a href="/SuperAdmin/UserManagement/Create?clinicId=@Model.Id" class="btn btn-info btn-block" aria-label="Add user to this clinic">
-                            <i class="fas fa-user-plus"></i> Add User
+                    <div class="col-md-6">
+                        <a href="/SuperAdmin/UserManagement/Create?clinicId=@Model.Id" class="action-btn action-btn-info">
+                            <i class="fas fa-user-plus"></i>
+                            <span>@Localizer.T("Button.Add")</span>
+                            <small>Assign personnel</small>
                         </a>
                     </div>
-                    <div class="col-md-4 mb-2">
-                        <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-secondary btn-block" aria-label="Back to clinics list">
-                            <i class="fas fa-arrow-left"></i> Back to Clinics
+                    <div class="col-md-6">
+                        <a href="/SuperAdmin/DocumentTemplates/AssignToAllClinics/@Model.Id" class="action-btn action-btn-primary">
+                            <i class="fas fa-file-upload"></i>
+                            <span>Assign Templates</span>
+                            <small>Link document templates</small>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="/SuperAdmin/Dashboard/Clinics" class="action-btn action-btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>@Localizer.T("Common.Back")</span>
+                            <small>Return to list</small>
                         </a>
                     </div>
                 </div>

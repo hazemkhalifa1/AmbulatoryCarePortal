@@ -1,19 +1,19 @@
 @model AmbulatoryCarePortal.Application.Common.PagedResult<HrStaffDto>
 
 @{
-    ViewData["Title"] = ViewBag.PageTitle ?? "HR Staff Management";
+    ViewData["Title"] = ViewBag.PageTitle ?? Localizer.T("Page.StaffManagement");
 }
 
 <div class="fade-in">
     <div class="card card-primary">
         <div class="card-header">
             <h3 class="card-title">
-                <i class="fas fa-users"></i> Staff Management
-                <small class="ml-2 text-muted" dir="rtl">إدارة الموظفين</small>
+                    <i class="fas fa-users"></i> @Localizer.T("Nav.Staff")
+                <small class="ml-2 text-muted" dir="rtl">@Localizer.T("Nav.Staff")</small>
             </h3>
             <div class="card-tools">
-                <a href="@Url.Action("Create", "HRManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-primary" aria-label="Add new staff member">
-                    <i class="fas fa-plus"></i> Add Staff
+                <a href="@Url.Action("Create", "HRManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-primary" aria-label="@Localizer.T("HR.AddNewStaff")">
+                    <i class="fas fa-plus"></i> @Localizer.T("HR.AddStaff")
                 </a>
             </div>
         </div>
@@ -23,19 +23,19 @@
                 <div class="table-toolbar">
                     <div class="search-box">
                         <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="form-control" id="tableSearch" data-table-search="staffTable" placeholder="Search staff..." aria-label="Search staff" />
+                        <input type="text" class="form-control" id="tableSearch" data-table-search="staffTable" placeholder="@Localizer.T("HR.SearchPlaceholder")" aria-label="@Localizer.T("HR.SearchPlaceholder")" />
                     </div>
                 </div>
 
-                <table class="table table-hover" id="staffTable" role="table" aria-label="Staff members">
+                    <table class="table table-hover" id="staffTable" role="table" aria-label="@Localizer.T("HR.StaffManagement")">
                     <thead>
                         <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Position</th>
-                            <th scope="col">Department</th>
-                            <th scope="col">Documents</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Actions</th>
+                            <th scope="col">@Localizer.T("HR.Name")</th>
+                            <th scope="col">@Localizer.T("HR.PositionTitle")</th>
+                            <th scope="col">@Localizer.T("HR.Department")</th>
+                            <th scope="col">@Localizer.T("HR.Documents")</th>
+                            <th scope="col">@Localizer.T("HR.Status")</th>
+                            <th scope="col">@Localizer.T("HR.Actions")</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,22 +87,22 @@
                                     <td>
                                         @if (staff.IsActive)
                                         {
-                                            <span class="badge badge-success">Active</span>
+                                            <span class="badge badge-success">@Localizer.T("HR.Active")</span>
                                         }
                                         else
                                         {
-                                            <span class="badge badge-danger">Inactive</span>
+                                            <span class="badge badge-danger">@Localizer.T("HR.Inactive")</span>
                                         }
                                     </td>
                                     <td>
                                         <div class="actions-cell">
-                                            <a href="@Url.Action("Details", "HRManagement", new { area = "ClinicAdmin", id = staff.Id })" class="btn btn-sm btn-info" title="View" aria-label="View staff details">
+                                            <a href="@Url.Action("Details", "HRManagement", new { area = "ClinicAdmin", id = staff.Id })" class="btn btn-sm btn-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="@Url.Action("Edit", "HRManagement", new { area = "ClinicAdmin", id = staff.Id })" class="btn btn-sm btn-warning" title="Edit" aria-label="Edit staff member">
+                                            <a href="@Url.Action("Edit", "HRManagement", new { area = "ClinicAdmin", id = staff.Id })" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="@Url.Action("Documents", "HRManagement", new { area = "ClinicAdmin", staffId = staff.Id })" class="btn btn-sm btn-primary" title="Documents" aria-label="View staff documents">
+                                            <a href="@Url.Action("Documents", "HRManagement", new { area = "ClinicAdmin", staffId = staff.Id })" class="btn btn-sm btn-primary" title="@Localizer.T("HR.Documents")" aria-label="@Localizer.T("HR.Documents")">
                                                 <i class="fas fa-folder-open"></i>
                                             </a>
                                         </div>
@@ -115,8 +115,8 @@
                             <tr>
                                 <td colspan="6" class="text-center text-muted py-4">
                                     <i class="fas fa-users fa-2x mb-2 d-block"></i>
-                                    No staff members found.
-                                    <a href="@Url.Action("Create", "HRManagement", new { area = "ClinicAdmin" })">Add staff</a>
+                                    @Localizer.T("HR.NoStaffFound")
+                                    <a href="@Url.Action("Create", "HRManagement", new { area = "ClinicAdmin" })">@Localizer.T("HR.AddStaff")</a>
                                 </td>
                             </tr>
                         }
@@ -125,8 +125,8 @@
 
                 <div class="table-footer">
                     <div class="pagination-info">
-                        Showing <strong>@Model.Data.Count</strong> of <strong>@Model.TotalCount</strong> staff
-                        (Page @Model.PageNumber of @Model.TotalPages)
+                        @Localizer.T("Common.Showing") <strong>@Model.Data.Count</strong> @Localizer.T("Common.Of") <strong>@Model.TotalCount</strong> @Localizer.T("HR.StaffCount")
+                        (@Localizer.T("Common.Page") @Model.PageNumber @Localizer.T("Common.Of") @Model.TotalPages)
                     </div>
 
                     @if (Model.TotalPages > 1)
@@ -134,8 +134,8 @@
                         <nav aria-label="Staff table pagination">
                             <ul class="pagination">
                                 <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                                    <a href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" class="page-link" aria-label="Previous page">
-                                        <i class="fas fa-chevron-left"></i> Previous
+                                    <a href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Previous")">
+                                        <i class="fas fa-chevron-left"></i> @Localizer.T("Common.Previous")
                                     </a>
                                 </li>
 
@@ -147,8 +147,8 @@
                                 }
 
                                 <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                                    <a href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" class="page-link" aria-label="Next page">
-                                        Next <i class="fas fa-chevron-right"></i>
+                                    <a href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Next")">
+                                        @Localizer.T("Common.Next") <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
                             </ul>
