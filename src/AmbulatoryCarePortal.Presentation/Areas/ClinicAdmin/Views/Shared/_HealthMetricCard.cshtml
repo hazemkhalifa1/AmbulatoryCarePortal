@@ -1,0 +1,31 @@
+@model dynamic
+@*
+    Usage:
+    <partial name="_HealthMetricCard" model='new {
+        Icon = "fa-hospital",
+        Color = "primary",    // primary, success, warning, danger, info
+        Value = "12",
+        Label = "Total Clinics",
+        Badge = "+2 this month",
+        Link = "/ClinicAdmin/Dashboard/Policies"
+    }' />
+*@
+<div class="health-metric @(Model.Color ?? "primary")">
+    <div class="metric-top">
+        <div class="metric-icon"><i class="fas @(Model.Icon ?? "fa-chart-line")"></i></div>
+        @if (!string.IsNullOrEmpty(Model.Badge))
+        {
+            <span class="metric-badge">@Model.Badge</span>
+        }
+    </div>
+    <div class="metric-value">@Model.Value</div>
+    <div class="metric-label">@Model.Label</div>
+    @if (!string.IsNullOrEmpty(Model.Link))
+    {
+        <div class="metric-footer">
+            <a href="@Model.Link">
+                @(Model.LinkText ?? Localizer.T("Common.ViewDetails")) <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    }
+</div>

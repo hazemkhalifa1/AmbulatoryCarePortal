@@ -1,0 +1,24 @@
+@model dynamic
+@*
+    Usage:
+    <partial name="_EmptyState" model='new {
+        Icon = "fa-file-alt",
+        Title = "No items found",
+        Message = "There are no items to display.",
+        ActionLink = "/ClinicAdmin/SomeAction/Create",
+        ActionText = "Create New"
+    }' />
+*@
+<div class="empty-state-modern">
+    <div class="empty-icon-wrap">
+        <i class="fas @(Model.Icon ?? "fa-inbox")"></i>
+    </div>
+    <h4>@(Model.Title ?? Localizer.T("Empty.NoItems"))</h4>
+    <p>@(Model.Message ?? Localizer.T("Empty.NoItemsMessage"))</p>
+    @if (!string.IsNullOrEmpty(Model.ActionLink))
+    {
+        <a href="@Model.ActionLink" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> @(Model.ActionText ?? Localizer.T("Common.Create"))
+        </a>
+    }
+</div>

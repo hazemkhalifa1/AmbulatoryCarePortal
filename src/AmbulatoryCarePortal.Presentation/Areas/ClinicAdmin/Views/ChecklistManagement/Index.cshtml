@@ -2,187 +2,191 @@
 
 @{
     ViewData["Title"] = Localizer.T("Page.ChecklistManagement");
+    var totalCount = ViewBag.TotalCount ?? 0;
 }
 
-<div class="row fade-in">
-    <div class="col-sm-6">
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i> @Localizer.T("Checklist.CreateChecklist")
-        </a>
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Page.ChecklistManagement"),
+    Icon = "fa-clipboard-list",
+    Breadcrumb = ""
+}' />
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-4 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-clipboard-list",
+            Color = "primary",
+            Value = totalCount.ToString(),
+            Label = Localizer.T("Checklist.AllChecklists"),
+            Badge = Localizer.T("Common.Total"),
+            Link = Url.Action("Create"),
+            LinkText = Localizer.T("Checklist.CreateChecklist")
+        }' />
     </div>
-    <div class="col-sm-6 text-sm-end">
-        <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-sync-alt me-1"></i> @Localizer.T("Common.Refresh")
-        </a>
+    <div class="col-lg-4 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-check-circle",
+            Color = "success",
+            Value = Model.Count(m => m.CompletionRate >= 80).ToString(),
+            Label = Localizer.T("Checklist.CompletedRounds"),
+            Badge = Localizer.T("Common.Compliant"),
+            Link = ""
+        }' />
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-sync-alt",
+            Color = "info",
+            Value = Model.Count(m => m.LastExecutedDate == DateTime.MinValue).ToString(),
+            Label = Localizer.T("Checklist.NotStarted"),
+            Badge = Localizer.T("Common.Attention"),
+            Link = ""
+        }' />
     </div>
 </div>
 
-<div class="card card-primary">
-    <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-clipboard-list"></i> @Localizer.T("Checklist.AllChecklists")</h3>
-        <div class="card-tools">
-            <div class="table-toolbar">
-                <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="form-control" data-table-search="checklistTable" id="searchInput" placeholder="@Localizer.T("Checklist.SearchPlaceholder")" value="@ViewBag.SearchTerm" aria-label="@Localizer.T("Checklist.SearchPlaceholder")">
-                </div>
+<div class="data-table-wrapper">
+    <div class="data-table-toolbar">
+        <div class="toolbar-left">
+            <span class="toolbar-title"><i class="fas fa-clipboard-list me-2"></i>@Localizer.T("Checklist.AllChecklists")</span>
+            <span class="toolbar-count">@totalCount @Localizer.T("Checklist.TotalChecklists")</span>
+        </div>
+        <div class="toolbar-right gap-2">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="form-control" id="searchInput" placeholder="@Localizer.T("Checklist.SearchPlaceholder")" value="@ViewBag.SearchTerm" aria-label="@Localizer.T("Checklist.SearchPlaceholder")">
             </div>
+            <select id="frequencyFilter" class="form-select" style="width: auto; min-width: 120px;" onchange="applyFilters()" aria-label="@Localizer.T("Checklist.Frequency")">
+                <option value="">@Localizer.T("Common.All")</option>
+                <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">@Localizer.T("Checklist.Daily")</option>
+                <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">@Localizer.T("Checklist.Weekly")</option>
+                <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">@Localizer.T("Checklist.Monthly")</option>
+            </select>
+            <select id="statusFilter" class="form-select" style="width: auto; min-width: 120px;" onchange="applyFilters()" aria-label="@Localizer.T("Common.Status")">
+                <option value="">@Localizer.T("Common.All")</option>
+                <option value="active" selected="@(ViewBag.StatusFilter == "active")">@Localizer.T("Common.Active")</option>
+                <option value="inactive" selected="@(ViewBag.StatusFilter == "inactive")">@Localizer.T("Common.Inactive")</option>
+            </select>
+            <a asp-action="Create" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus me-1"></i> @Localizer.T("Checklist.CreateChecklist")
+            </a>
         </div>
     </div>
-    <div class="card-body">
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label class="form-label small">@Localizer.T("Checklist.Frequency")</label>
-                    <select id="frequencyFilter" class="form-select" onchange="applyFilters()" aria-label="@Localizer.T("Checklist.Frequency")">
-                        <option value="">@Localizer.T("Common.All")</option>
-                        <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">@Localizer.T("Checklist.Daily")</option>
-                        <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">@Localizer.T("Checklist.Weekly")</option>
-                        <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">@Localizer.T("Checklist.Monthly")</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label class="form-label small">@Localizer.T("Common.Status")</label>
-                    <select id="statusFilter" class="form-select" onchange="applyFilters()" aria-label="@Localizer.T("Common.Status")">
-                        <option value="">@Localizer.T("Common.All")</option>
-                        <option value="active" selected="@(ViewBag.StatusFilter == "active")">@Localizer.T("Common.Active")</option>
-                        <option value="inactive" selected="@(ViewBag.StatusFilter == "inactive")">@Localizer.T("Common.Inactive")</option>
-                    </select>
-                </div>
-            </div>
-        </div>
 
-        <div class="table-container">
-            <table class="table table-hover" id="checklistTable">
-                <thead>
+    <table class="data-table" id="checklistTable">
+        <thead>
+            <tr>
+                <th scope="col">@Localizer.T("Checklist.TemplateName")</th>
+                <th scope="col">@Localizer.T("Checklist.Frequency")</th>
+                <th scope="col" class="text-center">@Localizer.T("Checklist.TotalRounds")</th>
+                <th scope="col" class="text-center">@Localizer.T("Checklist.CompletedRounds")</th>
+                <th scope="col">@Localizer.T("Checklist.CompletionPct")</th>
+                <th scope="col">@Localizer.T("Checklist.LastExecuted")</th>
+                <th scope="col" class="text-end">@Localizer.T("Common.Actions")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
                     <tr>
-                        <th>@Localizer.T("Checklist.TemplateName")</th>
-                        <th>@Localizer.T("Checklist.Frequency")</th>
-                        <th class="text-center">@Localizer.T("Checklist.TotalRounds")</th>
-                        <th class="text-center">@Localizer.T("Checklist.CompletedRounds")</th>
-                        <th class="text-center">@Localizer.T("Checklist.CompletionPct")</th>
-                        <th>@Localizer.T("Checklist.LastExecuted")</th>
-                        <th class="text-center">@Localizer.T("Common.Actions")</th>
+                        <td>
+                            <strong>@item.Template.Name</strong>
+                            @if (!string.IsNullOrEmpty(item.Template.NameAr))
+                            {
+                                <br><small class="text-muted" dir="rtl">@item.Template.NameAr</small>
+                            }
+                        </td>
+                        <td>
+                            <span class="status-pill needs-review">@item.Template.Frequency</span>
+                        </td>
+                        <td class="text-center fw-bold">@item.TotalRounds</td>
+                        <td class="text-center fw-bold">@item.CompletedRounds</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2" style="min-width: 120px;">
+                                <div class="progress flex-grow-1" style="height: 8px;">
+                                    <div class="progress-bar @(item.CompletionRate >= 80 ? "bg-success" : item.CompletionRate >= 50 ? "bg-warning" : "bg-danger")"
+                                         style="width: @item.CompletionRate%" role="progressbar"
+                                         aria-valuenow="@item.CompletionRate" aria-valuemin="0" aria-valuemax="100" aria-label="@Localizer.T("Checklist.Completion") @item.CompletionRate%"></div>
+                                </div>
+                                <small class="text-nowrap fw-bold">@item.CompletionRate%</small>
+                            </div>
+                        </td>
+                        <td>
+                            @if (item.LastExecutedDate == DateTime.MinValue)
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                            else
+                            {
+                                <span>@item.LastExecutedDate.ToString("yyyy-MM-dd")</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="cell-actions justify-content-end">
+                                <a asp-action="Execute" asp-route-templateId="@item.Template.Id"
+                                   class="btn btn-sm btn-outline-success" title="@Localizer.T("Checklist.Execute")" aria-label="@Localizer.T("Checklist.Execute")">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                                <a asp-action="ViewHistory" asp-route-templateId="@item.Template.Id"
+                                   class="btn btn-sm btn-outline-info" title="@Localizer.T("Checklist.ViewHistory")" aria-label="@Localizer.T("Checklist.ViewHistory")">
+                                    <i class="fas fa-history"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-warning" title="@Localizer.T("Checklist.Analytics")"
+                                        aria-label="@Localizer.T("Checklist.Analytics")"
+                                        onclick="showAnalytics(@item.Template.Id)">
+                                    <i class="fas fa-chart-bar"></i>
+                                </button>
+                                <a asp-action="Export" asp-route-templateId="@item.Template.Id" asp-route-format="excel"
+                                   class="btn btn-sm btn-outline-secondary" title="@Localizer.T("Common.Export")" aria-label="@Localizer.T("Common.Export")">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Any())
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center py-4">
+                        <partial name="_EmptyState" model='new {
+                            Icon = "fa-clipboard-list",
+                            Title = Localizer.T("Empty.NoChecklists"),
+                            Message = Localizer.T("Checklist.NoChecklistsMessage"),
+                            ActionLink = Url.Action("Create"),
+                            ActionText = Localizer.T("Checklist.CreateChecklist")
+                        }' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (ViewBag.TotalPages > 1)
+    {
+        <div class="data-table-pagination">
+            <div class="page-info">
+                @Localizer.T("Common.Showing") @Model.Count @Localizer.T("Common.Of") @totalCount @Localizer.T("Checklist.TotalChecklists")
+            </div>
+            <div class="page-links">
+                @for (int p = 1; p <= ViewBag.TotalPages; p++)
+                {
+                    if (p == ViewBag.CurrentPage)
                     {
-                        var idx = 0;
-                        foreach (var item in Model)
-                        {
-                            idx++;
-                            <tr>
-                                <td>
-                                    <strong>@item.Template.Name</strong>
-                                    @if (!string.IsNullOrEmpty(item.Template.NameAr))
-                                    {
-                                        <br><small class="text-muted" dir="rtl">@item.Template.NameAr</small>
-                                    }
-                                </td>
-                                <td>
-                                    @if (item.Template.Frequency.ToString() == "Daily")
-                                    {
-                                        <span class="badge badge-info">@item.Template.Frequency</span>
-                                    }
-                                    else if (item.Template.Frequency.ToString() == "Weekly")
-                                    {
-                                        <span class="badge badge-warning">@item.Template.Frequency</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-secondary">@item.Template.Frequency</span>
-                                    }
-                                </td>
-                                <td class="text-center">@item.TotalRounds</td>
-                                <td class="text-center">@item.CompletedRounds</td>
-                                <td style="min-width: 120px;">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="progress flex-grow-1" style="height: 8px;">
-                                            <div class="progress-bar @(item.CompletionRate >= 80 ? "bg-success" : item.CompletionRate >= 50 ? "bg-warning" : "bg-danger")"
-                                                 style="width: @item.CompletionRate%" role="progressbar"
-                                                 aria-valuenow="@item.CompletionRate" aria-valuemin="0" aria-valuemax="100" aria-label="@Localizer.T("Checklist.Completion") @item.CompletionRate%"></div>
-                                        </div>
-                                        <small class="text-nowrap">@item.CompletionRate%</small>
-                                    </div>
-                                </td>
-                                <td>
-                                    @if (item.LastExecutedDate == DateTime.MinValue)
-                                    {
-                                        <span class="text-muted">—</span>
-                                    }
-                                    else
-                                    {
-                                        <span>@item.LastExecutedDate.ToString("yyyy-MM-dd")</span>
-                                    }
-                                </td>
-                                <td class="text-center">
-                                    <div class="actions-cell">
-                                        <a asp-action="Execute" asp-route-templateId="@item.Template.Id"
-                                           class="btn btn-sm btn-success" title="@Localizer.T("Checklist.Execute")" aria-label="@Localizer.T("Checklist.Execute")">
-                                            <i class="fas fa-play"></i>
-                                        </a>
-                                        <a asp-action="ViewHistory" asp-route-templateId="@item.Template.Id"
-                                           class="btn btn-sm btn-info" title="@Localizer.T("Checklist.ViewHistory")" aria-label="@Localizer.T("Checklist.ViewHistory")">
-                                            <i class="fas fa-history"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-sm btn-warning" title="@Localizer.T("Checklist.Analytics")"
-                                                aria-label="@Localizer.T("Checklist.Analytics")"
-                                                onclick="showAnalytics(@item.Template.Id)">
-                                            <i class="fas fa-chart-bar"></i>
-                                        </button>
-                                        <a asp-action="Export" asp-route-templateId="@item.Template.Id" asp-route-format="excel"
-                                           class="btn btn-sm btn-secondary" title="@Localizer.T("Common.Export")" aria-label="@Localizer.T("Common.Export")">
-                                            <i class="fas fa-download"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
+                        <span class="active">@p</span>
                     }
                     else
                     {
-                        <tr>
-                            <td colspan="7">
-                                <div class="empty-state">
-                                    <i class="fas fa-clipboard-list empty-icon"></i>
-                                    <h4>@Localizer.T("Empty.NoChecklists")</h4>
-                                    <p>@Localizer.T("Checklist.NoChecklistsMessage")</p>
-                                    <a asp-action="Create" class="btn btn-primary">@Localizer.T("Checklist.CreateChecklist")</a>
-                                </div>
-                            </td>
-                        </tr>
+                        <a href="javascript:void(0)" onclick="goToPage(@p)">@p</a>
                     }
-                </tbody>
-            </table>
+                }
+            </div>
         </div>
-
-        @if (ViewBag.TotalPages > 1)
-        {
-            <div class="table-footer">
-                <div class="pagination-info">@Localizer.T("Common.Showing") @Model.Count @Localizer.T("Common.Of") @ViewBag.TotalCount @Localizer.T("Checklist.TotalChecklists")</div>
-                <ul class="pagination">
-                    @for (int p = 1; p <= ViewBag.TotalPages; p++)
-                    {
-                        <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
-                            <a class="page-link" href="javascript:void(0)" onclick="goToPage(@p)" aria-label="@Localizer.T("Common.Page") @p">@p</a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        }
-        else
-        {
-            <div class="text-muted small mt-3">
-                @Localizer.T("Common.Showing") @Model.Count @Localizer.T("Common.Of") @ViewBag.TotalCount @Localizer.T("Checklist.TotalChecklists")
-            </div>
-        }
-    </div>
+    }
 </div>
 
-<!-- Analytics Modal -->
 <div class="modal fade" id="analyticsModal" tabindex="-1" aria-hidden="true" aria-labelledby="analyticsModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -227,65 +231,47 @@
             $.getJSON('/api/checklist/analytics?templateId=' + templateId)
                 .done(function(data) {
                     const html = `
-                        <div class="row">
+                        <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="small-box bg-info">
-                                    <div class="inner">
-                                        <h3>${data.totalRounds}</h3>
-                                        <p>@Localizer.T("Checklist.TotalRounds")</p>
-                                    </div>
-                                    <div class="icon"><i class="fas fa-clipboard-list"></i></div>
+                                <div class="health-metric-card">
+                                    <div class="metric-icon info"><i class="fas fa-clipboard-list"></i></div>
+                                    <div class="metric-content"><span class="metric-value">${data.totalRounds}</span><span class="metric-label">@Localizer.T("Checklist.TotalRounds")</span></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="small-box bg-success">
-                                    <div class="inner">
-                                        <h3>${data.completedRounds}</h3>
-                                        <p>@Localizer.T("Checklist.CompletedRounds")</p>
-                                    </div>
-                                    <div class="icon"><i class="fas fa-check-circle"></i></div>
+                                <div class="health-metric-card">
+                                    <div class="metric-icon success"><i class="fas fa-check-circle"></i></div>
+                                    <div class="metric-content"><span class="metric-value">${data.completedRounds}</span><span class="metric-label">@Localizer.T("Checklist.CompletedRounds")</span></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="small-box bg-warning">
-                                    <div class="inner">
-                                        <h3>${data.approvedRounds}</h3>
-                                        <p>@Localizer.T("Checklist.ApprovedRounds")</p>
-                                    </div>
-                                    <div class="icon"><i class="fas fa-check-double"></i></div>
+                                <div class="health-metric-card">
+                                    <div class="metric-icon warning"><i class="fas fa-check-double"></i></div>
+                                    <div class="metric-content"><span class="metric-value">${data.approvedRounds}</span><span class="metric-label">@Localizer.T("Checklist.ApprovedRounds")</span></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="small-box bg-danger">
-                                    <div class="inner">
-                                        <h3>${data.lastExecutedDate ? new Date(data.lastExecutedDate).toLocaleDateString() : '@Localizer.T("HR.NA")'}</h3>
-                                        <p>@Localizer.T("Checklist.LastExecuted")</p>
-                                    </div>
-                                    <div class="icon"><i class="fas fa-calendar"></i></div>
+                                <div class="health-metric-card">
+                                    <div class="metric-icon danger"><i class="fas fa-calendar"></i></div>
+                                    <div class="metric-content"><span class="metric-value">${data.lastExecutedDate ? new Date(data.lastExecutedDate).toLocaleDateString() : '@Localizer.T("HR.NA")'}</span><span class="metric-label">@Localizer.T("Checklist.LastExecuted")</span></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-3">
+                        <div class="row g-3 mt-3">
                             <div class="col-md-6">
                                 <h6>@Localizer.T("Checklist.Completion")</h6>
                                 <div class="progress" style="height: 20px;">
-                                    <div class="progress-bar bg-success" style="width: ${data.completionRate}%" role="progressbar" aria-valuenow="${data.completionRate}" aria-valuemin="0" aria-valuemax="100">
-                                        ${data.completionRate}%
-                                    </div>
+                                    <div class="progress-bar bg-success" style="width: ${data.completionRate}%">${data.completionRate}%</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <h6>@Localizer.T("Checklist.Approve") Rate</h6>
                                 <div class="progress" style="height: 20px;">
-                                    <div class="progress-bar bg-info" style="width: ${data.approvalRate}%" role="progressbar" aria-valuenow="${data.approvalRate}" aria-valuemin="0" aria-valuemax="100">
-                                        ${data.approvalRate}%
-                                    </div>
+                                    <div class="progress-bar bg-info" style="width: ${data.approvalRate}%">${data.approvalRate}%</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-3">
-                            <strong>@Localizer.T("Checklist.TemplateLabel"):</strong> ${data.templateName}
-                        </div>
+                        <div class="mt-3"><strong>@Localizer.T("Checklist.TemplateLabel"):</strong> ${data.templateName}</div>
                     `;
                     $('#analyticsBody').html(html);
                 })

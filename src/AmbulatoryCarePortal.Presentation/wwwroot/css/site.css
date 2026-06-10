@@ -26,9 +26,12 @@
     --color-text-secondary: #6B7280;
     --color-text-muted: #9CA3AF;
     --color-success: #7AC943;
-    --color-warning: #00A7A0;
-    --color-danger: #0F2450;
+    --color-warning: #F59E0B;
+    --color-warning-light: #FEF3C7;
+    --color-danger: #EF4444;
+    --color-danger-light: #FEE2E2;
     --color-info: #1A3A6B;
+    --color-info-light: #DBEAFE;
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
@@ -641,9 +644,9 @@ body.sidebar-collapse .main-sidebar {
 .kpi-card .kpi-icon.primary { background: var(--color-primary-lighter); color: var(--color-primary); }
 .kpi-card .kpi-icon.secondary { background: var(--color-secondary-light); color: var(--color-secondary); }
 .kpi-card .kpi-icon.success { background: var(--color-accent-light); color: var(--color-accent); }
-.kpi-card .kpi-icon.warning { background: var(--color-secondary-light); color: var(--color-secondary); }
-.kpi-card .kpi-icon.danger { background: var(--color-primary-lighter); color: var(--color-primary-dark); }
-.kpi-card .kpi-icon.info { background: var(--color-primary-lighter); color: var(--color-primary); }
+.kpi-card .kpi-icon.warning { background: var(--color-warning-light); color: var(--color-warning); }
+.kpi-card .kpi-icon.danger { background: var(--color-danger-light); color: var(--color-danger); }
+.kpi-card .kpi-icon.info { background: var(--color-info-light); color: var(--color-info); }
 
 .kpi-card .kpi-label {
     font-size: 0.8rem;
@@ -3201,4 +3204,798 @@ html[dir="rtl"] .text-right {
 
 html[dir="rtl"] .text-left {
     text-align: right !important;
+}
+
+/* ============================================================
+   29. CLINIC ADMIN - HEALTHCARE DASHBOARD
+   ============================================================ */
+
+/* --- Healthcare Metric Card --- */
+.health-metric {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    transition: var(--transition-slow);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.health-metric::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 0 2px 2px 0;
+}
+
+.health-metric.primary::before { background: var(--color-primary); }
+.health-metric.success::before { background: var(--color-accent); }
+.health-metric.warning::before { background: var(--color-warning); }
+.health-metric.danger::before { background: var(--color-danger); }
+.health-metric.info::before { background: var(--color-info); }
+
+html[dir="rtl"] .health-metric::before {
+    left: auto;
+    right: 0;
+    border-radius: 2px 0 0 2px;
+}
+
+.health-metric:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-3px);
+}
+
+.health-metric .metric-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.health-metric .metric-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    flex-shrink: 0;
+}
+
+.health-metric.primary .metric-icon { background: var(--color-primary-lighter); color: var(--color-primary); }
+.health-metric.success .metric-icon { background: var(--color-accent-light); color: var(--color-accent); }
+.health-metric.warning .metric-icon { background: var(--color-warning-light); color: var(--color-warning); }
+.health-metric.danger .metric-icon { background: var(--color-danger-light); color: var(--color-danger); }
+.health-metric.info .metric-icon { background: var(--color-info-light); color: var(--color-info); }
+
+.health-metric .metric-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.health-metric.primary .metric-badge { background: var(--color-primary-lighter); color: var(--color-primary); }
+.health-metric.success .metric-badge { background: var(--color-accent-light); color: var(--color-accent-dark); }
+.health-metric.warning .metric-badge { background: var(--color-warning-light); color: #B45309; }
+.health-metric.danger .metric-badge { background: var(--color-danger-light); color: #B91C1C; }
+.health-metric.info .metric-badge { background: var(--color-info-light); color: var(--color-info); }
+
+.health-metric .metric-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.2;
+    margin-bottom: 0.125rem;
+}
+
+.health-metric .metric-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.health-metric .metric-footer {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.health-metric .metric-footer a {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.health-metric .metric-footer a:hover {
+    color: var(--color-primary);
+}
+
+/* --- Compliance Status Badge --- */
+.compliance-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.compliance-badge.compliant {
+    background: var(--color-accent-light);
+    color: var(--color-accent-dark);
+}
+
+.compliance-badge.partial {
+    background: var(--color-warning-light);
+    color: #B45309;
+}
+
+.compliance-badge.non-compliant {
+    background: var(--color-danger-light);
+    color: #B91C1C;
+}
+
+.compliance-badge.pending {
+    background: var(--color-info-light);
+    color: var(--color-info);
+}
+
+.compliance-badge .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.compliance-badge.compliant .badge-dot { background: var(--color-accent); }
+.compliance-badge.partial .badge-dot { background: var(--color-warning); }
+.compliance-badge.non-compliant .badge-dot { background: var(--color-danger); }
+.compliance-badge.pending .badge-dot { background: var(--color-info); }
+
+/* --- Readiness Score (circular) --- */
+.readiness-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.readiness-score .score-ring {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.readiness-score .score-ring svg {
+    transform: rotate(-90deg);
+}
+
+.readiness-score .score-ring .score-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.readiness-score .score-ring .score-value.high { color: var(--color-accent); }
+.readiness-score .score-ring .score-value.medium { color: var(--color-warning); }
+.readiness-score .score-ring .score-value.low { color: var(--color-danger); }
+
+.readiness-score .score-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- Healthcare Quick Action Grid --- */
+.health-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.health-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    transition: var(--transition-slow);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.health-action:hover {
+    background: var(--color-primary-lighter);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.health-action .ha-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.health-action:hover .ha-icon {
+    background: var(--color-primary-lighter);
+    color: var(--color-primary);
+}
+
+.health-action .ha-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: center;
+    line-height: 1.3;
+}
+
+.health-action .ha-count {
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+}
+
+/* --- Healthcare Info Row --- */
+.health-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 0;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.health-info-row:last-child {
+    border-bottom: none;
+}
+
+.health-info-row .hi-label {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.health-info-row .hi-label i {
+    width: 16px;
+    color: var(--color-text-muted);
+}
+
+.health-info-row .hi-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+/* --- Activity Timeline --- */
+.activity-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+html[dir="rtl"] .activity-timeline {
+    padding-left: 0;
+    padding-right: 2rem;
+}
+
+.activity-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-border);
+}
+
+html[dir="rtl"] .activity-timeline::before {
+    left: auto;
+    right: 7px;
+}
+
+.activity-item {
+    position: relative;
+    padding-bottom: 1.25rem;
+}
+
+.activity-item:last-child {
+    padding-bottom: 0;
+}
+
+.activity-item .activity-dot {
+    position: absolute;
+    left: -2rem;
+    top: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid var(--color-white);
+    box-shadow: var(--shadow-sm);
+}
+
+html[dir="rtl"] .activity-item .activity-dot {
+    left: auto;
+    right: -2rem;
+}
+
+.activity-item .activity-dot.success { background: var(--color-accent); }
+.activity-item .activity-dot.warning { background: var(--color-warning); }
+.activity-item .activity-dot.danger { background: var(--color-danger); }
+.activity-item .activity-dot.info { background: var(--color-info); }
+
+.activity-item .activity-content {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    transition: var(--transition);
+}
+
+.activity-item .activity-content:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.activity-item .activity-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.125rem;
+}
+
+.activity-item .activity-desc {
+    font-size: 0.78rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.activity-item .activity-time {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+}
+
+/* --- Enhanced Empty State --- */
+.empty-state-modern {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.empty-state-modern .empty-icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--color-bg-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    font-size: 1.5rem;
+    color: var(--color-text-muted);
+}
+
+.empty-state-modern h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.375rem;
+}
+
+.empty-state-modern p {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    max-width: 280px;
+    margin-bottom: 1.25rem;
+}
+
+/* --- Enhanced Data Table --- */
+.data-table-wrapper {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.data-table-wrapper:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.data-table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.data-table-toolbar .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.data-table-toolbar .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.data-table-toolbar .toolbar-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text);
+    white-space: nowrap;
+}
+
+.data-table-toolbar .toolbar-count {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    background: var(--color-bg-alt);
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    padding: 0.625rem 1rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--color-bg-alt);
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border-light);
+    vertical-align: middle;
+}
+
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table tbody tr {
+    transition: var(--transition);
+}
+
+.data-table tbody tr:hover {
+    background: var(--color-primary-lighter);
+}
+
+.data-table .cell-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    white-space: nowrap;
+}
+
+/* --- Enhanced Pagination --- */
+.data-table-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid var(--color-border-light);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.data-table-pagination .page-info {
+    font-size: 0.78rem;
+    color: var(--color-text-secondary);
+}
+
+.data-table-pagination .page-links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.data-table-pagination .page-links a,
+.data-table-pagination .page-links span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border: 1px solid transparent;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.data-table-pagination .page-links a:hover {
+    background: var(--color-bg-alt);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+.data-table-pagination .page-links .active {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+}
+
+.data-table-pagination .page-links .disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* --- Filter Dropdown --- */
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-group .filter-select {
+    padding: 0.375rem 1.75rem 0.375rem 0.625rem;
+    font-size: 0.78rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-white);
+    color: var(--color-text);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    transition: var(--transition);
+}
+
+html[dir="rtl"] .filter-group .filter-select {
+    background-position: left 0.5rem center;
+    padding: 0.375rem 0.625rem 0.375rem 1.75rem;
+}
+
+.filter-group .filter-select:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-primary-lighter);
+}
+
+/* --- Status Pill --- */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.2rem 0.625rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.status-pill.active,
+.status-pill.complete,
+.status-pill.approved,
+.status-pill.compliant {
+    background: var(--color-accent-light);
+    color: var(--color-accent-dark);
+}
+
+.status-pill.pending,
+.status-pill.partial {
+    background: var(--color-warning-light);
+    color: #B45309;
+}
+
+.status-pill.expired,
+.status-pill.inactive,
+.status-pill.non-compliant,
+.status-pill.missing {
+    background: var(--color-danger-light);
+    color: #B91C1C;
+}
+
+.status-pill.needs-review,
+.status-pill.draft {
+    background: var(--color-info-light);
+    color: var(--color-info);
+}
+
+/* --- Enhanced Form Card --- */
+.form-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.form-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.form-card .form-card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.form-card .form-card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-card .form-card-body {
+    padding: 1.5rem;
+}
+
+.form-card .form-card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--color-border-light);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* --- Enhanced Input Styles --- */
+.form-floating-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-floating-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.375rem;
+}
+
+.form-floating-group .form-control {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    width: 100%;
+    background: var(--color-white);
+}
+
+.form-floating-group .form-control:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-lighter);
+    outline: none;
+}
+
+.form-floating-group .form-control.is-invalid {
+    border-color: var(--color-danger);
+}
+
+.form-floating-group .form-control.is-invalid:focus {
+    box-shadow: 0 0 0 3px var(--color-danger-light);
+}
+
+.form-floating-group .field-validation-valid {
+    display: none;
+}
+
+.form-floating-group .field-validation-error {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-danger);
+    margin-top: 0.25rem;
+}
+
+/* --- Responsive adjustments for ClinicAdmin --- */
+@media (max-width: 991.98px) {
+    .health-metric .metric-value {
+        font-size: 1.5rem;
+    }
+
+    .health-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .data-table-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .data-table-toolbar .toolbar-left,
+    .data-table-toolbar .toolbar-right {
+        justify-content: center;
+    }
+
+    .data-table-pagination {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .health-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .health-metric .metric-top {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+/* --- Staggered fade-in for ClinicAdmin cards --- */
+.health-metric:nth-child(1) { animation-delay: 0s; }
+.health-metric:nth-child(2) { animation-delay: 0.05s; }
+.health-metric:nth-child(3) { animation-delay: 0.1s; }
+.health-metric:nth-child(4) { animation-delay: 0.15s; }
+
+/* --- Smooth number counter animation --- */
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.health-metric .metric-value {
+    animation: countUp 0.5s ease-out;
+}
+
+/* --- Hover lift for data table rows --- */
+.data-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+    background: rgba(26, 58, 107, 0.03);
+    transform: translateX(2px);
+}
+
+html[dir="rtl"] .data-table tbody tr:hover {
+    transform: translateX(-2px);
 }

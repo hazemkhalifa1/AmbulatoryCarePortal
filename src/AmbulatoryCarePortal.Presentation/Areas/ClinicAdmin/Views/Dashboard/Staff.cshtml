@@ -2,162 +2,187 @@
 
 @{
     ViewData["Title"] = ViewBag.PageTitle ?? Localizer.T("Page.StaffManagement");
+    var activeCount = Model.Data.Count(s => s.IsActive);
+    var inactiveCount = Model.Data.Count(s => !s.IsActive);
 }
 
-<div class="fade-in">
-    <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title">
-                    <i class="fas fa-users"></i> @Localizer.T("Nav.Staff")
-                <small class="ml-2 text-muted" dir="rtl">@Localizer.T("Nav.Staff")</small>
-            </h3>
-            <div class="card-tools">
-                <a href="@Url.Action("Create", "HRManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-primary" aria-label="@Localizer.T("HR.AddNewStaff")">
-                    <i class="fas fa-plus"></i> @Localizer.T("HR.AddStaff")
+<div class="row g-3 mb-4">
+    <div class="col-lg-4 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-users",
+            Color = "primary",
+            Value = Model.TotalCount.ToString(),
+            Label = Localizer.T("HR.TotalStaff"),
+            Badge = Localizer.T("Common.Total"),
+            Link = Url.Action("Create", "HRManagement", new { area = "ClinicAdmin" }),
+            LinkText = Localizer.T("HR.AddStaff")
+        }' />
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-check-circle",
+            Color = "success",
+            Value = activeCount.ToString(),
+            Label = Localizer.T("HR.Active"),
+            Badge = Localizer.T("Common.Active"),
+            Link = ""
+        }' />
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-minus-circle",
+            Color = inactiveCount > 0 ? "warning" : "success",
+            Value = inactiveCount.ToString(),
+            Label = Localizer.T("HR.Inactive"),
+            Badge = inactiveCount > 0 ? Localizer.T("Common.Attention") : Localizer.T("Common.None"),
+            Link = ""
+        }' />
+    </div>
+</div>
+
+<div class="data-table-wrapper">
+    <div class="data-table-toolbar">
+        <div class="toolbar-left">
+            <span class="toolbar-title"><i class="fas fa-users me-2"></i>@Localizer.T("Nav.Staff")</span>
+            <span class="toolbar-count">@Model.TotalCount @Localizer.T("HR.StaffCount")</span>
+        </div>
+        <div class="toolbar-right">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="form-control" id="tableSearch" data-table-search="staffTable" placeholder="@Localizer.T("HR.SearchPlaceholder")" aria-label="@Localizer.T("HR.SearchPlaceholder")" />
+            </div>
+            <a href="@Url.Action("Create", "HRManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> @Localizer.T("HR.AddStaff")
+            </a>
+        </div>
+    </div>
+
+    <table class="data-table" id="staffTable" role="table" aria-label="@Localizer.T("HR.StaffManagement")">
+        <thead>
+            <tr>
+                <th scope="col">@Localizer.T("HR.Name")</th>
+                <th scope="col">@Localizer.T("HR.PositionTitle")</th>
+                <th scope="col">@Localizer.T("HR.Department")</th>
+                <th scope="col" class="text-center">@Localizer.T("HR.Documents")</th>
+                <th scope="col">@Localizer.T("HR.Status")</th>
+                <th scope="col" class="text-end">@Localizer.T("HR.Actions")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Data.Any())
+            {
+                @foreach (var staff in Model.Data)
+                {
+                    <tr>
+                        <td>
+                            <strong>@staff.FullNameEn</strong>
+                            @if (!string.IsNullOrEmpty(staff.FullNameAr))
+                            {
+                                <br /><small class="text-muted" dir="rtl">@staff.FullNameAr</small>
+                            }
+                        </td>
+                        <td>
+                            <span class="status-pill needs-review">
+                                @switch (staff.StaffType)
+                                {
+                                    case StaffType.Doctor:
+                                        <i class="fas fa-user-md"></i>
+                                        break;
+                                    case StaffType.Nurse:
+                                        <i class="fas fa-notes-medical"></i>
+                                        break;
+                                    case StaffType.Admin:
+                                        <i class="fas fa-user-tie"></i>
+                                        break;
+                                    case StaffType.Pharmacist:
+                                        <i class="fas fa-pills"></i>
+                                        break;
+                                    case StaffType.Lab:
+                                        <i class="fas fa-flask"></i>
+                                        break;
+                                    case StaffType.XR:
+                                        <i class="fas fa-x-ray"></i>
+                                        break;
+                                    case StaffType.Dentist:
+                                        <i class="fas fa-tooth"></i>
+                                        break;
+                                }
+                                @staff.StaffType
+                            </span>
+                        </td>
+                        <td>@staff.DepartmentName</td>
+                        <td class="text-center"><span class="fw-bold">@staff.DocumentCount</span></td>
+                        <td>
+                            @if (staff.IsActive)
+                            {
+                                <span class="status-pill active">@Localizer.T("HR.Active")</span>
+                            }
+                            else
+                            {
+                                <span class="status-pill inactive">@Localizer.T("HR.Inactive")</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="cell-actions justify-content-end">
+                                <a href="@Url.Action("Details", "HRManagement", new { area = "ClinicAdmin", id = staff.Id })" class="btn btn-sm btn-outline-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="@Url.Action("Edit", "HRManagement", new { area = "ClinicAdmin", id = staff.Id })" class="btn btn-sm btn-outline-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="@Url.Action("Documents", "HRManagement", new { area = "ClinicAdmin", staffId = staff.Id })" class="btn btn-sm btn-outline-primary" title="@Localizer.T("HR.Documents")" aria-label="@Localizer.T("HR.Documents")">
+                                    <i class="fas fa-folder-open"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center py-4">
+                        <partial name="_EmptyState" model='new {
+                            Icon = "fa-users",
+                            Title = Localizer.T("HR.NoStaffFound"),
+                            Message = Localizer.T("Empty.NoStaffMessage"),
+                            ActionLink = Url.Action("Create", "HRManagement", new { area = "ClinicAdmin" }),
+                            ActionText = Localizer.T("HR.AddStaff")
+                        }' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.Data.Any() && Model.TotalPages > 1)
+    {
+        <div class="data-table-pagination">
+            <div class="page-info">
+                @Localizer.T("Common.Showing") <strong>@Model.Data.Count</strong> @Localizer.T("Common.Of") <strong>@Model.TotalCount</strong>
+                (@Localizer.T("Common.Page") @Model.PageNumber @Localizer.T("Common.Of") @Model.TotalPages)
+            </div>
+            <div class="page-links">
+                <a href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" class="@(Model.HasPreviousPage ? "" : "disabled")" aria-label="@Localizer.T("Common.Previous")">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    if (i == Model.PageNumber)
+                    {
+                        <span class="active">@i</span>
+                    }
+                    else
+                    {
+                        <a href="?page=@i&pageSize=@Model.PageSize" aria-label="@Localizer.T("Common.Page") @i">@i</a>
+                    }
+                }
+                <a href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" class="@(Model.HasNextPage ? "" : "disabled")" aria-label="@Localizer.T("Common.Next")">
+                    <i class="fas fa-chevron-right"></i>
                 </a>
             </div>
         </div>
-
-        <div class="card-body">
-            <div class="table-container">
-                <div class="table-toolbar">
-                    <div class="search-box">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="form-control" id="tableSearch" data-table-search="staffTable" placeholder="@Localizer.T("HR.SearchPlaceholder")" aria-label="@Localizer.T("HR.SearchPlaceholder")" />
-                    </div>
-                </div>
-
-                    <table class="table table-hover" id="staffTable" role="table" aria-label="@Localizer.T("HR.StaffManagement")">
-                    <thead>
-                        <tr>
-                            <th scope="col">@Localizer.T("HR.Name")</th>
-                            <th scope="col">@Localizer.T("HR.PositionTitle")</th>
-                            <th scope="col">@Localizer.T("HR.Department")</th>
-                            <th scope="col">@Localizer.T("HR.Documents")</th>
-                            <th scope="col">@Localizer.T("HR.Status")</th>
-                            <th scope="col">@Localizer.T("HR.Actions")</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.Data.Any())
-                        {
-                            @foreach (var staff in Model.Data)
-                            {
-                                <tr>
-                                    <td>
-                                        <strong>@staff.FullNameEn</strong>
-                                        @if (!string.IsNullOrEmpty(staff.FullNameAr))
-                                        {
-                                            <br /><small dir="rtl">@staff.FullNameAr</small>
-                                        }
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-info">
-                                            @switch (staff.StaffType)
-                                            {
-                                                case StaffType.Doctor:
-                                                    <i class="fas fa-user-md"></i>
-                                                    break;
-                                                case StaffType.Nurse:
-                                                    <i class="fas fa-notes-medical"></i>
-                                                    break;
-                                                case StaffType.Admin:
-                                                    <i class="fas fa-user-tie"></i>
-                                                    break;
-                                                case StaffType.Pharmacist:
-                                                    <i class="fas fa-pills"></i>
-                                                    break;
-                                                case StaffType.Lab:
-                                                    <i class="fas fa-flask"></i>
-                                                    break;
-                                                case StaffType.XR:
-                                                    <i class="fas fa-x-ray"></i>
-                                                    break;
-                                                case StaffType.Dentist:
-                                                    <i class="fas fa-tooth"></i>
-                                                    break;
-                                            }
-                                            @staff.StaffType
-                                        </span>
-                                    </td>
-                                    <td>@staff.DepartmentName</td>
-                                    <td>
-                                        <span class="badge badge-secondary">@staff.DocumentCount</span>
-                                    </td>
-                                    <td>
-                                        @if (staff.IsActive)
-                                        {
-                                            <span class="badge badge-success">@Localizer.T("HR.Active")</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge badge-danger">@Localizer.T("HR.Inactive")</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <div class="actions-cell">
-                                            <a href="@Url.Action("Details", "HRManagement", new { area = "ClinicAdmin", id = staff.Id })" class="btn btn-sm btn-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="@Url.Action("Edit", "HRManagement", new { area = "ClinicAdmin", id = staff.Id })" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="@Url.Action("Documents", "HRManagement", new { area = "ClinicAdmin", staffId = staff.Id })" class="btn btn-sm btn-primary" title="@Localizer.T("HR.Documents")" aria-label="@Localizer.T("HR.Documents")">
-                                                <i class="fas fa-folder-open"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
-                                    <i class="fas fa-users fa-2x mb-2 d-block"></i>
-                                    @Localizer.T("HR.NoStaffFound")
-                                    <a href="@Url.Action("Create", "HRManagement", new { area = "ClinicAdmin" })">@Localizer.T("HR.AddStaff")</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-
-                <div class="table-footer">
-                    <div class="pagination-info">
-                        @Localizer.T("Common.Showing") <strong>@Model.Data.Count</strong> @Localizer.T("Common.Of") <strong>@Model.TotalCount</strong> @Localizer.T("HR.StaffCount")
-                        (@Localizer.T("Common.Page") @Model.PageNumber @Localizer.T("Common.Of") @Model.TotalPages)
-                    </div>
-
-                    @if (Model.TotalPages > 1)
-                    {
-                        <nav aria-label="Staff table pagination">
-                            <ul class="pagination">
-                                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                                    <a href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Previous")">
-                                        <i class="fas fa-chevron-left"></i> @Localizer.T("Common.Previous")
-                                    </a>
-                                </li>
-
-                                @for (int i = 1; i <= Model.TotalPages; i++)
-                                {
-                                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                        <a href="?page=@i&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Page") @i" aria-current="@(i == Model.PageNumber ? "page" : null)">@i</a>
-                                    </li>
-                                }
-
-                                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                                    <a href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Next")">
-                                        @Localizer.T("Common.Next") <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+    }
 </div>
 
 @section Scripts {

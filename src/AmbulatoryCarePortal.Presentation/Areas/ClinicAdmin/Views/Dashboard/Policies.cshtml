@@ -2,172 +2,210 @@
 
 @{
     ViewData["Title"] = ViewBag.PageTitle ?? Localizer.T("Page.PolicyDocuments");
+    var expiredCount = Model.Data.Count(d => d.ExpiryDate.HasValue && d.ExpiryDate.Value <= DateTime.UtcNow);
+    var expiringSoonCount = Model.Data.Count(d => d.ExpiryDate.HasValue && d.ExpiryDate.Value > DateTime.UtcNow && d.ExpiryDate.Value <= DateTime.UtcNow.AddDays(30));
+    var approvedCount = Model.Data.Count(d => d.DocumentStatus == DocumentStatus.Approved || d.DocumentStatus == DocumentStatus.Complete);
 }
 
-<div class="fade-in">
-    <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title">
-                    <i class="fas fa-file-alt"></i> @Localizer.T("Page.PolicyDocuments")
-                <small class="ml-2 text-muted" dir="rtl">@Localizer.T("Nav.Documents")</small>
-            </h3>
-            <div class="card-tools">
-                <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-primary" aria-label="@Localizer.T("Button.Create")">
-                    <i class="fas fa-plus"></i> @Localizer.T("Button.Create")
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-file-alt",
+            Color = "primary",
+            Value = Model.TotalCount.ToString(),
+            Label = Localizer.T("Common.Total"),
+            Badge = Localizer.T("Page.PolicyDocuments"),
+            Link = Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" }),
+            LinkText = Localizer.T("Button.Create")
+        }' />
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-check-circle",
+            Color = "success",
+            Value = approvedCount.ToString(),
+            Label = Localizer.T("Policy.Approved"),
+            Badge = Localizer.T("Common.Compliant"),
+            Link = ""
+        }' />
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-exclamation-triangle",
+            Color = expiringSoonCount > 0 ? "warning" : "success",
+            Value = expiringSoonCount.ToString(),
+            Label = Localizer.T("Policy.ExpiringSoon"),
+            Badge = expiringSoonCount > 0 ? Localizer.T("Common.Attention") : Localizer.T("Common.None"),
+            Link = ""
+        }' />
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-clock",
+            Color = expiredCount > 0 ? "danger" : "success",
+            Value = expiredCount.ToString(),
+            Label = Localizer.T("Policy.Expired"),
+            Badge = expiredCount > 0 ? Localizer.T("Common.Overdue") : Localizer.T("Common.None"),
+            Link = ""
+        }' />
+    </div>
+</div>
+
+<div class="data-table-wrapper">
+    <div class="data-table-toolbar">
+        <div class="toolbar-left">
+            <span class="toolbar-title"><i class="fas fa-file-alt me-2"></i>@Localizer.T("Page.PolicyDocuments")</span>
+            <span class="toolbar-count">@Model.TotalCount @Localizer.T("Common.Total")</span>
+        </div>
+        <div class="toolbar-right">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="form-control" id="tableSearch" data-table-search="policiesTable" placeholder="@Localizer.T("Policy.SearchPlaceholder")" aria-label="@Localizer.T("Policy.SearchPlaceholder")" />
+            </div>
+            <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> @Localizer.T("Button.Create")
+            </a>
+        </div>
+    </div>
+
+    <table class="data-table" id="policiesTable" role="table" aria-label="@Localizer.T("Page.PolicyDocuments")">
+        <thead>
+            <tr>
+                <th scope="col">@Localizer.T("Common.Title")</th>
+                <th scope="col">@Localizer.T("Policy.StandardCode")</th>
+                <th scope="col">@Localizer.T("Common.Status")</th>
+                <th scope="col">@Localizer.T("HR.Department")</th>
+                <th scope="col">@Localizer.T("Common.Version")</th>
+                <th scope="col">@Localizer.T("Common.Expiry")</th>
+                <th scope="col" class="text-end">@Localizer.T("Common.Actions")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Data.Any())
+            {
+                @foreach (var doc in Model.Data)
+                {
+                    <tr>
+                        <td>
+                            <strong>@doc.Title</strong>
+                            @if (!string.IsNullOrEmpty(doc.TitleAr))
+                            {
+                                <br /><small class="text-muted" dir="rtl">@doc.TitleAr</small>
+                            }
+                        </td>
+                        <td><span class="badge bg-secondary">@doc.StandardCode</span></td>
+                        <td>
+                            @switch (doc.DocumentStatus)
+                            {
+                                case DocumentStatus.Draft:
+                                    <span class="status-pill needs-review">@Localizer.T("Policy.Draft")</span>
+                                    break;
+                                case DocumentStatus.NeedsReview:
+                                    <span class="status-pill needs-review">@Localizer.T("Policy.NeedsReview")</span>
+                                    break;
+                                case DocumentStatus.Pending:
+                                    <span class="status-pill needs-review">@Localizer.T("Policy.Pending")</span>
+                                    break;
+                                case DocumentStatus.Approved:
+                                    <span class="status-pill active">@Localizer.T("Policy.Approved")</span>
+                                    break;
+                                case DocumentStatus.Complete:
+                                    <span class="status-pill active">@Localizer.T("Policy.Complete")</span>
+                                    break;
+                                case DocumentStatus.MissingAttachment:
+                                    <span class="status-pill inactive">@Localizer.T("Policy.MissingAttachment")</span>
+                                    break;
+                                case DocumentStatus.Expired:
+                                    <span class="status-pill inactive">@Localizer.T("Policy.Expired")</span>
+                                    break;
+                                default:
+                                    <span class="status-pill needs-review">@doc.DocumentStatus</span>
+                                    break;
+                            }
+                        </td>
+                        <td>@doc.DepartmentName</td>
+                        <td><span class="compliance-badge compliant">v@(doc.VersionNumber)</span></td>
+                        <td>
+                            @if (doc.ExpiryDate.HasValue)
+                            {
+                                <span>@doc.ExpiryDate.Value.ToString("dd/MM/yyyy")</span>
+                                if (doc.ExpiryDate.Value <= DateTime.UtcNow)
+                                {
+                                    <br /><span class="compliance-badge non-compliant mt-1 d-inline-block">@Localizer.T("Policy.Expired")</span>
+                                }
+                                else if (doc.ExpiryDate.Value <= DateTime.UtcNow.AddDays(30))
+                                {
+                                    <br /><span class="compliance-badge needs-attention mt-1 d-inline-block">@Localizer.T("Policy.ExpiringSoon")</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">@Localizer.T("Policy.NA")</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="cell-actions justify-content-end">
+                                <a href="@Url.Action("Details", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-outline-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="@Url.Action("Edit", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-outline-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form method="post" asp-area="ClinicAdmin" asp-controller="PolicyManagement" asp-action="Delete" asp-route-id="@doc.Id" style="display: inline;" onsubmit="return confirm('@Localizer.T("Alert.ConfirmDelete")')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center py-4">
+                        <partial name="_EmptyState" model='new {
+                            Icon = "fa-file-alt",
+                            Title = Localizer.T("Empty.NoPolicies"),
+                            Message = Localizer.T("Empty.NoPoliciesMessage"),
+                            ActionLink = Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" }),
+                            ActionText = Localizer.T("Button.Create")
+                        }' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.Data.Any() && Model.TotalPages > 1)
+    {
+        <div class="data-table-pagination">
+            <div class="page-info">
+                @Localizer.T("Common.Showing") <strong>@Model.Data.Count</strong> @Localizer.T("Common.Of") <strong>@Model.TotalCount</strong>
+                (@Localizer.T("Common.Page") @Model.PageNumber @Localizer.T("Common.Of") @Model.TotalPages)
+            </div>
+            <div class="page-links">
+                <a href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" class="@(Model.HasPreviousPage ? "" : "disabled")" aria-label="@Localizer.T("Common.Previous")">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    if (i == Model.PageNumber)
+                    {
+                        <span class="active">@i</span>
+                    }
+                    else
+                    {
+                        <a href="?page=@i&pageSize=@Model.PageSize" aria-label="@Localizer.T("Common.Page") @i">@i</a>
+                    }
+                }
+                <a href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" class="@(Model.HasNextPage ? "" : "disabled")" aria-label="@Localizer.T("Common.Next")">
+                    <i class="fas fa-chevron-right"></i>
                 </a>
             </div>
         </div>
-
-        <div class="card-body">
-            <div class="table-container">
-                <div class="table-toolbar">
-                    <div class="search-box">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="form-control" id="tableSearch" data-table-search="policiesTable" placeholder="@Localizer.T("Policy.SearchPlaceholder")" aria-label="@Localizer.T("Policy.SearchPlaceholder")" />
-                    </div>
-                </div>
-
-                <table class="table table-hover" id="policiesTable" role="table" aria-label="@Localizer.T("Page.PolicyDocuments")">
-                    <thead>
-                        <tr>
-                            <th scope="col">@Localizer.T("Common.Title")</th>
-                            <th scope="col">@Localizer.T("Policy.StandardCode")</th>
-                            <th scope="col">@Localizer.T("Common.Status")</th>
-                            <th scope="col">@Localizer.T("HR.Department")</th>
-                            <th scope="col">@Localizer.T("Common.Version")</th>
-                            <th scope="col">@Localizer.T("Common.Expiry")</th>
-                            <th scope="col">@Localizer.T("Common.Actions")</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.Data.Any())
-                        {
-                            @foreach (var doc in Model.Data)
-                            {
-                                <tr>
-                                    <td>
-                                        <strong>@doc.Title</strong>
-                                        @if (!string.IsNullOrEmpty(doc.TitleAr))
-                                        {
-                                            <br /><small dir="rtl">@doc.TitleAr</small>
-                                        }
-                                    </td>
-                                    <td><code>@doc.StandardCode</code></td>
-                                    <td>
-                                        @switch (doc.DocumentStatus)
-                                        {
-                                            case DocumentStatus.Draft:
-                                                <span class="badge badge-secondary">@Localizer.T("Policy.Draft")</span>
-                                                break;
-                                            case DocumentStatus.NeedsReview:
-                                                <span class="badge badge-info">@Localizer.T("Policy.NeedsReview")</span>
-                                                break;
-                                            case DocumentStatus.Pending:
-                                                <span class="badge badge-warning">@Localizer.T("Policy.Pending")</span>
-                                                break;
-                                            case DocumentStatus.Approved:
-                                                <span class="badge badge-success">@Localizer.T("Policy.Approved")</span>
-                                                break;
-                                            case DocumentStatus.Complete:
-                                                <span class="badge badge-primary">@Localizer.T("Policy.Complete")</span>
-                                                break;
-                                            case DocumentStatus.MissingAttachment:
-                                                <span class="badge badge-danger">@Localizer.T("Policy.MissingAttachment")</span>
-                                                break;
-                                            case DocumentStatus.Expired:
-                                                <span class="badge badge-secondary">@Localizer.T("Policy.Expired")</span>
-                                                break;
-                                            default:
-                                                <span class="badge badge-secondary">@doc.DocumentStatus</span>
-                                                break;
-                                        }
-                                    </td>
-                                    <td>@doc.DepartmentName</td>
-                                    <td><span class="badge badge-info">v@(doc.VersionNumber)</span></td>
-                                    <td>
-                                        @if (doc.ExpiryDate.HasValue)
-                                        {
-                                            @doc.ExpiryDate.Value.ToString("dd/MM/yyyy")
-                                            if (doc.ExpiryDate.Value <= DateTime.UtcNow)
-                                            {
-                                                <br /><span class="badge badge-danger">@Localizer.T("Policy.Expired")</span>
-                                            }
-                                            else if (doc.ExpiryDate.Value <= DateTime.UtcNow.AddDays(30))
-                                            {
-                                                <br /><span class="badge badge-warning">@Localizer.T("Policy.ExpiringSoon")</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">@Localizer.T("Policy.NA")</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <div class="actions-cell">
-                                    <a href="@Url.Action("Details", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="@Url.Action("Edit", "PolicyManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form method="post" asp-area="ClinicAdmin" asp-controller="PolicyManagement" asp-action="Delete" asp-route-id="@doc.Id" style="display: inline;" onsubmit="return confirm('@Localizer.T("Alert.ConfirmDelete")')">
-                                        <button type="submit" class="btn btn-sm btn-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="7" class="text-center text-muted py-4">
-                                    <i class="fas fa-file-alt fa-2x mb-2 d-block"></i>
-                                    @Localizer.T("Empty.NoPolicies")
-                                    <a href="@Url.Action("Create", "PolicyManagement", new { area = "ClinicAdmin" })">@Localizer.T("Button.Create")</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-
-                <div class="table-footer">
-                    <div class="pagination-info">
-                        @Localizer.T("Common.Showing") <strong>@Model.Data.Count</strong> @Localizer.T("Common.Of") <strong>@Model.TotalCount</strong> @Localizer.T("Page.PolicyDocuments")
-                        (@Localizer.T("Common.Page") @Model.PageNumber @Localizer.T("Common.Of") @Model.TotalPages)
-                    </div>
-
-                    @if (Model.TotalPages > 1)
-                    {
-                        <nav aria-label="Policies table pagination">
-                            <ul class="pagination">
-                                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                                    <a href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Previous")">
-                                        <i class="fas fa-chevron-left"></i> @Localizer.T("Common.Previous")
-                                    </a>
-                                </li>
-
-                                @for (int i = 1; i <= Model.TotalPages; i++)
-                                {
-                                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                        <a href="?page=@i&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Page") @i" aria-current="@(i == Model.PageNumber ? "page" : null)">@i</a>
-                                    </li>
-                                }
-
-                                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                                    <a href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" class="page-link" aria-label="@Localizer.T("Common.Next")">
-                                        @Localizer.T("Common.Next") <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+    }
 </div>
 
 @section Scripts {

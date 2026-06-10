@@ -1,0 +1,40 @@
+@model dynamic
+@*
+    Usage:
+    <partial name="_PageHeader" model='new {
+        Icon = "fa-chart-line",
+        Title = "KPI Monitoring",
+        Subtitle = "Track and manage key performance indicators",
+        Actions = new List<dynamic> {
+            new { Link = "/ClinicAdmin/KPIManagement/Create", Text = "Add KPI", Icon = "fa-plus", Class = "btn-primary" }
+        }
+    }' />
+*@
+<div class="dashboard-hero mb-4">
+    <div class="hero-content">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h1 class="hero-title"><i class="fas @(Model.Icon ?? "fa-tachometer-alt") me-2"></i>@Model.Title</h1>
+                @if (!string.IsNullOrEmpty(Model.Subtitle))
+                {
+                    <p class="hero-subtitle mb-0">@Model.Subtitle</p>
+                }
+            </div>
+            @if (Model.Actions != null)
+            {
+                <div class="d-flex gap-2">
+                    @foreach (var action in Model.Actions)
+                    {
+                        <a href="@action.Link" class="btn @(action.Class ?? "btn-primary")">
+                            @if (!string.IsNullOrEmpty(action.Icon))
+                            {
+                                <i class="fas @action.Icon me-1"></i>
+                            }
+                            @action.Text
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

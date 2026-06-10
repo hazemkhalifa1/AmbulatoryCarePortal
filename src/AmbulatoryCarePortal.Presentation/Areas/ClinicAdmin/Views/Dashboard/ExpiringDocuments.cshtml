@@ -2,164 +2,206 @@
 
 @{
     ViewData["Title"] = ViewBag.PageTitle ?? Localizer.T("Page.ExpiringDocuments");
+    var criticalCount = Model.Count(d => d.DaysUntilExpiry <= 0);
+    var urgentCount = Model.Count(d => d.DaysUntilExpiry > 0 && d.DaysUntilExpiry <= 7);
+    var upcomingCount = Model.Count(d => d.DaysUntilExpiry > 7);
+    var totalCount = Model.Count;
 }
 
-<div class="fade-in">
-    <div class="card card-warning">
-        <div class="card-header">
-            <h3 class="card-title">
-                    <i class="fas fa-exclamation-triangle"></i> @Localizer.T("Page.ExpiringDocuments")
-                <small class="ml-2 text-muted" dir="rtl">@Localizer.T("HR.ExpiringDocuments")</small>
-            </h3>
-            <div class="card-tools">
-                <span class="badge badge-warning">@Model.Count @Localizer.T("HR.Documents")</span>
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-clock",
+            Color = "danger",
+            Value = totalCount.ToString(),
+            Label = Localizer.T("Common.Total"),
+            Badge = Localizer.T("Page.ExpiringDocuments"),
+            Link = ""
+        }' />
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-exclamation-circle",
+            Color = criticalCount > 0 ? "danger" : "success",
+            Value = criticalCount.ToString(),
+            Label = Localizer.T("HR.Expired"),
+            Badge = criticalCount > 0 ? Localizer.T("Common.Critical") : Localizer.T("Common.None"),
+            Link = ""
+        }' />
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-exclamation-triangle",
+            Color = urgentCount > 0 ? "warning" : "success",
+            Value = urgentCount.ToString(),
+            Label = Localizer.T("HR.Urgent"),
+            Badge = urgentCount > 0 ? Localizer.T("Common.Attention") : Localizer.T("Common.None"),
+            Link = ""
+        }' />
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-calendar-alt",
+            Color = "info",
+            Value = upcomingCount.ToString(),
+            Label = Localizer.T("HR.Upcoming"),
+            Badge = Localizer.T("Common.Scheduled"),
+            Link = ""
+        }' />
+    </div>
+</div>
+
+<div class="data-table-wrapper">
+    <div class="data-table-toolbar">
+        <div class="toolbar-left">
+            <span class="toolbar-title"><i class="fas fa-exclamation-triangle me-2"></i>@Localizer.T("Page.ExpiringDocuments")</span>
+            <span class="toolbar-count">@totalCount @Localizer.T("HR.Documents")</span>
+        </div>
+        <div class="toolbar-right">
+            <div class="search-box me-2">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="form-control" id="tableSearch" data-table-search="expiringTable" placeholder="@Localizer.T("Doc.SearchPlaceholder")" aria-label="@Localizer.T("Doc.SearchPlaceholder")" />
+            </div>
+            <div class="btn-group" role="group" aria-label="@Localizer.T("HR.Category")">
+                <button type="button" class="btn btn-sm @* btn-outline-primary *@ btn-primary" onclick="filterDocs('all')" id="filterAll" aria-label="@Localizer.T("Common.All")">@Localizer.T("Common.All")</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="filterDocs('critical')" id="filterCritical" aria-label="@Localizer.T("HR.Critical")">@Localizer.T("HR.Critical")</button>
+                <button type="button" class="btn btn-sm btn-outline-warning" onclick="filterDocs('urgent')" id="filterUrgent" aria-label="@Localizer.T("HR.Urgent")">@Localizer.T("HR.Urgent")</button>
+                <button type="button" class="btn btn-sm btn-outline-info" onclick="filterDocs('upcoming')" id="filterUpcoming" aria-label="@Localizer.T("HR.Upcoming")">@Localizer.T("HR.Upcoming")</button>
             </div>
         </div>
+    </div>
 
-        <div class="card-body">
-            <div class="table-container">
-                <div class="table-toolbar">
-                    <div class="search-box">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="form-control" id="tableSearch" data-table-search="expiringTable" placeholder="@Localizer.T("Doc.SearchPlaceholder")" aria-label="@Localizer.T("Doc.SearchPlaceholder")" />
-                    </div>
-                    <div class="btn-group" role="group" aria-label="@Localizer.T("HR.Category")">
-                        <button type="button" class="btn btn-sm btn-outline-success" onclick="filterDocs('all')" aria-label="@Localizer.T("Common.All")">@Localizer.T("Common.All")</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="filterDocs('critical')" aria-label="@Localizer.T("HR.Critical")">@Localizer.T("HR.Critical")</button>
-                        <button type="button" class="btn btn-sm btn-outline-warning" onclick="filterDocs('urgent')" aria-label="@Localizer.T("HR.Urgent")">@Localizer.T("HR.Urgent")</button>
-                        <button type="button" class="btn btn-sm btn-outline-info" onclick="filterDocs('upcoming')" aria-label="@Localizer.T("HR.Upcoming")">@Localizer.T("HR.Upcoming")</button>
-                    </div>
-                </div>
+    <table class="data-table" id="expiringTable" role="table" aria-label="@Localizer.T("Page.ExpiringDocuments")">
+        <thead>
+            <tr>
+                <th scope="col">@Localizer.T("HR.DocumentName")</th>
+                <th scope="col">@Localizer.T("HR.DocumentType")</th>
+                <th scope="col">@Localizer.T("HR.ExpiryDate")</th>
+                <th scope="col">@Localizer.T("HR.DaysLeft")</th>
+                <th scope="col">@Localizer.T("HR.Verified")</th>
+                <th scope="col">@Localizer.T("Common.Status")</th>
+                <th scope="col" class="text-end">@Localizer.T("Common.Actions")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var doc in Model.OrderBy(d => d.DaysUntilExpiry))
+                {
+                    var statusClass = doc.DaysUntilExpiry <= 0 ? "critical" : doc.DaysUntilExpiry <= 7 ? "urgent" : "upcoming";
+                    var statusLabel = doc.DaysUntilExpiry <= 0 ? Localizer.T("HR.Expired") : doc.DaysUntilExpiry <= 7 ? Localizer.T("HR.Critical") : doc.DaysUntilExpiry <= 14 ? Localizer.T("HR.Urgent") : Localizer.T("HR.Upcoming");
 
-                <table class="table table-hover" id="expiringTable" role="table" aria-label="@Localizer.T("Page.ExpiringDocuments")">
-                    <thead>
-                        <tr>
-                            <th scope="col">@Localizer.T("HR.DocumentName")</th>
-                            <th scope="col">@Localizer.T("HR.DocumentType")</th>
-                            <th scope="col">@Localizer.T("HR.ExpiryDate")</th>
-                            <th scope="col">@Localizer.T("HR.DaysLeft")</th>
-                            <th scope="col">@Localizer.T("HR.Verified")</th>
-                            <th scope="col">@Localizer.T("Common.Status")</th>
-                            <th scope="col">@Localizer.T("Common.Actions")</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.Any())
-                        {
-                            @foreach (var doc in Model.OrderBy(d => d.DaysUntilExpiry))
+                    <tr class="doc-row" data-status="@statusClass">
+                        <td>
+                            <strong>@doc.DocumentName</strong>
+                        </td>
+                        <td>
+                            <span class="status-pill needs-review">
+                                @switch (doc.DocumentType)
+                                {
+                                    case HrDocumentType.ID:
+                                        <i class="fas fa-id-card"></i>
+                                        break;
+                                    case HrDocumentType.CV:
+                                        <i class="fas fa-file-alt"></i>
+                                        break;
+                                    case HrDocumentType.EducationCert:
+                                        <i class="fas fa-graduation-cap"></i>
+                                        break;
+                                    case HrDocumentType.License:
+                                        <i class="fas fa-certificate"></i>
+                                        break;
+                                    case HrDocumentType.Training:
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        break;
+                                    case HrDocumentType.Competency:
+                                        <i class="fas fa-clipboard-check"></i>
+                                        break;
+                                    case HrDocumentType.RadiationSafety:
+                                        <i class="fas fa-radiation-alt"></i>
+                                        break;
+                                    case HrDocumentType.JobDescription:
+                                        <i class="fas fa-briefcase"></i>
+                                        break;
+                                    case HrDocumentType.Orientation:
+                                        <i class="fas fa-compass"></i>
+                                        break;
+                                }
+                                @doc.DocumentType
+                            </span>
+                        </td>
+                        <td>
+                            @if (doc.ExpiryDate.HasValue)
                             {
-                                var statusClass = doc.DaysUntilExpiry <= 0 ? "critical" : doc.DaysUntilExpiry <= 7 ? "urgent" : "upcoming";
-                                var statusLabel = doc.DaysUntilExpiry <= 0 ? Localizer.T("HR.Expired") : doc.DaysUntilExpiry <= 7 ? Localizer.T("HR.Critical") : doc.DaysUntilExpiry <= 14 ? Localizer.T("HR.Urgent") : Localizer.T("HR.Upcoming");
-
-                                <tr class="doc-row" data-status="@statusClass">
-                                    <td>
-                                        <strong>@doc.DocumentName</strong>
-                                    </td>
-                                    <td>
-                                        @switch (doc.DocumentType)
-                                        {
-                                            case HrDocumentType.ID:
-                                                <span class="badge badge-secondary">@Localizer.T("HR.DocType.ID")</span>
-                                                break;
-                                            case HrDocumentType.CV:
-                                                <span class="badge badge-info">@Localizer.T("HR.DocType.CV")</span>
-                                                break;
-                                            case HrDocumentType.EducationCert:
-                                                <span class="badge badge-primary">@Localizer.T("HR.DocType.EducationCert")</span>
-                                                break;
-                                            case HrDocumentType.License:
-                                                <span class="badge badge-warning">@Localizer.T("HR.DocType.License")</span>
-                                                break;
-                                            case HrDocumentType.Training:
-                                                <span class="badge badge-success">@Localizer.T("HR.DocType.Training")</span>
-                                                break;
-                                            case HrDocumentType.Competency:
-                                                <span class="badge badge-info">@Localizer.T("HR.DocType.Competency")</span>
-                                                break;
-                                            case HrDocumentType.RadiationSafety:
-                                                <span class="badge badge-danger">@Localizer.T("HR.DocType.RadiationSafety")</span>
-                                                break;
-                                            case HrDocumentType.JobDescription:
-                                                <span class="badge badge-secondary">@Localizer.T("HR.DocType.JobDescription")</span>
-                                                break;
-                                            case HrDocumentType.Orientation:
-                                                <span class="badge badge-primary">@Localizer.T("HR.DocType.Orientation")</span>
-                                                break;
-                                            default:
-                                                <span class="badge badge-secondary">@doc.DocumentType</span>
-                                                break;
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (doc.ExpiryDate.HasValue)
-                                        {
-                                            @doc.ExpiryDate.Value.ToString("dd/MM/yyyy")
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">@Localizer.T("HR.NA")</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <strong>@doc.DaysUntilExpiry</strong> @Localizer.T("HR.Days")
-                                    </td>
-                                    <td>
-                                        @if (doc.IsVerified)
-                                        {
-                                            <span class="badge badge-success"><i class="fas fa-check"></i> @Localizer.T("HR.Verified")</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge badge-warning"><i class="fas fa-times"></i> @Localizer.T("HR.Pending")</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (statusClass == "critical")
-                                        {
-                                            <span class="badge badge-danger">@statusLabel</span>
-                                        }
-                                        else if (statusClass == "urgent")
-                                        {
-                                            <span class="badge badge-warning">@statusLabel</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge badge-info">@statusLabel</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <div class="actions-cell">
-                                            <a href="@Url.Action("Edit", "HRManagement", new { area = "ClinicAdmin", id = doc.Id })#documents" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
-                                                <i class="fas fa-sync-alt"></i>
-                                            </a>
-                                            <a href="@Url.Action("Details", "HRManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-info" title="@Localizer.T("HR.View")" aria-label="@Localizer.T("HR.View")">
-                                                <i class="fas fa-user"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @doc.ExpiryDate.Value.ToString("dd/MM/yyyy")
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="7" class="text-center text-muted py-4">
-                                    <i class="fas fa-check-circle fa-2x mb-2 d-block text-success"></i>
-                                    @Localizer.T("Empty.NoDocuments")
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                            else
+                            {
+                                <span class="text-muted">@Localizer.T("HR.NA")</span>
+                            }
+                        </td>
+                        <td>
+                            <strong class="@(statusClass == "critical" ? "text-danger" : statusClass == "urgent" ? "text-warning" : "text-info")">@doc.DaysUntilExpiry</strong> @Localizer.T("HR.Days")
+                        </td>
+                        <td>
+                            @if (doc.IsVerified)
+                            {
+                                <span class="status-pill active"><i class="fas fa-check"></i> @Localizer.T("HR.Verified")</span>
+                            }
+                            else
+                            {
+                                <span class="status-pill needs-review"><i class="fas fa-times"></i> @Localizer.T("HR.Pending")</span>
+                            }
+                        </td>
+                        <td>
+                            @if (statusClass == "critical")
+                            {
+                                <span class="status-pill inactive">@statusLabel</span>
+                            }
+                            else if (statusClass == "urgent")
+                            {
+                                <span class="status-pill needs-review">@statusLabel</span>
+                            }
+                            else
+                            {
+                                <span class="status-pill active">@statusLabel</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="cell-actions justify-content-end">
+                                <a href="@Url.Action("Edit", "HRManagement", new { area = "ClinicAdmin", id = doc.Id })#documents" class="btn btn-sm btn-outline-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
+                                    <i class="fas fa-sync-alt"></i>
+                                </a>
+                                <a href="@Url.Action("Details", "HRManagement", new { area = "ClinicAdmin", id = doc.Id })" class="btn btn-sm btn-outline-info" title="@Localizer.T("HR.View")" aria-label="@Localizer.T("HR.View")">
+                                    <i class="fas fa-user"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center py-4">
+                        <partial name="_EmptyState" model='new {
+                            Icon = "fa-check-circle",
+                            Title = Localizer.T("Empty.NoDocuments"),
+                            Message = Localizer.T("Empty.NoExpiringDocumentsMessage"),
+                            ActionLink = "",
+                            ActionText = ""
+                        }' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-                <div class="table-footer">
-                    <div class="pagination-info">
-                        <span class="badge badge-danger"><i class="fas fa-circle"></i> @Localizer.T("HR.CriticalDesc")</span>
-                        <span class="badge badge-warning"><i class="fas fa-circle"></i> @Localizer.T("HR.UrgentDesc")</span>
-                        <span class="badge badge-info"><i class="fas fa-circle"></i> @Localizer.T("HR.UpcomingDesc")</span>
-                    </div>
-                </div>
-            </div>
+    <div class="data-table-pagination">
+        <div class="page-info">
+            <span class="status-pill inactive me-2"><i class="fas fa-circle"></i> @Localizer.T("HR.CriticalDesc")</span>
+            <span class="status-pill needs-review me-2"><i class="fas fa-circle"></i> @Localizer.T("HR.UrgentDesc")</span>
+            <span class="status-pill active"><i class="fas fa-circle"></i> @Localizer.T("HR.UpcomingDesc")</span>
         </div>
     </div>
 </div>
@@ -183,6 +225,9 @@
                     $(this).toggle($(this).data('status') === status);
                 }
             });
+            $('#filterAll, #filterCritical, #filterUrgent, #filterUpcoming').removeClass('btn-primary').addClass('btn-outline-primary');
+            var btnMap = { all: 'filterAll', critical: 'filterCritical', urgent: 'filterUrgent', upcoming: 'filterUpcoming' };
+            $('#' + btnMap[status]).removeClass('btn-outline-primary').addClass('btn-primary');
         }
     </script>
 }

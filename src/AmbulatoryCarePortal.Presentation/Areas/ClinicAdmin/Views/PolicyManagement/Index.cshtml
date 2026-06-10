@@ -10,201 +10,193 @@
     var departmentFilter = (int?)ViewBag.DepartmentFilter;
 }
 
-<div class="fade-in">
-    <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-file-pdf me-2"></i>@Localizer.T("Nav.Documents")</h3>
-            <div class="card-tools">
-                <a asp-action="Create" class="btn btn-success btn-sm" aria-label="@Localizer.T("Button.Create")">
-                    <i class="fas fa-plus"></i> @Localizer.T("Button.Create")
-                </a>
-            </div>
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Page.PolicyDocuments"),
+    Icon = "fa-file-pdf",
+    Breadcrumb = Localizer.T("Nav.Documents")
+}' />
+
+<div class="data-table-wrapper">
+    <div class="data-table-toolbar">
+        <div class="toolbar-left">
+            <span class="toolbar-title">@Localizer.T("Page.PolicyDocuments")</span>
+            <span class="toolbar-count">@totalCount @Localizer.T("Nav.Documents")</span>
         </div>
-        <div class="card-body">
-            <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="@Localizer.T("Policy.FilterPolicies")">
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <div class="input-group">
-                            <div class="input-group-text"><i class="fas fa-search"></i></div>
-                            <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("Policy.SearchPlaceholder")" value="@searchTerm" aria-label="@Localizer.T("Policy.SearchPlaceholder")" />
-                            <button type="submit" class="btn btn-primary" aria-label="@Localizer.T("Common.Search")">
-                                <i class="fas fa-search"></i>
-                            </button>
-                            @if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || departmentFilter.HasValue)
-                            {
-                                <a asp-action="Index" class="btn btn-secondary" aria-label="@Localizer.T("Common.Clear")">
-                                    <i class="fas fa-times"></i> @Localizer.T("Common.Clear")
-                                </a>
-                            }
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <select name="statusFilter" class="form-select" onchange="document.getElementById('filterForm').submit()" aria-label="@Localizer.T("Common.Filter")">
-                            <option value="">@Localizer.T("Common.All")</option>
-                            <option value="Draft" selected="@(statusFilter == "Draft")">@Localizer.T("Policy.Draft")</option>
-                            <option value="Pending" selected="@(statusFilter == "Pending")">@Localizer.T("Policy.Pending")</option>
-                            <option value="Approved" selected="@(statusFilter == "Approved")">@Localizer.T("Policy.Approved")</option>
-                            <option value="Expired" selected="@(statusFilter == "Expired")">@Localizer.T("Policy.Expired")</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="hidden" name="departmentFilter" id="departmentFilter" value="@departmentFilter" />
-                    </div>
-                    <div class="col-md-2 text-end">
-                        <small class="text-muted">@totalCount @Localizer.T("Nav.Documents")</small>
-                    </div>
+        <div class="toolbar-right">
+            <a asp-action="Create" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> @Localizer.T("Button.Create")
+            </a>
+        </div>
+    </div>
+
+    <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="@Localizer.T("Policy.FilterPolicies")">
+        <div class="data-table-toolbar" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+            <div class="toolbar-left gap-2 w-100">
+                <div class="search-box flex-grow-1" style="max-width: 300px;">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("Policy.SearchPlaceholder")" value="@searchTerm" aria-label="@Localizer.T("Policy.SearchPlaceholder")" />
                 </div>
-            </form>
-
-            <div class="table-container">
-                <table class="table table-hover" id="policiesTable" role="table" aria-label="@Localizer.T("Page.PolicyDocuments")">
-                    <thead>
-                        <tr>
-                            <th scope="col">@Localizer.T("Common.Title")</th>
-                            <th scope="col">@Localizer.T("Policy.StandardCode")</th>
-                            <th scope="col">@Localizer.T("Common.Status")</th>
-                            <th scope="col">@Localizer.T("HR.Department")</th>
-                            <th scope="col">@Localizer.T("Common.Version")</th>
-                            <th scope="col">@Localizer.T("Common.Expiry")</th>
-                            <th scope="col">@Localizer.T("Doc.Attachments")</th>
-                            <th scope="col" class="text-center">@Localizer.T("Common.Actions")</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.Any())
-                        {
-                            @foreach (var policy in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        <a asp-action="Details" asp-route-id="@policy.Id" class="fw-bold text-decoration-none" aria-label="View policy details">
-                                            @policy.Title
-                                        </a>
-                                        @if (!string.IsNullOrEmpty(policy.TitleAr))
-                                        {
-                                            <br /><small class="text-muted" dir="rtl">@policy.TitleAr</small>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(policy.StandardCode))
-                                        {
-                                            <span class="badge badge-info">@policy.StandardCode</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">&mdash;</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @{
-                                            var statusBadge = policy.DocumentStatus switch
-                                            {
-                                                DocumentStatus.Draft => "secondary",
-                                                DocumentStatus.Pending => "warning",
-                                                DocumentStatus.Approved => "success",
-                                                _ => "secondary"
-                                            };
-                                        }
-                                        <span class="badge badge-@statusBadge">@policy.DocumentStatus</span>
-                                    </td>
-                                    <td>@policy.DepartmentName</td>
-                                    <td><span class="badge badge-primary">v@(policy.VersionNumber)</span></td>
-                                    <td>
-                                        @if (policy.ExpiryDate.HasValue)
-                                        {
-                                            <span class="@(policy.ExpiryDate.Value <= DateTime.UtcNow.AddMonths(1) ? "text-danger fw-bold" : "")">
-                                                @policy.ExpiryDate.Value.ToString("yyyy-MM-dd")
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">&mdash;</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-info">@policy.AttachmentCount</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="actions-cell">
-                                            <a asp-action="Details" asp-route-id="@policy.Id" class="btn btn-sm btn-info" title="@Localizer.T("Common.Details")" aria-label="@Localizer.T("Common.View")">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a asp-action="Edit" asp-route-id="@policy.Id" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-sm btn-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                    data-policy-id="@policy.Id" data-policy-title="@policy.Title">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="8" class="text-center text-muted py-4">
-                                    <i class="fas fa-file-pdf fa-3x mb-2"></i><br />
-                                    @Localizer.T("Empty.NoPolicies")
-                                    @if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || departmentFilter.HasValue)
-                                    {
-                                        <span>@Localizer.T("Empty.FilterAdjust")</span>
-                                    }
-                                    else
-                                    {
-                                        <a asp-action="Create">@Localizer.T("Button.Create")</a>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-
-                @if (totalPages > 1)
+                <select name="statusFilter" class="form-select" style="width: auto; min-width: 140px;" onchange="document.getElementById('filterForm').submit()" aria-label="@Localizer.T("Common.Filter")">
+                    <option value="">@Localizer.T("Common.All")</option>
+                    <option value="Draft" selected="@(statusFilter == "Draft")">@Localizer.T("Policy.Draft")</option>
+                    <option value="Pending" selected="@(statusFilter == "Pending")">@Localizer.T("Policy.Pending")</option>
+                    <option value="Approved" selected="@(statusFilter == "Approved")">@Localizer.T("Policy.Approved")</option>
+                    <option value="Expired" selected="@(statusFilter == "Expired")">@Localizer.T("Policy.Expired")</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary" aria-label="@Localizer.T("Common.Search")">
+                    <i class="fas fa-search"></i>
+                </button>
+                @if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || departmentFilter.HasValue)
                 {
-                    <div class="table-footer">
-                        <div class="pagination-info">
-                            @Localizer.T("Policy.PageInfo", currentPage, totalPages, totalCount)
-                        </div>
-                        <nav aria-label="Policy table pagination">
-                            <ul class="pagination">
-                                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" aria-label="@Localizer.T("Policy.FirstPage")">
-                                        <i class="fas fa-angle-double-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" aria-label="@Localizer.T("Common.Previous")">
-                                        <i class="fas fa-angle-left"></i>
-                                    </a>
-                                </li>
-
-                                @for (var i = 1; i <= totalPages; i++)
-                                {
-                                    <li class="page-item @(i == currentPage ? "active" : "")">
-                                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" aria-label="@Localizer.T("Common.Page") @i" aria-current="@(i == currentPage ? "page" : null)">@i</a>
-                                    </li>
-                                }
-
-                                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" aria-label="@Localizer.T("Common.Next")">
-                                        <i class="fas fa-angle-right"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@totalPages" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" aria-label="@Localizer.T("Policy.LastPage")">
-                                        <i class="fas fa-angle-double-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+                    <a asp-action="Index" class="btn btn-sm btn-outline-secondary" aria-label="@Localizer.T("Common.Clear")">
+                        <i class="fas fa-times"></i> @Localizer.T("Common.Clear")
+                    </a>
                 }
             </div>
         </div>
-    </div>
+    </form>
+
+    <table class="data-table" id="policiesTable" role="table" aria-label="@Localizer.T("Page.PolicyDocuments")">
+        <thead>
+            <tr>
+                <th scope="col">@Localizer.T("Common.Title")</th>
+                <th scope="col">@Localizer.T("Policy.StandardCode")</th>
+                <th scope="col">@Localizer.T("Common.Status")</th>
+                <th scope="col">@Localizer.T("HR.Department")</th>
+                <th scope="col">@Localizer.T("Common.Version")</th>
+                <th scope="col">@Localizer.T("Common.Expiry")</th>
+                <th scope="col" class="text-center">@Localizer.T("Doc.Attachments")</th>
+                <th scope="col" class="text-end">@Localizer.T("Common.Actions")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var policy in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@policy.Id" class="fw-bold text-decoration-none">
+                                @policy.Title
+                            </a>
+                            @if (!string.IsNullOrEmpty(policy.TitleAr))
+                            {
+                                <br /><small class="text-muted" dir="rtl">@policy.TitleAr</small>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(policy.StandardCode))
+                            {
+                                <span class="badge bg-secondary">@policy.StandardCode</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">&mdash;</span>
+                            }
+                        </td>
+                        <td>
+                            @{
+                                var statusBadge = policy.DocumentStatus switch
+                                {
+                                    DocumentStatus.Draft => "needs-review",
+                                    DocumentStatus.Pending => "needs-review",
+                                    DocumentStatus.Approved => "active",
+                                    DocumentStatus.Complete => "active",
+                                    DocumentStatus.MissingAttachment => "inactive",
+                                    DocumentStatus.Expired => "inactive",
+                                    _ => "needs-review"
+                                };
+                            }
+                            <span class="status-pill @statusBadge">@policy.DocumentStatus</span>
+                        </td>
+                        <td>@policy.DepartmentName</td>
+                        <td><span class="compliance-badge compliant">v@(policy.VersionNumber)</span></td>
+                        <td>
+                            @if (policy.ExpiryDate.HasValue)
+                            {
+                                var isExpiring = policy.ExpiryDate.Value <= DateTime.UtcNow.AddMonths(1);
+                                <span class="@(isExpiring ? "text-danger fw-bold" : "")">
+                                    @policy.ExpiryDate.Value.ToString("yyyy-MM-dd")
+                                </span>
+                                if (isExpiring)
+                                {
+                                    <br /><span class="compliance-badge non-compliant mt-1 d-inline-block">@Localizer.T("Policy.ExpiringSoon")</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">&mdash;</span>
+                            }
+                        </td>
+                        <td class="text-center"><span class="fw-bold">@policy.AttachmentCount</span></td>
+                        <td>
+                            <div class="cell-actions justify-content-end">
+                                <a asp-action="Details" asp-route-id="@policy.Id" class="btn btn-sm btn-outline-info" title="@Localizer.T("Common.Details")" aria-label="@Localizer.T("Common.View")">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@policy.Id" class="btn btn-sm btn-outline-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")"
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                        data-policy-id="@policy.Id" data-policy-title="@policy.Title">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" class="text-center py-4">
+                        <partial name="_EmptyState" model='new {
+                            Icon = "fa-file-pdf",
+                            Title = Localizer.T("Empty.NoPolicies"),
+                            Message = !string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || departmentFilter.HasValue
+                                ? Localizer.T("Empty.FilterAdjust")
+                                : "",
+                            ActionLink = !string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || departmentFilter.HasValue ? "" : Url.Action("Create"),
+                            ActionText = !string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || departmentFilter.HasValue ? "" : Localizer.T("Button.Create")
+                        }' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (totalPages > 1)
+    {
+        <div class="data-table-pagination">
+            <div class="page-info">@Localizer.T("Policy.PageInfo", currentPage, totalPages, totalCount)</div>
+            <div class="page-links">
+                <a asp-action="Index" asp-route-page="1" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" class="@(currentPage == 1 ? "disabled" : "")" aria-label="@Localizer.T("Policy.FirstPage")">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+                <a asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" class="@(currentPage == 1 ? "disabled" : "")" aria-label="@Localizer.T("Common.Previous")">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+                @for (var i = 1; i <= totalPages; i++)
+                {
+                    if (i == currentPage)
+                    {
+                        <span class="active">@i</span>
+                    }
+                    else
+                    {
+                        <a asp-action="Index" asp-route-page="@i" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" aria-label="@Localizer.T("Common.Page") @i">@i</a>
+                    }
+                }
+                <a asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" class="@(currentPage == totalPages ? "disabled" : "")" aria-label="@Localizer.T("Common.Next")">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+                <a asp-action="Index" asp-route-page="@totalPages" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" class="@(currentPage == totalPages ? "disabled" : "")" aria-label="@Localizer.T("Policy.LastPage")">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            </div>
+        </div>
+    }
 </div>
 
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">

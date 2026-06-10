@@ -4,199 +4,186 @@
     ViewData["Title"] = @Localizer.T("Page.KPIMonitoring");
 }
 
-<div class="row fade-in">
-    <div class="col-sm-6">
-        <h3><i class="fas fa-chart-line text-primary me-2"></i>@Localizer.T("Page.KPIMonitoring")</h3>
-    </div>
-    <div class="col-sm-6 text-end">
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i>@Localizer.T("KPI.CreateNew")
-        </a>
-    </div>
-</div>
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Page.KPIMonitoring"),
+    Icon = "fa-chart-line",
+    Breadcrumb = ""
+}' />
 
-<div class="card card-primary">
-    <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-filter"></i> @Localizer.T("KPI.FilterKPIs")</h3>
-        <div class="card-tools">
-            <form method="get" asp-action="Index" id="filterForm" class="row g-3 align-items-end">
-                <div class="col-md-4">
-                    <label class="form-label small">@Localizer.T("Common.Search")</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("KPI.SearchPlaceholder")" value="@ViewBag.SearchTerm" aria-label="@Localizer.T("Common.Search")" />
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label small">@Localizer.T("Common.Frequency")</label>
-                    <select name="frequencyFilter" class="form-select" onchange="this.form.submit()" aria-label="@Localizer.T("KPI.FilterByFrequency")">
-                        <option value="">@Localizer.T("KPI.AllFrequencies")</option>
-                        <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">@Localizer.T("KPI.Daily")</option>
-                        <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">@Localizer.T("KPI.Weekly")</option>
-                        <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">@Localizer.T("KPI.Monthly")</option>
-                        <option value="Quarterly" selected="@(ViewBag.FrequencyFilter == "Quarterly")">@Localizer.T("KPI.Quarterly")</option>
-                        <option value="Annually" selected="@(ViewBag.FrequencyFilter == "Annually")">@Localizer.T("KPI.Annually")</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label small">@Localizer.T("HR.Department")</label>
-                    <select name="departmentFilter" class="form-select" onchange="this.form.submit()" aria-label="@Localizer.T("KPI.FilterByDepartment")">
-                        <option value="">@Localizer.T("KPI.AllDepartments")</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <a asp-action="Index" class="btn btn-outline-primary w-100">
-                        <i class="fas fa-undo me-1"></i>@Localizer.T("Common.Reset")
-                    </a>
-                </div>
-            </form>
+<div class="data-table-wrapper">
+    <div class="data-table-toolbar">
+        <div class="toolbar-left">
+            <span class="toolbar-title"><i class="fas fa-chart-line me-2"></i>@Localizer.T("Page.KPIMonitoring")</span>
+            <span class="toolbar-count">@ViewBag.TotalCount @Localizer.T("KPI.TotalKPIs")</span>
+        </div>
+        <div class="toolbar-right gap-2">
+            <a asp-action="Create" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus me-1"></i>@Localizer.T("KPI.CreateNew")
+            </a>
         </div>
     </div>
-    <div class="card-body p-0">
-        <div class="table-container">
-            <table class="table table-hover" id="kpiTable">
-                <thead>
+
+    <form method="get" asp-action="Index" id="filterForm" class="p-3" style="border-top: 1px solid var(--border-color);">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small">@Localizer.T("Common.Search")</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("KPI.SearchPlaceholder")" value="@ViewBag.SearchTerm" aria-label="@Localizer.T("Common.Search")" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">@Localizer.T("Common.Frequency")</label>
+                <select name="frequencyFilter" class="form-select" onchange="this.form.submit()" aria-label="@Localizer.T("KPI.FilterByFrequency")">
+                    <option value="">@Localizer.T("KPI.AllFrequencies")</option>
+                    <option value="Daily" selected="@(ViewBag.FrequencyFilter == "Daily")">@Localizer.T("KPI.Daily")</option>
+                    <option value="Weekly" selected="@(ViewBag.FrequencyFilter == "Weekly")">@Localizer.T("KPI.Weekly")</option>
+                    <option value="Monthly" selected="@(ViewBag.FrequencyFilter == "Monthly")">@Localizer.T("KPI.Monthly")</option>
+                    <option value="Quarterly" selected="@(ViewBag.FrequencyFilter == "Quarterly")">@Localizer.T("KPI.Quarterly")</option>
+                    <option value="Annually" selected="@(ViewBag.FrequencyFilter == "Annually")">@Localizer.T("KPI.Annually")</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">@Localizer.T("HR.Department")</label>
+                <select name="departmentFilter" class="form-select" onchange="this.form.submit()" aria-label="@Localizer.T("KPI.FilterByDepartment")">
+                    <option value="">@Localizer.T("KPI.AllDepartments")</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-undo me-1"></i>@Localizer.T("Common.Reset")
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <table class="data-table" id="kpiTable">
+        <thead>
+            <tr>
+                <th scope="col">@Localizer.T("KPI.KPIName")</th>
+                <th scope="col" class="text-end">@Localizer.T("KPI.TargetValue")</th>
+                <th scope="col" class="text-end">@Localizer.T("KPI.LastEntry")</th>
+                <th scope="col">@Localizer.T("KPI.AchievementRate")</th>
+                <th scope="col" class="text-center">@Localizer.T("Common.Frequency")</th>
+                <th scope="col" class="text-center">@Localizer.T("KPI.TotalEntries")</th>
+                <th scope="col" class="text-end">@Localizer.T("Common.Actions")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    var rateColor = item.AchievementRate >= 100 ? "bg-success" :
+                        item.AchievementRate >= 75 ? "bg-info" :
+                        item.AchievementRate >= 50 ? "bg-warning" : "bg-danger";
                     <tr>
-                        <th>@Localizer.T("KPI.KPIName")</th>
-                        <th class="text-end">@Localizer.T("KPI.TargetValue")</th>
-                        <th class="text-end">@Localizer.T("KPI.LastEntry")</th>
-                        <th class="text-center">@Localizer.T("KPI.AchievementRate")</th>
-                        <th class="text-center">@Localizer.T("Common.Frequency")</th>
-                        <th class="text-center">@Localizer.T("KPI.TotalEntries")</th>
-                        <th class="text-center">@Localizer.T("Common.Actions")</th>
+                        <td>
+                            <div class="fw-bold">@item.KPI.Name</div>
+                            @if (!string.IsNullOrEmpty(item.KPI.NameAr))
+                            {
+                                <small class="text-muted" dir="rtl">@item.KPI.NameAr</small>
+                            }
+                        </td>
+                        <td class="text-end fw-bold">@item.KPI.TargetValue.ToString("N2")</td>
+                        <td class="text-end">
+                            @if (item.LatestEntry != null)
+                            {
+                                <span class="fw-bold">@item.LatestEntry.ActualValue.ToString("N2")</span>
+                                <small class="text-muted d-block">/ @item.KPI.TargetValue.ToString("N2")</small>
+                            }
+                            else
+                            {
+                                <span class="text-muted">@Localizer.T("Common.NoData")</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2" style="min-width:140px;">
+                                <div class="progress flex-grow-1" style="height:8px;">
+                                    <div class="progress-bar @rateColor" role="progressbar"
+                                         style="width:@Math.Min(item.AchievementRate, 100)%"
+                                         aria-valuenow="@item.AchievementRate" aria-valuemin="0" aria-valuemax="100" aria-label="@Localizer.T("KPI.AchievementRate") @item.AchievementRate.ToString("N2")%">
+                                    </div>
+                                </div>
+                                <small class="text-nowrap fw-bold">@item.AchievementRate.ToString("N2")%</small>
+                            </div>
+                        </td>
+                        <td class="text-center"><span class="status-pill needs-review">@item.KPI.Frequency</span></td>
+                        <td class="text-center"><span class="fw-bold">@item.TotalEntries</span></td>
+                        <td>
+                            <div class="cell-actions justify-content-end">
+                                <a asp-action="EnterData" asp-route-kpiId="@item.KPI.Id"
+                                   class="btn btn-sm btn-outline-success" title="@Localizer.T("Page.EnterKPIData")" aria-label="@Localizer.T("Page.EnterKPIData") @item.KPI.Name">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                                <a asp-action="ViewAnalytics" asp-route-id="@item.KPI.Id"
+                                   class="btn btn-sm btn-outline-info" title="@Localizer.T("Page.KPIAnalytics")" aria-label="@Localizer.T("Page.KPIAnalytics") @item.KPI.Name">
+                                    <i class="fas fa-chart-bar"></i>
+                                </a>
+                                <a asp-action="Compare" class="btn btn-sm btn-outline-warning" title="@Localizer.T("Page.CompareKPIs")" aria-label="@Localizer.T("Page.CompareKPIs")">
+                                    <i class="fas fa-arrows-alt-h"></i>
+                                </a>
+                                <a asp-action="Export" asp-route-kpiId="@item.KPI.Id" asp-route-format="excel"
+                                   class="btn btn-sm btn-outline-secondary" title="@Localizer.T("KPI.Export")" aria-label="@Localizer.T("KPI.Export") @item.KPI.Name">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Any())
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center py-4">
+                        <partial name="_EmptyState" model='new {
+                            Icon = "fa-chart-line",
+                            Title = Localizer.T("KPI.NoKPIsMatch"),
+                            Message = Localizer.T("KPI.NoKPIsMatch"),
+                            ActionLink = Url.Action("Create"),
+                            ActionText = Localizer.T("KPI.CreateNew")
+                        }' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (ViewBag.TotalPages > 1)
+    {
+        <div class="data-table-pagination">
+            <div class="page-info">@Localizer.T("KPI.ShowingPageInfo", ViewBag.CurrentPage, ViewBag.TotalPages, ViewBag.TotalCount)</div>
+            <div class="page-links">
+                <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)"
+                   asp-route-searchTerm="@ViewBag.SearchTerm"
+                   asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
+                   asp-route-departmentFilter="@ViewBag.DepartmentFilter"
+                   class="@(ViewBag.CurrentPage <= 1 ? "disabled" : "")" aria-label="@Localizer.T("Common.Back")">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    if (i == ViewBag.CurrentPage)
                     {
-                        @foreach (var item in Model)
-                        {
-                            var rateColor = item.AchievementRate >= 100 ? "bg-success" :
-                                item.AchievementRate >= 75 ? "bg-info" :
-                                item.AchievementRate >= 50 ? "bg-warning" : "bg-danger";
-                            <tr>
-                                <td>
-                                    <div class="fw-semibold">@item.KPI.Name</div>
-                                    @if (!string.IsNullOrEmpty(item.KPI.NameAr))
-                                    {
-                                        <small class="text-muted">@item.KPI.NameAr</small>
-                                    }
-                                </td>
-                                <td class="text-end">@item.KPI.TargetValue.ToString("N2")</td>
-                                <td class="text-end">
-                                    @if (item.LatestEntry != null)
-                                    {
-                                        <span>@item.LatestEntry.ActualValue.ToString("N2")</span>
-                                        <small class="text-muted d-block">/ @item.KPI.TargetValue.ToString("N2")</small>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">@Localizer.T("Common.NoData")</span>
-                                    }
-                                </td>
-                                <td class="text-center">
-                                    <div class="d-flex align-items-center gap-2" style="min-width:140px;">
-                                        <div class="progress flex-grow-1" style="height:8px;">
-                                            <div class="progress-bar @rateColor" role="progressbar"
-                                                 style="width:@Math.Min(item.AchievementRate, 100)%"
-                                                 aria-valuenow="@item.AchievementRate" aria-valuemin="0" aria-valuemax="100" aria-label="@Localizer.T("KPI.AchievementRate") @item.AchievementRate.ToString("N2")%">
-                                            </div>
-                                        </div>
-                                        <small class="text-nowrap fw-semibold">@item.AchievementRate.ToString("N2")%</small>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge badge-secondary">@item.KPI.Frequency</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge badge-info">@item.TotalEntries</span>
-                                </td>
-                                <td class="text-center">
-                                    <div class="actions-cell">
-                                        <a asp-action="EnterData" asp-route-kpiId="@item.KPI.Id"
-                                           class="btn btn-sm btn-success" title="@Localizer.T("Page.EnterKPIData")" aria-label="@Localizer.T("Page.EnterKPIData") @item.KPI.Name">
-                                            <i class="fas fa-pen"></i>
-                                        </a>
-                                        <a asp-action="ViewAnalytics" asp-route-id="@item.KPI.Id"
-                                           class="btn btn-sm btn-info" title="@Localizer.T("Page.KPIAnalytics")" aria-label="@Localizer.T("Page.KPIAnalytics") @item.KPI.Name">
-                                            <i class="fas fa-chart-bar"></i>
-                                        </a>
-                                        <a asp-action="Compare" class="btn btn-sm btn-warning" title="@Localizer.T("Page.CompareKPIs")" aria-label="@Localizer.T("Page.CompareKPIs")">
-                                            <i class="fas fa-arrows-alt-h"></i>
-                                        </a>
-                                        <a asp-action="Export" asp-route-kpiId="@item.KPI.Id" asp-route-format="excel"
-                                           class="btn btn-sm btn-secondary" title="@Localizer.T("KPI.Export")" aria-label="@Localizer.T("KPI.Export") @item.KPI.Name">
-                                            <i class="fas fa-download"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
+                        <span class="active">@i</span>
                     }
                     else
                     {
-                        <tr>
-                            <td colspan="7">
-                                <div class="empty-state">
-                                    <i class="fas fa-inbox empty-icon"></i>
-                                    <h4>@Localizer.T("KPI.NoKPIsMatch")</h4>
-                                    <p>@Localizer.T("KPI.NoKPIsMatch")</p>
-                                    <a asp-action="Create" class="btn btn-primary">@Localizer.T("KPI.CreateNew")</a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-    @if (ViewBag.TotalPages > 1)
-    {
-        <div class="card-footer">
-            <div class="table-footer">
-                <div class="pagination-info">@Localizer.T("KPI.ShowingPageInfo", ViewBag.CurrentPage, ViewBag.TotalPages, ViewBag.TotalCount)</div>
-                <ul class="pagination">
-                    <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
-                        <a class="page-link" asp-action="Index"
-                           asp-route-page="@(ViewBag.CurrentPage - 1)"
+                        <a asp-action="Index" asp-route-page="@i"
                            asp-route-searchTerm="@ViewBag.SearchTerm"
                            asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
                            asp-route-departmentFilter="@ViewBag.DepartmentFilter"
-                           aria-label="@Localizer.T("Common.Back")">
-                            <i class="fas fa-chevron-left"></i>
-                        </a>
-                    </li>
-                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            <a class="page-link" asp-action="Index"
-                               asp-route-page="@i"
-                               asp-route-searchTerm="@ViewBag.SearchTerm"
-                               asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
-                               asp-route-departmentFilter="@ViewBag.DepartmentFilter"
-                               aria-label="@Localizer.T("Common.Page") @i">
-                                @i
-                            </a>
-                        </li>
+                           aria-label="@Localizer.T("Common.Page") @i">@i</a>
                     }
-                    <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
-                        <a class="page-link" asp-action="Index"
-                           asp-route-page="@(ViewBag.CurrentPage + 1)"
-                           asp-route-searchTerm="@ViewBag.SearchTerm"
-                           asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
-                           asp-route-departmentFilter="@ViewBag.DepartmentFilter"
-                           aria-label="@Localizer.T("Common.Next")">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
-                    </li>
-                </ul>
+                }
+                <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)"
+                   asp-route-searchTerm="@ViewBag.SearchTerm"
+                   asp-route-frequencyFilter="@ViewBag.FrequencyFilter"
+                   asp-route-departmentFilter="@ViewBag.DepartmentFilter"
+                   class="@(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")" aria-label="@Localizer.T("Common.Next")">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
             </div>
-        </div>
-    }
-    else
-    {
-        <div class="card-footer text-center text-muted small">
-            @Localizer.T("KPI.KPIFound", ViewBag.TotalCount)
         </div>
     }
 </div>

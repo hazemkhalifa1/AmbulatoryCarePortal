@@ -10,221 +10,206 @@
     var totalPages = totalCount > 0 ? (int)Math.Ceiling((double)totalCount / pageSize) : 1;
 }
 
-<div class="fade-in">
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="kpi-card">
-                <div class="kpi-icon primary"><i class="fas fa-users"></i></div>
-                <div class="kpi-label">@Localizer.T("HR.TotalStaff")</div>
-                <div class="kpi-value">@totalCount</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="kpi-card">
-                <div class="kpi-icon success"><i class="fas fa-check-circle"></i></div>
-                <div class="kpi-label">@Localizer.T("HR.Compliant")</div>
-                <div class="kpi-value">@ViewBag.CompliantCount</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="kpi-card">
-                <div class="kpi-icon danger"><i class="fas fa-times-circle"></i></div>
-                <div class="kpi-label">@Localizer.T("HR.NonCompliant")</div>
-                <div class="kpi-value">@ViewBag.NonCompliantCount</div>
-            </div>
-        </div>
+<div class="row g-3 mb-4">
+    <div class="col-lg-4 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-users",
+            Color = "primary",
+            Value = totalCount.ToString(),
+            Label = Localizer.T("HR.TotalStaff"),
+            Badge = Localizer.T("Common.Total"),
+            Link = Url.Action("Create"),
+            LinkText = Localizer.T("HR.AddStaff")
+        }' />
     </div>
-
-    <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-users"></i>
-                @Localizer.T("Page.StaffManagement")
-            </h3>
-            <div class="card-tools">
-                <div class="btn-group">
-                    <a asp-action="Create" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> @Localizer.T("HR.AddStaff")
-                    </a>
-                    <a asp-action="ExpiringDocuments" class="btn btn-sm btn-warning">
-                        <i class="fas fa-exclamation-triangle"></i> @Localizer.T("HR.ExpiringDocuments")
-                    </a>
-                    <a asp-action="NonCompliantStaff" class="btn btn-sm btn-danger">
-                        <i class="fas fa-times-circle"></i> @Localizer.T("HR.NonCompliantStaff")
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <form method="get" asp-action="Index" class="mb-4">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-4">
-                        <label class="form-label">@Localizer.T("Common.Search")</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" name="searchTerm" class="form-control"
-                                   placeholder="@Localizer.T("HR.SearchPlaceholder")"
-                                   value="@ViewBag.SearchTerm" />
-                            <button type="submit" class="btn btn-info">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">@Localizer.T("HR.ComplianceStatus")</label>
-                        <select name="complianceFilter" class="form-control" onchange="this.form.submit()">
-                            <option value="">@Localizer.T("HR.AllCompliance")</option>
-                            <option value="Compliant" selected="@(ViewBag.ComplianceFilter == "Compliant")">
-                                @Localizer.T("HR.Compliant")
-                            </option>
-                            <option value="Non-Compliant" selected="@(ViewBag.ComplianceFilter == "Non-Compliant")">
-                                @Localizer.T("HR.NonCompliant")
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">@Localizer.T("HR.Department")</label>
-                        <select name="departmentFilter" class="form-control" onchange="this.form.submit()">
-                            <option value="">@Localizer.T("HR.AllDepartments")</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <a asp-action="Index" class="btn btn-secondary w-100">
-                            <i class="fas fa-redo"></i> @Localizer.T("Common.Reset")
-                        </a>
-                    </div>
-                </div>
-            </form>
-
-            <div class="table-container">
-                <table class="table table-hover" id="staffTable">
-                    <thead>
-                        <tr>
-                            <th>@Localizer.T("HR.Name")</th>
-                            <th>@Localizer.T("HR.StaffType")</th>
-                            <th>@Localizer.T("HR.Department")</th>
-                            <th>@Localizer.T("HR.Status")</th>
-                            <th>@Localizer.T("HR.Documents")</th>
-                            <th>@Localizer.T("HR.ComplianceStatus")</th>
-                            <th>@Localizer.T("HR.LastUpdate")</th>
-                            <th>@Localizer.T("HR.Actions")</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.Any())
-                        {
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        <strong>@item.Staff.FullNameEn</strong>
-                                        @if (!string.IsNullOrEmpty(item.Staff.FullNameAr))
-                                        {
-                                            <br /><small class="text-muted" dir="rtl">@item.Staff.FullNameAr</small>
-                                        }
-                                    </td>
-                                    <td><span class="badge badge-info">@item.Staff.StaffType</span></td>
-                                    <td>@item.Staff.DepartmentName</td>
-                                    <td>
-                                        @if (item.Staff.IsActive)
-                                        {
-                                            <span class="badge badge-success">@Localizer.T("HR.Active")</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge badge-danger">@Localizer.T("HR.Inactive")</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-info" title="@Localizer.T("HR.TotalDocuments")">@item.TotalDocuments</span>
-                                        <span class="badge badge-success" title="@Localizer.T("HR.Verified")">@item.ValidDocuments</span>
-                                        @if (item.ExpiringDocuments > 0)
-                                        {
-                                            <span class="badge badge-warning" title="@Localizer.T("HR.ExpiringSoon")">@item.ExpiringDocuments</span>
-                                        }
-                                        @if (item.ExpiredDocuments > 0)
-                                        {
-                                            <span class="badge badge-danger" title="@Localizer.T("Common.Expired")">@item.ExpiredDocuments</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (item.ComplianceStatus == "Compliant")
-                                        {
-                                            <span class="badge badge-success">
-                                                <i class="fas fa-check-circle"></i> @Localizer.T("HR.Compliant")
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge badge-danger">
-                                                <i class="fas fa-times-circle"></i> @Localizer.T("HR.NonCompliant")
-                                            </span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (item.LastDocumentUpdate > DateTime.MinValue)
-                                        {
-                                            <small>@item.LastDocumentUpdate.ToString("dd/MM/yyyy")</small>
-                                        }
-                                        else
-                                        {
-                                            <small class="text-muted">-</small>
-                                        }
-                                    </td>
-                                    <td>
-                                        <div class="actions-cell">
-                                            <a asp-action="Details" asp-route-id="@item.Staff.Id" class="btn btn-sm btn-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="8">
-                                    <div class="empty-state">
-                                        <i class="fas fa-users empty-icon"></i>
-                                        <h4>@Localizer.T("HR.NoStaffFound")</h4>
-                                        <p>@Localizer.T("HR.NoStaffFoundMessage")</p>
-                                        <a asp-action="Create" class="btn btn-primary">@Localizer.T("HR.AddNewStaffMember")</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-footer">
-                <div class="pagination-info">
-                    @Localizer.T("HR.Showing") @Model.Count @Localizer.T("HR.Of") @totalCount
-                </div>
-                @if (totalPages > 1)
-                {
-                    <ul class="pagination">
-                        <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
-                            <a class="page-link" href="?page=@(currentPage - 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter" aria-label="@Localizer.T("Common.Previous")">
-                                &laquo;
-                            </a>
-                        </li>
-                        @for (int i = 1; i <= totalPages; i++)
-                        {
-                            <li class="page-item @(i == currentPage ? "active" : "")">
-                                <a class="page-link" href="?page=@i&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter">@i</a>
-                            </li>
-                        }
-                        <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
-                            <a class="page-link" href="?page=@(currentPage + 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter" aria-label="@Localizer.T("Common.Next")">
-                                &raquo;
-                            </a>
-                        </li>
-                    </ul>
-                }
-            </div>
-        </div>
+    <div class="col-lg-4 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-check-circle",
+            Color = "success",
+            Value = ViewBag.CompliantCount?.ToString() ?? "0",
+            Label = Localizer.T("HR.Compliant"),
+            Badge = Localizer.T("Common.Compliant"),
+            Link = ""
+        }' />
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <partial name="_HealthMetricCard" model='new {
+            Icon = "fa-times-circle",
+            Color = "danger",
+            Value = ViewBag.NonCompliantCount?.ToString() ?? "0",
+            Label = Localizer.T("HR.NonCompliant"),
+            Badge = Localizer.T("Common.NonCompliant"),
+            Link = ""
+        }' />
     </div>
 </div>
+
+<div class="data-table-wrapper">
+    <div class="data-table-toolbar">
+        <div class="toolbar-left">
+            <span class="toolbar-title"><i class="fas fa-users me-2"></i>@Localizer.T("Page.StaffManagement")</span>
+            <span class="toolbar-count">@totalCount @Localizer.T("HR.StaffCount")</span>
+        </div>
+        <div class="toolbar-right gap-2">
+            <a asp-action="ExpiringDocuments" class="btn btn-sm btn-outline-warning">
+                <i class="fas fa-exclamation-triangle"></i> @Localizer.T("HR.ExpiringDocuments")
+            </a>
+            <a asp-action="NonCompliantStaff" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-times-circle"></i> @Localizer.T("HR.NonCompliantStaff")
+            </a>
+            <a asp-action="Create" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> @Localizer.T("HR.AddStaff")
+            </a>
+        </div>
+    </div>
+
+    <form method="get" asp-action="Index" role="search">
+        <div class="data-table-toolbar" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+            <div class="toolbar-left gap-2 w-100 flex-wrap">
+                <div class="search-box" style="max-width: 250px;">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("HR.SearchPlaceholder")" value="@ViewBag.SearchTerm" />
+                </div>
+                <select name="complianceFilter" class="form-select" style="width: auto; min-width: 140px;" onchange="this.form.submit()">
+                    <option value="">@Localizer.T("HR.AllCompliance")</option>
+                    <option value="Compliant" selected="@(ViewBag.ComplianceFilter == "Compliant")">@Localizer.T("HR.Compliant")</option>
+                    <option value="Non-Compliant" selected="@(ViewBag.ComplianceFilter == "Non-Compliant")">@Localizer.T("HR.NonCompliant")</option>
+                </select>
+                <select name="departmentFilter" class="form-select" style="width: auto; min-width: 140px;" onchange="this.form.submit()">
+                    <option value="">@Localizer.T("HR.AllDepartments")</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
+                <a asp-action="Index" class="btn btn-sm btn-outline-secondary"><i class="fas fa-redo"></i> @Localizer.T("Common.Reset")</a>
+            </div>
+        </div>
+    </form>
+
+    <table class="data-table" id="staffTable">
+        <thead>
+            <tr>
+                <th scope="col">@Localizer.T("HR.Name")</th>
+                <th scope="col">@Localizer.T("HR.StaffType")</th>
+                <th scope="col">@Localizer.T("HR.Department")</th>
+                <th scope="col">@Localizer.T("HR.Status")</th>
+                <th scope="col" class="text-center">@Localizer.T("HR.Documents")</th>
+                <th scope="col">@Localizer.T("HR.ComplianceStatus")</th>
+                <th scope="col">@Localizer.T("HR.LastUpdate")</th>
+                <th scope="col" class="text-end">@Localizer.T("HR.Actions")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@item.Staff.FullNameEn</strong>
+                            @if (!string.IsNullOrEmpty(item.Staff.FullNameAr))
+                            {
+                                <br /><small class="text-muted" dir="rtl">@item.Staff.FullNameAr</small>
+                            }
+                        </td>
+                        <td><span class="status-pill needs-review">@item.Staff.StaffType</span></td>
+                        <td>@item.Staff.DepartmentName</td>
+                        <td>
+                            @if (item.Staff.IsActive)
+                            {
+                                <span class="status-pill active">@Localizer.T("HR.Active")</span>
+                            }
+                            else
+                            {
+                                <span class="status-pill inactive">@Localizer.T("HR.Inactive")</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <span class="fw-bold" title="@Localizer.T("HR.TotalDocuments")">@item.TotalDocuments</span>
+                            <span class="compliance-badge compliant ms-1" title="@Localizer.T("HR.Verified")">@item.ValidDocuments</span>
+                            @if (item.ExpiringDocuments > 0)
+                            {
+                                <span class="compliance-badge needs-attention ms-1" title="@Localizer.T("HR.ExpiringSoon")">@item.ExpiringDocuments</span>
+                            }
+                            @if (item.ExpiredDocuments > 0)
+                            {
+                                <span class="compliance-badge non-compliant ms-1" title="@Localizer.T("Common.Expired")">@item.ExpiredDocuments</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.ComplianceStatus == "Compliant")
+                            {
+                                <span class="status-pill active"><i class="fas fa-check-circle"></i> @Localizer.T("HR.Compliant")</span>
+                            }
+                            else
+                            {
+                                <span class="status-pill inactive"><i class="fas fa-times-circle"></i> @Localizer.T("HR.NonCompliant")</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.LastDocumentUpdate > DateTime.MinValue)
+                            {
+                                <small>@item.LastDocumentUpdate.ToString("dd/MM/yyyy")</small>
+                            }
+                            else
+                            {
+                                <small class="text-muted">-</small>
+                            }
+                        </td>
+                        <td>
+                            <div class="cell-actions justify-content-end">
+                                <a asp-action="Details" asp-route-id="@item.Staff.Id" class="btn btn-sm btn-outline-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" class="text-center py-4">
+                        <partial name="_EmptyState" model='new {
+                            Icon = "fa-users",
+                            Title = Localizer.T("HR.NoStaffFound"),
+                            Message = Localizer.T("HR.NoStaffFoundMessage"),
+                            ActionLink = Url.Action("Create"),
+                            ActionText = Localizer.T("HR.AddNewStaffMember")
+                        }' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (totalPages > 1)
+    {
+        <div class="data-table-pagination">
+            <div class="page-info">
+                @Localizer.T("HR.Showing") @Model.Count @Localizer.T("HR.Of") @totalCount
+            </div>
+            <div class="page-links">
+                <a href="?page=@(currentPage - 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter" class="@(currentPage <= 1 ? "disabled" : "")" aria-label="@Localizer.T("Common.Previous")">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    if (i == currentPage)
+                    {
+                        <span class="active">@i</span>
+                    }
+                    else
+                    {
+                        <a href="?page=@i&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter">@i</a>
+                    }
+                }
+                <a href="?page=@(currentPage + 1)&searchTerm=@ViewBag.SearchTerm&complianceFilter=@ViewBag.ComplianceFilter&departmentFilter=@ViewBag.DepartmentFilter" class="@(currentPage >= totalPages ? "disabled" : "")" aria-label="@Localizer.T("Common.Next")">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
