@@ -87,7 +87,7 @@ public class TranslationService : ITranslationService
             ["App.Title"] = "CBAHI Ambulatory Care Portal",
             ["App.TitleShort"] = "Accreditation Platform",
             ["App.Tagline"] = "Enterprise compliance management platform for healthcare facilities. Streamline accreditation, monitor KPIs, and manage credentials.",
-            ["App.Copyright"] = "© 2024 CBAHI. All rights reserved. Saudi Healthcare Compliance.",
+            ["App.Copyright"] = "© 2026 CBAHI. All rights reserved. Saudi Healthcare Compliance.",
             ["App.Version"] = "Version",
 
             ["Login.SecureLogin"] = "Secure Login",
@@ -101,7 +101,7 @@ public class TranslationService : ITranslationService
             ["Login.ForgotPassword"] = "Forgot password?",
             ["Login.SignIn"] = "Sign In",
             ["Login.SigningIn"] = "Signing in...",
-            ["Login.Footer"] = "© 2024 CBAHI Ambulatory Care Compliance Portal",
+            ["Login.Footer"] = "© 2026 CBAHI Ambulatory Care Compliance Portal",
             ["Login.ChooseLanguage"] = "Language",
 
             ["Login.Feature.Policy"] = "Policy & Document Management",
@@ -925,7 +925,7 @@ public class TranslationService : ITranslationService
             ["App.Title"] = "بوابة سباهي للرعاية الخارجية",
             ["App.TitleShort"] = "منصة الاعتماد",
             ["App.Tagline"] = "منصة إدارة الامتثال المؤسسي للمنشآت الصحية. تبسيط الاعتماد، ومراقبة مؤشرات الأداء، وإدارة المؤهلات.",
-            ["App.Copyright"] = "© 2024 سباهي. جميع الحقوق محفوظة. الامتثال الصحي السعودي.",
+            ["App.Copyright"] = "© 2026 سباهي. جميع الحقوق محفوظة. الامتثال الصحي السعودي.",
             ["App.Version"] = "الإصدار",
 
             ["Login.SecureLogin"] = "تسجيل دخول آمن",
@@ -939,7 +939,7 @@ public class TranslationService : ITranslationService
             ["Login.ForgotPassword"] = "نسيت كلمة المرور؟",
             ["Login.SignIn"] = "تسجيل الدخول",
             ["Login.SigningIn"] = "جاري تسجيل الدخول...",
-            ["Login.Footer"] = "© 2024 سباهي - بوابة الامتثال للرعاية الخارجية",
+            ["Login.Footer"] = "© 2026 سباهي - بوابة الامتثال للرعاية الخارجية",
 
             ["Login.Feature.Policy"] = "إدارة السياسات والوثائق",
             ["Login.Feature.KPI"] = "مراقبة مؤشرات الأداء والتحليلات",
