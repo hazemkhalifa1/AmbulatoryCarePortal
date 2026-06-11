@@ -142,10 +142,12 @@
                                         <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinic.Id" class="btn btn-sm btn-outline-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")"
-                                                onclick="confirmDelete(@clinic.Id, '@clinic.Name')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <form method="post" action="/SuperAdmin/Dashboard/Delete/@clinic.Id" style="display:inline" onsubmit="return confirm('@Localizer.T("Clinic.ConfirmDelete"): @clinic.Name?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

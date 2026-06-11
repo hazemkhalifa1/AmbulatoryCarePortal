@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AmbulatoryCarePortal.Application.Common;
 using AmbulatoryCarePortal.Application.Constants;
 using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
@@ -31,14 +33,74 @@ public class DocumentTemplatesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 10, string? searchTerm = null)
+    public async Task<IActionResult> Index(
+        int page = 1,
+        int pageSize = 20,
+        string? searchTerm = null,
+        string? clinicType = null,
+        string? standard = null)
     {
-        var pagedResult = await _templateService.GetAllTemplatesAsync(page, pageSize, searchTerm);
-
         ViewBag.SearchTerm = searchTerm;
+        ViewBag.SelectedClinicType = clinicType;
+        ViewBag.SelectedStandard = standard;
         ViewBag.PageTitle = _localizer.T("Page.DocumentTemplates");
 
-        return View(pagedResult);
+        if (!string.IsNullOrEmpty(clinicType) && Enum.TryParse<ClinicType>(clinicType, out var parsedType))
+        {
+            var standards = ClinicTypeStandards.GetStandards(parsedType);
+            ViewBag.Standards = standards;
+
+            var allForType = await _unitOfWork.Repository<DocumentTemplate>()
+                .FindAsync(t => t.ClinicType == parsedType && !t.IsDeleted);
+            ViewBag.DocumentCounts = allForType
+                .GroupBy(t => t.StandardCode)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            if (!string.IsNullOrEmpty(standard))
+            {
+                Expression<Func<DocumentTemplate, bool>> predicate = t =>
+                    t.ClinicType == parsedType && t.StandardCode == standard && !t.IsDeleted;
+
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    var term = searchTerm.ToLower();
+                    predicate = t => t.ClinicType == parsedType && t.StandardCode == standard && !t.IsDeleted
+                        && (t.TitleEn.ToLower().Contains(term) || (t.TitleAr != null && t.TitleAr.Contains(term)));
+                }
+
+                var pagedResult = await _unitOfWork.Repository<DocumentTemplate>()
+                    .GetPagedAsync(page, pageSize, predicate);
+
+                var dtoList = pagedResult.Data.Select(t => new DocumentTemplateDto
+                {
+                    Id = t.Id,
+                    StandardCode = t.StandardCode,
+                    TitleEn = t.TitleEn,
+                    TitleAr = t.TitleAr,
+                    Description = t.Description,
+                    DepartmentCategory = t.DepartmentCategory,
+                    ClinicType = t.ClinicType,
+                    TemplateFilePath = t.TemplateFilePath,
+                    IsActive = t.IsActive,
+                    CreatedAt = t.CreatedAt
+                }).ToList();
+
+                var result = new PagedResult<DocumentTemplateDto>
+                {
+                    Data = dtoList,
+                    TotalCount = pagedResult.TotalCount,
+                    PageNumber = pagedResult.PageNumber,
+                    PageSize = pagedResult.PageSize
+                };
+
+                return View(result);
+            }
+
+            return View(new PagedResult<DocumentTemplateDto>());
+        }
+
+        var allResult = await _templateService.GetAllTemplatesAsync(page, pageSize, searchTerm);
+        return View(allResult);
     }
 
     [HttpGet]

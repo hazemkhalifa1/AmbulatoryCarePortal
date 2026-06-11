@@ -126,6 +126,7 @@ public class UserManagementController : Controller
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var auditLog = new AuditTrail
             {
+                ClinicId = user.ClinicId ?? 0,
                 ActionType = AuditActionType.Create,
                 TargetObjectId = 0,
                 TargetObjectType = nameof(AppUser),
@@ -242,6 +243,7 @@ public class UserManagementController : Controller
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var auditLog = new AuditTrail
             {
+                ClinicId = user.ClinicId ?? 0,
                 ActionType = AuditActionType.Update,
                 TargetObjectId = 0,
                 TargetObjectType = nameof(AppUser),
@@ -275,6 +277,7 @@ public class UserManagementController : Controller
         var editUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         var editAuditLog = new AuditTrail
         {
+            ClinicId = user.ClinicId ?? 0,
             ActionType = AuditActionType.Update,
             TargetObjectId = 0,
             TargetObjectType = nameof(AppUser),
@@ -308,6 +311,12 @@ public class UserManagementController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        var roles = await _userManager.GetRolesAsync(user);
+        if (roles.Any())
+        {
+            await _userManager.RemoveFromRolesAsync(user, roles);
+        }
+
         var result = await _userManager.DeleteAsync(user);
 
         if (result.Succeeded)
@@ -315,6 +324,7 @@ public class UserManagementController : Controller
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var auditLog = new AuditTrail
             {
+                ClinicId = user.ClinicId ?? 0,
                 ActionType = AuditActionType.Delete,
                 TargetObjectId = 0,
                 TargetObjectType = nameof(AppUser),

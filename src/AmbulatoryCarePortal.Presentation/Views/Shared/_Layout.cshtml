@@ -78,10 +78,24 @@
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/SuperAdmin/DocumentTemplates" class="nav-link" role="menuitem">
+                                <a href="#docSubMenu" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="@(Context.Request.Path.ToString().Contains("DocumentTemplates") ? "true" : "false")">
                                     <i class="nav-icon fas fa-file"></i>
-                                    <p>@Localizer.T("Nav.ManageDocuments")</p>
+                                    <p>@Localizer.T("Nav.ManageDocuments") <i class="fas fa-angle-down float-end"></i></p>
                                 </a>
+                                <ul class="collapse nav-sidebar @(Context.Request.Path.ToString().Contains("DocumentTemplates") ? "show" : "")" id="docSubMenu">
+                                    <li class="nav-item">
+                                        <a href="/SuperAdmin/DocumentTemplates?clinicType=AMB" class="nav-link ps-4 @(Context.Request.Query["clinicType"].ToString() == "AMB" ? "active" : "")">
+                                            <i class="nav-icon fas fa-circle nav-icon-sm"></i>
+                                            <p>AMB CBAHI</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/SuperAdmin/DocumentTemplates?clinicType=Dental" class="nav-link ps-4 @(Context.Request.Query["clinicType"].ToString() == "Dental" ? "active" : "")">
+                                            <i class="nav-icon fas fa-circle nav-icon-sm"></i>
+                                            <p>Dental CBAHI</p>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                             <li class="nav-item" role="none">
                                 <a href="/SuperAdmin/UserManagement" class="nav-link" role="menuitem">

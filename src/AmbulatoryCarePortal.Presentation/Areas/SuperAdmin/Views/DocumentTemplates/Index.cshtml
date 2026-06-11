@@ -2,57 +2,113 @@
 
 @{
     ViewData["Title"] = Localizer.T("Page.DocumentTemplates");
+    var selectedClinicType = (string?)ViewBag.SelectedClinicType;
+    var selectedStandard = (string?)ViewBag.SelectedStandard;
+    var standards = (string[]?)ViewBag.Standards;
+    var documentCounts = (Dictionary<string, int>?)ViewBag.DocumentCounts;
+    var searchTerm = (string?)ViewBag.SearchTerm;
     var currentPage = Model.PageNumber;
     var totalPages = Model.TotalPages;
     var totalCount = Model.TotalCount;
-    var searchTerm = (string?)ViewBag.SearchTerm;
+
+    var standardNames = new Dictionary<string, string>
+    {
+        {"LD", "Leadership"},
+        {"PC", "Provision of Care"},
+        {"FMS", "Facility Management & Safety"},
+        {"LB", "Laboratory"},
+        {"RD", "Radiology"},
+        {"DN", "Dental/Nursing"},
+        {"MM", "Medication Management"},
+        {"MOI", "Management of Information"},
+        {"IPC", "Infection Prevention & Control"},
+        {"DPU", "DPU"},
+        {"DA", "DA"},
+        {"DL", "Dental Lab"}
+    };
+
+    var standardIcons = new Dictionary<string, string>
+    {
+        {"LD", "fa-users-cog"},
+        {"PC", "fa-stethoscope"},
+        {"FMS", "fa-building"},
+        {"LB", "fa-flask"},
+        {"RD", "fa-x-ray"},
+        {"DN", "fa-tooth"},
+        {"MM", "fa-pills"},
+        {"MOI", "fa-database"},
+        {"IPC", "fa-shield-virus"},
+        {"DPU", "fa-tint"},
+        {"DA", "fa-syringe"},
+        {"DL", "fa-tooth"}
+    };
 }
 
 <div class="fade-in">
-    <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-file me-2"></i>@Localizer.T("Page.DocumentTemplates")</h3>
-            <div class="card-tools">
-                <a asp-action="Create" class="btn btn-success btn-sm" aria-label="@Localizer.T("Button.Create")">
-                    <i class="fas fa-plus"></i> @Localizer.T("Button.Create")
-                </a>
-            </div>
-        </div>
-        <div class="card-body">
-            <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="Filter templates">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <div class="input-group-text"><i class="fas fa-search"></i></div>
-                            <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("Search.Templates")" value="@searchTerm" aria-label="@Localizer.T("Search.Templates")" />
-                            <button type="submit" class="btn btn-primary" aria-label="@Localizer.T("Common.Search")">
-                                <i class="fas fa-search"></i> @Localizer.T("Common.Search")
-                            </button>
-                            @if (!string.IsNullOrEmpty(searchTerm))
-                            {
-                                <a asp-action="Index" class="btn btn-secondary" aria-label="@Localizer.T("Common.Clear")">
-                                    <i class="fas fa-times"></i> @Localizer.T("Common.Clear")
-                                </a>
-                            }
-                        </div>
-                    </div>
-                    <div class="col-md-6 text-end">
-                        <small class="text-muted">@totalCount template(s)</small>
-                    </div>
-                </div>
-            </form>
 
+    @if (!string.IsNullOrEmpty(selectedClinicType))
+    {
+        <!-- Standards Cards Row -->
+        @if (standards != null && standards.Any())
+        {
+            <div class="row g-3 mb-4">
+                @foreach (var std in standards)
+                {
+                    var count = documentCounts != null && documentCounts.ContainsKey(std) ? documentCounts[std] : 0;
+                    var isSelected = std == selectedStandard;
+                    var stdName = standardNames.ContainsKey(std) ? standardNames[std] : std;
+                    var icon = standardIcons.ContainsKey(std) ? standardIcons[std] : "fa-file";
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <a href="/SuperAdmin/DocumentTemplates?clinicType=@selectedClinicType&standard=@std"
+                           class="text-decoration-none">
+                            <div class="standard-card @(isSelected ? "standard-card-selected" : "")">
+                                <div class="standard-card-icon"><i class="fas @icon"></i></div>
+                                <div class="standard-card-name">@stdName</div>
+                                <div class="standard-card-count">@count @Localizer.T("Clinic.Documents")</div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(selectedStandard))
+        {
+            <!-- Toolbar -->
+            <div class="table-toolbar">
+                <div class="d-flex align-items-center gap-3">
+                    <h5 class="mb-0 fw-bold">@Localizer.T("Page.DocumentTemplates")</h5>
+                    <span class="badge badge-primary">@selectedStandard</span>
+                    <small class="text-muted">(@totalCount @Localizer.T("Clinic.Documents"))</small>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <form method="get" action="/SuperAdmin/DocumentTemplates" class="d-flex align-items-center gap-2" role="search">
+                        <input type="hidden" name="clinicType" value="@selectedClinicType" />
+                        <input type="hidden" name="standard" value="@selectedStandard" />
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" name="searchTerm" class="form-control form-control-sm" placeholder="@Localizer.T("Search.Templates")" value="@searchTerm" />
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
+                        @if (!string.IsNullOrEmpty(searchTerm))
+                        {
+                            <a href="/SuperAdmin/DocumentTemplates?clinicType=@selectedClinicType&standard=@selectedStandard" class="btn btn-sm btn-secondary"><i class="fas fa-times"></i></a>
+                        }
+                    </form>
+                    <a asp-action="Create" class="btn btn-sm btn-success"><i class="fas fa-plus"></i> @Localizer.T("Button.Add") @Localizer.T("Clinic.Document")</a>
+                </div>
+            </div>
+
+            <!-- Table -->
             <div class="table-container">
-                <table class="table table-hover" role="table" aria-label="Document templates">
+                <table class="table table-hover" role="table">
                     <thead>
                         <tr>
-                            <th scope="col">Standard Code</th>
-                            <th scope="col">Title (EN)</th>
-                            <th scope="col">Title (AR)</th>
-                            <th scope="col">Clinic Type</th>
-                            <th scope="col">Department Category</th>
-                            <th scope="col">Template File</th>
-                            <th scope="col">@Localizer.T("Common.Active")</th>
+                            <th scope="col">@Localizer.T("Common.Id")</th>
+                            <th scope="col">@Localizer.T("Clinic.Document")</th>
+                            <th scope="col">@Localizer.T("Clinic.Department")</th>
+                            <th scope="col" class="text-center">@Localizer.T("Common.View")</th>
+                            <th scope="col" class="text-center">@Localizer.T("Common.Active")</th>
                             <th scope="col" class="text-center">@Localizer.T("Common.Actions")</th>
                         </tr>
                     </thead>
@@ -63,18 +119,7 @@
                             {
                                 <tr>
                                     <td><span class="badge badge-info">@template.StandardCode</span></td>
-                                    <td>@template.TitleEn</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(template.TitleAr))
-                                        {
-                                            <span dir="rtl">@template.TitleAr</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">&mdash;</span>
-                                        }
-                                    </td>
-                                    <td><span class="badge badge-primary">@template.ClinicType</span></td>
+                                    <td class="fw-semibold">@template.TitleEn</td>
                                     <td>
                                         @if (!string.IsNullOrEmpty(template.DepartmentCategory))
                                         {
@@ -85,41 +130,55 @@
                                             <span class="text-muted">&mdash;</span>
                                         }
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         @if (!string.IsNullOrEmpty(template.TemplateFilePath))
                                         {
-                                            <span class="badge badge-success"><i class="fas fa-check"></i> Uploaded</span>
+                                            <a href="@template.TemplateFilePath" target="_blank" class="text-secondary text-decoration-none" title="@Localizer.T("Common.View") PDF">
+                                                <i class="fas fa-eye me-1"></i>@Localizer.T("Common.View")
+                                            </a>
                                         }
                                         else
                                         {
-                                            <span class="badge badge-secondary"><i class="fas fa-times"></i> No file</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (template.IsActive)
-                                        {
-                                            <span class="badge badge-success">@Localizer.T("Common.Active")</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge badge-secondary">@Localizer.T("Common.Inactive")</span>
+                                            <span class="text-muted">&mdash;</span>
                                         }
                                     </td>
                                     <td class="text-center">
-                                        <div class="actions-cell">
-                                            <a asp-action="Edit" asp-route-id="@template.Id" class="btn btn-sm btn-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-sm btn-info" title="Assign to All Clinics" aria-label="Assign to all clinics"
-                                                    data-bs-toggle="modal" data-bs-target="#assignModal"
-                                                    data-template-id="@template.Id" data-template-code="@template.StandardCode">
-                                                <i class="fas fa-hospital"></i>
+                                        @if (template.IsActive)
+                                        {
+                                            <span class="status-pill complete">@Localizer.T("Common.Active")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-pill inactive">@Localizer.T("Common.Inactive")</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-ghost" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                    data-template-id="@template.Id" data-template-code="@template.StandardCode">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a asp-action="Edit" asp-route-id="@template.Id" class="dropdown-item">
+                                                        <i class="fas fa-edit text-warning"></i> @Localizer.T("Common.Edit")
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item"
+                                                            data-bs-toggle="modal" data-bs-target="#assignModal"
+                                                            data-template-id="@template.Id" data-template-code="@template.StandardCode">
+                                                        <i class="fas fa-hospital text-info"></i> @Localizer.T("Clinic.AssignTemplates")
+                                                    </button>
+                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item text-danger"
+                                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                            data-template-id="@template.Id" data-template-code="@template.StandardCode">
+                                                        <i class="fas fa-trash"></i> @Localizer.T("Common.Delete")
+                                                    </button>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </td>
                                 </tr>
@@ -128,7 +187,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="8" class="text-center text-muted py-4">
+                                <td colspan="6" class="text-center text-muted py-4">
                                     <i class="fas fa-file fa-3x mb-2"></i><br />
                                     @Localizer.T("Empty.NoTemplates")
                                     @if (!string.IsNullOrEmpty(searchTerm))
@@ -137,7 +196,7 @@
                                     }
                                     else
                                     {
-                                        <a asp-action="Create">@Localizer.T("Button.Create")</a>
+                                        <a asp-action="Create">@Localizer.T("Button.Create") @Localizer.T("Clinic.Document")</a>
                                     }
                                 </td>
                             </tr>
@@ -154,28 +213,28 @@
                         <nav aria-label="Template table pagination">
                             <ul class="pagination">
                                 <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-searchTerm="@searchTerm" aria-label="@Localizer.T("Common.Page") 1">
+                                    <a class="page-link" href="/SuperAdmin/DocumentTemplates?clinicType=@selectedClinicType&standard=@selectedStandard&page=1&searchTerm=@searchTerm" aria-label="First">
                                         <i class="fas fa-angle-double-left"></i>
                                     </a>
                                 </li>
                                 <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" aria-label="@Localizer.T("Common.Previous")">
+                                    <a class="page-link" href="/SuperAdmin/DocumentTemplates?clinicType=@selectedClinicType&standard=@selectedStandard&page=@(currentPage - 1)&searchTerm=@searchTerm" aria-label="Previous">
                                         <i class="fas fa-angle-left"></i>
                                     </a>
                                 </li>
                                 @for (var i = 1; i <= totalPages; i++)
                                 {
                                     <li class="page-item @(i == currentPage ? "active" : "")">
-                                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchTerm="@searchTerm" aria-label="Page @i">@i</a>
+                                        <a class="page-link" href="/SuperAdmin/DocumentTemplates?clinicType=@selectedClinicType&standard=@selectedStandard&page=@i&searchTerm=@searchTerm">@i</a>
                                     </li>
                                 }
                                 <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" aria-label="@Localizer.T("Common.Next")">
+                                    <a class="page-link" href="/SuperAdmin/DocumentTemplates?clinicType=@selectedClinicType&standard=@selectedStandard&page=@(currentPage + 1)&searchTerm=@searchTerm" aria-label="Next">
                                         <i class="fas fa-angle-right"></i>
                                     </a>
                                 </li>
                                 <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@totalPages" asp-route-searchTerm="@searchTerm" aria-label="Last page">
+                                    <a class="page-link" href="/SuperAdmin/DocumentTemplates?clinicType=@selectedClinicType&standard=@selectedStandard&page=@totalPages&searchTerm=@searchTerm" aria-label="Last">
                                         <i class="fas fa-angle-double-right"></i>
                                     </a>
                                 </li>
@@ -184,8 +243,34 @@
                     </div>
                 }
             </div>
+        }
+        else
+        {
+            <!-- No standard selected - prompt -->
+            <div class="text-center py-5">
+                <i class="fas fa-hand-pointer fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">@Localizer.T("Document.SelectStandard")</h5>
+                <p class="text-muted small">@Localizer.T("Document.SelectStandardHint")</p>
+            </div>
+        }
+    }
+    else
+    {
+        <!-- No clinic type selected -->
+        <div class="text-center py-5">
+            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">@Localizer.T("Document.SelectClinicType")</h5>
+            <p class="text-muted small">@Localizer.T("Document.SelectClinicTypeHint")</p>
+            <div class="d-flex justify-content-center gap-3 mt-3">
+                <a href="/SuperAdmin/DocumentTemplates?clinicType=AMB" class="btn btn-primary btn-lg">
+                    <i class="fas fa-hospital me-2"></i>AMB CBAHI
+                </a>
+                <a href="/SuperAdmin/DocumentTemplates?clinicType=Dental" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-tooth me-2"></i>Dental CBAHI
+                </a>
+            </div>
         </div>
-    </div>
+    }
 </div>
 
 <!-- Delete Modal -->
@@ -193,8 +278,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title" id="deleteModalTitle"><i class="fas fa-exclamation-triangle me-2"></i>@Localizer.T("Common.Confirm")</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
+                <h5 class="modal-title" id="deleteModalTitle"><i class="fas fa-exclamation-triangle me-2"></i>@Localizer.T("Common.Confirm")</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
             </div>
             <form method="post" asp-action="Delete" id="deleteForm">
                 <input type="hidden" name="id" id="deleteTemplateId" value="" />

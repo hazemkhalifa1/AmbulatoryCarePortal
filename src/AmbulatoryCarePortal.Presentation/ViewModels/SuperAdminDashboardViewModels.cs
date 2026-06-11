@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using AmbulatoryCarePortal.Application.DTOs.Clinic;
 
 namespace AmbulatoryCarePortal.Presentation.ViewModels;
@@ -10,6 +11,7 @@ public class SuperAdminDashboardViewModel
 
 public class CreateClinicViewModel
 {
+    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? NameAr { get; set; }
     public string? CityEn { get; set; }
@@ -17,4 +19,7 @@ public class CreateClinicViewModel
     public AmbulatoryCarePortal.Domain.Enums.ClinicType ClinicType { get; set; }
     public string? LicenseNumber { get; set; }
     public DateTime? LicenseExpiry { get; set; }
+    public bool IsActive { get; set; } = true;
+    public IFormFile? LogoFile { get; set; }
+    public string? ExistingLogoPath { get; set; }
 }

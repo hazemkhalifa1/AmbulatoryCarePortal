@@ -8,21 +8,32 @@
 <div class="clinic-detail-hero mb-4">
     <div class="hero-content">
         <div class="d-flex justify-content-between align-items-start">
-            <div>
-                <div class="d-flex align-items-center gap-3 mb-2">
-                    <h1 class="hero-title mb-0"><i class="fas fa-clinic-medical me-2"></i>@Model.Name</h1>
-                    @if (Model.IsActive)
-                    {
-                        <span class="badge badge-lg bg-success">@Localizer.T("Common.Active")</span>
-                    }
-                    else
-                    {
-                        <span class="badge badge-lg bg-danger">@Localizer.T("Common.Inactive")</span>
-                    }
+            <div class="d-flex align-items-center gap-4">
+                @if (!string.IsNullOrEmpty(Model.LogoPath))
+                {
+                    <div class="clinic-logo-wrapper">
+                        <img src="@Model.LogoPath" alt="@Model.Name logo" class="clinic-hero-logo" />
+                    </div>
+                }
+                <div>
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <h1 class="hero-title mb-0"><i class="fas fa-clinic-medical me-2"></i>@Model.Name</h1>
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge badge-lg bg-success">@Localizer.T("Common.Active")</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-lg bg-danger">@Localizer.T("Common.Inactive")</span>
+                        }
+                    </div>
+                    <p class="hero-subtitle mb-0">@Model.NameAr</p>
                 </div>
-                <p class="hero-subtitle mb-0">@Model.NameAr</p>
             </div>
             <div class="d-flex gap-2">
+                <a href="/SuperAdmin/Dashboard/Edit/@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-edit me-1"></i>@Localizer.T("Common.Edit")
+                </a>
                 <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-light">
                     <i class="fas fa-arrow-left me-1"></i>@Localizer.T("Common.Back")
                 </a>
@@ -155,11 +166,14 @@
                         </form>
                     </div>
                     <div class="col-md-6">
-                        <a href="/SuperAdmin/Dashboard/Clinics" class="action-btn action-btn-secondary">
-                            <i class="fas fa-arrow-left"></i>
-                            <span>@Localizer.T("Common.Back")</span>
-                            <small>@Localizer.T("Dashboard.Action.ReturnToList")</small>
-                        </a>
+                        <form method="post" action="/SuperAdmin/Dashboard/Delete/@Model.Id" style="margin: 0; padding: 0;" onsubmit="return confirm('@Localizer.T("Clinic.ConfirmDelete"): @Model.Name?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="action-btn action-btn-danger" style="width: 100%; cursor: pointer; font-family: inherit; font-size: inherit; line-height: inherit; text-align: inherit;">
+                                <i class="fas fa-trash"></i>
+                                <span>@Localizer.T("Common.Delete") @Localizer.T("Page.Clinic")</span>
+                                <small>@Localizer.T("Dashboard.Action.DeleteClinicWarning")</small>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
