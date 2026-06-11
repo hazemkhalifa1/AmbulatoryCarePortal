@@ -1,4 +1,5 @@
 using AmbulatoryCarePortal.Application.DTOs.Document;
+using AmbulatoryCarePortal.Domain.Enums;
 using FluentValidation;
 
 namespace AmbulatoryCarePortal.Application.Validators;
@@ -23,5 +24,8 @@ public class CreateDocumentTemplateDtoValidator : AbstractValidator<CreateDocume
 
         RuleFor(x => x.DepartmentCategory)
             .MaximumLength(100).WithMessage("Department category must not exceed 100 characters");
+
+        RuleFor(x => x.ClinicType)
+            .IsInEnum().WithMessage("Clinic type is required");
     }
 }

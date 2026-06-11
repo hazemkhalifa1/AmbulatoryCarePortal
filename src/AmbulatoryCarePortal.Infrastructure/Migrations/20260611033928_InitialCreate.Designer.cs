@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AmbulatoryCarePortal.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260609134630_Initial")]
-    partial class Initial
+    [Migration("20260611033928_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -493,6 +493,119 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.ToTable("Clinics");
                 });
 
+            modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ClinicDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocumentStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("DocumentTemplateId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("OfficialPdfPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentTemplateId");
+
+                    b.HasIndex("ClinicId", "DocumentTemplateId")
+                        .IsUnique();
+
+                    b.ToTable("ClinicDocuments");
+                });
+
+            modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ClinicDocumentAttachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClinicDocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FilePath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FileType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UploadedByUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClinicDocumentId");
+
+                    b.HasIndex("UploadedByUserId");
+
+                    b.ToTable("ClinicDocumentAttachments");
+                });
+
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -537,6 +650,71 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.DocumentTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClinicType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentCategory")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("StandardCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("TemplateFilePath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("TitleAr")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("TitleEn")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StandardCode")
+                        .IsUnique();
+
+                    b.ToTable("DocumentTemplates");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.EvidenceAttachment", b =>
@@ -1397,6 +1575,43 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.Navigation("Department");
                 });
 
+            modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ClinicDocument", b =>
+                {
+                    b.HasOne("AmbulatoryCarePortal.Domain.Entities.Clinic", "Clinic")
+                        .WithMany("ClinicDocuments")
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AmbulatoryCarePortal.Domain.Entities.DocumentTemplate", "DocumentTemplate")
+                        .WithMany("ClinicDocuments")
+                        .HasForeignKey("DocumentTemplateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Clinic");
+
+                    b.Navigation("DocumentTemplate");
+                });
+
+            modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ClinicDocumentAttachment", b =>
+                {
+                    b.HasOne("AmbulatoryCarePortal.Domain.Entities.ClinicDocument", "ClinicDocument")
+                        .WithMany("Attachments")
+                        .HasForeignKey("ClinicDocumentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AmbulatoryCarePortal.Domain.Entities.AppUser", "UploadedByUser")
+                        .WithMany()
+                        .HasForeignKey("UploadedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ClinicDocument");
+
+                    b.Navigation("UploadedByUser");
+                });
+
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.Department", b =>
                 {
                     b.HasOne("AmbulatoryCarePortal.Domain.Entities.Clinic", "Clinic")
@@ -1653,6 +1868,8 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.Navigation("ChecklistTemplates");
 
+                    b.Navigation("ClinicDocuments");
+
                     b.Navigation("Departments");
 
                     b.Navigation("Forms");
@@ -1668,6 +1885,11 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ClinicDocument", b =>
+                {
+                    b.Navigation("Attachments");
+                });
+
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.Department", b =>
                 {
                     b.Navigation("ChecklistRounds");
@@ -1681,6 +1903,11 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.Navigation("Staff");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.DocumentTemplate", b =>
+                {
+                    b.Navigation("ClinicDocuments");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.Form", b =>

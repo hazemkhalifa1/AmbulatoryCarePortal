@@ -90,7 +90,8 @@ public class MappingProfile : Profile
         // Document Template Mappings
         CreateMap<DocumentTemplate, CreateDocumentTemplateDto>().ReverseMap();
         CreateMap<DocumentTemplate, UpdateDocumentTemplateDto>().ReverseMap();
-        CreateMap<DocumentTemplate, DocumentTemplateDto>();
+        CreateMap<DocumentTemplate, DocumentTemplateDto>()
+            .ForMember(dest => dest.ClinicType, opt => opt.MapFrom(src => src.ClinicType));
 
         // ClinicDocument Mappings
         CreateMap<ClinicDocument, ClinicDocumentDto>();

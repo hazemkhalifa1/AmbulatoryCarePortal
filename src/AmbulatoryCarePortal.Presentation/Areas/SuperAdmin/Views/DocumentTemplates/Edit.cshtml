@@ -27,8 +27,8 @@
                 <form method="post" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" role="form" aria-label="Edit template form">
                     @Html.AntiForgeryToken()
                     <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ClinicType" id="clinicTypeHidden" />
 
-                    <!-- Section: Standard Identification -->
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-tag me-2"></i>
@@ -42,17 +42,18 @@
                                     <span asp-validation-for="StandardCode" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="DepartmentCategory" class="form-label">Department Category</label>
-                                    <select asp-for="DepartmentCategory" class="form-select">
-                                        <option value="">-- Select Category --</option>
-                                        <option value="Leadership">Leadership (LD)</option>
-                                        <option value="FMS">Facility Management (FMS)</option>
-                                        <option value="PFE">Patient & Family Education (PFE)</option>
-                                        <option value="LAB">Laboratory (LAB)</option>
-                                        <option value="RAD">Radiology (RAD)</option>
-                                        <option value="INF">Infection Control (INF)</option>
-                                        <option value="HRM">Human Resources (HRM)</option>
-                                        <option value="NURS">Nursing (NURS)</option>
+                                    <label asp-for="ClinicType" class="form-label">@Localizer.T("Doc.ClinicType") <span class="text-danger">*</span></label>
+                                    <select asp-for="ClinicType" class="form-select" id="clinicTypeSelect" asp-items="Html.GetEnumSelectList<ClinicType>()">
+                                        <option value="">-- @Localizer.T("Doc.SelectClinicType") --</option>
+                                    </select>
+                                    <span asp-validation-for="ClinicType" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="DepartmentCategory" class="form-label">@Localizer.T("Template.DepartmentCategory") <span class="text-danger">*</span></label>
+                                    <select asp-for="DepartmentCategory" class="form-select" id="departmentCategorySelect">
+                                        <option value="">-- @Localizer.T("Doc.SelectStandard") --</option>
                                     </select>
                                     <span asp-validation-for="DepartmentCategory" class="text-danger"></span>
                                 </div>
@@ -60,7 +61,6 @@
                         </div>
                     </div>
 
-                    <!-- Section: Title Information -->
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-heading me-2"></i>
@@ -82,7 +82,6 @@
                         </div>
                     </div>
 
-                    <!-- Section: Description -->
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-align-left me-2"></i>
@@ -97,7 +96,6 @@
                         </div>
                     </div>
 
-                    <!-- Section: Status -->
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-toggle-on me-2"></i>
@@ -111,7 +109,6 @@
                         </div>
                     </div>
 
-                    <!-- Section: File Upload -->
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-upload me-2"></i>
@@ -170,6 +167,37 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        function loadStandardsDropdown(clinicType) {
+            return $.get('@Url.Action("GetStandards", "DocumentTemplates", new { area = "SuperAdmin" })', { clinicType: clinicType });
+        }
+
+        $('#clinicTypeSelect').on('change', function() {
+            var val = $(this).val();
+            var $deptSelect = $('#departmentCategorySelect').empty().append('<option value="">-- @Localizer.T("Doc.SelectStandard") --');
+
+            if (!val) return;
+
+            loadStandardsDropdown(val).done(function(data) {
+                $.each(data.standards, function(i, s) {
+                    $deptSelect.append('<option value="' + s + '">' + s + '</option>');
+                });
+
+                // Re-select the previously saved DepartmentCategory if it matches any standard
+                var savedDept = '@Model.DepartmentCategory';
+                if (savedDept) {
+                    $deptSelect.val(savedDept);
+                }
+            });
+        });
+
+        // Trigger on load to populate standards for the current ClinicType
+        $(function() {
+            var initialType = $('#clinicTypeSelect').val();
+            if (initialType) {
+                $('#clinicTypeSelect').trigger('change');
+            }
+        });
+
         document.getElementById('uploadBtn').addEventListener('click', function() {
             document.getElementById('templateFile').click();
         });

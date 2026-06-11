@@ -1,32 +1,28 @@
 @model dynamic
-@*
-    Usage:
-    <partial name="_PageHeader" model='new {
-        Icon = "fa-chart-line",
-        Title = "KPI Monitoring",
-        Subtitle = "Track and manage key performance indicators",
-        Actions = new List<dynamic> {
-            new { Link = "/ClinicAdmin/KPIManagement/Create", Text = "Add KPI", Icon = "fa-plus", Class = "btn-primary" }
-        }
-    }' />
-*@
+@{
+    string SafeString(object value) => value?.ToString() ?? "";
+    bool HasProp(object obj, string name) => obj.GetType().GetProperty(name) != null;
+    var subtitle = HasProp(Model, "Subtitle") ? SafeString(Model.Subtitle) : "";
+    var hasActions = HasProp(Model, "Actions") && Model.Actions != null;
+    var icon = HasProp(Model, "Icon") ? SafeString(Model.Icon) : "fa-tachometer-alt";
+}
 <div class="dashboard-hero mb-4">
     <div class="hero-content">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div>
-                <h1 class="hero-title"><i class="fas @(Model.Icon ?? "fa-tachometer-alt") me-2"></i>@Model.Title</h1>
-                @if (!string.IsNullOrEmpty(Model.Subtitle))
+                <h1 class="hero-title"><i class="fas @icon me-2"></i>@Model.Title</h1>
+                @if (!string.IsNullOrEmpty(subtitle))
                 {
-                    <p class="hero-subtitle mb-0">@Model.Subtitle</p>
+                    <p class="hero-subtitle mb-0">@subtitle</p>
                 }
             </div>
-            @if (Model.Actions != null)
+            @if (hasActions)
             {
                 <div class="d-flex gap-2">
                     @foreach (var action in Model.Actions)
                     {
-                        <a href="@action.Link" class="btn @(action.Class ?? "btn-primary")">
-                            @if (!string.IsNullOrEmpty(action.Icon))
+                        <a href="@action.Link" class="btn @(!string.IsNullOrEmpty(SafeString(action.Class)) ? SafeString(action.Class) : "btn-primary")">
+                            @if (HasProp(action, "Icon") && !string.IsNullOrEmpty(SafeString(action.Icon)))
                             {
                                 <i class="fas @action.Icon me-1"></i>
                             }

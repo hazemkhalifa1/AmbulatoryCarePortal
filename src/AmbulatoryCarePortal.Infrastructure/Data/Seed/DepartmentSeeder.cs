@@ -33,7 +33,7 @@ public static class DepartmentSeeder
                 NameAr = "العيادة التجريبية",
                 CityEn = "Riyadh",
                 CityAr = "الرياض",
-                ClinicType = ClinicType.Ambulatory,
+                ClinicType = ClinicType.AMB,
                 LicenseNumber = "LIC-001",
                 LicenseExpiry = DateTime.Now.AddYears(2),
                 IsActive = true,

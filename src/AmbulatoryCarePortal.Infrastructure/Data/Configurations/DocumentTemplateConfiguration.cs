@@ -15,6 +15,10 @@ public class DocumentTemplateConfiguration : IEntityTypeConfiguration<DocumentTe
         builder.Property(x => x.TitleAr).HasMaxLength(255);
         builder.Property(x => x.Description).HasMaxLength(1000);
         builder.Property(x => x.DepartmentCategory).HasMaxLength(100);
+        builder.Property(x => x.ClinicType)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasMaxLength(50);
         builder.Property(x => x.TemplateFilePath).HasMaxLength(500);
 
         builder.HasIndex(x => x.StandardCode).IsUnique();

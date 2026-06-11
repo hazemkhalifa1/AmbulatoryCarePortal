@@ -19,14 +19,46 @@
     </div>
 </div>
 
+<!-- Step 1: Clinic Type Selection -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">@Localizer.T("Doc.ClinicType") <span class="text-danger">*</span></label>
+                <select id="clinicTypeSelect" class="form-select form-select-lg">
+                    <option value="">-- @Localizer.T("Doc.SelectClinicType") --</option>
+                    <option value="AMB">AMB CBAHI</option>
+                    <option value="Dental">Dental CBAHI</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Step 2: Standards Tab Bar -->
+<div id="standardsSection" class="d-none mb-4">
+    <div class="card">
+        <div class="card-body">
+            <ul class="nav nav-pills mb-3" id="standardsTabs" role="tablist"></ul>
+            <div id="templatesTableContainer">
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-hand-pointer fa-2x mb-2"></i>
+                    <p>@Localizer.T("Doc.SelectStandard")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Step 3: Create Form -->
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="card template-form-card">
             <div class="card-body">
                 <form method="post" asp-action="Create" enctype="multipart/form-data" role="form" aria-label="Create template form">
                     @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="ClinicType" id="clinicTypeHidden" />
 
-                    <!-- Section: Standard Identification -->
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-tag me-2"></i>
@@ -40,17 +72,9 @@
                                     <span asp-validation-for="StandardCode" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="DepartmentCategory" class="form-label">Department Category</label>
-                                    <select asp-for="DepartmentCategory" class="form-select">
-                                        <option value="">-- Select Category --</option>
-                                        <option value="Leadership">Leadership (LD)</option>
-                                        <option value="FMS">Facility Management (FMS)</option>
-                                        <option value="PFE">Patient & Family Education (PFE)</option>
-                                        <option value="LAB">Laboratory (LAB)</option>
-                                        <option value="RAD">Radiology (RAD)</option>
-                                        <option value="INF">Infection Control (INF)</option>
-                                        <option value="HRM">Human Resources (HRM)</option>
-                                        <option value="NURS">Nursing (NURS)</option>
+                                    <label asp-for="DepartmentCategory" class="form-label">@Localizer.T("Template.DepartmentCategory") <span class="text-danger">*</span></label>
+                                    <select asp-for="DepartmentCategory" class="form-select" id="departmentCategorySelect">
+                                        <option value="">-- @Localizer.T("Doc.SelectStandard") --</option>
                                     </select>
                                     <span asp-validation-for="DepartmentCategory" class="text-danger"></span>
                                 </div>
@@ -58,7 +82,6 @@
                         </div>
                     </div>
 
-                    <!-- Section: Title Information -->
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-heading me-2"></i>
@@ -80,7 +103,6 @@
                         </div>
                     </div>
 
-                    <!-- Section: Description -->
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-align-left me-2"></i>
@@ -89,13 +111,12 @@
                         <div class="form-section-body">
                             <div class="mb-3">
                                 <label asp-for="Description" class="form-label">Description (Optional)</label>
-                                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Provide a brief description of this template's purpose..."></textarea>
+                                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Provide a brief description of this template's purpose..."></textarea>
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Section: File Upload -->
                     <div class="form-section">
                         <div class="form-section-header">
                             <i class="fas fa-upload me-2"></i>
@@ -146,6 +167,74 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        var standardsCache = {};
+
+        function loadStandards(clinicType) {
+            if (standardsCache[clinicType]) {
+                return $.Deferred().resolve(standardsCache[clinicType]).promise();
+            }
+            return $.get('@Url.Action("GetStandards", "DocumentTemplates", new { area = "SuperAdmin" })', { clinicType: clinicType })
+                .done(function(data) { standardsCache[clinicType] = data.standards; });
+        }
+
+        function renderStandardsTabs(standards) {
+            var $tabs = $('#standardsTabs').empty();
+            var $deptSelect = $('#departmentCategorySelect').empty().append('<option value="">-- @Localizer.T("Doc.SelectStandard") --');
+
+            $.each(standards, function(i, s) {
+                var active = i === 0 ? 'active' : '';
+                $tabs.append('<li class="nav-item" role="presentation"><button class="nav-link ' + active + '" data-standard="' + s + '" type="button" role="tab">' + s + '</button></li>');
+                $deptSelect.append('<option value="' + s + '">' + s + '</option>');
+            });
+
+            if (standards.length > 0) {
+                loadTemplatesForTab(standards[0]);
+            }
+        }
+
+        function loadTemplatesForTab(standard) {
+            var clinicType = $('#clinicTypeSelect').val();
+            var $container = $('#templatesTableContainer');
+            $container.html('<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2 text-muted">Loading templates...</p></div>');
+
+            $.get('@Url.Action("ByTypeAndStandard", "DocumentTemplates", new { area = "SuperAdmin" })', { clinicType: clinicType, standard: standard })
+                .done(function(data) {
+                    if (!data || data.length === 0) {
+                        $container.html('<div class="text-center py-4 text-muted"><i class="fas fa-file fa-2x mb-2"></i><p>@Localizer.T("Empty.NoTemplates")</p></div>');
+                        return;
+                    }
+                    var html = '<div class="table-responsive"><table class="table table-hover data-table"><thead><tr><th>@Localizer.T("Doc.StandardCode")</th><th>@Localizer.T("Doc.TitleEn")</th><th>@Localizer.T("Doc.TitleAr")</th><th>@Localizer.T("Common.Active")</th></tr></thead><tbody>';
+                    $.each(data, function(i, t) {
+                        html += '<tr><td><span class="badge badge-info">' + t.standardCode + '</span></td><td>' + t.titleEn + '</td><td>' + (t.titleAr || '&mdash;') + '</td><td>' + (t.isActive ? '<span class="badge badge-success">@Localizer.T("Common.Active")</span>' : '<span class="badge badge-secondary">@Localizer.T("Common.Inactive")</span>') + '</td></tr>';
+                    });
+                    html += '</tbody></table></div>';
+                    $container.html(html);
+                });
+        }
+
+        $('#clinicTypeSelect').on('change', function() {
+            var val = $(this).val();
+            $('#clinicTypeHidden').val(val);
+
+            if (!val) {
+                $('#standardsSection').addClass('d-none');
+                return;
+            }
+
+            $('#standardsSection').removeClass('d-none');
+            $('#templatesTableContainer').html('<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2 text-muted">Loading standards...</p></div>');
+
+            loadStandards(val).done(function(standards) {
+                renderStandardsTabs(standards);
+            });
+        });
+
+        $('#standardsTabs').on('click', 'button', function() {
+            $('#standardsTabs button').removeClass('active');
+            $(this).addClass('active');
+            loadTemplatesForTab($(this).data('standard'));
+        });
+
         document.getElementById('uploadBtn').addEventListener('click', function() {
             document.getElementById('templateFile').click();
         });
@@ -174,5 +263,11 @@
             document.getElementById('uploadPreview').classList.add('d-none');
             document.getElementById('uploadArea').classList.remove('has-file');
         });
+
+        // Pre-select if value exists (for re-rendering after validation error)
+        var preselectedType = $('#clinicTypeHidden').val();
+        if (preselectedType) {
+            $('#clinicTypeSelect').val(preselectedType).trigger('change');
+        }
     </script>
 }

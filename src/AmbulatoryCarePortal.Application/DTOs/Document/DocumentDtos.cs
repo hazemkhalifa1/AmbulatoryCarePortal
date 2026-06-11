@@ -9,6 +9,7 @@ public class CreateDocumentTemplateDto
     public string? TitleAr { get; set; }
     public string? Description { get; set; }
     public string? DepartmentCategory { get; set; }
+    public ClinicType ClinicType { get; set; }
 }
 
 public class UpdateDocumentTemplateDto
@@ -19,6 +20,7 @@ public class UpdateDocumentTemplateDto
     public string? TitleAr { get; set; }
     public string? Description { get; set; }
     public string? DepartmentCategory { get; set; }
+    public ClinicType ClinicType { get; set; }
     public bool IsActive { get; set; }
 }
 
@@ -30,6 +32,7 @@ public class DocumentTemplateDto
     public string? TitleAr { get; set; }
     public string? Description { get; set; }
     public string? DepartmentCategory { get; set; }
+    public ClinicType ClinicType { get; set; }
     public string? TemplateFilePath { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }

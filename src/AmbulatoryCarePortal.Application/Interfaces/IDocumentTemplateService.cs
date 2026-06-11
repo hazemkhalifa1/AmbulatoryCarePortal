@@ -1,5 +1,6 @@
 using AmbulatoryCarePortal.Application.Common;
 using AmbulatoryCarePortal.Application.DTOs.Document;
+using AmbulatoryCarePortal.Domain.Enums;
 
 namespace AmbulatoryCarePortal.Application.Interfaces;
 
@@ -12,4 +13,5 @@ public interface IDocumentTemplateService
     Task<bool> DeleteTemplateAsync(int id);
     Task<bool> UploadTemplateFileAsync(int id, string filePath);
     Task AssignToAllClinicsAsync(int templateId);
+    Task<List<DocumentTemplateDto>> GetTemplatesByTypeAndStandardAsync(ClinicType clinicType, string standard);
 }

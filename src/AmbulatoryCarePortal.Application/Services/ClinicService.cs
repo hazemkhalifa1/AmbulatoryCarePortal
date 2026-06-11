@@ -76,13 +76,11 @@ public class ClinicService : IClinicService
         await _unitOfWork.Repository<Clinic>().AddAsync(clinic);
         await _unitOfWork.SaveChangesAsync();
 
-        // Create default departments for ambulatory care
-        if (clinic.ClinicType == ClinicType.Ambulatory || clinic.ClinicType == ClinicType.Specialty)
+        if (clinic.ClinicType == ClinicType.AMB)
         {
             await CreateDefaultDepartmentsAsync(clinic.Id);
         }
-        // Create dental-specific departments for dental centers
-        else if (clinic.ClinicType == ClinicType.DentalCenter)
+        else if (clinic.ClinicType == ClinicType.Dental)
         {
             await CreateDentalDepartmentsAsync(clinic.Id);
         }

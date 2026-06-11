@@ -4,13 +4,35 @@
     ViewData["Title"] = @Localizer.T("Page.ClinicDocuments");
     var searchTerm = (string?)ViewBag.SearchTerm;
     var statusFilter = (string?)ViewBag.StatusFilter;
+    var standardFilter = (string?)ViewBag.StandardFilter;
+    var standards = (string[]?)ViewBag.Standards;
 }
 
 <partial name="_PageHeader" model='new {
     Title = Localizer.T("Page.ClinicDocuments"),
     Icon = "fa-file",
+    Subtitle = "",
     Breadcrumb = ""
 }' />
+
+@if (standards != null && standards.Length > 0)
+{
+    <div class="card mb-3">
+        <div class="card-body py-2">
+            <ul class="nav nav-pills" id="standardsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link @(string.IsNullOrEmpty(standardFilter) ? "active" : "")" asp-action="Index" asp-route-standardFilter="" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" role="tab">@Localizer.T("Common.All")</a>
+                </li>
+                @foreach (var std in standards)
+                {
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link @(standardFilter == std ? "active" : "")" asp-action="Index" asp-route-standardFilter="@std" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" role="tab">@std</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
 
 <div class="data-table-wrapper">
     <div class="data-table-toolbar">
@@ -20,6 +42,7 @@
         </div>
         <div class="toolbar-right gap-2">
             <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="@Localizer.T("Doc.FilterDocuments")" class="d-flex gap-2">
+                <input type="hidden" name="standardFilter" value="@standardFilter" />
                 <div class="search-box" style="max-width: 250px;">
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("Doc.SearchPlaceholder")" value="@searchTerm" aria-label="@Localizer.T("Doc.SearchDocuments")" />
@@ -35,7 +58,7 @@
                 <button type="submit" class="btn btn-sm btn-primary" aria-label="@Localizer.T("Common.Search")">
                     <i class="fas fa-search"></i>
                 </button>
-                @if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter))
+                @if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || !string.IsNullOrEmpty(standardFilter))
                 {
                     <a asp-action="Index" class="btn btn-sm btn-outline-secondary" aria-label="@Localizer.T("Doc.ClearFilters")">
                         <i class="fas fa-times"></i> @Localizer.T("Common.Clear")
@@ -137,7 +160,7 @@
                         <partial name="_EmptyState" model='new {
                             Icon = "fa-file",
                             Title = Localizer.T("Empty.NoDocuments"),
-                            Message = !string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) ? Localizer.T("Empty.NoDocumentsMessage") : "",
+                            Message = !string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || !string.IsNullOrEmpty(standardFilter) ? Localizer.T("Empty.NoDocumentsMessage") : "",
                             ActionLink = "",
                             ActionText = ""
                         }' />

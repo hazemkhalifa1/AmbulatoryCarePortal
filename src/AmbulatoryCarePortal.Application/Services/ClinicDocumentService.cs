@@ -23,7 +23,7 @@ public class ClinicDocumentService : IClinicDocumentService
         _logger = logger;
     }
 
-    public async Task<List<ClinicDocumentDto>> GetClinicDocumentsAsync(int clinicId, string? searchTerm = null, string? statusFilter = null)
+    public async Task<List<ClinicDocumentDto>> GetClinicDocumentsAsync(int clinicId, string? searchTerm = null, string? statusFilter = null, string? standardFilter = null)
     {
         var clinicDocs = await _unitOfWork.Repository<ClinicDocument>().FindAsync(
             cd => cd.ClinicId == clinicId
@@ -49,6 +49,10 @@ public class ClinicDocumentService : IClinicDocumentService
 
             if (!string.IsNullOrEmpty(statusFilter) &&
                 !string.Equals(cd.DocumentStatus.ToString(), statusFilter, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (!string.IsNullOrEmpty(standardFilter) &&
+                !string.Equals(template.DepartmentCategory, standardFilter, StringComparison.OrdinalIgnoreCase))
                 continue;
 
             result.Add(new ClinicDocumentDto

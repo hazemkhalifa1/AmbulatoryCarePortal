@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AmbulatoryCarePortal.Application.Constants;
 using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
@@ -30,16 +31,26 @@ public class ClinicDocumentsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(string? searchTerm = null, string? statusFilter = null)
+    public async Task<IActionResult> Index(string? searchTerm = null, string? statusFilter = null, string? standardFilter = null)
     {
         var clinicId = User.FindFirst("ClinicId") != null
             ? int.Parse(User.FindFirst("ClinicId")?.Value ?? "0")
             : 0;
 
-        var documents = await _clinicDocumentService.GetClinicDocumentsAsync(clinicId, searchTerm, statusFilter);
+        var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(clinicId);
+        string[]? standards = null;
+
+        if (clinic != null)
+        {
+            standards = ClinicTypeStandards.GetStandards(clinic.ClinicType);
+        }
+
+        var documents = await _clinicDocumentService.GetClinicDocumentsAsync(clinicId, searchTerm, statusFilter, standardFilter);
 
         ViewBag.SearchTerm = searchTerm;
         ViewBag.StatusFilter = statusFilter;
+        ViewBag.StandardFilter = standardFilter;
+        ViewBag.Standards = standards;
 
         return View(documents);
     }

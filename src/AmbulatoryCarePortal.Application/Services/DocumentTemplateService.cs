@@ -1,4 +1,5 @@
 using AmbulatoryCarePortal.Application.Common;
+using AmbulatoryCarePortal.Application.Constants;
 using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
@@ -107,6 +108,15 @@ public class DocumentTemplateService : IDocumentTemplateService
         await _unitOfWork.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<List<DocumentTemplateDto>> GetTemplatesByTypeAndStandardAsync(ClinicType clinicType, string standard)
+    {
+        var templates = await _unitOfWork.Repository<DocumentTemplate>().FindAsync(
+            t => t.ClinicType == clinicType && t.DepartmentCategory == standard && !t.IsDeleted
+        );
+
+        return _mapper.Map<List<DocumentTemplateDto>>(templates.ToList());
     }
 
     public async Task AssignToAllClinicsAsync(int templateId)

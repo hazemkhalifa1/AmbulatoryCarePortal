@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AmbulatoryCarePortal.Application.Constants;
 using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
+using AmbulatoryCarePortal.Domain.Enums;
 using AmbulatoryCarePortal.Presentation.Helpers;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers;
@@ -37,6 +39,23 @@ public class DocumentTemplatesController : Controller
         ViewBag.PageTitle = _localizer.T("Page.DocumentTemplates");
 
         return View(pagedResult);
+    }
+
+    [HttpGet]
+    public JsonResult GetStandards(string clinicType)
+    {
+        if (!Enum.TryParse<ClinicType>(clinicType, out var type))
+            return Json(new { standards = Array.Empty<string>() });
+
+        var standards = ClinicTypeStandards.GetStandards(type);
+        return Json(new { standards });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ByTypeAndStandard(ClinicType clinicType, string standard)
+    {
+        var templates = await _templateService.GetTemplatesByTypeAndStandardAsync(clinicType, standard);
+        return Json(templates);
     }
 
     [HttpGet]
@@ -117,6 +136,7 @@ public class DocumentTemplatesController : Controller
             TitleAr = template.TitleAr,
             Description = template.Description,
             DepartmentCategory = template.DepartmentCategory,
+            ClinicType = template.ClinicType,
             IsActive = template.IsActive
         };
 

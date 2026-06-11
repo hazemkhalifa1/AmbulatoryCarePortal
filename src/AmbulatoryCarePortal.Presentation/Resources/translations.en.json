@@ -390,6 +390,9 @@
   "KPI.NoEntries": "No Entries Recorded",
   "KPI.CreateNew": "Create New KPI",
 
+  "Doc.ClinicType": "Clinic Type",
+  "Doc.SelectClinicType": "-- Select Clinic Type --",
+  "Doc.SelectStandard": "-- Select Standard --",
   "Doc.SearchPlaceholder": "Search document, clinic, KPI...",
   "Doc.NoAttachments": "No Attachments",
   "Doc.UploadAttachment": "Upload Attachment",

@@ -1,3 +1,5 @@
+using AmbulatoryCarePortal.Domain.Enums;
+
 namespace AmbulatoryCarePortal.Domain.Entities;
 
 public class DocumentTemplate : BaseEntity
@@ -7,9 +9,9 @@ public class DocumentTemplate : BaseEntity
     public string? TitleAr { get; set; }
     public string? Description { get; set; }
     public string? DepartmentCategory { get; set; }
+    public ClinicType ClinicType { get; set; }
     public string? TemplateFilePath { get; set; }
     public bool IsActive { get; set; } = true;
 
-    // Navigation properties
     public ICollection<ClinicDocument> ClinicDocuments { get; set; } = new List<ClinicDocument>();
 }
