@@ -100,6 +100,12 @@ public class MappingProfile : Profile
         // ClinicDocumentAttachment Mappings
         CreateMap<ClinicDocumentAttachment, ClinicDocumentAttachmentDto>();
 
+        // Department Mappings
+        CreateMap<Department, DepartmentDto>()
+            .ForMember(dest => dest.ClinicName, opt => opt.MapFrom(src => src.Clinic.Name));
+
+        CreateMap<Department, CreateDepartmentDto>().ReverseMap();
+
         // User Mappings
         CreateMap<AppUser, UserDto>();
     }

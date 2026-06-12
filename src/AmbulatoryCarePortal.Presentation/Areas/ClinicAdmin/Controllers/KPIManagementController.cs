@@ -80,14 +80,91 @@ public class KPIManagementController : Controller
             });
         }
 
+        var departments = await _unitOfWork.Repository<Department>().FindAsync(d => d.ClinicId == clinicId);
+
         ViewBag.SearchTerm = searchTerm;
         ViewBag.FrequencyFilter = frequencyFilter;
         ViewBag.DepartmentFilter = departmentFilter;
+        ViewBag.Departments = departments;
         ViewBag.TotalCount = kpis.Count();
         ViewBag.CurrentPage = page;
         ViewBag.TotalPages = (int)Math.Ceiling(kpis.Count() / (double)pageSize);
 
         return View(kpiDtos);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ByDepartment(int? departmentId)
+    {
+        var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
+        var departments = await _unitOfWork.Repository<Department>().FindAsync(d => d.ClinicId == clinicId);
+
+        if (departmentId.HasValue)
+        {
+            var dept = departments.FirstOrDefault(d => d.Id == departmentId.Value);
+            if (dept == null)
+                return NotFound();
+
+            var kpis = await _unitOfWork.Repository<KPI>().FindAsync(k => k.DepartmentId == departmentId.Value);
+
+            var kpiDtos = new List<KPIDetailViewModel>();
+            foreach (var kpi in kpis)
+            {
+                var entries = await _unitOfWork.Repository<KPIEntry>().FindAsync(e => e.KPIId == kpi.Id);
+                var latestEntry = entries.OrderByDescending(e => e.PeriodYear)
+                    .ThenByDescending(e => e.PeriodMonth)
+                    .FirstOrDefault();
+
+                kpiDtos.Add(new KPIDetailViewModel
+                {
+                    KPI = _mapper.Map<KPIDto>(kpi),
+                    LatestEntry = _mapper.Map<KPIEntryDto>(latestEntry),
+                    TotalEntries = entries.Count(),
+                    AchievementRate = latestEntry != null
+                        ? Math.Round((latestEntry.ActualValue / kpi.TargetValue) * 100, 2)
+                        : 0
+                });
+            }
+
+            ViewBag.DepartmentName = dept.NameEn;
+            ViewBag.DepartmentNameAr = dept.NameAr;
+            return View(kpiDtos);
+        }
+
+        var allDepartmentKpis = new List<DepartmentsKPIGroupViewModel>();
+        foreach (var dept in departments.OrderBy(d => d.NameEn))
+        {
+            var deptKpis = await _unitOfWork.Repository<KPI>().FindAsync(k => k.DepartmentId == dept.Id);
+            var deptKpiDtos = new List<KPIDetailViewModel>();
+            foreach (var kpi in deptKpis)
+            {
+                var entries = await _unitOfWork.Repository<KPIEntry>().FindAsync(e => e.KPIId == kpi.Id);
+                var latestEntry = entries.OrderByDescending(e => e.PeriodYear)
+                    .ThenByDescending(e => e.PeriodMonth)
+                    .FirstOrDefault();
+
+                deptKpiDtos.Add(new KPIDetailViewModel
+                {
+                    KPI = _mapper.Map<KPIDto>(kpi),
+                    LatestEntry = _mapper.Map<KPIEntryDto>(latestEntry),
+                    TotalEntries = entries.Count(),
+                    AchievementRate = latestEntry != null
+                        ? Math.Round((latestEntry.ActualValue / kpi.TargetValue) * 100, 2)
+                        : 0
+                });
+            }
+
+            allDepartmentKpis.Add(new DepartmentsKPIGroupViewModel
+            {
+                DepartmentId = dept.Id,
+                DepartmentName = dept.NameEn,
+                DepartmentNameAr = dept.NameAr,
+                KPIs = deptKpiDtos
+            });
+        }
+
+        ViewBag.AllDepartments = allDepartmentKpis;
+        return View(allDepartmentKpis);
     }
 
     [HttpGet]
@@ -430,6 +507,14 @@ public class KPIDetailViewModel
     public KPIEntryDto? LatestEntry { get; set; }
     public int TotalEntries { get; set; }
     public decimal AchievementRate { get; set; }
+}
+
+public class DepartmentsKPIGroupViewModel
+{
+    public int DepartmentId { get; set; }
+    public string DepartmentName { get; set; } = string.Empty;
+    public string? DepartmentNameAr { get; set; }
+    public List<KPIDetailViewModel> KPIs { get; set; } = new();
 }
 
 public class KPIAnalyticsViewModel

@@ -98,9 +98,12 @@ public class HRManagementController : Controller
             staffDtos = staffDtos.Where(s => s.ComplianceStatus == complianceFilter).ToList();
         }
 
+        var departments = await _unitOfWork.Repository<Department>().FindAsync(d => d.ClinicId == clinicId);
+
         ViewBag.SearchTerm = searchTerm;
         ViewBag.ComplianceFilter = complianceFilter;
         ViewBag.DepartmentFilter = departmentFilter;
+        ViewBag.Departments = departments;
         ViewBag.TotalCount = staffDtos.Count;
         ViewBag.CurrentPage = page;
 
@@ -180,6 +183,101 @@ public class HRManagementController : Controller
         TempData["SuccessMessage"] = _localizer.T("Alert.Success.StaffCreated");
 
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "ClinicAdmin")]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var staff = await _unitOfWork.Repository<HrStaff>().GetByIdAsync(id);
+        if (staff == null)
+            return NotFound();
+
+        var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
+        if (staff.ClinicId != clinicId)
+            return Forbid();
+
+        var departments = await _unitOfWork.Repository<Department>().FindAsync(d => d.ClinicId == clinicId);
+
+        var model = new CreateHRStaffViewModel
+        {
+            FirstName = staff.FirstName ?? "",
+            LastName = staff.LastName ?? "",
+            NationalId = staff.NationalId ?? "",
+            Email = staff.Email ?? "",
+            PhoneNumber = staff.PhoneNumber ?? "",
+            PositionTitle = staff.PositionTitle ?? "",
+            StaffType = staff.StaffType.ToString(),
+            DepartmentId = staff.DepartmentId ?? 0,
+            JoinDate = staff.JoinDate ?? DateTime.Now,
+            AvailableDepartments = departments.Select(d => new DepartmentViewModel { Id = d.Id, Name = d.NameEn, ClinicId = d.ClinicId }).ToList(),
+            StaffTypes = Enum.GetValues(typeof(StaffType))
+                .Cast<StaffType>()
+                .Select(s => s.ToString())
+                .ToList()
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "ClinicAdmin")]
+    public async Task<IActionResult> Edit(int id, CreateHRStaffViewModel model)
+    {
+        var staff = await _unitOfWork.Repository<HrStaff>().GetByIdAsync(id);
+        if (staff == null)
+            return NotFound();
+
+        var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
+        if (staff.ClinicId != clinicId)
+            return Forbid();
+
+        if (!ModelState.IsValid)
+        {
+            var departments = await _unitOfWork.Repository<Department>().FindAsync(d => d.ClinicId == clinicId);
+            model.AvailableDepartments = departments.Select(d => new DepartmentViewModel { Id = d.Id, Name = d.NameEn, ClinicId = d.ClinicId }).ToList();
+            model.StaffTypes = Enum.GetValues(typeof(StaffType)).Cast<StaffType>().Select(s => s.ToString()).ToList();
+            return View(model);
+        }
+
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        staff.FirstName = model.FirstName;
+        staff.LastName = model.LastName;
+        staff.FullNameEn = $"{model.FirstName} {model.LastName}";
+        staff.NationalId = model.NationalId;
+        staff.Email = model.Email;
+        staff.PhoneNumber = model.PhoneNumber;
+        staff.PositionTitle = model.PositionTitle;
+        staff.StaffType = Enum.Parse<StaffType>(model.StaffType);
+        staff.DepartmentId = model.DepartmentId;
+        staff.JoinDate = model.JoinDate;
+        staff.UpdatedAt = DateTime.UtcNow;
+        staff.UpdatedBy = userId;
+
+        _unitOfWork.Repository<HrStaff>().Update(staff);
+        await _unitOfWork.SaveChangesAsync();
+
+        var auditLog = new AuditTrail
+        {
+            ActionType = AuditActionType.Update,
+            TargetObjectId = staff.Id,
+            TargetObjectType = nameof(HrStaff),
+            Description = $"Updated staff record: {staff.FirstName} {staff.LastName}",
+            ClinicId = clinicId,
+            CreatedBy = userId,
+            ActionDate = DateTime.UtcNow,
+            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+        };
+
+        await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
+        await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation($"Staff record updated for {staff.FirstName} {staff.LastName} by {userId}");
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.StaffUpdated");
+
+        return RedirectToAction(nameof(Details), new { id });
     }
 
     [HttpGet]

@@ -852,5 +852,54 @@
   "Report.IncludeAuditTrail": "Include Audit Trail",
   "Report.EndDateAfterStartDate": "End date must be after start date.",
   "Report.GenerateTitle": "Generate {0} Report",
-  "Report.AnalyticsTitle": "{0} Analytics"
+  "Report.AnalyticsTitle": "{0} Analytics",
+
+  "Nav.Departments": "Departments",
+  "Nav.PoliciesDocuments": "Policies & Documents",
+
+  "Page.Departments": "Departments",
+  "Page.DepartmentDetails": "Department Details",
+  "Page.KPIByDepartment": "KPIs by Department",
+
+  "Department.CreateDepartment": "Create Department",
+  "Department.EditDepartment": "Edit Department",
+  "Department.Code": "Code",
+  "Department.SelectCode": "-- Select Code --",
+  "Department.NameEnPlaceholder": "Enter department name in English",
+  "Department.NameArPlaceholder": "أدخل اسم القسم بالعربية",
+  "Department.Information": "Department Information",
+  "Department.SearchPlaceholder": "Search by name...",
+  "Department.FilterDepartments": "Filter departments",
+  "Department.ConfirmDelete": "Confirm Delete",
+  "Department.DeleteConfirmMessage": "Are you sure you want to delete the department:",
+  "Department.DeleteWarning": "This action cannot be undone. The department will be soft-deleted.",
+
+  "Alert.Success.DepartmentCreated": "Department created successfully!",
+  "Alert.Success.DepartmentUpdated": "Department updated successfully!",
+  "Alert.Success.DepartmentDeleted": "Department deleted successfully!",
+  "Alert.Error.DepartmentHasLinks": "Cannot delete this department. It has {0} staff, {1} policies, {2} KPIs, and {3} checklists linked to it. Please reassign or remove them first.",
+
+  "Empty.NoDepartments": "No Departments Found",
+  "Empty.FilterAdjust": "Try adjusting your search or filter criteria.",
+
+  "Common.ArabicName": "Name (Arabic)",
+  "HR.StaffCount": "Staff",
+
+  "KPI.ByDepartment": "KPIs by Department",
+  "KPI.DepartmentKPIs": "Department KPIs",
+  "KPI.NoDepartmentKPIs": "No KPIs for this department",
+
+  "Doc.Type": "Type",
+  "Doc.CustomPolicy": "Custom Policy",
+  "Doc.CBAHIStandard": "CBAHI Standard",
+
+  "Page.EditStaff": "Edit Staff",
+  "HR.EditStaffMember": "Edit Staff Member",
+  "Alert.Success.StaffUpdated": "Staff record updated successfully!",
+
+  "Doc.NoDocumentsFound": "No Documents Found",
+  "Doc.NoDocumentsFoundMessage": "No policies or clinic documents match your criteria.",
+
+  "Nav.EmployeeManagement": "Employee Management",
+  "Alert.Error.NoClinicAccess": "You do not have access to any clinic. Please contact an administrator."
 }

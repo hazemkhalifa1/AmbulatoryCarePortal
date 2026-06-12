@@ -1,9 +1,11 @@
 @model List<HRStaffDetailViewModel>
 @using System.Globalization
+@using AmbulatoryCarePortal.Domain.Entities
 
 @{
     ViewData["Title"] = Localizer.T("Page.StaffManagement");
     var isArabic = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+    var departments = ViewBag.Departments as IEnumerable<Department> ?? Enumerable.Empty<Department>();
     var totalCount = ViewBag.TotalCount ?? 0;
     var currentPage = ViewBag.CurrentPage ?? 1;
     var pageSize = 10;
@@ -77,6 +79,10 @@
                 </select>
                 <select name="departmentFilter" class="form-select" style="width: auto; min-width: 140px;" onchange="this.form.submit()">
                     <option value="">@Localizer.T("HR.AllDepartments")</option>
+                    @foreach (var dept in departments)
+                    {
+                        <option value="@dept.Id" selected="@(ViewBag.DepartmentFilter?.ToString() == dept.Id.ToString())">@dept.NameEn</option>
+                    }
                 </select>
                 <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
                 <a asp-action="Index" class="btn btn-sm btn-outline-secondary"><i class="fas fa-redo"></i> @Localizer.T("Common.Reset")</a>
@@ -156,6 +162,9 @@
                         </td>
                         <td>
                             <div class="cell-actions justify-content-end">
+                                <a asp-action="Edit" asp-route-id="@item.Staff.Id" class="btn btn-sm btn-outline-primary" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
+                                    <i class="fas fa-edit"></i>
+                                </a>
                                 <a asp-action="Details" asp-route-id="@item.Staff.Id" class="btn btn-sm btn-outline-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
                                     <i class="fas fa-eye"></i>
                                 </a>

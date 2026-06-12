@@ -11,14 +11,12 @@ public class UserRoleManagementViewModel
     public string PhoneNumber { get; set; }
     public bool IsActive { get; set; }
     public int? ClinicId { get; set; }
-    public int? DepartmentId { get; set; }
     public string SelectedRole { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? LastLoginAt { get; set; }
 
     public List<RoleOptionViewModel> AvailableRoles { get; set; } = new();
     public List<ClinicViewModel> AvailableClinics { get; set; } = new();
-    public List<DepartmentViewModel> AvailableDepartments { get; set; } = new();
 }
 
 public class RoleOptionViewModel

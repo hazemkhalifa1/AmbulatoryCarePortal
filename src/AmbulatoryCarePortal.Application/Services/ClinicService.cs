@@ -159,24 +159,24 @@ public class ClinicService : IClinicService
     {
         var departments = new[]
         {
-            (DepartmentCodeEnum.LD, "Leadership of the Organization", "قيادة المنظمة"),
-            (DepartmentCodeEnum.PC, "Provision of Care", "تقديم الرعاية"),
-            (DepartmentCodeEnum.LB, "Laboratory", "المختبر"),
-            (DepartmentCodeEnum.RD, "Radiology Department", "قسم الأشعات"),
-            (DepartmentCodeEnum.DN, "Dental", "الأسنان"),
-            (DepartmentCodeEnum.MM, "Medication Management", "إدارة الأدوية"),
-            (DepartmentCodeEnum.MOI, "Management of Information", "إدارة المعلومات"),
-            (DepartmentCodeEnum.IPC, "Infection Prevention and Control", "الوقاية من العدوى والتحكم بها"),
-            (DepartmentCodeEnum.FMS, "Facility Management and Safety", "إدارة المرافق والسلامة"),
-            (DepartmentCodeEnum.DPU, "Dialysis Patient Unit", "وحدة مرضى غسيل الكلى"),
-            (DepartmentCodeEnum.DA, "Dental Anesthesia", "تخدير الأسنان")
+            ("LD", "Leadership of the Organization", "قيادة المنظمة"),
+            ("PC", "Provision of Care", "تقديم الرعاية"),
+            ("LB", "Laboratory", "المختبر"),
+            ("RD", "Radiology Department", "قسم الأشعات"),
+            ("DN", "Dental", "الأسنان"),
+            ("MM", "Medication Management", "إدارة الأدوية"),
+            ("MOI", "Management of Information", "إدارة المعلومات"),
+            ("IPC", "Infection Prevention and Control", "الوقاية من العدوى والتحكم بها"),
+            ("FMS", "Facility Management and Safety", "إدارة المرافق والسلامة"),
+            ("DPU", "Dialysis Patient Unit", "وحدة مرضى غسيل الكلى"),
+            ("DA", "Dental Anesthesia", "تخدير الأسنان")
         };
 
         var departmentEntities = departments.Select(d => new Department
         {
             NameEn = d.Item2,
             NameAr = d.Item3,
-            DepartmentCode = d.Item1,
+            Code = d.Item1,
             ClinicId = clinicId,
             CreatedAt = DateTime.UtcNow
         }).ToList();
@@ -189,19 +189,19 @@ public class ClinicService : IClinicService
     {
         var departments = new[]
         {
-            (DepartmentCodeEnum.LD, "Leadership of the Organization", "قيادة المنظمة"),
-            (DepartmentCodeEnum.PC, "Provision of Care", "تقديم الرعاية"),
-            (DepartmentCodeEnum.DL, "Dental Laboratory", "معمل الأسنان"),
-            (DepartmentCodeEnum.MOI, "Management of Information", "إدارة المعلومات"),
-            (DepartmentCodeEnum.IPC, "Infection Prevention and Control", "الوقاية من العدوى والتحكم بها"),
-            (DepartmentCodeEnum.FMS, "Facility Management and Safety", "إدارة المرافق والسلامة")
+            ("LD", "Leadership of the Organization", "قيادة المنظمة"),
+            ("PC", "Provision of Care", "تقديم الرعاية"),
+            ("DL", "Dental Laboratory", "معمل الأسنان"),
+            ("MOI", "Management of Information", "إدارة المعلومات"),
+            ("IPC", "Infection Prevention and Control", "الوقاية من العدوى والتحكم بها"),
+            ("FMS", "Facility Management and Safety", "إدارة المرافق والسلامة")
         };
 
         var departmentEntities = departments.Select(d => new Department
         {
             NameEn = d.Item2,
             NameAr = d.Item3,
-            DepartmentCode = d.Item1,
+            Code = d.Item1,
             ClinicId = clinicId,
             CreatedAt = DateTime.UtcNow
         }).ToList();

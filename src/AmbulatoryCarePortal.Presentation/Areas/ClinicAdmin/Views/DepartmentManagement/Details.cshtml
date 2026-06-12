@@ -1,0 +1,159 @@
+@model DepartmentDetailViewModel
+
+@{
+    ViewData["Title"] = Model.NameEn;
+}
+
+<partial name="_PageHeader" model='new {
+    Title = Model.NameEn,
+    Icon = "fa-building",
+    Breadcrumb = Localizer.T("Page.Departments")
+}' />
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h3><i class="fas fa-info-circle me-2"></i>@Localizer.T("Department.Information")</h3>
+                @if (User.IsInRole("ClinicAdmin"))
+                {
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-warning">
+                            <i class="fas fa-edit"></i> @Localizer.T("Common.Edit")
+                        </a>
+                    </div>
+                }
+            </div>
+            <div class="form-card-body">
+                <div class="detail-row">
+                    <span class="detail-label">@Localizer.T("Common.Name")</span>
+                    <span class="detail-value">@Model.NameEn</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.NameAr))
+                {
+                    <div class="detail-row">
+                        <span class="detail-label">@Localizer.T("Common.ArabicName")</span>
+                        <span class="detail-value" dir="rtl">@Model.NameAr</span>
+                    </div>
+                }
+                <div class="detail-row">
+                    <span class="detail-label">@Localizer.T("Department.Code")</span>
+                    <span class="detail-value"><span class="badge bg-secondary fs-6">@Model.Code</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="row g-3">
+            <div class="col-6">
+                <partial name="_HealthMetricCard" model='new {
+                    Icon = "fa-users",
+                    Color = "primary",
+                    Value = Model.StaffCount.ToString(),
+                    Label = Localizer.T("HR.StaffCount"),
+                    Badge = "",
+                    Link = Url.Action("Index", "HRManagement") + "?departmentFilter=" + Model.Id,
+                    LinkText = Localizer.T("Common.ViewAll")
+                }' />
+            </div>
+            <div class="col-6">
+                <partial name="_HealthMetricCard" model='new {
+                    Icon = "fa-file-shield",
+                    Color = "success",
+                    Value = Model.PolicyCount.ToString(),
+                    Label = Localizer.T("Nav.Policies"),
+                    Badge = "",
+                    Link = Url.Action("Index", "PolicyManagement") + "?departmentFilter=" + Model.Id,
+                    LinkText = Localizer.T("Common.ViewAll")
+                }' />
+            </div>
+            <div class="col-6">
+                <partial name="_HealthMetricCard" model='new {
+                    Icon = "fa-chart-line",
+                    Color = "info",
+                    Value = Model.KPICount.ToString(),
+                    Label = Localizer.T("Nav.KPIMonitoring"),
+                    Badge = "",
+                    Link = Url.Action("Index", "KPIManagement") + "?departmentFilter=" + Model.Id,
+                    LinkText = Localizer.T("Common.ViewAll")
+                }' />
+            </div>
+            <div class="col-6">
+                <partial name="_HealthMetricCard" model='new {
+                    Icon = "fa-clipboard-check",
+                    Color = "warning",
+                    Value = Model.ChecklistCount.ToString(),
+                    Label = Localizer.T("Nav.Checklists"),
+                    Badge = "",
+                    Link = Url.Action("Index", "ChecklistManagement") + "?departmentId=" + Model.Id,
+                    LinkText = Localizer.T("Common.ViewAll")
+                }' />
+            </div>
+        </div>
+
+        <div class="form-card mt-3">
+            <div class="form-card-header">
+                <h3><i class="fas fa-cog me-2"></i>@Localizer.T("Common.Actions")</h3>
+            </div>
+            <div class="form-card-body">
+                <div class="d-grid gap-2">
+                    @if (User.IsInRole("ClinicAdmin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning">
+                            <i class="fas fa-edit me-1"></i> @Localizer.T("Common.Edit")
+                        </a>
+                        <button type="button" class="btn btn-outline-danger"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-department-id="@Model.Id" data-department-name="@Model.NameEn">
+                            <i class="fas fa-trash me-1"></i> @Localizer.T("Common.Delete")
+                        </button>
+                    }
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> @Localizer.T("Common.BackToList")
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalTitle"><i class="fas fa-exclamation-triangle me-2"></i>@Localizer.T("Department.ConfirmDelete")</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
+            </div>
+            <form method="post" asp-action="Delete" id="deleteForm">
+                <input type="hidden" name="id" id="deleteDepartmentId" value="" />
+                <div class="modal-body">
+                    <p>@Localizer.T("Department.DeleteConfirmMessage")</p>
+                    <p class="fw-bold text-danger" id="deleteDepartmentName"></p>
+                    <p class="text-muted small">@Localizer.T("Department.DeleteWarning")</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Common.Cancel")</button>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>@Localizer.T("Common.Delete")</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var deptId = button.getAttribute('data-department-id');
+                    var deptName = button.getAttribute('data-department-name');
+                    document.getElementById('deleteDepartmentId').value = deptId;
+                    document.getElementById('deleteDepartmentName').textContent = deptName;
+                });
+            }
+        });
+    </script>
+}

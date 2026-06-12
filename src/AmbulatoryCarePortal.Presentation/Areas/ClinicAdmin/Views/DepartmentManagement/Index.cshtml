@@ -1,0 +1,192 @@
+@model List<DepartmentListViewModel>
+
+@{
+    ViewData["Title"] = Localizer.T("Page.Departments");
+    var currentPage = (int)ViewBag.CurrentPage;
+    var totalPages = (int)ViewBag.TotalPages;
+    var totalCount = (int)ViewBag.TotalCount;
+    var searchTerm = (string)ViewBag.SearchTerm;
+}
+
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Page.Departments"),
+    Icon = "fa-building",
+    Breadcrumb = ""
+}' />
+
+<div class="data-table-wrapper">
+    <div class="data-table-toolbar">
+        <div class="toolbar-left">
+            <span class="toolbar-title"><i class="fas fa-building me-2"></i>@Localizer.T("Page.Departments")</span>
+            <span class="toolbar-count">@totalCount @Localizer.T("Clinic.Departments")</span>
+        </div>
+        <div class="toolbar-right">
+            @if (User.IsInRole("ClinicAdmin"))
+            {
+                <a asp-action="Create" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> @Localizer.T("Button.Create")
+                </a>
+            }
+        </div>
+    </div>
+
+    <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="@Localizer.T("Department.FilterDepartments")">
+        <div class="data-table-toolbar" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+            <div class="toolbar-left gap-2 w-100">
+                <div class="search-box flex-grow-1" style="max-width: 300px;">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("Department.SearchPlaceholder")" value="@searchTerm" aria-label="@Localizer.T("Department.SearchPlaceholder")" />
+                </div>
+                <button type="submit" class="btn btn-sm btn-primary" aria-label="@Localizer.T("Common.Search")">
+                    <i class="fas fa-search"></i>
+                </button>
+                @if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    <a asp-action="Index" class="btn btn-sm btn-outline-secondary" aria-label="@Localizer.T("Common.Clear")">
+                        <i class="fas fa-times"></i> @Localizer.T("Common.Clear")
+                    </a>
+                }
+            </div>
+        </div>
+    </form>
+
+    <table class="data-table" id="departmentsTable" role="table" aria-label="@Localizer.T("Page.Departments")">
+        <thead>
+            <tr>
+                <th scope="col">@Localizer.T("Common.Name")</th>
+                <th scope="col">@Localizer.T("Department.Code")</th>
+                <th scope="col" class="text-center">@Localizer.T("HR.StaffCount")</th>
+                <th scope="col" class="text-center">@Localizer.T("Nav.Policies")</th>
+                <th scope="col" class="text-center">@Localizer.T("Nav.KPIMonitoring")</th>
+                <th scope="col" class="text-end">@Localizer.T("Common.Actions")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var dept in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@dept.Id" class="fw-bold text-decoration-none">
+                                @dept.NameEn
+                            </a>
+                            @if (!string.IsNullOrEmpty(dept.NameAr))
+                            {
+                                <br /><small class="text-muted" dir="rtl">@dept.NameAr</small>
+                            }
+                        </td>
+                        <td><span class="badge bg-secondary">@dept.Code</span></td>
+                        <td class="text-center"><span class="fw-bold">@dept.StaffCount</span></td>
+                        <td class="text-center"><span class="fw-bold">@dept.PolicyCount</span></td>
+                        <td class="text-center"><span class="fw-bold">@dept.KPICount</span></td>
+                        <td>
+                            <div class="cell-actions justify-content-end">
+                                <a asp-action="Details" asp-route-id="@dept.Id" class="btn btn-sm btn-outline-info" title="@Localizer.T("Common.Details")" aria-label="@Localizer.T("Common.View")">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                @if (User.IsInRole("ClinicAdmin"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@dept.Id" class="btn btn-sm btn-outline-warning" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            data-department-id="@dept.Id" data-department-name="@dept.NameEn">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center py-4">
+                        <partial name="_EmptyState" model='new {
+                            Icon = "fa-building",
+                            Title = Localizer.T("Empty.NoDepartments"),
+                            Message = !string.IsNullOrEmpty(searchTerm) ? Localizer.T("Empty.FilterAdjust") : "",
+                            ActionLink = User.IsInRole("ClinicAdmin") && string.IsNullOrEmpty(searchTerm) ? Url.Action("Create") : "",
+                            ActionText = User.IsInRole("ClinicAdmin") && string.IsNullOrEmpty(searchTerm) ? Localizer.T("Button.Create") : ""
+                        }' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (totalPages > 1)
+    {
+        <div class="data-table-pagination">
+            <div class="page-info">@Localizer.T("Policy.PageInfo", currentPage, totalPages, totalCount)</div>
+            <div class="page-links">
+                <a asp-action="Index" asp-route-page="1" asp-route-searchTerm="@searchTerm" class="@(currentPage == 1 ? "disabled" : "")" aria-label="@Localizer.T("Policy.FirstPage")">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+                <a asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" class="@(currentPage == 1 ? "disabled" : "")" aria-label="@Localizer.T("Common.Previous")">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+                @for (var i = 1; i <= totalPages; i++)
+                {
+                    if (i == currentPage)
+                    {
+                        <span class="active">@i</span>
+                    }
+                    else
+                    {
+                        <a asp-action="Index" asp-route-page="@i" asp-route-searchTerm="@searchTerm" aria-label="@Localizer.T("Common.Page") @i">@i</a>
+                    }
+                }
+                <a asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" class="@(currentPage == totalPages ? "disabled" : "")" aria-label="@Localizer.T("Common.Next")">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+                <a asp-action="Index" asp-route-page="@totalPages" asp-route-searchTerm="@searchTerm" class="@(currentPage == totalPages ? "disabled" : "")" aria-label="@Localizer.T("Policy.LastPage")">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalTitle"><i class="fas fa-exclamation-triangle me-2"></i>@Localizer.T("Department.ConfirmDelete")</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
+            </div>
+            <form method="post" asp-action="Delete" id="deleteForm">
+                <input type="hidden" name="id" id="deleteDepartmentId" value="" />
+                <div class="modal-body">
+                    <p>@Localizer.T("Department.DeleteConfirmMessage")</p>
+                    <p class="fw-bold text-danger" id="deleteDepartmentName"></p>
+                    <p class="text-muted small">@Localizer.T("Department.DeleteWarning")</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Common.Cancel")</button>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>@Localizer.T("Common.Delete")</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var deptId = button.getAttribute('data-department-id');
+                    var deptName = button.getAttribute('data-department-name');
+                    document.getElementById('deleteDepartmentId').value = deptId;
+                    document.getElementById('deleteDepartmentName').textContent = deptName;
+                });
+            }
+        });
+    </script>
+}

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using AmbulatoryCarePortal.Domain.Enums;
 
 namespace AmbulatoryCarePortal.Domain.Entities;
 
@@ -8,7 +7,6 @@ public class AppUser : IdentityUser
     public string? FullNameEn { get; set; }
     public string? FullNameAr { get; set; }
     public int? ClinicId { get; set; }
-    public int? DepartmentId { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastLoginAt { get; set; }
@@ -16,7 +14,6 @@ public class AppUser : IdentityUser
 
     // Navigation properties
     public Clinic? Clinic { get; set; }
-    public Department? Department { get; set; }
     public ICollection<PolicyDocument> PolicyDocuments { get; set; } = new List<PolicyDocument>();
     public ICollection<EvidenceAttachment> EvidenceAttachments { get; set; } = new List<EvidenceAttachment>();
     public ICollection<AuditTrail> AuditTrails { get; set; } = new List<AuditTrail>();

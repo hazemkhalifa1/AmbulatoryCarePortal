@@ -1,0 +1,181 @@
+@model List<DepartmentsKPIGroupViewModel>
+@using System.Globalization
+
+@{
+    ViewData["Title"] = Localizer.T("Page.KPIByDepartment");
+    var isArabic = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+}
+
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Page.KPIByDepartment"),
+    Icon = "fa-chart-pie",
+    Breadcrumb = Localizer.T("Page.KPIMonitoring")
+}' />
+
+<div class="data-table-wrapper">
+    <div class="data-table-toolbar">
+        <div class="toolbar-left">
+            <span class="toolbar-title"><i class="fas fa-chart-pie me-2"></i>@Localizer.T("KPI.ByDepartment")</span>
+            <span class="toolbar-count">@Model.Sum(g => g.KPIs.Count) @Localizer.T("KPI.TotalKPIs")</span>
+        </div>
+        <div class="toolbar-right gap-2">
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-th-list"></i> @Localizer.T("KPI.AllKPIs")
+            </a>
+            <a asp-action="Create" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus me-1"></i>@Localizer.T("KPI.CreateNew")
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <partial name="_EmptyState" model='new {
+        Icon = "fa-chart-pie",
+        Title = Localizer.T("KPI.NoKPIsMatch"),
+        Message = Localizer.T("KPI.NoKPIsMatch"),
+        ActionLink = Url.Action("Create"),
+        ActionText = Localizer.T("KPI.CreateNew")
+    }' />
+}
+else
+{
+    <div class="accordion" id="departmentKPIAccordion">
+        @{
+            var deptIndex = 0;
+        }
+        @foreach (var group in Model)
+        {
+            deptIndex++;
+            var headingId = $"deptHeading{deptIndex}";
+            var collapseId = $"deptCollapse{deptIndex}";
+            var avgRate = group.KPIs.Any() ? group.KPIs.Average(k => k.AchievementRate) : 0m;
+            var rateColor = avgRate >= 100 ? "bg-success" : avgRate >= 75 ? "bg-info" : avgRate >= 50 ? "bg-warning" : "bg-danger";
+
+            <div class="accordion-item mb-3 border rounded">
+                <h2 class="accordion-header" id="@headingId">
+                    <button class="accordion-button @(deptIndex > 1 ? "collapsed" : "")" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#@collapseId"
+                            aria-expanded="@(deptIndex == 1 ? "true" : "false")" aria-controls="@collapseId">
+                        <div class="d-flex align-items-center gap-3 w-100">
+                            <i class="fas fa-building fa-lg text-primary"></i>
+                            <div>
+                                <strong>@group.DepartmentName</strong>
+                                @if (!string.IsNullOrEmpty(group.DepartmentNameAr))
+                                {
+                                    <span class="text-muted ms-2" dir="rtl">@group.DepartmentNameAr</span>
+                                }
+                            </div>
+                            <span class="badge bg-secondary ms-auto">@group.KPIs.Count @Localizer.T("KPI.TotalKPIs")</span>
+                            <div class="d-flex align-items-center gap-2" style="min-width:120px;">
+                                <div class="progress flex-grow-1" style="height:8px;">
+                                    <div class="progress-bar @rateColor" role="progressbar"
+                                         style="width:@Math.Min((double)avgRate, 100)%"
+                                         aria-valuenow="@avgRate" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <small class="text-nowrap fw-bold">@avgRate.ToString("N2")%</small>
+                            </div>
+                        </div>
+                    </button>
+                </h2>
+                <div id="@collapseId" class="accordion-collapse collapse @(deptIndex == 1 ? "show" : "")"
+                     aria-labelledby="@headingId" data-bs-parent="#departmentKPIAccordion">
+                    <div class="accordion-body p-0">
+                        @if (group.KPIs.Any())
+                        {
+                            <table class="data-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">@Localizer.T("KPI.KPIName")</th>
+                                        <th scope="col" class="text-end">@Localizer.T("KPI.TargetValue")</th>
+                                        <th scope="col" class="text-end">@Localizer.T("KPI.LastEntry")</th>
+                                        <th scope="col">@Localizer.T("KPI.AchievementRate")</th>
+                                        <th scope="col" class="text-center">@Localizer.T("Common.Frequency")</th>
+                                        <th scope="col" class="text-center">@Localizer.T("KPI.TotalEntries")</th>
+                                        <th scope="col" class="text-end">@Localizer.T("Common.Actions")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in group.KPIs)
+                                    {
+                                        var kpiRateColor = item.AchievementRate >= 100 ? "bg-success" :
+                                            item.AchievementRate >= 75 ? "bg-info" :
+                                            item.AchievementRate >= 50 ? "bg-warning" : "bg-danger";
+                                        <tr>
+                                            <td>
+                                                <div class="fw-bold">@item.KPI.Name</div>
+                                                @if (!string.IsNullOrEmpty(item.KPI.NameAr))
+                                                {
+                                                    <small class="text-muted" dir="rtl">@item.KPI.NameAr</small>
+                                                }
+                                            </td>
+                                            <td class="text-end fw-bold">@item.KPI.TargetValue.ToString("N2")</td>
+                                            <td class="text-end">
+                                                @if (item.LatestEntry != null)
+                                                {
+                                                    <span class="fw-bold">@item.LatestEntry.ActualValue.ToString("N2")</span>
+                                                    <small class="text-muted d-block">/ @item.KPI.TargetValue.ToString("N2")</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">@Localizer.T("Common.NoData")</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2" style="min-width:140px;">
+                                                    <div class="progress flex-grow-1" style="height:8px;">
+                                                        <div class="progress-bar @kpiRateColor" role="progressbar"
+                                                             style="width:@Math.Min(item.AchievementRate, 100)%"
+                                                             aria-valuenow="@item.AchievementRate" aria-valuemin="0" aria-valuemax="100">
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-nowrap fw-bold">@item.AchievementRate.ToString("N2")%</small>
+                                                </div>
+                                            </td>
+                                            <td class="text-center"><span class="status-pill needs-review">@item.KPI.Frequency</span></td>
+                                            <td class="text-center"><span class="fw-bold">@item.TotalEntries</span></td>
+                                            <td>
+                                                <div class="cell-actions justify-content-end">
+                                                    <a asp-action="EnterData" asp-route-kpiId="@item.KPI.Id"
+                                                       class="btn btn-sm btn-outline-success" title="@Localizer.T("Page.EnterKPIData")">
+                                                        <i class="fas fa-pen"></i>
+                                                    </a>
+                                                    <a asp-action="ViewAnalytics" asp-route-id="@item.KPI.Id"
+                                                       class="btn btn-sm btn-outline-info" title="@Localizer.T("Page.KPIAnalytics")">
+                                                        <i class="fas fa-chart-bar"></i>
+                                                    </a>
+                                                    <a asp-action="Export" asp-route-kpiId="@item.KPI.Id" asp-route-format="excel"
+                                                       class="btn btn-sm btn-outline-secondary" title="@Localizer.T("KPI.Export")">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="text-center py-4">
+                                <partial name="_EmptyState" model='new {
+                                    Icon = "fa-chart-line",
+                                    Title = Localizer.T("KPI.NoDepartmentKPIs"),
+                                    Message = "",
+                                    ActionLink = Url.Action("Create"),
+                                    ActionText = Localizer.T("KPI.CreateNew")
+                                }' />
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

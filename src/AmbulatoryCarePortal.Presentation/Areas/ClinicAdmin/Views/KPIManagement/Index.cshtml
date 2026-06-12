@@ -1,7 +1,9 @@
 @model List<KPIDetailViewModel>
+@using AmbulatoryCarePortal.Domain.Entities
 
 @{
     ViewData["Title"] = @Localizer.T("Page.KPIMonitoring");
+    var departments = ViewBag.Departments as IEnumerable<Department> ?? Enumerable.Empty<Department>();
 }
 
 <partial name="_PageHeader" model='new {
@@ -17,6 +19,9 @@
             <span class="toolbar-count">@ViewBag.TotalCount @Localizer.T("KPI.TotalKPIs")</span>
         </div>
         <div class="toolbar-right gap-2">
+            <a asp-action="ByDepartment" class="btn btn-sm btn-outline-info">
+                <i class="fas fa-chart-pie me-1"></i>@Localizer.T("KPI.ByDepartment")
+            </a>
             <a asp-action="Create" class="btn btn-sm btn-primary">
                 <i class="fas fa-plus me-1"></i>@Localizer.T("KPI.CreateNew")
             </a>
@@ -47,6 +52,10 @@
                 <label class="form-label small">@Localizer.T("HR.Department")</label>
                 <select name="departmentFilter" class="form-select" onchange="this.form.submit()" aria-label="@Localizer.T("KPI.FilterByDepartment")">
                     <option value="">@Localizer.T("KPI.AllDepartments")</option>
+                    @foreach (var dept in departments)
+                    {
+                        <option value="@dept.Id" selected="@(ViewBag.DepartmentFilter?.ToString() == dept.Id.ToString())">@dept.NameEn</option>
+                    }
                 </select>
             </div>
             <div class="col-md-2">

@@ -18,7 +18,7 @@ public class HrStaffConfiguration : IEntityTypeConfiguration<HrStaff>
             .HasMaxLength(255);
 
         builder.Property(x => x.NationalId)
-            .HasMaxLength(50);
+            .HasMaxLength(100);
 
         builder.Property(x => x.Email)
             .HasMaxLength(255);

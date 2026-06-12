@@ -1,0 +1,75 @@
+@model CreateDepartmentViewModel
+
+@{
+    ViewData["Title"] = Localizer.T("Department.CreateDepartment");
+}
+
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Department.CreateDepartment"),
+    Icon = "fa-plus-circle",
+    Breadcrumb = Localizer.T("Page.Departments")
+}' />
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h3><i class="fas fa-plus-circle me-2"></i>@Localizer.T("Department.CreateDepartment")</h3>
+            </div>
+            <form method="post" asp-action="Create" role="form" aria-label="@Localizer.T("Department.CreateDepartment")">
+                @Html.AntiForgeryToken()
+
+                <div class="form-card-body">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="@Localizer.T("Common.Close")"></button>
+                        </div>
+                    }
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="NameEn" class="form-label">@Localizer.T("Common.Name") <span class="text-danger">*</span></label>
+                                <input asp-for="NameEn" class="form-control" placeholder="@Localizer.T("Department.NameEnPlaceholder")" required aria-required="true" />
+                                <span asp-validation-for="NameEn" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="NameAr" class="form-label">@Localizer.T("Common.ArabicName")</label>
+                                <input asp-for="NameAr" class="form-control" placeholder="@Localizer.T("Department.NameArPlaceholder")" dir="rtl" />
+                                <span asp-validation-for="NameAr" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Code" class="form-label">@Localizer.T("Department.Code") <span class="text-danger">*</span></label>
+                                <input asp-for="Code" class="form-control" placeholder="@Localizer.T("Department.SelectCode")" required aria-required="true" />
+                                <span asp-validation-for="Code" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> @Localizer.T("Common.Cancel")
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> @Localizer.T("Button.Create")
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

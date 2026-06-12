@@ -2,13 +2,13 @@
 @using System.Globalization
 
 @{
-    ViewData["Title"] = Localizer.T("Page.AddStaff");
+    ViewData["Title"] = Localizer.T("Page.EditStaff");
     var isArabic = CultureInfo.CurrentCulture.Name.StartsWith("ar");
 }
 
 <partial name="_PageHeader" model='new {
-    Title = Localizer.T("HR.AddNewStaffMember"),
-    Icon = "fa-user-plus",
+    Title = Localizer.T("HR.EditStaffMember"),
+    Icon = "fa-user-edit",
     Breadcrumb = Localizer.T("Page.StaffManagement")
 }' />
 
@@ -16,10 +16,10 @@
     <div class="col-lg-8">
         <div class="form-card">
             <div class="form-card-header">
-                <h3><i class="fas fa-user-plus"></i> @Localizer.T("HR.AddNewStaffMember")</h3>
+                <h3><i class="fas fa-user-edit"></i> @Localizer.T("HR.EditStaffMember")</h3>
             </div>
 
-            <form method="post" asp-action="Create">
+            <form method="post" asp-action="Edit">
                 @Html.AntiForgeryToken()
 
                 <div class="form-card-body">
@@ -146,7 +146,7 @@
 
                 <div class="form-card-footer">
                     <div class="d-flex justify-content-between">
-                        <a asp-action="Index" class="btn btn-outline-secondary">
+                        <a asp-action="Details" asp-route-id="@ViewContext.RouteData.Values["id"]" class="btn btn-outline-secondary">
                             <i class="fas fa-times"></i> @Localizer.T("HR.Cancel")
                         </a>
                         <button type="submit" class="btn btn-primary">

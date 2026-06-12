@@ -84,7 +84,6 @@ public class UserManagementController : Controller
         {
             AvailableRoles = await GetAvailableRolesAsync(),
             AvailableClinics = await GetAvailableClinicsAsync(),
-            AvailableDepartments = await GetAvailableDepartmentsAsync(),
             IsActive = true
         };
 
@@ -110,7 +109,6 @@ public class UserManagementController : Controller
             PhoneNumber = model.PhoneNumber,
             IsActive = model.IsActive,
             ClinicId = model.ClinicId,
-            DepartmentId = model.DepartmentId,
             EmailConfirmed = true
         };
 
@@ -177,7 +175,6 @@ public class UserManagementController : Controller
             PhoneNumber = user.PhoneNumber,
             IsActive = user.IsActive,
             ClinicId = user.ClinicId,
-            DepartmentId = user.DepartmentId,
             SelectedRole = roles.FirstOrDefault() ?? "None",
             AvailableRoles = await GetAvailableRolesAsync(),
             AvailableClinics = await GetAvailableClinicsAsync(),
@@ -212,7 +209,6 @@ public class UserManagementController : Controller
         user.PhoneNumber = model.PhoneNumber;
         user.IsActive = model.IsActive;
         user.ClinicId = model.ClinicId;
-        user.DepartmentId = model.DepartmentId;
 
         var currentRoles = await _userManager.GetRolesAsync(user);
         IdentityResult result;
@@ -430,14 +426,4 @@ public class UserManagementController : Controller
         }).ToList();
     }
 
-    private async Task<List<DepartmentViewModel>> GetAvailableDepartmentsAsync()
-    {
-        var departments = await _unitOfWork.Repository<Department>().GetAllAsync();
-        return departments.Select(d => new DepartmentViewModel
-        {
-            Id = d.Id,
-            Name = d.NameEn,
-            ClinicId = d.ClinicId
-        }).ToList();
-    }
 }

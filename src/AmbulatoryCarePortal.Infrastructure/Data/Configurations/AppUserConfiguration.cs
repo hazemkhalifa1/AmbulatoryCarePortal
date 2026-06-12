@@ -26,11 +26,6 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
             .HasForeignKey(x => x.ClinicId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(x => x.Department)
-            .WithMany(x => x.Users)
-            .HasForeignKey(x => x.DepartmentId)
-            .OnDelete(DeleteBehavior.Restrict);
-
         builder.HasMany(x => x.PolicyDocuments)
             .WithOne()
             .OnDelete(DeleteBehavior.Restrict);

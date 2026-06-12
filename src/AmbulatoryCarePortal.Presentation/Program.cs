@@ -6,6 +6,7 @@ using AmbulatoryCarePortal.Infrastructure.Data;
 using AmbulatoryCarePortal.Infrastructure.Data.Seed;
 using AmbulatoryCarePortal.Infrastructure.DependencyInjection;
 using AmbulatoryCarePortal.Presentation.DependencyInjection;
+using AmbulatoryCarePortal.Presentation.Helpers;
 using AmbulatoryCarePortal.Presentation.Middleware;
 
 // Configure Serilog
@@ -42,6 +43,9 @@ try
         })
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
+
+    // Add custom claims factory to inject ClinicId claim
+    builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUser>, ClinicClaimsPrincipalFactory>();
 
     // Add Razor Pages
     builder.Services.AddRazorPages();

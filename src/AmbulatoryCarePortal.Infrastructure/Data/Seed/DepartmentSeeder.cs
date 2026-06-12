@@ -6,20 +6,20 @@ namespace AmbulatoryCarePortal.Infrastructure.Data.Seed;
 
 public static class DepartmentSeeder
 {
-    private static readonly (DepartmentCodeEnum Code, string NameEn, string NameAr)[] CbahiDepartments =
+    private static readonly (string Code, string NameEn, string NameAr)[] CbahiDepartments =
     {
-        (DepartmentCodeEnum.LD,  "Leadership of the Organization",     "قيادة المنظمة"),
-        (DepartmentCodeEnum.PC,  "Provision of Care",                 "تقديم الرعاية"),
-        (DepartmentCodeEnum.LB,  "Laboratory",                        "المختبر"),
-        (DepartmentCodeEnum.RD,  "Radiology Department",              "قسم الأشعات"),
-        (DepartmentCodeEnum.DN,  "Dental",                            "الأسنان"),
-        (DepartmentCodeEnum.MM,  "Medication Management",             "إدارة الأدوية"),
-        (DepartmentCodeEnum.MOI, "Management of Information",         "إدارة المعلومات"),
-        (DepartmentCodeEnum.IPC, "Infection Prevention and Control",  "الوقاية من العدوى والتحكم بها"),
-        (DepartmentCodeEnum.FMS, "Facility Management and Safety",    "إدارة المرافق والسلامة"),
-        (DepartmentCodeEnum.DPU, "Dialysis Patient Unit",             "وحدة مرضى غسيل الكلى"),
-        (DepartmentCodeEnum.DA,  "Dental Anesthesia",                 "تخدير الأسنان"),
-        (DepartmentCodeEnum.DL,  "Dental Laboratory",                 "مختبر الأسنان")
+        ("LD",  "Leadership of the Organization",     "قيادة المنظمة"),
+        ("PC",  "Provision of Care",                 "تقديم الرعاية"),
+        ("LB",  "Laboratory",                        "المختبر"),
+        ("RD",  "Radiology Department",              "قسم الأشعات"),
+        ("DN",  "Dental",                            "الأسنان"),
+        ("MM",  "Medication Management",             "إدارة الأدوية"),
+        ("MOI", "Management of Information",         "إدارة المعلومات"),
+        ("IPC", "Infection Prevention and Control",  "الوقاية من العدوى والتحكم بها"),
+        ("FMS", "Facility Management and Safety",    "إدارة المرافق والسلامة"),
+        ("DPU", "Dialysis Patient Unit",             "وحدة مرضى غسيل الكلى"),
+        ("DA",  "Dental Anesthesia",                 "تخدير الأسنان"),
+        ("DL",  "Dental Laboratory",                 "مختبر الأسنان")
     };
 
     public static async Task SeedDepartmentsAsync(AppDbContext dbContext, string createdBy = "system")
@@ -46,23 +46,23 @@ public static class DepartmentSeeder
             await dbContext.SaveChangesAsync();
         }
 
-        var existingDepartmentCodes = (await dbContext.Departments
+        var existingCodes = (await dbContext.Departments
             .Where(d => d.ClinicId == clinic.Id)
-            .Select(d => d.DepartmentCode)
+            .Select(d => d.Code)
             .ToListAsync()).ToHashSet();
 
         var newDepartments = new List<Department>();
 
         foreach (var (code, nameEn, nameAr) in CbahiDepartments)
         {
-            if (existingDepartmentCodes.Contains(code))
+            if (existingCodes.Contains(code))
                 continue;
 
             newDepartments.Add(new Department
             {
                 NameEn = nameEn,
                 NameAr = nameAr,
-                DepartmentCode = code,
+                Code = code,
                 ClinicId = clinic.Id,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = createdBy
