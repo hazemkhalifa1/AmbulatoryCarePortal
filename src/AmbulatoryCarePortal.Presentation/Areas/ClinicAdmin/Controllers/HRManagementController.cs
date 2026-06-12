@@ -49,10 +49,12 @@ public class HRManagementController : Controller
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
 
-        var staff = await _unitOfWork.Repository<HrStaff>().FindAsync(
+        var staff = await _unitOfWork.Repository<HrStaff>().FindWithIncludesAsync(
             s => s.ClinicId == clinicId &&
                  (string.IsNullOrEmpty(searchTerm) || s.FirstName.Contains(searchTerm) || s.LastName.Contains(searchTerm)) &&
-                 (!departmentFilter.HasValue || s.DepartmentId == departmentFilter.Value)
+                 (!departmentFilter.HasValue || s.DepartmentId == departmentFilter.Value),
+            includeDeleted: false,
+            x => x.Department
         );
 
         var pagedStaff = staff
@@ -149,6 +151,7 @@ public class HRManagementController : Controller
         {
             FirstName = model.FirstName,
             LastName = model.LastName,
+            FullNameEn = $"{model.FirstName} {model.LastName}".Trim(),
             NationalId = model.NationalId,
             Email = model.Email,
             PhoneNumber = model.PhoneNumber,
@@ -283,7 +286,11 @@ public class HRManagementController : Controller
     [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
-        var staff = await _unitOfWork.Repository<HrStaff>().GetByIdAsync(id);
+        var staff = (await _unitOfWork.Repository<HrStaff>().FindWithIncludesAsync(
+            s => s.Id == id,
+            includeDeleted: false,
+            x => x.Department
+        )).FirstOrDefault();
         if (staff == null)
             return NotFound();
 
@@ -425,7 +432,11 @@ public class HRManagementController : Controller
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
 
-        var staff = await _unitOfWork.Repository<HrStaff>().FindAsync(s => s.ClinicId == clinicId);
+        var staff = await _unitOfWork.Repository<HrStaff>().FindWithIncludesAsync(
+            s => s.ClinicId == clinicId,
+            includeDeleted: false,
+            x => x.Department
+        );
         var staffIds = staff.Select(s => s.Id).ToList();
 
         var documents = await _unitOfWork.Repository<HrDocument>().FindAsync(
@@ -442,13 +453,12 @@ public class HRManagementController : Controller
         {
             var person = staff.FirstOrDefault(s => s.Id == doc.HrStaffId);
             var daysUntilExpiry = (doc.ExpiryDate!.Value - DateTime.UtcNow).Days;
-            var dept = await _unitOfWork.Repository<Department>().GetByIdAsync(person?.DepartmentId ?? 0);
 
             expiringList.Add(new ExpiringDocumentViewModel
             {
                 Document = _mapper.Map<HRDocumentDto>(doc),
                 StaffName = $"{person?.FirstName} {person?.LastName}",
-                DepartmentName = dept?.NameEn,
+                DepartmentName = person?.Department?.NameEn,
                 DaysUntilExpiry = daysUntilExpiry,
                 Category = daysUntilExpiry <= 7 ? "Critical" : daysUntilExpiry <= 30 ? "Urgent" : "Upcoming"
             });
@@ -462,7 +472,11 @@ public class HRManagementController : Controller
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
 
-        var staff = await _unitOfWork.Repository<HrStaff>().FindAsync(s => s.ClinicId == clinicId);
+        var staff = await _unitOfWork.Repository<HrStaff>().FindWithIncludesAsync(
+            s => s.ClinicId == clinicId,
+            includeDeleted: false,
+            x => x.Department
+        );
 
         var nonCompliantList = new List<HRStaffNonCompliantViewModel>();
 

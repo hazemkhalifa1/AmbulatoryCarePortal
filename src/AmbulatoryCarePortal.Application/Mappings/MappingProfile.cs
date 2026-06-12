@@ -68,10 +68,14 @@ public class MappingProfile : Profile
         // HR Mappings
         CreateMap<HrStaff, CreateHrStaffDto>().ReverseMap();
         CreateMap<HrStaff, HrStaffDto>()
+            .ForMember(dest => dest.FullNameEn, opt => opt.MapFrom(src =>
+                !string.IsNullOrEmpty(src.FullNameEn) ? src.FullNameEn : $"{src.FirstName} {src.LastName}".Trim()))
             .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.NameEn))
             .ForMember(dest => dest.DocumentCount, opt => opt.MapFrom(src => src.Documents.Count));
 
         CreateMap<HrStaff, HrStaffDetailDto>()
+            .ForMember(dest => dest.FullNameEn, opt => opt.MapFrom(src =>
+                !string.IsNullOrEmpty(src.FullNameEn) ? src.FullNameEn : $"{src.FirstName} {src.LastName}".Trim()))
             .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.NameEn))
             .ForMember(dest => dest.Documents, opt => opt.MapFrom(src => src.Documents));
 
