@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+[Authorize(Policy = "Permission.notifications.manage")]
 public class NotificationsController : Controller
 {
     private readonly INotificationService _notificationService;

@@ -118,8 +118,13 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         UpdateRange(entities);
     }
 
+    private const int MaxPageSize = 100;
+
     public async Task<PagedResult<T>> GetPagedAsync(int pageNumber, int pageSize, Expression<Func<T, bool>>? predicate = null, Expression<Func<T, object>>? orderBy = null, bool ascending = true, bool includeDeleted = false)
     {
+        pageNumber = Math.Max(1, pageNumber);
+        pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
+
         var query = _dbSet.AsQueryable();
         if (includeDeleted)
             query = query.IgnoreQueryFilters();
@@ -148,6 +153,9 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 
     public async Task<PagedResult<T>> GetPagedWithIncludesAsync(int pageNumber, int pageSize, Expression<Func<T, bool>>? predicate = null, Expression<Func<T, object>>? orderBy = null, bool ascending = true, bool includeDeleted = false, params Expression<Func<T, object>>[] includes)
     {
+        pageNumber = Math.Max(1, pageNumber);
+        pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
+
         var query = _dbSet.AsQueryable();
         if (includeDeleted)
             query = query.IgnoreQueryFilters();

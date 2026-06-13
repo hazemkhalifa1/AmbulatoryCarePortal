@@ -1,6 +1,7 @@
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Presentation.Helpers;
+using AmbulatoryCarePortal.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +9,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+[Authorize(Policy = "Permission.dashboard.view")]
 public class DashboardController : Controller
 {
     private readonly IClinicService _clinicService;
     private readonly IPolicyDocumentService _policyDocumentService;
     private readonly IKPIService _kpiService;
     private readonly IHrService _hrService;
+    private readonly IComplianceCalendarService _complianceCalendarService;
+    private readonly IComplianceScoreService _complianceScoreService;
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<DashboardController> _logger;
     private readonly ITranslationService _localizer;
@@ -24,6 +27,8 @@ public class DashboardController : Controller
         IPolicyDocumentService policyDocumentService,
         IKPIService kpiService,
         IHrService hrService,
+        IComplianceCalendarService complianceCalendarService,
+        IComplianceScoreService complianceScoreService,
         ILogger<DashboardController> logger,
         UserManager<AppUser> userManager,
         ITranslationService localizer)
@@ -32,6 +37,8 @@ public class DashboardController : Controller
         _policyDocumentService = policyDocumentService;
         _kpiService = kpiService;
         _hrService = hrService;
+        _complianceCalendarService = complianceCalendarService;
+        _complianceScoreService = complianceScoreService;
         _logger = logger;
         _userManager = userManager;
         _localizer = localizer;
@@ -110,6 +117,32 @@ public class DashboardController : Controller
         return View(expiringDocs);
     }
 
+    public async Task<IActionResult> ComplianceCalendar()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId;
+        if (!clinicId.HasValue)
+            return Unauthorized();
+
+        var model = await _complianceCalendarService.GetCalendarAsync(clinicId.Value);
+        ViewBag.PageTitle = _localizer.T("Page.ComplianceCalendar");
+
+        return View(model);
+    }
+
+    public async Task<IActionResult> ComplianceScore()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId;
+        if (!clinicId.HasValue)
+            return Unauthorized();
+
+        ViewBag.PageTitle = _localizer.T("Page.ComplianceScore");
+        var score = await _complianceScoreService.GetLatestScoreAsync(clinicId.Value);
+        var dashboard = await _complianceScoreService.GetDashboardAsync(clinicId.Value);
+        return View(new ComplianceScoreWidgetViewModel { Score = score, Dashboard = dashboard });
+    }
+
     [HttpPost]
     public async Task<IActionResult> UpdateComplianceScore()
     {
@@ -120,13 +153,68 @@ public class DashboardController : Controller
 
         try
         {
-            var score = await _clinicService.CalculateComplianceScoreAsync(clinicId.Value);
-            return Json(new { success = true, score });
+            var result = await _complianceScoreService.CalculateScoreAsync(clinicId.Value);
+            return Json(new { success = true, score = result.OverallScore });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error calculating compliance score");
             return Json(new { success = false, message = "Error calculating compliance score" });
         }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ScoreHistory()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId;
+        if (!clinicId.HasValue)
+            return Unauthorized();
+
+        var history = await _complianceScoreService.GetScoreHistoryAsync(clinicId.Value, 10);
+        return Json(history.Select(h => new
+        {
+            calculatedAt = h.CalculatedAt,
+            overallScore = h.OverallScore,
+            policyScore = h.PolicyScore,
+            kpiScore = h.KpiScore,
+            checklistScore = h.ChecklistScore,
+            hrScore = h.HrScore,
+            documentScore = h.DocumentScore
+        }));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ScoreData()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var clinicId = user?.ClinicId;
+        if (!clinicId.HasValue)
+            return Unauthorized();
+
+        var score = await _complianceScoreService.GetLatestScoreAsync(clinicId.Value);
+        var dashboard = await _complianceScoreService.GetDashboardAsync(clinicId.Value);
+        var widget = new ComplianceScoreWidgetViewModel { Score = score, Dashboard = dashboard };
+        return Json(new
+        {
+            overallScore = widget.Score.OverallScore,
+            status = widget.Score.OverallScore >= 80 ? "compliant" : widget.Score.OverallScore >= 60 ? "partial" : "noncompliant",
+            components = widget.Score.Components.Select(c => new
+            {
+                name = c.Name,
+                score = c.Score,
+                weight = c.Weight,
+                color = c.Color,
+                icon = c.Icon
+            }),
+            dashboard = new
+            {
+                missingPolicies = widget.Dashboard.MissingPolicies,
+                expiredDocuments = widget.Dashboard.ExpiredDocuments,
+                overdueChecklists = widget.Dashboard.OverdueChecklists,
+                expiringCredentials = widget.Dashboard.ExpiringCredentials
+            },
+            lastCalculated = widget.Score.CalculatedAt
+        });
     }
 }

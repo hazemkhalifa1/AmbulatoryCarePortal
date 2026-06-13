@@ -1,0 +1,53 @@
+@model AmbulatoryCarePortal.Presentation.ViewModels.ConfirmEmailViewModel
+
+@{
+    ViewData["Title"] = Localizer.T("App.Title");
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<div class="login-container" style="min-height:100vh">
+    <div class="login-brand-panel">
+        <div class="grid-pattern"></div>
+        <div class="login-brand-content">
+            <div class="brand-icon-large">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+            <h1>@Localizer.T("App.Name")</h1>
+            <p class="brand-subtitle">@Localizer.T("App.Tagline")</p>
+        </div>
+        <div class="login-brand-footer">
+            <p>@Localizer.T("App.Copyright")</p>
+        </div>
+    </div>
+
+    <div class="login-form-panel">
+        <div class="login-form-wrapper">
+            <div class="login-card">
+                <form method="post" asp-action="ConfirmEmail" novalidate>
+                    <input type="hidden" asp-for="UserId" />
+                    <input type="hidden" asp-for="Code" />
+
+                    <div class="text-center mb-4">
+                        <div style="font-size: 4rem; color: var(--primary-color);">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>@Localizer.T("ConfirmEmail.Heading")</h3>
+                        <p>@Localizer.T("ConfirmEmail.Message")</p>
+                    </div>
+
+                    <button type="submit" class="login-btn" data-loading>
+                        <span class="btn-text">@Localizer.T("ConfirmEmail.ConfirmBtn")</span>
+                        <span class="btn-loading">
+                            <span class="spinner"></span>
+                            @Localizer.T("ConfirmEmail.Confirming")
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="login-form-footer">
+                @Localizer.T("App.FullCopyright")
+            </div>
+        </div>
+    </div>
+</div>

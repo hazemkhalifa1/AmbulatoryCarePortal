@@ -32,5 +32,8 @@ public class FormConfiguration : IEntityTypeConfiguration<Form>
             .WithOne(x => x.Form)
             .HasForeignKey(x => x.FormId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(x => new { x.ClinicId, x.Category })
+            .HasFilter("[IsDeleted] = 0");
     }
 }

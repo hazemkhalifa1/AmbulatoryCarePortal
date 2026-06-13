@@ -21,6 +21,6 @@ public class DocumentTemplateConfiguration : IEntityTypeConfiguration<DocumentTe
             .HasMaxLength(50);
         builder.Property(x => x.TemplateFilePath).HasMaxLength(500);
 
-        builder.HasIndex(x => x.StandardCode).IsUnique();
+        builder.HasIndex(x => x.StandardCode).IsUnique().HasFilter("[IsDeleted] = 0");
     }
 }

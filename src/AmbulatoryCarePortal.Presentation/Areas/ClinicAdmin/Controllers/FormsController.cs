@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+[Authorize(Policy = "Permission.documents.manage")]
 public class FormsController : Controller
 {
     private readonly IFormService _formService;
@@ -51,7 +51,7 @@ public class FormsController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.documents.manage")]
     public IActionResult Create()
     {
         ViewBag.PageTitle = _localizer.T("Page.AddForm");
@@ -60,7 +60,7 @@ public class FormsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.documents.manage")]
     public async Task<IActionResult> Create(CreateFormDto dto)
     {
         if (!ModelState.IsValid)
@@ -101,7 +101,7 @@ public class FormsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.documents.manage")]
     public async Task<IActionResult> Delete(int id)
     {
         try
@@ -120,7 +120,7 @@ public class FormsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.documents.manage")]
     public async Task<IActionResult> UploadVersion(int formId, IFormFile file, string? notes)
     {
         if (file == null || file.Length == 0)

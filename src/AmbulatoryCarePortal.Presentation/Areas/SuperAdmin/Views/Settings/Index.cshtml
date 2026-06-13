@@ -1,0 +1,374 @@
+@{
+    ViewData["Title"] = Localizer.T("Page.SystemSettings");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var settings = ViewBag.Settings as Dictionary<SettingCategory, List<SystemSettingDto>> ?? new();
+    var activeTab = ViewBag.ActiveTab as string ?? "mail";
+
+    SystemSettingDto? GetSetting(string key)
+    {
+        foreach (var kv in settings)
+        {
+            var found = kv.Value.FirstOrDefault(s => s.Key == key);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    string SettingValue(string key) => GetSetting(key)?.Value ?? "";
+    bool SettingBool(string key) => bool.TryParse(GetSetting(key)?.Value, out var b) && b;
+    int SettingInt(string key, int def = 0) => int.TryParse(GetSetting(key)?.Value, out var i) ? i : def;
+}
+
+<div class="dashboard-hero mb-4">
+    <div class="hero-content">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h1 class="hero-title"><i class="fas fa-cog me-2"></i>@Localizer.T("Page.SystemSettings")</h1>
+                <p class="hero-subtitle mb-0">@Localizer.T("Settings.Subtitle")</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <!-- Nav Tabs -->
+        <ul class="nav nav-tabs mb-4" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "mail" ? "active" : "")" id="mail-tab" data-bs-toggle="tab" data-bs-target="#mail" type="button" role="tab" aria-controls="mail" aria-selected="@(activeTab == "mail" ? "true" : "false")">
+                    <i class="fas fa-envelope me-1"></i> @Localizer.T("Settings.Mail.Tab")
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "documenttemplate" ? "active" : "")" id="documenttemplate-tab" data-bs-toggle="tab" data-bs-target="#documenttemplate" type="button" role="tab" aria-controls="documenttemplate" aria-selected="@(activeTab == "documenttemplate" ? "true" : "false")">
+                    <i class="fas fa-file me-1"></i> @Localizer.T("Settings.DocumentTemplate.Tab")
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "branding" ? "active" : "")" id="branding-tab" data-bs-toggle="tab" data-bs-target="#branding" type="button" role="tab" aria-controls="branding" aria-selected="@(activeTab == "branding" ? "true" : "false")">
+                    <i class="fas fa-paint-brush me-1"></i> @Localizer.T("Settings.Branding.Tab")
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "notifications" ? "active" : "")" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab" aria-controls="notifications" aria-selected="@(activeTab == "notifications" ? "true" : "false")">
+                    <i class="fas fa-bell me-1"></i> @Localizer.T("Settings.Notifications.Tab")
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "localization" ? "active" : "")" id="localization-tab" data-bs-toggle="tab" data-bs-target="#localization" type="button" role="tab" aria-controls="localization" aria-selected="@(activeTab == "localization" ? "true" : "false")">
+                    <i class="fas fa-globe me-1"></i> @Localizer.T("Settings.Localization.Tab")
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "general" ? "active" : "")" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="@(activeTab == "general" ? "true" : "false")">
+                    <i class="fas fa-wrench me-1"></i> @Localizer.T("Settings.General.Tab")
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Mail Tab -->
+            <div class="tab-pane fade @(activeTab == "mail" ? "show active" : "")" id="mail" role="tabpanel" aria-labelledby="mail-tab">
+                <form method="post" asp-action="UpdateMail" aria-label="Mail settings form">
+                    @Html.AntiForgeryToken()
+                    <div class="form-section">
+                        <div class="form-section-header"><i class="fas fa-server me-2"></i><span>@Localizer.T("Settings.Mail.SmtpSettings")</span></div>
+                        <div class="form-section-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Mail.Host") <span class="text-danger">*</span></label>
+                                    <input name="Smtp_Host" class="form-control" value="@SettingValue("Smtp.Host")" placeholder="smtp.example.com" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Mail.Port")</label>
+                                    <input name="Smtp_Port" class="form-control" value="@SettingValue("Smtp.Port")" placeholder="587" type="number" />
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Mail.Username")</label>
+                                    <input name="Smtp_Username" class="form-control" value="@SettingValue("Smtp.Username")" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Mail.Password")</label>
+                                    <div class="input-group">
+                                        <input name="Smtp_Password" class="form-control" value="@SettingValue("Smtp.Password")" type="password" />
+                                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="Smtp_Password">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mt-2">
+                                        <input name="Smtp_EnableSsl" class="form-check-input" type="checkbox" value="true" @(SettingBool("Smtp.EnableSsl") ? "checked" : "") />
+                                        <label class="form-check-label">@Localizer.T("Settings.Mail.EnableSsl")</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Mail.FromAddress")</label>
+                                    <input name="Smtp_FromAddress" class="form-control" value="@SettingValue("Smtp.FromAddress")" type="email" placeholder="noreply@cbahi-portal.com" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Mail.FromName")</label>
+                                    <input name="Smtp_FromName" class="form-control" value="@SettingValue("Smtp.FromName")" />
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Mail.TestRecipient")</label>
+                                    <input name="Smtp_TestRecipientEmail" class="form-control" value="@SettingValue("Smtp.TestRecipientEmail")" type="email" placeholder="admin@example.com" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-card-footer d-flex gap-2">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")</button>
+                        <button type="button" class="btn btn-outline-info" id="sendTestEmailBtn"><i class="fas fa-paper-plane me-1"></i>@Localizer.T("Settings.Mail.SendTest")</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Document Template Tab -->
+            <div class="tab-pane fade @(activeTab == "documenttemplate" ? "show active" : "")" id="documenttemplate" role="tabpanel" aria-labelledby="documenttemplate-tab">
+                <form method="post" asp-action="UpdateDocumentTemplate" aria-label="Document template settings form">
+                    @Html.AntiForgeryToken()
+                    <div class="form-section">
+                        <div class="form-section-header"><i class="fas fa-file me-2"></i><span>@Localizer.T("Settings.DocumentTemplate.Title")</span></div>
+                        <div class="form-section-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.ExpiryWarningDays")</label>
+                                    <input name="DocumentTemplate_DefaultExpiryWarningDays" class="form-control" value="@SettingValue("DocumentTemplate.DefaultExpiryWarningDays")" type="number" min="1" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.MaxFileSizeMB")</label>
+                                    <input name="DocumentTemplate_MaxFileSizeMB" class="form-control" value="@SettingValue("DocumentTemplate.MaxFileSizeMB")" type="number" min="1" />
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.AllowedExtensions")</label>
+                                    <input name="DocumentTemplate_AllowedFileExtensions" class="form-control" value="@SettingValue("DocumentTemplate.AllowedFileExtensions")" placeholder=".pdf,.docx,.xlsx" />
+                                    <div class="form-text">@Localizer.T("Settings.DocumentTemplate.ExtensionsHelp")</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mt-4">
+                                        <input name="DocumentTemplate_AutoAssignToNewClinics" class="form-check-input" type="checkbox" value="true" @(SettingBool("DocumentTemplate.AutoAssignToNewClinics") ? "checked" : "") />
+                                        <label class="form-check-label">@Localizer.T("Settings.DocumentTemplate.AutoAssign")</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-card-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Branding Tab -->
+            <div class="tab-pane fade @(activeTab == "branding" ? "show active" : "")" id="branding" role="tabpanel" aria-labelledby="branding-tab">
+                <form method="post" asp-action="UpdateBranding" aria-label="Branding settings form">
+                    @Html.AntiForgeryToken()
+                    <div class="form-section">
+                        <div class="form-section-header"><i class="fas fa-paint-brush me-2"></i><span>@Localizer.T("Settings.Branding.Title")</span></div>
+                        <div class="form-section-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Branding.SiteName")</label>
+                                    <input name="Branding_SiteName" class="form-control" value="@SettingValue("Branding.SiteName")" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Branding.SiteNameAr")</label>
+                                    <input name="Branding_SiteNameAr" class="form-control" value="@SettingValue("Branding.SiteNameAr")" dir="rtl" />
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-4">
+                                    <label class="form-label">@Localizer.T("Settings.Branding.PrimaryColor")</label>
+                                    <input name="Branding_PrimaryColor" class="form-control form-control-color" value="@(SettingValue("Branding.PrimaryColor") ?? "#1A3A6B")" type="color" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">@Localizer.T("Settings.Branding.SupportPhone")</label>
+                                    <input name="Branding_SupportPhone" class="form-control" value="@SettingValue("Branding.SupportPhone")" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">@Localizer.T("Settings.Branding.SupportEmail")</label>
+                                    <input name="Branding_SupportEmail" class="form-control" value="@SettingValue("Branding.SupportEmail")" type="email" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-card-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Notifications Tab -->
+            <div class="tab-pane fade @(activeTab == "notifications" ? "show active" : "")" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+                <form method="post" asp-action="UpdateNotifications" aria-label="Notification settings form">
+                    @Html.AntiForgeryToken()
+                    <div class="form-section">
+                        <div class="form-section-header"><i class="fas fa-bell me-2"></i><span>@Localizer.T("Settings.Notifications.Title")</span></div>
+                        <div class="form-section-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Notifications.PolicyExpiryWarningDays")</label>
+                                    <input name="Notifications_PolicyExpiryWarningDays" class="form-control" value="@SettingValue("Notifications.PolicyExpiryWarningDays")" type="number" min="1" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Notifications.HRDocumentExpiryWarningDays")</label>
+                                    <input name="Notifications_HRDocumentExpiryWarningDays" class="form-control" value="@SettingValue("Notifications.HRDocumentExpiryWarningDays")" type="number" min="1" />
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mt-2">
+                                        <input name="Notifications_EnableEmailNotifications" class="form-check-input" type="checkbox" value="true" @(SettingBool("Notifications.EnableEmailNotifications") ? "checked" : "") />
+                                        <label class="form-check-label">@Localizer.T("Settings.Notifications.EnableEmail")</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mt-2">
+                                        <input name="Notifications_DailyDigestEnabled" class="form-check-input" type="checkbox" value="true" @(SettingBool("Notifications.DailyDigestEnabled") ? "checked" : "") />
+                                        <label class="form-check-label">@Localizer.T("Settings.Notifications.DailyDigest")</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Notifications.DigestSendTime")</label>
+                                    <input name="Notifications_DigestSendTime" class="form-control" value="@SettingValue("Notifications.DigestSendTime")" type="time" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-card-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Localization Tab -->
+            <div class="tab-pane fade @(activeTab == "localization" ? "show active" : "")" id="localization" role="tabpanel" aria-labelledby="localization-tab">
+                <form method="post" asp-action="UpdateLocalization" aria-label="Localization settings form">
+                    @Html.AntiForgeryToken()
+                    <div class="form-section">
+                        <div class="form-section-header"><i class="fas fa-globe me-2"></i><span>@Localizer.T("Settings.Localization.Title")</span></div>
+                        <div class="form-section-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.Localization.DefaultLanguage")</label>
+                                    <select name="Localization_DefaultLanguage" class="form-select">
+                                        <option value="en" selected="@(SettingValue("Localization.DefaultLanguage") == "en")">English</option>
+                                        <option value="ar" selected="@(SettingValue("Localization.DefaultLanguage") == "ar")">العربية</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mt-4">
+                                        <input name="Localization_AllowUserLanguageToggle" class="form-check-input" type="checkbox" value="true" @(SettingBool("Localization.AllowUserLanguageToggle") ? "checked" : "") />
+                                        <label class="form-check-label">@Localizer.T("Settings.Localization.AllowToggle")</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-card-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- General Tab -->
+            <div class="tab-pane fade @(activeTab == "general" ? "show active" : "")" id="general" role="tabpanel" aria-labelledby="general-tab">
+                <form method="post" asp-action="UpdateGeneral" aria-label="General settings form">
+                    @Html.AntiForgeryToken()
+                    <div class="form-section">
+                        <div class="form-section-header"><i class="fas fa-wrench me-2"></i><span>@Localizer.T("Settings.General.Title")</span></div>
+                        <div class="form-section-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">@Localizer.T("Settings.General.SessionTimeout")</label>
+                                    <input name="General_SessionTimeoutMinutes" class="form-control" value="@SettingValue("General.SessionTimeoutMinutes")" type="number" min="1" placeholder="20" />
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mt-2">
+                                        <input name="General_MaintenanceMode" class="form-check-input" type="checkbox" value="true" @(SettingBool("General.MaintenanceMode") ? "checked" : "") />
+                                        <label class="form-check-label">@Localizer.T("Settings.General.MaintenanceMode")</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-12">
+                                    <label class="form-label">@Localizer.T("Settings.General.MaintenanceMessage")</label>
+                                    <textarea name="General_MaintenanceMessage" class="form-control" rows="3">@SettingValue("General.MaintenanceMessage")</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-card-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Send test email
+        document.getElementById('sendTestEmailBtn')?.addEventListener('click', function() {
+            var btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>@Localizer.T("Common.Sending")...';
+
+            fetch('/SuperAdmin/Settings/SendTestEmail', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                showAlert(data.message, data.success ? 'success' : 'danger');
+            })
+            .catch(() => {
+                showAlert('@Localizer.T("Settings.TestEmailFailed")', 'danger');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>@Localizer.T("Settings.Mail.SendTest")';
+            });
+        });
+
+        // Password toggle
+        document.querySelectorAll('.toggle-password').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var targetName = this.getAttribute('data-target');
+                var input = document.querySelector('input[name="' + targetName + '"]');
+                if (input) {
+                    input.type = input.type === 'password' ? 'text' : 'password';
+                    this.querySelector('i').classList.toggle('fa-eye');
+                    this.querySelector('i').classList.toggle('fa-eye-slash');
+                }
+            });
+        });
+
+        // Tab persistence - activate the correct tab on page load
+        var hash = window.location.hash;
+        if (hash) {
+            var tab = document.querySelector('[data-bs-target="' + hash + '"]');
+            if (tab) {
+                bootstrap.Tab.getOrCreateInstance(tab).show();
+            }
+        }
+    </script>
+}

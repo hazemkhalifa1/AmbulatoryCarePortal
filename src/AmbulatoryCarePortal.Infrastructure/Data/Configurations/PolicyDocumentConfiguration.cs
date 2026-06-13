@@ -51,6 +51,9 @@ public class PolicyDocumentConfiguration : IEntityTypeConfiguration<PolicyDocume
             .OnDelete(DeleteBehavior.Restrict);
 
         // Indexes
-        builder.HasIndex(x => new { x.ClinicId, x.StandardCode }).IsUnique();
+        builder.HasIndex(x => new { x.ClinicId, x.StandardCode }).IsUnique().HasFilter("[IsDeleted] = 0");
+
+        builder.HasIndex(x => new { x.ClinicId, x.DocumentStatus, x.ExpiryDate })
+            .HasFilter("[IsDeleted] = 0");
     }
 }

@@ -9,7 +9,7 @@ using AmbulatoryCarePortal.Presentation.Helpers;
 namespace AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers;
 
 [Area("SuperAdmin")]
-[Authorize(Roles = "SuperAdmin")]
+[Authorize(Policy = "Permission.system.configure")]
 public class DashboardController : Controller
 {
     private readonly IClinicService _clinicService;

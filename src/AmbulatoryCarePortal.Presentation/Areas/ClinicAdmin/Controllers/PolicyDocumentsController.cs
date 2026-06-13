@@ -11,7 +11,7 @@ using AmbulatoryCarePortal.Presentation.Helpers;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+[Authorize(Policy = "Permission.policies.read")]
 public class PolicyDocumentsController : Controller
 {
     private readonly IPolicyDocumentService _policyService;

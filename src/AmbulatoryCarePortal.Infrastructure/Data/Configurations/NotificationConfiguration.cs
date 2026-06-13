@@ -32,5 +32,9 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
             .WithMany(x => x.Notifications)
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(x => new { x.ClinicId, x.IsRead, x.CreatedAt })
+            .IsDescending(false, false, true)
+            .HasFilter("[IsDeleted] = 0");
     }
 }

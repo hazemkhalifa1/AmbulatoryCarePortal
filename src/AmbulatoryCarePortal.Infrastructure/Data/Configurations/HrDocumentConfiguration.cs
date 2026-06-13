@@ -29,5 +29,8 @@ public class HrDocumentConfiguration : IEntityTypeConfiguration<HrDocument>
             .WithMany(x => x.HrDocuments)
             .HasForeignKey(x => x.UploadedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => new { x.HrStaffId, x.ExpiryDate })
+            .HasFilter("[IsDeleted] = 0");
     }
 }

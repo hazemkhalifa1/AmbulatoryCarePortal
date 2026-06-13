@@ -44,6 +44,20 @@
                     </span>
                 </div>
 
+                <div class="detail-row">
+                    <span class="detail-label">@Localizer.T("Profile.EmailStatus")</span>
+                    <span class="detail-value">
+                        @if (Model.EmailConfirmed)
+                        {
+                            <span class="badge badge-success"><i class="fas fa-check-circle"></i> @Localizer.T("Profile.EmailConfirmed")</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> @Localizer.T("Profile.EmailNotConfirmed")</span>
+                        }
+                    </span>
+                </div>
+
                 @if (Model.LastLoginAt.HasValue)
                 {
                     <div class="detail-row">
@@ -52,6 +66,17 @@
                     </div>
                 }
             </div>
+            @if (!Model.EmailConfirmed)
+            {
+                <div class="card-footer">
+                    <form method="post" asp-action="ResendConfirmationEmail">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-warning w-full">
+                            <i class="fas fa-envelope"></i> @Localizer.T("Profile.ResendConfirmation")
+                        </button>
+                    </form>
+                </div>
+            }
             <div class="card-footer">
                 <form method="post" action="/Account/Logout">
                     @Html.AntiForgeryToken()

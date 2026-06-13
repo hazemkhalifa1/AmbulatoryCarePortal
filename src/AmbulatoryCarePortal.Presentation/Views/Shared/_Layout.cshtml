@@ -110,6 +110,12 @@
                                     <p>@Localizer.T("Nav.AuditLogs")</p>
                                 </a>
                             </li>
+                            <li class="nav-item" role="none">
+                                <a href="/SuperAdmin/Settings" class="nav-link @(Context.Request.Path.ToString().Contains("/Settings") ? "active" : "")" role="menuitem">
+                                    <i class="nav-icon fas fa-cog"></i>
+                                    <p>@Localizer.T("Nav.SystemSettings")</p>
+                                </a>
+                            </li>
                         }
                         else if (User.IsInRole("ClinicAdmin") || User.IsInRole("ClinicViewer"))
                         {
@@ -148,6 +154,18 @@
                                 <a href="/ClinicAdmin/Forms" class="nav-link" role="menuitem">
                                     <i class="nav-icon fas fa-file-alt"></i>
                                     <p>@Localizer.T("Nav.FormsLibrary")</p>
+                                </a>
+                            </li>
+                            <li class="nav-item" role="none">
+                                <a href="/ClinicAdmin/Dashboard/ComplianceCalendar" class="nav-link @(Context.Request.Path.ToString().Contains("ComplianceCalendar") ? "active" : "")" role="menuitem">
+                                    <i class="nav-icon fas fa-calendar-check"></i>
+                                    <p>@Localizer.T("Nav.ComplianceCalendar")</p>
+                                </a>
+                            </li>
+                            <li class="nav-item" role="none">
+                                <a href="/ClinicAdmin/Dashboard/ComplianceScore" class="nav-link @(Context.Request.Path.ToString().Contains("ComplianceScore") ? "active" : "")" role="menuitem">
+                                    <i class="nav-icon fas fa-shield-alt"></i>
+                                    <p>@Localizer.T("Nav.ComplianceScore")</p>
                                 </a>
                             </li>
                             <li class="nav-header" role="presentation">@Localizer.T("Nav.Staff")</li>

@@ -11,7 +11,7 @@ using AmbulatoryCarePortal.Presentation.ViewModels;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+[Authorize(Policy = "Permission.kpis.read")]
 public class KPIManagementController : Controller
 {
     private readonly IKPIService _kpiService;
@@ -168,7 +168,7 @@ public class KPIManagementController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.kpis.create")]
     public async Task<IActionResult> Create()
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
@@ -188,7 +188,7 @@ public class KPIManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.kpis.create")]
     public async Task<IActionResult> Create(CreateKPIViewModel model)
     {
         if (!ModelState.IsValid)

@@ -11,7 +11,7 @@ using AmbulatoryCarePortal.Presentation.ViewModels;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+[Authorize(Policy = "Permission.staff.view")]
 public class DepartmentManagementController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -75,15 +75,15 @@ public class DepartmentManagementController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin")]
-    public IActionResult Create()
+    [Authorize(Policy = "Permission.staff.manage")]
+    public async Task<IActionResult> Create()
     {
         return View(new CreateDepartmentViewModel());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.staff.manage")]
     public async Task<IActionResult> Create(CreateDepartmentViewModel model)
     {
         if (!ModelState.IsValid)
@@ -132,7 +132,7 @@ public class DepartmentManagementController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.staff.manage")]
     public async Task<IActionResult> Edit(int id)
     {
         var department = await _unitOfWork.Repository<Department>().GetByIdAsync(id);
@@ -156,7 +156,7 @@ public class DepartmentManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.staff.manage")]
     public async Task<IActionResult> Edit(int id, EditDepartmentViewModel model)
     {
         var department = await _unitOfWork.Repository<Department>().GetByIdAsync(id);
@@ -234,7 +234,7 @@ public class DepartmentManagementController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.staff.manage")]
     public async Task<IActionResult> Delete(int id)
     {
         var department = await _unitOfWork.Repository<Department>().GetByIdAsync(id);

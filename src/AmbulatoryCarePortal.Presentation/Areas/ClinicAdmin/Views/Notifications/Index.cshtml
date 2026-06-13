@@ -1,4 +1,5 @@
-@model List<object>
+@model List<NotificationDto>
+@using AmbulatoryCarePortal.Application.DTOs
 
 @{
     ViewData["Title"] = Localizer.T("Page.Notifications");
@@ -53,10 +54,9 @@
         @if (Model.Any())
         {
             <div class="list-group list-group-flush">
-                @foreach (dynamic notification in Model)
+                @foreach (var notification in Model)
                 {
-                    var isRead = (bool)notification.IsRead;
-                    var notifType = (string)notification.NotificationType.ToString();
+                    var notifType = notification.NotificationType.ToString();
                     var iconClass = notifType switch
                     {
                         "DocumentExpiry" => "fas fa-calendar-exclamation text-warning",
@@ -67,20 +67,20 @@
                         _ => "fas fa-bell text-secondary"
                     };
 
-                    <div class="list-group-item list-group-item-action @(isRead ? "" : "list-group-item-info")" role="alert" aria-live="polite">
+                    <div class="list-group-item list-group-item-action @(notification.IsRead ? "" : "list-group-item-info")" role="alert" aria-live="polite">
                         <div class="row align-items-center g-3">
                             <div class="col-auto">
                                 <i class="@iconClass fa-lg"></i>
                             </div>
                             <div class="col">
                                 <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1 @(isRead ? "" : "fw-bold")">@notification.Title</h6>
+                                    <h6 class="mb-1 @(notification.IsRead ? "" : "fw-bold")">@notification.Title</h6>
                                     <small class="text-muted">@notification.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
                                 </div>
                                 <p class="mb-1">@notification.Message</p>
                             </div>
                             <div class="col-auto">
-                                @if (!isRead)
+                                @if (!notification.IsRead)
                                 {
                                     <form method="post" action="/ClinicAdmin/Notifications/MarkRead/@notification.Id" style="display:inline">
                                         <button type="submit" class="btn btn-sm btn-outline-primary mark-read-btn" aria-label="@Localizer.T("Common.MarkAsRead")">

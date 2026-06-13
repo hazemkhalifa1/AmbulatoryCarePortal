@@ -1,3 +1,4 @@
+using AmbulatoryCarePortal.Application.DTOs;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
@@ -36,7 +37,7 @@ public class NotificationService : INotificationService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task<List<object>> GetUserNotificationsAsync(string userId)
+    public async Task<List<NotificationDto>> GetUserNotificationsAsync(string userId)
     {
         var notifications = await _unitOfWork.Repository<Notification>().FindAsync(
             x => x.UserId == userId,
@@ -45,15 +46,18 @@ public class NotificationService : INotificationService
 
         return notifications
             .OrderByDescending(x => x.CreatedAt)
-            .Select(x => (object)new
+            .Select(x => new NotificationDto
             {
-                x.Id,
-                x.Title,
-                x.Message,
-                x.MessageAr,
-                x.NotificationType,
-                x.IsRead,
-                x.CreatedAt
+                Id = x.Id,
+                ClinicId = x.ClinicId,
+                Title = x.Title,
+                Message = x.Message,
+                MessageAr = x.MessageAr,
+                NotificationType = x.NotificationType,
+                IsRead = x.IsRead,
+                ReadAt = x.ReadAt,
+                UserId = x.UserId,
+                CreatedAt = x.CreatedAt
             })
             .ToList();
     }

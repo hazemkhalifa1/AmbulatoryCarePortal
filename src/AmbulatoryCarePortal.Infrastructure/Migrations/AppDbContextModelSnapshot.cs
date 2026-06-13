@@ -127,7 +127,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.Property<int>("ActionType")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClinicId")
+                    b.Property<int?>("ClinicId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -347,11 +347,13 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("ChecklistTemplateId");
 
-                    b.HasIndex("ClinicId");
-
                     b.HasIndex("DepartmentId");
 
                     b.HasIndex("ExecutedByUserId");
+
+                    b.HasIndex("ClinicId", "ChecklistTemplateId", "ExecutedAt")
+                        .IsDescending(false, false, true)
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("ChecklistRounds");
                 });
@@ -477,10 +479,11 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("LicenseNumber")
                         .IsUnique()
-                        .HasFilter("[LicenseNumber] IS NOT NULL");
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.HasIndex("Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("Clinics");
                 });
@@ -535,7 +538,8 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasIndex("DocumentTemplateId");
 
                     b.HasIndex("ClinicId", "DocumentTemplateId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("ClinicDocuments");
                 });
@@ -598,6 +602,87 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.ToTable("ClinicDocumentAttachments");
                 });
 
+            modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ComplianceScoreSnapshot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CalculatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("ChecklistScore")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("ChecklistWeight")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("DocumentScore")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("DocumentWeight")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("HrScore")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("HrWeight")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("KpiScore")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("KpiWeight")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("OverallScore")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("PolicyScore")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("PolicyWeight")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClinicId", "CalculatedAt")
+                        .IsDescending(false, true);
+
+                    b.ToTable("ComplianceScoreSnapshot");
+                });
+
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -641,7 +726,8 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClinicId", "Code")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("Departments");
                 });
@@ -706,7 +792,8 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("StandardCode")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("DocumentTemplates");
                 });
@@ -833,7 +920,8 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClinicId");
+                    b.HasIndex("ClinicId", "Category")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("Forms");
                 });
@@ -958,9 +1046,10 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HrStaffId");
-
                     b.HasIndex("UploadedByUserId");
+
+                    b.HasIndex("HrStaffId", "ExpiryDate")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("HrDocuments");
                 });
@@ -1223,9 +1312,11 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClinicId");
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex("ClinicId", "IsRead", "CreatedAt")
+                        .IsDescending(false, false, true)
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("Notifications");
                 });
@@ -1296,9 +1387,69 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("ClinicId", "StandardCode")
                         .IsUnique()
-                        .HasFilter("[StandardCode] IS NOT NULL");
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.HasIndex("ClinicId", "DocumentStatus", "ExpiryDate")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("PolicyDocuments");
+                });
+
+            modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.SystemSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEncrypted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("ValueType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("SystemSettings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1449,8 +1600,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasOne("AmbulatoryCarePortal.Domain.Entities.Clinic", "Clinic")
                         .WithMany("AuditTrails")
                         .HasForeignKey("ClinicId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("AmbulatoryCarePortal.Domain.Entities.PolicyDocument", null)
                         .WithMany("AuditTrails")
@@ -1597,6 +1747,17 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.Navigation("ClinicDocument");
 
                     b.Navigation("UploadedByUser");
+                });
+
+            modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ComplianceScoreSnapshot", b =>
+                {
+                    b.HasOne("AmbulatoryCarePortal.Domain.Entities.Clinic", "Clinic")
+                        .WithMany("ComplianceScoreSnapshots")
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Clinic");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.Department", b =>
@@ -1856,6 +2017,8 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.Navigation("ChecklistTemplates");
 
                     b.Navigation("ClinicDocuments");
+
+                    b.Navigation("ComplianceScoreSnapshots");
 
                     b.Navigation("Departments");
 

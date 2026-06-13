@@ -57,7 +57,7 @@ public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
             .OnDelete(DeleteBehavior.Cascade);
 
         // Indexes
-        builder.HasIndex(x => x.Name).IsUnique();
-        builder.HasIndex(x => x.LicenseNumber).IsUnique();
+        builder.HasIndex(x => x.Name).IsUnique().HasFilter("[IsDeleted] = 0");
+        builder.HasIndex(x => x.LicenseNumber).IsUnique().HasFilter("[IsDeleted] = 0");
     }
 }

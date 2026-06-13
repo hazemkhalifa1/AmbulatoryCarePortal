@@ -98,12 +98,8 @@ public class HrService : IHrService
     {
         var expiryDate = DateTime.Now.AddDays(daysThreshold);
 
-        var staffIds = (await _unitOfWork.Repository<HrStaff>().FindAsync(s => s.ClinicId == clinicId))
-            .Select(s => s.Id)
-            .ToHashSet();
-
         var documents = await _unitOfWork.Repository<HrDocument>().FindAsync(x =>
-            staffIds.Contains(x.HrStaffId) &&
+            x.HrStaff.ClinicId == clinicId &&
             x.ExpiryDate.HasValue &&
             x.ExpiryDate <= expiryDate
         );

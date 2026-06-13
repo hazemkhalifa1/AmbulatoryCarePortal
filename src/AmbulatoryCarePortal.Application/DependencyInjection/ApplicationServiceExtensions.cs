@@ -29,7 +29,8 @@ public static class ApplicationServiceExtensions
         // Additional services
         services.AddScoped<IReportingService, ReportingService>();
         services.AddScoped<IAnalyticsService, AnalyticsService>();
-        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<MailKitEmailSender>();
+        services.AddScoped<IEmailService, HangfireEmailService>();
         services.AddScoped<IBackgroundJobService, BackgroundJobService>();
         services.AddScoped<IAdvancedNotificationService, AdvancedNotificationService>();
         services.AddScoped<IAdvancedSearchService, AdvancedSearchService>();
@@ -41,8 +42,14 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IDocumentTemplateService, DocumentTemplateService>();
         services.AddScoped<IClinicDocumentService, ClinicDocumentService>();
 
-        // Background services
-        services.AddHostedService<NotificationBackgroundService>();
+        // Compliance Score Engine
+        services.AddScoped<IComplianceScoreService, ComplianceScoreService>();
+
+        // Settings
+        services.AddScoped<ISettingsService, SettingsService>();
+
+        // Compliance
+        services.AddScoped<IComplianceCalendarService, ComplianceCalendarService>();
 
         return services;
     }

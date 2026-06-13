@@ -13,7 +13,7 @@ using HRDocumentDto = AmbulatoryCarePortal.Application.DTOs.HrDocumentDto;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+[Authorize(Policy = "Permission.staff.view")]
 public class HRManagementController : Controller
 {
     private readonly IHrService _hrService;
@@ -113,7 +113,7 @@ public class HRManagementController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.staff.manage")]
     public async Task<IActionResult> Create()
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
@@ -133,7 +133,7 @@ public class HRManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.staff.manage")]
     public async Task<IActionResult> Create(CreateHRStaffViewModel model)
     {
         if (!ModelState.IsValid)
@@ -189,7 +189,7 @@ public class HRManagementController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.staff.manage")]
     public async Task<IActionResult> Edit(int id)
     {
         var staff = await _unitOfWork.Repository<HrStaff>().GetByIdAsync(id);
@@ -225,7 +225,7 @@ public class HRManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.staff.manage")]
     public async Task<IActionResult> Edit(int id, CreateHRStaffViewModel model)
     {
         var staff = await _unitOfWork.Repository<HrStaff>().GetByIdAsync(id);
@@ -317,7 +317,7 @@ public class HRManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.documents.upload")]
     public async Task<IActionResult> UploadDocument(int staffId, CreateHRDocumentViewModel model, IFormFile documentFile)
     {
         var staff = await _unitOfWork.Repository<HrStaff>().GetByIdAsync(staffId);
@@ -384,7 +384,7 @@ public class HRManagementController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.documents.verify")]
     public async Task<IActionResult> VerifyDocument(int documentId)
     {
         var document = await _unitOfWork.Repository<HrDocument>().GetByIdAsync(documentId);

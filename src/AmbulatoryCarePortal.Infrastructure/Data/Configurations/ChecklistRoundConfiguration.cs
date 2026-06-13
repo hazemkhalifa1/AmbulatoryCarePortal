@@ -39,5 +39,9 @@ public class ChecklistRoundConfiguration : IEntityTypeConfiguration<ChecklistRou
             .WithOne(x => x.ChecklistRound)
             .HasForeignKey(x => x.ChecklistRoundId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(x => new { x.ClinicId, x.ChecklistTemplateId, x.ExecutedAt })
+            .IsDescending(false, false, true)
+            .HasFilter("[IsDeleted] = 0");
     }
 }

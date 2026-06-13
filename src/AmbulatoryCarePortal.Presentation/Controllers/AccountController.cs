@@ -1,9 +1,11 @@
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Presentation.ViewModels;
 using AmbulatoryCarePortal.Presentation.Helpers;
+using AmbulatoryCarePortal.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace AmbulatoryCarePortal.Presentation.Controllers;
 
@@ -13,24 +15,27 @@ public class AccountController : Controller
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<AccountController> _logger;
     private readonly ITranslationService _localizer;
+    private readonly IEmailService _emailService;
 
     public AccountController(
         SignInManager<AppUser> signInManager,
         UserManager<AppUser> userManager,
         ILogger<AccountController> logger,
-        ITranslationService localizer)
+        ITranslationService localizer,
+        IEmailService emailService)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
         _localizer = localizer;
+        _emailService = emailService;
     }
 
     [HttpGet]
     [AllowAnonymous]
     public IActionResult Login(string? returnUrl = null)
     {
-        if (User.Identity?.IsAuthenticated ?? false)
+        if (User.Identity?.IsAuthenticated == true)
             return RedirectToAction("Index", "Dashboard");
 
         ViewData["ReturnUrl"] = returnUrl;
@@ -46,6 +51,13 @@ public class AccountController : Controller
 
         if (ModelState.IsValid)
         {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null && !user.EmailConfirmed)
+            {
+                ModelState.AddModelError(string.Empty, _localizer.T("Alert.Error.EmailNotConfirmed"));
+                return View(model);
+            }
+
             var result = await _signInManager.PasswordSignInAsync(
                 model.Email,
                 model.Password,
@@ -55,14 +67,21 @@ public class AccountController : Controller
 
             if (result.Succeeded)
             {
-                _logger.LogInformation($"User {model.Email} logged in successfully.");
+                user.LastLoginAt = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+
+                _logger.LogInformation("User {Email} logged in successfully.", model.Email);
                 return LocalRedirect(returnUrl ?? "/");
             }
 
             if (result.IsLockedOut)
             {
-                _logger.LogWarning($"User {model.Email} account locked.");
+                _logger.LogWarning("User {Email} account locked.", model.Email);
                 ModelState.AddModelError(string.Empty, _localizer.T("Alert.Error.LoginLocked"));
+            }
+            else if (result.RequiresTwoFactor)
+            {
+                return RedirectToPage("/Account/LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
             }
             else
             {
@@ -92,12 +111,14 @@ public class AccountController : Controller
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("Login")]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
 
         var user = await _userManager.FindByEmailAsync(model.Email);
+
         if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
         {
             TempData["SuccessMessage"] = _localizer.T("Alert.Info.PasswordResetSent");
@@ -105,10 +126,25 @@ public class AccountController : Controller
         }
 
         var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-        var callbackUrl = Url.Action(nameof(ResetPassword), "Account", new { email = user.Email, code }, Request.Scheme);
+        var callbackUrl = Url.Action(
+            nameof(ResetPassword),
+            "Account",
+            new { email = user.Email, code },
+            Request.Scheme
+        );
 
-        _logger.LogInformation($"Password reset link sent to {user.Email}");
-        TempData["SuccessMessage"] = _localizer.T("Alert.Success.PasswordResetEmail");
+        var sent = await _emailService.SendPasswordResetEmailAsync(user.Email, callbackUrl);
+
+        if (sent)
+        {
+            _logger.LogInformation("Password reset email sent to {Email}", user.Email);
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.PasswordResetEmail");
+        }
+        else
+        {
+            _logger.LogError("Failed to send password reset email to {Email}", user.Email);
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.PasswordResetSendFailed");
+        }
 
         return RedirectToAction(nameof(Login));
     }
@@ -144,7 +180,7 @@ public class AccountController : Controller
         var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
         if (result.Succeeded)
         {
-            _logger.LogInformation($"Password reset for user {model.Email}");
+            _logger.LogInformation("Password reset for user {Email}", model.Email);
             return RedirectToAction(nameof(ResetPasswordConfirmation));
         }
 
@@ -162,6 +198,71 @@ public class AccountController : Controller
     }
 
     [HttpGet]
+    public IActionResult ConfirmEmail(string? userId = null, string? code = null)
+    {
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
+            return BadRequest("Invalid email confirmation link.");
+
+        var model = new ConfirmEmailViewModel { UserId = userId, Code = code };
+        return View(model);
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConfirmEmail(ConfirmEmailViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var user = await _userManager.FindByIdAsync(model.UserId);
+        if (user == null)
+            return NotFound();
+
+        var result = await _userManager.ConfirmEmailAsync(user, model.Code);
+        if (result.Succeeded)
+        {
+            _logger.LogInformation("Email confirmed for user {Email}", user.Email);
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.EmailConfirmed");
+            return RedirectToAction(nameof(Login));
+        }
+
+        TempData["ErrorMessage"] = _localizer.T("Alert.Error.EmailConfirmationFailed");
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendConfirmationEmail()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return NotFound();
+
+        if (user.EmailConfirmed)
+        {
+            TempData["InfoMessage"] = _localizer.T("Alert.Info.EmailAlreadyConfirmed");
+            return RedirectToAction("Profile");
+        }
+
+        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var callbackUrl = Url.Action(
+            nameof(ConfirmEmail),
+            "Account",
+            new { userId = user.Id, code },
+            Request.Scheme
+        );
+
+        await _emailService.SendEmailAsync(user.Email, "Confirm your email",
+            $"Please confirm your email by clicking <a href='{callbackUrl}'>here</a>.");
+
+        _logger.LogInformation("Email confirmation resent to {Email}", user.Email);
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.ConfirmationEmailSent");
+
+        return RedirectToAction("Profile");
+    }
+
+    [HttpGet]
     public async Task<IActionResult> Profile()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -176,7 +277,8 @@ public class AccountController : Controller
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
             Role = roles.FirstOrDefault(),
-            LastLoginAt = user.LastLoginAt
+            LastLoginAt = user.LastLoginAt,
+            EmailConfirmed = user.EmailConfirmed
         };
 
         return View(model);

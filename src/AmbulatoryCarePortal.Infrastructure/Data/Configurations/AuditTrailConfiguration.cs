@@ -29,7 +29,7 @@ public class AuditTrailConfiguration : IEntityTypeConfiguration<AuditTrail>
         builder.HasOne(x => x.Clinic)
             .WithMany(x => x.AuditTrails)
             .HasForeignKey(x => x.ClinicId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(x => x.User)
             .WithMany(x => x.AuditTrails)

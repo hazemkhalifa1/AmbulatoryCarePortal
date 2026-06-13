@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Xunit;
 using Moq;
 using AutoMapper;
@@ -20,6 +21,8 @@ public class ClinicServiceTests
     private readonly Mock<IGenericRepository<Clinic>> _mockClinicRepo;
     private readonly Mock<IGenericRepository<Department>> _mockDeptRepo;
     private readonly Mock<IGenericRepository<PolicyDocument>> _mockPolicyRepo;
+    private readonly Mock<IGenericRepository<DocumentTemplate>> _mockDocTemplateRepo;
+    private readonly Mock<IGenericRepository<ClinicDocument>> _mockClinicDocRepo;
     private readonly ClinicService _clinicService;
 
     public ClinicServiceTests()
@@ -34,10 +37,14 @@ public class ClinicServiceTests
         _mockClinicRepo = new Mock<IGenericRepository<Clinic>>();
         _mockDeptRepo = new Mock<IGenericRepository<Department>>();
         _mockPolicyRepo = new Mock<IGenericRepository<PolicyDocument>>();
+        _mockDocTemplateRepo = new Mock<IGenericRepository<DocumentTemplate>>();
+        _mockClinicDocRepo = new Mock<IGenericRepository<ClinicDocument>>();
 
         _mockUnitOfWork.Setup(u => u.Repository<Clinic>()).Returns(_mockClinicRepo.Object);
         _mockUnitOfWork.Setup(u => u.Repository<Department>()).Returns(_mockDeptRepo.Object);
         _mockUnitOfWork.Setup(u => u.Repository<PolicyDocument>()).Returns(_mockPolicyRepo.Object);
+        _mockUnitOfWork.Setup(u => u.Repository<DocumentTemplate>()).Returns(_mockDocTemplateRepo.Object);
+        _mockUnitOfWork.Setup(u => u.Repository<ClinicDocument>()).Returns(_mockClinicDocRepo.Object);
 
         _clinicService = new ClinicService(_mockUnitOfWork.Object, _mockMapper.Object, _mockUserManager.Object);
     }
@@ -52,7 +59,7 @@ public class ClinicServiceTests
             NameAr = "عيادة الاختبار",
             CityEn = "Riyadh",
             CityAr = "الرياض",
-            ClinicType = ClinicType.Ambulatory,
+            ClinicType = ClinicType.AMB,
             LicenseNumber = "LIC-001"
         };
 
@@ -67,6 +74,7 @@ public class ClinicServiceTests
         _mockMapper.Setup(m => m.Map<Clinic>(createClinicDto)).Returns(clinic);
         _mockClinicRepo.Setup(r => r.AddAsync(It.IsAny<Clinic>())).Returns(Task.CompletedTask);
         _mockDeptRepo.Setup(r => r.AddRangeAsync(It.IsAny<IEnumerable<Department>>())).Returns(Task.CompletedTask);
+        _mockDocTemplateRepo.Setup(r => r.FindAsync(It.IsAny<Expression<Func<DocumentTemplate, bool>>>(), false)).ReturnsAsync(new List<DocumentTemplate>());
         _mockUnitOfWork.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
 
         // Act
@@ -85,8 +93,9 @@ public class ClinicServiceTests
         int clinicId = 1;
 
         _mockPolicyRepo
-            .Setup(r => r.CountAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<PolicyDocument, bool>>>(), false))
-            .ReturnsAsync(10);
+            .SetupSequence(r => r.CountAsync(It.IsAny<Expression<Func<PolicyDocument, bool>>>(), false))
+            .ReturnsAsync(10)
+            .ReturnsAsync(0);
 
         _mockClinicRepo
             .Setup(r => r.GetByIdAsync(clinicId, false))
@@ -101,7 +110,7 @@ public class ClinicServiceTests
         var result = await _clinicService.CalculateComplianceScoreAsync(clinicId);
 
         // Assert
-        Assert.Equal(0, result); // No complete policies in mock, so score is 0
+        Assert.Equal(0, result); // No complete policies, so score is 0
     }
 
     [Fact]

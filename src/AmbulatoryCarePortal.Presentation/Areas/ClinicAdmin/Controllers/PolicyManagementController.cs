@@ -11,7 +11,7 @@ using AmbulatoryCarePortal.Presentation.ViewModels;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+[Authorize(Policy = "Permission.policies.read")]
 public class PolicyManagementController : Controller
 {
     private readonly IPolicyDocumentService _policyService;
@@ -72,7 +72,7 @@ public class PolicyManagementController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.policies.create")]
     public async Task<IActionResult> Create()
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
@@ -89,7 +89,7 @@ public class PolicyManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.policies.create")]
     public async Task<IActionResult> Create(CreatePolicyDocumentViewModel model, IFormFile policyFile)
     {
         if (!ModelState.IsValid)
@@ -156,7 +156,7 @@ public class PolicyManagementController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.policies.update")]
     public async Task<IActionResult> Edit(int id)
     {
         var policy = await _unitOfWork.Repository<PolicyDocument>().GetByIdAsync(id);
@@ -187,7 +187,7 @@ public class PolicyManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.policies.update")]
     public async Task<IActionResult> Edit(int id, UpdatePolicyDocumentViewModel model)
     {
         var policy = await _unitOfWork.Repository<PolicyDocument>().GetByIdAsync(id);
@@ -273,6 +273,7 @@ public class PolicyManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = "Permission.policies.evidence.upload")]
     public async Task<IActionResult> UploadEvidence(int policyId, IFormFile evidenceFile, string? notes)
     {
         var policy = await _unitOfWork.Repository<PolicyDocument>().GetByIdAsync(policyId);
@@ -338,7 +339,7 @@ public class PolicyManagementController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.policies.delete")]
     public async Task<IActionResult> Delete(int id)
     {
         var policy = await _unitOfWork.Repository<PolicyDocument>().GetByIdAsync(id);
@@ -376,7 +377,7 @@ public class PolicyManagementController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.policies.approve")]
     public async Task<IActionResult> Approve(int id)
     {
         var policy = await _unitOfWork.Repository<PolicyDocument>().GetByIdAsync(id);

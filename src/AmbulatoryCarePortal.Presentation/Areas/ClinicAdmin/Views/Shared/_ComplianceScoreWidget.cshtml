@@ -1,0 +1,107 @@
+@model ComplianceScoreWidgetViewModel
+
+@{
+    var score = Model.Score;
+    var dashboard = Model.Dashboard;
+    var gaugeColor = score.OverallScore >= 80 ? "success" : score.OverallScore >= 60 ? "warning" : "danger";
+}
+
+<div class="form-card">
+    <div class="form-card-header">
+        <h3><i class="fas fa-shield-alt text-primary"></i> @Localizer.T("Clinic.ComplianceScore")</h3>
+        <div class="d-flex align-items-center gap-2">
+            <span class="compliance-badge @gaugeColor">
+                <span class="badge-dot"></span>
+                @(score.OverallScore >= 80 ? Localizer.T("Common.Compliant") : score.OverallScore >= 60 ? Localizer.T("Common.Partial") : Localizer.T("Common.NonCompliant"))
+            </span>
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="updateComplianceScore()">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+    </div>
+    <div class="form-card-body">
+        <div class="row g-4 align-items-center">
+            <div class="col-md-5 text-center">
+                <div class="readiness-score">
+                    <div class="score-ring">
+                        <svg width="100" height="100" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" fill="none" stroke="var(--color-border)" stroke-width="8"/>
+                            <circle cx="60" cy="60" r="54" fill="none"
+                                    stroke="var(--color-@gaugeColor)"
+                                    stroke-width="8"
+                                    stroke-dasharray="339.292"
+                                    stroke-dashoffset="@(339.292m * (1m - score.OverallScore / 100m))"
+                                    stroke-linecap="round"
+                                    transform="rotate(-90, 60, 60)"/>
+                        </svg>
+                        <div class="score-value @gaugeColor">@score.OverallScore.ToString("F0")%</div>
+                    </div>
+                    <div class="score-label">@Localizer.T("Clinic.OverallCompliance")</div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="progress-group mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="progress-text">@Localizer.T("Clinic.ComplianceScore")</span>
+                        <span class="fw-bold">@score.OverallScore.ToString("F1")%</span>
+                    </div>
+                    <div class="progress" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar bg-@gaugeColor"
+                             style="width: @score.OverallScore%"
+                             role="progressbar"
+                             aria-valuenow="@score.OverallScore"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+
+                @foreach (var component in score.Components)
+                {
+                    var compColor = component.Score >= 80 ? "success" : component.Score >= 60 ? "warning" : "danger";
+                    <div class="mb-2 small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span><i class="@component.Icon me-1" style="color:@component.Color"></i>@component.Name</span>
+                            <span class="fw-bold">@component.Score.ToString("F1")% (w:@component.Weight%)</span>
+                        </div>
+                        <div class="progress" style="height: 5px; border-radius: 3px;">
+                            <div class="progress-bar bg-@compColor"
+                                 style="width: @component.Score%"
+                                 role="progressbar">
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <hr />
+        <div class="row g-2 text-center">
+            <div class="col-3">
+                <div class="text-danger small">@Localizer.T("Clinic.MissingPolicies")</div>
+                <div class="fw-bold">@dashboard.MissingPolicies</div>
+            </div>
+            <div class="col-3">
+                <div class="text-danger small">@Localizer.T("Clinic.ExpiredDocuments")</div>
+                <div class="fw-bold">@dashboard.ExpiredDocuments</div>
+            </div>
+            <div class="col-3">
+                <div class="text-warning small">@Localizer.T("Clinic.OverdueChecklists")</div>
+                <div class="fw-bold">@dashboard.OverdueChecklists</div>
+            </div>
+            <div class="col-3">
+                <div class="text-warning small">@Localizer.T("Clinic.ExpiringCredentials")</div>
+                <div class="fw-bold">@dashboard.ExpiringCredentials</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Score.Components.Count > 0)
+{
+    var chartLabels = string.Join(",", score.Components.Select(c => $"'{c.Name}'"));
+    var chartScores = string.Join(",", score.Components.Select(c => c.Score.ToString("F0")));
+    var chartColors = string.Join(",", score.Components.Select(c => $"'{c.Color}'"));
+}
+```
+

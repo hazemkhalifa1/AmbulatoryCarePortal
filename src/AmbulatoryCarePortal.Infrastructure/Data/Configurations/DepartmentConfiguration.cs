@@ -43,6 +43,6 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .OnDelete(DeleteBehavior.Cascade);
 
         // Indexes
-        builder.HasIndex(x => new { x.ClinicId, x.Code }).IsUnique();
+        builder.HasIndex(x => new { x.ClinicId, x.Code }).IsUnique().HasFilter("[IsDeleted] = 0");
     }
 }

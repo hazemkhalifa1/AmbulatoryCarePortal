@@ -14,7 +14,7 @@ using ChecklistAnswerEnum = AmbulatoryCarePortal.Domain.Enums.ChecklistAnswer;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+[Authorize(Policy = "Permission.checklists.read")]
 public class ChecklistManagementController : Controller
 {
     private readonly IChecklistService _checklistService;
@@ -95,7 +95,7 @@ public class ChecklistManagementController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.checklists.create")]
     public async Task<IActionResult> Create()
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
@@ -116,7 +116,7 @@ public class ChecklistManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.checklists.create")]
     public async Task<IActionResult> Create(CreateChecklistViewModel model)
     {
         if (!ModelState.IsValid)
@@ -187,6 +187,7 @@ public class ChecklistManagementController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "Permission.checklists.execute")]
     public async Task<IActionResult> Execute(int templateId)
     {
         var template = await _unitOfWork.Repository<ChecklistTemplate>().GetByIdAsync(templateId);
@@ -221,6 +222,7 @@ public class ChecklistManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = "Permission.checklists.execute")]
     public async Task<IActionResult> Execute(int templateId, ExecuteChecklistViewModel model, IFormFile evidenceFile)
     {
         var template = await _unitOfWork.Repository<ChecklistTemplate>().GetByIdAsync(templateId);
@@ -346,7 +348,7 @@ public class ChecklistManagementController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.checklists.approve")]
     public async Task<IActionResult> Approve(int roundId)
     {
         var round = await _unitOfWork.Repository<ChecklistRound>().GetByIdAsync(roundId);

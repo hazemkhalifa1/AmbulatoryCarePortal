@@ -29,6 +29,6 @@ public class ClinicDocumentConfiguration : IEntityTypeConfiguration<ClinicDocume
             .HasForeignKey(x => x.ClinicDocumentId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(x => new { x.ClinicId, x.DocumentTemplateId }).IsUnique();
+        builder.HasIndex(x => new { x.ClinicId, x.DocumentTemplateId }).IsUnique().HasFilter("[IsDeleted] = 0");
     }
 }

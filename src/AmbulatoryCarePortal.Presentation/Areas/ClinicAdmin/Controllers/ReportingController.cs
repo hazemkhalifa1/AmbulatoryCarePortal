@@ -8,7 +8,7 @@ using AmbulatoryCarePortal.Presentation.ViewModels;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin")]
+[Authorize(Policy = "Permission.reports.generate")]
 public class ReportingController : Controller
 {
     private readonly IReportingService _reportingService;
@@ -206,7 +206,7 @@ public class ReportingController : Controller
     /// Generate audit report
     /// </summary>
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+    [Authorize(Policy = "Permission.reports.generate")]
     public IActionResult AuditReportBuilder()
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
@@ -225,7 +225,7 @@ public class ReportingController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+    [Authorize(Policy = "Permission.reports.generate")]
     public async Task<IActionResult> GenerateAuditReport(ReportGeneratorViewModel model)
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
@@ -311,7 +311,7 @@ public class ReportingController : Controller
     /// Generate HR report
     /// </summary>
     [HttpGet]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.reports.export")]
     public IActionResult HRReportBuilder()
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
@@ -330,7 +330,7 @@ public class ReportingController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "ClinicAdmin")]
+    [Authorize(Policy = "Permission.reports.export")]
     public async Task<IActionResult> GenerateHRReport(ReportGeneratorViewModel model)
     {
         var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");

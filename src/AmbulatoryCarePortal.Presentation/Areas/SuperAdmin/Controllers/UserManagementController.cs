@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers;
 
 [Area("SuperAdmin")]
-[Authorize(Roles = "SuperAdmin")]
+[Authorize(Policy = "Permission.users.manage")]
 public class UserManagementController : Controller
 {
     private readonly UserManager<AppUser> _userManager;
@@ -22,6 +22,7 @@ public class UserManagementController : Controller
     private readonly AppDbContext _dbContext;
     private readonly ILogger<UserManagementController> _logger;
     private readonly ITranslationService _localizer;
+    private readonly IEmailService _emailService;
 
     public UserManagementController(
         UserManager<AppUser> userManager,
@@ -29,7 +30,8 @@ public class UserManagementController : Controller
         IUnitOfWork unitOfWork,
         AppDbContext dbContext,
         ILogger<UserManagementController> logger,
-        ITranslationService localizer)
+        ITranslationService localizer,
+        IEmailService emailService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -37,6 +39,7 @@ public class UserManagementController : Controller
         _dbContext = dbContext;
         _logger = logger;
         _localizer = localizer;
+        _emailService = emailService;
     }
 
     /// <summary>
@@ -109,7 +112,7 @@ public class UserManagementController : Controller
             PhoneNumber = model.PhoneNumber,
             IsActive = model.IsActive,
             ClinicId = model.ClinicId,
-            EmailConfirmed = true
+            EmailConfirmed = false
         };
 
         var result = await _userManager.CreateAsync(user, password);
@@ -120,6 +123,18 @@ public class UserManagementController : Controller
             {
                 await _userManager.AddToRoleAsync(user, model.SelectedRole);
             }
+
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var callbackUrl = Url.Action(
+                "ConfirmEmail",
+                "Account",
+                new { userId = user.Id, code },
+                Request.Scheme
+            );
+
+            await _emailService.SendWelcomeEmailAsync(user.Email, model.FullName, password);
+            await _emailService.SendEmailAsync(user.Email, "Confirm your email",
+                $"Welcome to CBAHI Portal. Please confirm your email by clicking <a href='{callbackUrl}'>here</a>.");
 
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var auditLog = new AuditTrail

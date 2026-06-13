@@ -70,7 +70,7 @@ public interface IAuditService
 public interface INotificationService
 {
     Task SendNotificationAsync(int clinicId, string title, string message, string? messageAr, string notificationType, int? targetObjectId, string targetObjectType);
-    Task<List<object>> GetUserNotificationsAsync(string userId);
+    Task<List<NotificationDto>> GetUserNotificationsAsync(string userId);
     Task MarkAsReadAsync(int notificationId);
     Task MarkAllAsReadAsync(string userId);
     Task<int> GetUnreadCountAsync(int clinicId, string userId);

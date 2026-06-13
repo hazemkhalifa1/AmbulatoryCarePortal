@@ -10,7 +10,7 @@ using AmbulatoryCarePortal.Presentation.Helpers;
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
-[Authorize(Roles = "ClinicAdmin,ClinicViewer")]
+[Authorize(Policy = "Permission.documents.manage")]
 public class ClinicDocumentsController : Controller
 {
     private readonly IClinicDocumentService _clinicDocumentService;

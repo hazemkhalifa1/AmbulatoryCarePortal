@@ -1,8 +1,10 @@
+using AmbulatoryCarePortal.Application.BackgroundJobs;
 using AmbulatoryCarePortal.Application.Common;
 using AmbulatoryCarePortal.Application.DTOs;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
+using Hangfire;
 
 namespace AmbulatoryCarePortal.Application.Services;
 
@@ -15,26 +17,12 @@ public class AuditService : IAuditService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task LogActionAsync(int clinicId, string actionType, string? description,
+    public Task LogActionAsync(int clinicId, string actionType, string? description,
         string? targetObjectType, int? targetObjectId, string? userId, string? ipAddress)
     {
-        if (!Enum.TryParse<AuditActionType>(actionType, out var auditAction))
-            auditAction = AuditActionType.Create;
-
-        var auditTrail = new AuditTrail
-        {
-            ClinicId = clinicId,
-            ActionType = auditAction,
-            Description = description,
-            TargetObjectType = targetObjectType ?? string.Empty,
-            TargetObjectId = targetObjectId,
-            UserId = userId,
-            IpAddress = ipAddress,
-            ActionDate = DateTime.UtcNow
-        };
-
-        await _unitOfWork.Repository<AuditTrail>().AddAsync(auditTrail);
-        await _unitOfWork.SaveChangesAsync();
+        BackgroundJob.Enqueue<AuditLogJob>(job =>
+            job.LogActionAsync(clinicId, actionType, description, targetObjectType, targetObjectId, userId, ipAddress));
+        return Task.CompletedTask;
     }
 
     public async Task<PagedResult<AuditTrailDto>> GetAuditTrailAsync(int clinicId, int pageNumber = 1, int pageSize = 20, string? searchTerm = null, string? actionTypeFilter = null, DateTime? dateFrom = null, DateTime? dateTo = null)
@@ -146,6 +134,6 @@ public class AuditService : IAuditService
     public async Task<int> GetDistinctUserCountAsync(int clinicId)
     {
         var trails = await _unitOfWork.Repository<AuditTrail>().FindAsync(x => x.ClinicId == clinicId);
-        return trails.Select(x => x.UserId).Distinct().Count();
+        return trails.Where(x => x.UserId != null).Select(x => x.UserId).Distinct().Count();
     }
 }

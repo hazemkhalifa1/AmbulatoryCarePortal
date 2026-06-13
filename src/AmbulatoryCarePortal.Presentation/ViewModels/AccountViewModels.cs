@@ -13,6 +13,12 @@ public class ResetPasswordViewModel
     public string Code { get; set; } = string.Empty;
 }
 
+public class ConfirmEmailViewModel
+{
+    public string UserId { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
+}
+
 public class ProfileViewModel
 {
     public string? FullNameEn { get; set; }
@@ -22,4 +28,5 @@ public class ProfileViewModel
     public string? ClinicName { get; set; }
     public string? Role { get; set; }
     public DateTime? LastLoginAt { get; set; }
+    public bool EmailConfirmed { get; set; }
 }

@@ -1,53 +1,78 @@
 using AmbulatoryCarePortal.Application.Interfaces;
-using Microsoft.Extensions.Configuration;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Logging;
-using System.Net;
-using System.Net.Mail;
+using MimeKit;
 
 namespace AmbulatoryCarePortal.Application.Services;
 
-public class EmailService : IEmailService
+public class MailKitEmailSender
 {
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<EmailService> _logger;
-    private readonly SmtpClient _smtpClient;
-    private readonly string _senderEmail;
-    private readonly string _senderName;
+    private readonly ISettingsService _settingsService;
+    private readonly ILogger<MailKitEmailSender> _logger;
 
-    public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
+    public MailKitEmailSender(ISettingsService settingsService, ILogger<MailKitEmailSender> logger)
     {
-        _configuration = configuration;
+        _settingsService = settingsService;
         _logger = logger;
+    }
 
-        var smtpServer = _configuration["EmailSettings:SmtpServer"];
-        var smtpPort = int.Parse(_configuration["EmailSettings:SmtpPort"] ?? "587");
-        var enableSsl = bool.Parse(_configuration["EmailSettings:EnableSsl"] ?? "true");
-        var username = _configuration["EmailSettings:Username"];
-        var password = _configuration["EmailSettings:Password"];
+    private async Task<SmtpClient> CreateSmtpClientAsync()
+    {
+        var smtpServer = await _settingsService.GetValueAsync("Smtp.Host") ?? "localhost";
+        var smtpPort = await _settingsService.GetValueAsync("Smtp.Port", 587);
+        var enableSsl = await _settingsService.GetValueAsync("Smtp.EnableSsl", true);
+        var username = await _settingsService.GetValueAsync("Smtp.Username");
+        var password = await _settingsService.GetValueAsync("Smtp.Password");
 
-        _senderEmail = _configuration["EmailSettings:SenderEmail"] ?? "noreply@cbahi-portal.com";
-        _senderName = _configuration["EmailSettings:SenderName"] ?? "CBAHI Portal";
+        var client = new SmtpClient();
 
-        _smtpClient = new SmtpClient(smtpServer, smtpPort)
+        if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
         {
-            Credentials = new NetworkCredential(username, password),
-            EnableSsl = enableSsl
-        };
+            await client.ConnectAsync(smtpServer, smtpPort, enableSsl ? SecureSocketOptions.StartTlsWhenAvailable : SecureSocketOptions.None);
+            await client.AuthenticateAsync(username, password);
+        }
+        else
+        {
+            await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.StartTlsWhenAvailable);
+        }
+
+        return client;
+    }
+
+    private async Task<string> GetSenderEmailAsync()
+    {
+        return await _settingsService.GetValueAsync("Smtp.FromAddress") ?? "noreply@cbahi-portal.com";
+    }
+
+    private async Task<string> GetSenderNameAsync()
+    {
+        return await _settingsService.GetValueAsync("Smtp.FromName") ?? "CBAHI Portal";
     }
 
     public async Task<bool> SendEmailAsync(string to, string subject, string body, bool isHtml = true)
     {
         try
         {
-            using var mailMessage = new MailMessage(_senderEmail, to)
-            {
-                From = new MailAddress(_senderEmail, _senderName),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = isHtml
-            };
+            using var client = await CreateSmtpClientAsync();
+            var senderEmail = await GetSenderEmailAsync();
+            var senderName = await GetSenderNameAsync();
 
-            await _smtpClient.SendMailAsync(mailMessage);
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(senderName, senderEmail));
+            message.To.Add(new MailboxAddress("", to));
+            message.Subject = subject;
+
+            var bodyBuilder = new BodyBuilder();
+            if (isHtml)
+                bodyBuilder.HtmlBody = body;
+            else
+                bodyBuilder.TextBody = body;
+            message.Body = bodyBuilder.ToMessageBody();
+
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
+
             _logger.LogInformation("Email sent successfully to {To}", to);
             return true;
         }
@@ -62,9 +87,28 @@ public class EmailService : IEmailService
     {
         try
         {
-            foreach (var recipient in recipients)
-                await SendEmailAsync(recipient, subject, body, isHtml);
+            using var client = await CreateSmtpClientAsync();
+            var senderEmail = await GetSenderEmailAsync();
+            var senderName = await GetSenderNameAsync();
 
+            foreach (var recipient in recipients)
+            {
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(senderName, senderEmail));
+                message.To.Add(new MailboxAddress("", recipient));
+                message.Subject = subject;
+
+                var bodyBuilder = new BodyBuilder();
+                if (isHtml)
+                    bodyBuilder.HtmlBody = body;
+                else
+                    bodyBuilder.TextBody = body;
+                message.Body = bodyBuilder.ToMessageBody();
+
+                await client.SendAsync(message);
+            }
+
+            await client.DisconnectAsync(true);
             _logger.LogInformation("Bulk email sent to {Count} recipients", recipients.Count);
             return true;
         }
@@ -72,6 +116,32 @@ public class EmailService : IEmailService
         {
             _logger.LogError(ex, "Failed to send bulk email");
             return false;
+        }
+    }
+
+    public async Task<(bool Success, string Message)> SendTestEmailAsync(string toAddress)
+    {
+        try
+        {
+            var subject = "CBAHI Portal - Test Email";
+            var body = $@"
+                <h2>Test Email</h2>
+                <p>This is a test email from CBAHI Portal.</p>
+                <p>If you received this email, your SMTP configuration is working correctly.</p>
+                <p><strong>Sent at:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
+                <hr/>
+                <p>This is an automated notification from CBAHI Portal</p>
+            ";
+
+            var success = await SendEmailAsync(toAddress, subject, body);
+            return success
+                ? (true, "Test email sent successfully")
+                : (false, "Failed to send test email. Check SMTP configuration.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send test email to {To}", toAddress);
+            return (false, $"Failed to send test email: {ex.Message}");
         }
     }
 
@@ -108,14 +178,15 @@ public class EmailService : IEmailService
         return SendEmailAsync(to, subject, body);
     }
 
-    public Task<bool> SendPasswordResetEmailAsync(string to, string resetToken)
+    public Task<bool> SendPasswordResetEmailAsync(string to, string callbackUrl)
     {
         var subject = "Password Reset Request";
         var body = $@"
             <h2>Password Reset Request</h2>
-            <p>You have requested to reset your password. Use the token below:</p>
-            <p><strong>Reset Token:</strong> {resetToken}</p>
-            <p>This token will expire in 24 hours.</p>
+            <p>You have requested to reset your password.</p>
+            <p>Click the link below to reset your password:</p>
+            <p><a href='{callbackUrl}'>Reset Password</a></p>
+            <p>This link will expire in 24 hours.</p>
             <p>If you did not request this, please ignore this email.</p>
             <hr/>
             <p>This is an automated notification from CBAHI Portal</p>
@@ -143,25 +214,33 @@ public class EmailService : IEmailService
     {
         try
         {
-            using var mailMessage = new MailMessage(_senderEmail, to)
+            using var client = await CreateSmtpClientAsync();
+            var senderEmail = await GetSenderEmailAsync();
+            var senderName = await GetSenderNameAsync();
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(senderName, senderEmail));
+            message.To.Add(new MailboxAddress("", to));
+            message.Subject = $"Scheduled Report: {reportName}";
+
+            var bodyBuilder = new BodyBuilder
             {
-                From = new MailAddress(_senderEmail, _senderName),
-                Subject = $"Scheduled Report: {reportName}",
-                Body = $@"
+                HtmlBody = $@"
                     <h2>Scheduled Report</h2>
                     <p>Your scheduled report is attached:</p>
                     <p><strong>Report Name:</strong> {reportName}</p>
                     <p><strong>Generated Date:</strong> {DateTime.UtcNow:dd/MM/yyyy HH:mm}</p>
                     <hr/>
                     <p>This is an automated notification from CBAHI Portal</p>
-                ",
-                IsBodyHtml = true
+                "
             };
 
-            var stream = new MemoryStream(reportContent);
-            mailMessage.Attachments.Add(new Attachment(stream, $"{reportName}.pdf", "application/pdf"));
+            bodyBuilder.Attachments.Add($"{reportName}.pdf", reportContent, new ContentType("application", "pdf"));
+            message.Body = bodyBuilder.ToMessageBody();
 
-            await _smtpClient.SendMailAsync(mailMessage);
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
+
             _logger.LogInformation("Scheduled report sent to {To}", to);
             return true;
         }
