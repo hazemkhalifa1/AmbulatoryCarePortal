@@ -193,17 +193,18 @@ function initializeLoadingButtons() {
 }
 
 // ============================================================
-// LANGUAGE TOGGLE
+// LANGUAGE TOGGLE (Segmented Control)
 // ============================================================
 function initializeLanguageToggle() {
-    var langToggle = document.getElementById('langToggle');
-    if (!langToggle) return;
+    var langOptions = document.querySelectorAll('.header-lang-option');
+    if (!langOptions.length) return;
 
-    langToggle.addEventListener('click', function (e) {
-        e.preventDefault();
-        var currentLang = document.documentElement.lang;
-        var newLang = currentLang === 'ar' ? 'en' : 'ar';
-        setLanguage(newLang);
+    langOptions.forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            var lang = this.getAttribute('data-lang');
+            if (!lang) return;
+            setLanguage(lang);
+        });
     });
 
     // Apply saved language
@@ -211,15 +212,29 @@ function initializeLanguageToggle() {
     if (savedLang === 'ar') {
         setLanguage('ar');
     }
+
+    // Legacy single-toggle fallback
+    var oldToggle = document.getElementById('langToggle');
+    if (oldToggle) {
+        oldToggle.style.display = 'none';
+    }
 }
 
 function setLanguage(lang) {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    var label = document.getElementById('langLabel');
-    if (label) label.textContent = lang.toUpperCase();
     localStorage.setItem('lang', lang);
     document.cookie = 'lang=' + lang + '; path=/; max-age=31536000';
+
+    // Update segmented toggle active state
+    document.querySelectorAll('.header-lang-option').forEach(function (btn) {
+        var btnLang = btn.getAttribute('data-lang');
+        if (btnLang === lang) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
 
     var rtlLink = document.getElementById('bootstrap-rtl');
     if (lang === 'ar') {

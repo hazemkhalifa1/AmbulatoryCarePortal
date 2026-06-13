@@ -499,6 +499,12 @@
   "Common.Date": "Date",
   "Common.Language": "Language",
   "Common.ViewAll": "View All",
+  "Common.MinutesAgo": "min ago",
+  "Common.HoursAgo": "hours ago",
+  "Common.DayAgo": "day ago",
+  "User.ClinicAdmin": "Clinic Admin",
+  "User.ClinicViewer": "Clinic Viewer",
+  "User.User": "User",
 
   "Clinic.Name": "Name",
   "Clinic.NameAr": "Name (Arabic)",

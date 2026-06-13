@@ -48,17 +48,6 @@
 
         <!-- ===== SIDEBAR ===== -->
         <aside class="main-sidebar">
-            <a href="/" class="brand-link">
-                <span class="brand-icon">
-                    <i class="fas fa-heartbeat"></i>
-                </span>
-                <span class="brand-text">
-                    <span class="brand-full">@Localizer.T("App.Name")</span>
-                    <span class="brand-compact">@Localizer.T("App.NameCompact")</span>
-                    <small>@Localizer.T("App.Tagline")</small>
-                </span>
-            </a>
-
             <div class="sidebar">
                 <nav class="mt-2" aria-label="@Localizer.T("Nav.MainMenu")">
                     <ul class="nav-sidebar" role="menubar">
@@ -66,31 +55,31 @@
                         {
                             <li class="nav-header" role="presentation">@Localizer.T("Nav.MainMenu")</li>
                             <li class="nav-item" role="none">
-                                <a href="/SuperAdmin/Dashboard" class="nav-link" role="menuitem">
+                                <a href="/SuperAdmin/Dashboard" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.Dashboard")">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <p>@Localizer.T("Nav.Dashboard")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/SuperAdmin/Dashboard/Clinics" class="nav-link" role="menuitem">
+                                <a href="/SuperAdmin/Dashboard/Clinics" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.ManageClinics")">
                                     <i class="nav-icon fas fa-hospital"></i>
                                     <p>@Localizer.T("Nav.ManageClinics")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="#docSubMenu" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="@(Context.Request.Path.ToString().Contains("DocumentTemplates") ? "true" : "false")">
+                                <a href="#docSubMenu" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="@(Context.Request.Path.ToString().Contains("DocumentTemplates") ? "true" : "false")" data-title="@Localizer.T("Nav.ManageDocuments")">
                                     <i class="nav-icon fas fa-file"></i>
-                                    <p>@Localizer.T("Nav.ManageDocuments") <i class="fas fa-angle-down float-end"></i></p>
+                                    <p>@Localizer.T("Nav.ManageDocuments") <i class="fas fa-angle-down ms-auto"></i></p>
                                 </a>
                                 <ul class="collapse nav-sidebar @(Context.Request.Path.ToString().Contains("DocumentTemplates") ? "show" : "")" id="docSubMenu">
                                     <li class="nav-item">
-                                        <a href="/SuperAdmin/DocumentTemplates?clinicType=AMB" class="nav-link ps-4 @(Context.Request.Query["clinicType"].ToString() == "AMB" ? "active" : "")">
+                                        <a href="/SuperAdmin/DocumentTemplates?clinicType=AMB" class="nav-link @(Context.Request.Query["clinicType"].ToString() == "AMB" ? "active" : "")">
                                             <i class="nav-icon fas fa-circle nav-icon-sm"></i>
                                             <p>AMB CBAHI</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="/SuperAdmin/DocumentTemplates?clinicType=Dental" class="nav-link ps-4 @(Context.Request.Query["clinicType"].ToString() == "Dental" ? "active" : "")">
+                                        <a href="/SuperAdmin/DocumentTemplates?clinicType=Dental" class="nav-link @(Context.Request.Query["clinicType"].ToString() == "Dental" ? "active" : "")">
                                             <i class="nav-icon fas fa-circle nav-icon-sm"></i>
                                             <p>Dental CBAHI</p>
                                         </a>
@@ -98,20 +87,20 @@
                                 </ul>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/SuperAdmin/UserManagement" class="nav-link" role="menuitem">
-                                    <i class="fas fa-users-cog"></i>
+                                <a href="/SuperAdmin/UserManagement" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.ManageUsers")">
+                                    <i class="nav-icon fas fa-users-cog"></i>
                                     <p>@Localizer.T("Nav.ManageUsers")</p>
                                 </a>
                             </li>
                             <li class="nav-header" role="presentation">@Localizer.T("Nav.System")</li>
                             <li class="nav-item" role="none">
-                                <a href="/SuperAdmin/Dashboard/AuditLog" class="nav-link" role="menuitem">
+                                <a href="/SuperAdmin/Dashboard/AuditLog" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.AuditLogs")">
                                     <i class="nav-icon fas fa-history"></i>
                                     <p>@Localizer.T("Nav.AuditLogs")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/SuperAdmin/Settings" class="nav-link @(Context.Request.Path.ToString().Contains("/Settings") ? "active" : "")" role="menuitem">
+                                <a href="/SuperAdmin/Settings" class="nav-link @(Context.Request.Path.ToString().Contains("/Settings") ? "active" : "")" role="menuitem" data-title="@Localizer.T("Nav.SystemSettings")">
                                     <i class="nav-icon fas fa-cog"></i>
                                     <p>@Localizer.T("Nav.SystemSettings")</p>
                                 </a>
@@ -121,63 +110,63 @@
                         {
                             <li class="nav-header" role="presentation">@Localizer.T("Nav.MainMenu")</li>
                             <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/Dashboard" class="nav-link" role="menuitem">
+                                <a href="/ClinicAdmin/Dashboard" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.Dashboard")">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <p>@Localizer.T("Nav.Dashboard")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/PolicyDocuments" class="nav-link" role="menuitem">
+                                <a href="/ClinicAdmin/PolicyDocuments" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.PoliciesDocuments")">
                                     <i class="nav-icon fas fa-file-shield"></i>
                                     <p>@Localizer.T("Nav.PoliciesDocuments")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/DepartmentManagement" class="nav-link" role="menuitem">
+                                <a href="/ClinicAdmin/DepartmentManagement" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.Departments")">
                                     <i class="nav-icon fas fa-building"></i>
                                     <p>@Localizer.T("Nav.Departments")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/KPIMonitoring" class="nav-link" role="menuitem">
+                                <a href="/ClinicAdmin/KPIMonitoring" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.KPIMonitoring")">
                                     <i class="nav-icon fas fa-chart-line"></i>
                                     <p>@Localizer.T("Nav.KPIMonitoring")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/ChecklistManagement" class="nav-link" role="menuitem">
+                                <a href="/ClinicAdmin/ChecklistManagement" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.Checklists")">
                                     <i class="nav-icon fas fa-clipboard-check"></i>
                                     <p>@Localizer.T("Nav.Checklists")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/Forms" class="nav-link" role="menuitem">
+                                <a href="/ClinicAdmin/Forms" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.FormsLibrary")">
                                     <i class="nav-icon fas fa-file-alt"></i>
                                     <p>@Localizer.T("Nav.FormsLibrary")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/Dashboard/ComplianceCalendar" class="nav-link @(Context.Request.Path.ToString().Contains("ComplianceCalendar") ? "active" : "")" role="menuitem">
+                                <a href="/ClinicAdmin/Dashboard/ComplianceCalendar" class="nav-link @(Context.Request.Path.ToString().Contains("ComplianceCalendar") ? "active" : "")" role="menuitem" data-title="@Localizer.T("Nav.ComplianceCalendar")">
                                     <i class="nav-icon fas fa-calendar-check"></i>
                                     <p>@Localizer.T("Nav.ComplianceCalendar")</p>
                                 </a>
                             </li>
                             <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/Dashboard/ComplianceScore" class="nav-link @(Context.Request.Path.ToString().Contains("ComplianceScore") ? "active" : "")" role="menuitem">
+                                <a href="/ClinicAdmin/Dashboard/ComplianceScore" class="nav-link @(Context.Request.Path.ToString().Contains("ComplianceScore") ? "active" : "")" role="menuitem" data-title="@Localizer.T("Nav.ComplianceScore")">
                                     <i class="nav-icon fas fa-shield-alt"></i>
                                     <p>@Localizer.T("Nav.ComplianceScore")</p>
                                 </a>
                             </li>
                             <li class="nav-header" role="presentation">@Localizer.T("Nav.Staff")</li>
                             <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/HRManagement" class="nav-link" role="menuitem">
+                                <a href="/ClinicAdmin/HRManagement" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.HRCredentialing")">
                                     <i class="nav-icon fas fa-users"></i>
                                     <p>@Localizer.T("Nav.HRCredentialing")</p>
                                 </a>
                             </li>
                             <li class="nav-header" role="presentation">@Localizer.T("Nav.Communication")</li>
                             <li class="nav-item" role="none">
-                                <a href="/ClinicAdmin/Notifications" class="nav-link" role="menuitem">
+                                <a href="/ClinicAdmin/Notifications" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.Notifications")">
                                     <i class="nav-icon fas fa-bell"></i>
                                     <p>@Localizer.T("Nav.Notifications")</p>
                                 </a>
@@ -185,7 +174,7 @@
                             @if (User.HasClaim("Permission", "reports.generate"))
                             {
                                 <li class="nav-item" role="none">
-                                    <a href="/ClinicAdmin/Reporting" class="nav-link" role="menuitem">
+                                    <a href="/ClinicAdmin/Reporting" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.Reports")">
                                         <i class="nav-icon fas fa-chart-bar"></i>
                                         <p>@Localizer.T("Nav.Reports")</p>
                                     </a>
@@ -201,68 +190,117 @@
         <div class="sidebar-overlay" tabindex="-1"></div>
 
         <!-- ===== TOP NAVBAR ===== -->
-        <nav class="main-header navbar navbar-expand" role="navigation" aria-label="@Localizer.T("Nav.MainMenu")">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button" aria-label="@Localizer.T("Nav.MainMenu")">
-                        <i class="fas fa-bars"></i>
-                    </a>
-                </li>
-            </ul>
+        <header class="main-header" role="banner">
+            <!-- Left: hamburger + brand -->
+            <div class="header-left">
+                <button class="header-hamburger" data-widget="pushmenu" type="button" aria-label="@Localizer.T("Nav.MainMenu")">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="/" class="header-brand-link">
+                    <span class="header-brand-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </span>
+                    <span class="header-brand-text">
+                        <span class="brand-full">@Localizer.T("App.Name")</span>
+                        <span class="brand-compact">@Localizer.T("App.NameCompact")</span>
+                        <small>@Localizer.T("App.Tagline")</small>
+                    </span>
+                </a>
+            </div>
 
-            <ul class="navbar-nav ms-auto">
+            <!-- Right: controls -->
+            <div class="header-right">
                 <!-- Notifications -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="@Localizer.T("Nav.Notifications")">
+                <div class="nav-item dropdown">
+                    <button class="header-notif-btn" id="notificationsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="@Localizer.T("Nav.Notifications")">
                         <i class="fas fa-bell"></i>
-                        <span class="navbar-badge" id="notificationBadge" style="display:none">0</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationsDropdown">
-                        <span class="dropdown-header">@Localizer.T("Nav.Notifications")</span>
-                        <div class="dropdown-divider"></div>
-                        <a href="/ClinicAdmin/Notifications" class="dropdown-item dropdown-footer">@Localizer.T("Common.ViewAll")</a>
+                        <span class="notif-badge" id="notificationBadge" style="display:none">0</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end notif-dropdown" aria-labelledby="notificationsDropdown">
+                        <div class="notif-dropdown-header">
+                            <span>@Localizer.T("Nav.Notifications")</span>
+                            <button type="button" class="mark-read">@Localizer.T("Button.MarkAllRead")</button>
+                        </div>
+                        <div id="notifList">
+                            <div class="notif-item unread">
+                                <span class="notif-dot"></span>
+                                <div class="notif-content">
+                                    <div class="notif-title">@Localizer.T("Notification.ChecklistReminder")</div>
+                                    <div class="notif-desc">@Localizer.T("Notification.ChecklistDue", "Daily Safety Checklist", "daily")</div>
+                                    <span class="notif-time">2 @Localizer.T("Common.HoursAgo")</span>
+                                </div>
+                            </div>
+                            <div class="notif-item unread">
+                                <span class="notif-dot"></span>
+                                <div class="notif-content">
+                                    <div class="notif-title">@Localizer.T("Notification.ComplianceAlert")</div>
+                                    <div class="notif-desc">@Localizer.T("Notification.ComplianceAlertBody", "Clinic A", "3", "2")</div>
+                                    <span class="notif-time">5 @Localizer.T("Common.HoursAgo")</span>
+                                </div>
+                            </div>
+                            <div class="notif-item read">
+                                <span class="notif-dot"></span>
+                                <div class="notif-content">
+                                    <div class="notif-title">@Localizer.T("Notification.ComplianceDigest")</div>
+                                    <div class="notif-desc">@Localizer.T("Notification.ComplianceDigestBody", "Clinic B", "45", "3")</div>
+                                    <span class="notif-time">1 @Localizer.T("Common.DayAgo")</span>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/ClinicAdmin/Notifications" class="notif-dropdown-footer">@Localizer.T("Common.ViewAll")</a>
                     </div>
-                </li>
+                </div>
 
-                <!-- Language Toggle -->
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="langToggle" role="button" aria-label="@Localizer.T("Common.Language")">
-                        <i class="fas fa-globe"></i>
-                        <span id="langLabel">@TranslationService.CurrentLanguage.ToUpper()</span>
-                    </a>
-                </li>
+                <!-- Language Segmented Toggle -->
+                <div class="nav-item">
+                    <div class="header-lang-toggle" role="group" aria-label="@Localizer.T("Common.Language")">
+                        <button type="button" class="header-lang-option @(TranslationService.CurrentLanguage == "en" ? "active" : "")" data-lang="en">EN</button>
+                        <button type="button" class="header-lang-option @(TranslationService.CurrentLanguage == "ar" ? "active" : "")" data-lang="ar">AR</button>
+                    </div>
+                </div>
 
                 <!-- User Menu -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle user-menu" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="@Localizer.T("User.MyProfile")">
+                <div class="nav-item dropdown">
+                    <button class="user-menu" id="navbarDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="@Localizer.T("User.MyProfile")">
                         <span class="user-avatar">
                             @User.Identity?.Name?.Substring(0, 1)?.ToUpper()
                         </span>
                         <span class="user-name">@User.Identity?.Name</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li>
-                            <h6 class="dropdown-header">@User.Identity?.Name</h6>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end user-card-dropdown" aria-labelledby="navbarDropdown">
+                        <div class="user-card-header">
+                            <div class="user-card-avatar">
+                                @User.Identity?.Name?.Substring(0, 1)?.ToUpper()
+                            </div>
+                            <div class="user-card-name">@User.Identity?.Name</div>
+                            <div class="user-card-email">@User.Identity?.Name</div>
+                            <span class="user-card-role">
+                                @if (User.IsInRole("SuperAdmin")) { @Localizer.T("Nav.SuperAdmin.Panel") }
+                                else if (User.IsInRole("ClinicAdmin")) { @Localizer.T("User.ClinicAdmin") }
+                                else if (User.IsInRole("ClinicViewer")) { @Localizer.T("User.ClinicViewer") }
+                                else { @Localizer.T("User.User") }
+                            </span>
+                        </div>
+                        <div class="user-card-body">
                             <a class="dropdown-item" href="/Account/Profile">
                                 <i class="fas fa-user-circle"></i> @Localizer.T("User.MyProfile")
                             </a>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
+                            <a class="dropdown-item" href="/Account/Profile">
+                                <i class="fas fa-cog"></i> @Localizer.T("Nav.SystemSettings")
+                            </a>
+                        </div>
+                        <div class="user-card-footer">
                             <form method="post" action="/Account/Logout">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="dropdown-item">
                                     <i class="fas fa-sign-out-alt"></i> @Localizer.T("User.Logout")
                                 </button>
                             </form>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
         <!-- ===== CONTENT WRAPPER ===== -->
         <div class="content-wrapper">
