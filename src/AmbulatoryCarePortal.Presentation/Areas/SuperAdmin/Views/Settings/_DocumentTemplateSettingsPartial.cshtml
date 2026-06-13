@@ -1,0 +1,49 @@
+@{
+    SystemSettingDto? GetSetting(string key)
+    {
+        var settings = ViewBag.Settings as Dictionary<SettingCategory, List<SystemSettingDto>> ?? new();
+        foreach (var kv in settings)
+        {
+            var found = kv.Value.FirstOrDefault(s => s.Key == key);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    string SettingValue(string key) => GetSetting(key)?.Value ?? "";
+    bool SettingBool(string key) => bool.TryParse(GetSetting(key)?.Value, out var b) && b;
+}
+
+<form method="post" asp-action="UpdateDocumentTemplate" aria-label="@Localizer.T("Settings.DocumentTemplate.Tab")">
+    @Html.AntiForgeryToken()
+    <div class="settings-card">
+        <div class="settings-card-header">
+            <div class="header-icon icon-docs"><i class="fas fa-file-alt"></i></div>
+            <h3>@Localizer.T("Settings.DocumentTemplate.Title")</h3>
+            <span class="header-badge">@Localizer.T("Settings.DocumentTemplate.Tab")</span>
+        </div>
+        <div class="settings-card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.ExpiryWarningDays")</label>
+                    <input name="DocumentTemplate_DefaultExpiryWarningDays" class="form-control" value="@SettingValue("DocumentTemplate.DefaultExpiryWarningDays")" type="number" min="1" placeholder="30" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.MaxFileSizeMB")</label>
+                    <input name="DocumentTemplate_MaxFileSizeMB" class="form-control" value="@SettingValue("DocumentTemplate.MaxFileSizeMB")" type="number" min="1" placeholder="20" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.AutoAssign")</label>
+                    @await Html.PartialAsync("_SettingsToggle", new { Name = "DocumentTemplate_AutoAssignToNewClinics", Label = Localizer.T("Settings.DocumentTemplate.AutoAssign"), Checked = SettingBool("DocumentTemplate.AutoAssignToNewClinics") })
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.AllowedExtensions")</label>
+                    <input name="DocumentTemplate_AllowedFileExtensions" class="form-control" value="@SettingValue("DocumentTemplate.AllowedFileExtensions")" placeholder=".pdf,.docx,.xlsx" />
+                    <span class="form-text">@Localizer.T("Settings.DocumentTemplate.ExtensionsHelp")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

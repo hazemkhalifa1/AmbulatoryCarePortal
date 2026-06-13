@@ -1,0 +1,66 @@
+@{
+    SystemSettingDto? GetSetting(string key)
+    {
+        var settings = ViewBag.Settings as Dictionary<SettingCategory, List<SystemSettingDto>> ?? new();
+        foreach (var kv in settings)
+        {
+            var found = kv.Value.FirstOrDefault(s => s.Key == key);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    string SettingValue(string key) => GetSetting(key)?.Value ?? "";
+}
+
+<form method="post" asp-action="UpdateBranding" aria-label="@Localizer.T("Settings.Branding.Tab")">
+    @Html.AntiForgeryToken()
+    <div class="settings-card">
+        <div class="settings-card-header">
+            <div class="header-icon icon-brand"><i class="fas fa-palette"></i></div>
+            <h3>@Localizer.T("Settings.Branding.Title")</h3>
+            <span class="header-badge">@Localizer.T("Settings.Branding.Tab")</span>
+        </div>
+        <div class="settings-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">@Localizer.T("Settings.Branding.SiteName")</label>
+                    <input name="Branding_SiteName" class="form-control" value="@SettingValue("Branding.SiteName")" placeholder="CBAHI Ambulatory Care Portal" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">@Localizer.T("Settings.Branding.SiteNameAr")</label>
+                    <input name="Branding_SiteNameAr" class="form-control" value="@SettingValue("Branding.SiteNameAr")" dir="rtl" placeholder="بوابة ساباهي للرعاية الخارجية" />
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">@Localizer.T("Settings.Branding.PrimaryColor")</label>
+                    <div class="d-flex align-items-center gap-2">
+                        <input name="Branding_PrimaryColor" class="form-control form-control-color" value="@(SettingValue("Branding.PrimaryColor") ?? "#1A3A6B")" type="color" />
+                        <span class="form-text mb-0" id="colorValueDisplay">@(SettingValue("Branding.PrimaryColor") ?? "#1A3A6B")</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">@Localizer.T("Settings.Branding.SupportPhone")</label>
+                    <input name="Branding_SupportPhone" class="form-control" value="@SettingValue("Branding.SupportPhone")" placeholder="+966 5X XXX XXXX" />
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">@Localizer.T("Settings.Branding.SupportEmail")</label>
+                    <input name="Branding_SupportEmail" class="form-control" value="@SettingValue("Branding.SupportEmail")" type="email" placeholder="support@cbahi-portal.com" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    (function() {
+        var colorInput = document.querySelector('input[name="Branding_PrimaryColor"]');
+        var colorDisplay = document.getElementById('colorValueDisplay');
+        if (colorInput && colorDisplay) {
+            colorInput.addEventListener('input', function() {
+                colorDisplay.textContent = this.value;
+            });
+        }
+    })();
+</script>

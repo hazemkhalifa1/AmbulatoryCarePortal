@@ -1,0 +1,78 @@
+@{
+    SystemSettingDto? GetSetting(string key)
+    {
+        var settings = ViewBag.Settings as Dictionary<SettingCategory, List<SystemSettingDto>> ?? new();
+        foreach (var kv in settings)
+        {
+            var found = kv.Value.FirstOrDefault(s => s.Key == key);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    string SettingValue(string key) => GetSetting(key)?.Value ?? "";
+    bool SettingBool(string key) => bool.TryParse(GetSetting(key)?.Value, out var b) && b;
+}
+
+<form method="post" asp-action="UpdateMail" aria-label="@Localizer.T("Settings.Mail.Tab")">
+    @Html.AntiForgeryToken()
+    <div class="settings-card">
+        <div class="settings-card-header">
+            <div class="header-icon icon-mail"><i class="fas fa-server"></i></div>
+            <h3>@Localizer.T("Settings.Mail.SmtpSettings")</h3>
+            <span class="header-badge">SMTP</span>
+        </div>
+        <div class="settings-card-body">
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <label class="form-label">@Localizer.T("Settings.Mail.Host") <span class="text-danger">*</span></label>
+                    <input name="Smtp_Host" class="form-control" value="@SettingValue("Smtp.Host")" placeholder="smtp.example.com" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">@Localizer.T("Settings.Mail.Port")</label>
+                    <input name="Smtp_Port" class="form-control" value="@SettingValue("Smtp.Port")" placeholder="587" type="number" />
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">&nbsp;</label>
+                    @await Html.PartialAsync("_SettingsToggle", new { Name = "Smtp_EnableSsl", Label = Localizer.T("Settings.Mail.EnableSsl"), Checked = SettingBool("Smtp.EnableSsl") })
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">@Localizer.T("Settings.Mail.Username")</label>
+                    <input name="Smtp_Username" class="form-control" value="@SettingValue("Smtp.Username")" placeholder="user@example.com" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">@Localizer.T("Settings.Mail.Password")</label>
+                    <div class="input-group">
+                        <input name="Smtp_Password" class="form-control" value="@SettingValue("Smtp.Password")" type="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" />
+                        <button type="button" class="btn toggle-password" data-target="Smtp_Password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">@Localizer.T("Settings.Mail.FromAddress")</label>
+                    <input name="Smtp_FromAddress" class="form-control" value="@SettingValue("Smtp.FromAddress")" type="email" placeholder="noreply@cbahi-portal.com" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">@Localizer.T("Settings.Mail.FromName")</label>
+                    <input name="Smtp_FromName" class="form-control" value="@SettingValue("Smtp.FromName")" placeholder="CBAHI Portal" />
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-7">
+                    <label class="form-label">@Localizer.T("Settings.Mail.TestRecipient")</label>
+                    <div class="input-group">
+                        <input name="Smtp_TestRecipientEmail" class="form-control" value="@SettingValue("Smtp.TestRecipientEmail")" type="email" placeholder="admin@example.com" />
+                        <button type="button" class="btn btn-outline-info" id="sendTestEmailBtn">
+                            <i class="fas fa-paper-plane"></i> @Localizer.T("Settings.Mail.SendTest")
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

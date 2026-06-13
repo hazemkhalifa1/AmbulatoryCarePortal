@@ -973,6 +973,11 @@
   "Settings.General.MaintenanceMessage": "Maintenance Message",
   "Settings.General.Updated": "General settings updated successfully.",
 
+  "Settings.SidebarTitle": "Settings Categories",
+  "Settings.SaveAll": "Save Changes",
+  "Settings.Saving": "Saving...",
+  "Settings.ResetToDefault": "Reset to Default",
+  "Settings.SavedToast": "Settings saved successfully.",
   "Settings.TestEmailSent": "Test email sent successfully.",
   "Settings.TestEmailFailed": "Failed to send test email.",
 

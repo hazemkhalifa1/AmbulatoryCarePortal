@@ -1,0 +1,45 @@
+@{
+    SystemSettingDto? GetSetting(string key)
+    {
+        var settings = ViewBag.Settings as Dictionary<SettingCategory, List<SystemSettingDto>> ?? new();
+        foreach (var kv in settings)
+        {
+            var found = kv.Value.FirstOrDefault(s => s.Key == key);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    string SettingValue(string key) => GetSetting(key)?.Value ?? "";
+    bool SettingBool(string key) => bool.TryParse(GetSetting(key)?.Value, out var b) && b;
+}
+
+<form method="post" asp-action="UpdateGeneral" aria-label="@Localizer.T("Settings.General.Tab")">
+    @Html.AntiForgeryToken()
+    <div class="settings-card">
+        <div class="settings-card-header">
+            <div class="header-icon icon-cog"><i class="fas fa-wrench"></i></div>
+            <h3>@Localizer.T("Settings.General.Title")</h3>
+            <span class="header-badge">@Localizer.T("Settings.General.Tab")</span>
+        </div>
+        <div class="settings-card-body">
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <label class="form-label">@Localizer.T("Settings.General.SessionTimeout")</label>
+                    <input name="General_SessionTimeoutMinutes" class="form-control" value="@SettingValue("General.SessionTimeoutMinutes")" type="number" min="1" placeholder="20" />
+                    <span class="form-text">@Localizer.T("Settings.General.SessionTimeout")</span>
+                </div>
+                <div class="col-md-7">
+                    <label class="form-label">@Localizer.T("Settings.General.MaintenanceMode")</label>
+                    @await Html.PartialAsync("_SettingsToggle", new { Name = "General_MaintenanceMode", Label = Localizer.T("Settings.General.MaintenanceMode"), Checked = SettingBool("General.MaintenanceMode") })
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">@Localizer.T("Settings.General.MaintenanceMessage")</label>
+                    <textarea name="General_MaintenanceMessage" class="form-control" rows="3" placeholder="@Localizer.T("Settings.General.MaintenanceMessage")">@SettingValue("General.MaintenanceMessage")</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
