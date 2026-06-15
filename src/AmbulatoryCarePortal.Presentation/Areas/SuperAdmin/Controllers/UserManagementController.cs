@@ -49,6 +49,7 @@ public class UserManagementController : Controller
     public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
     {
         var users = await _userManager.Users
+            .OrderBy(u => u.UserName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

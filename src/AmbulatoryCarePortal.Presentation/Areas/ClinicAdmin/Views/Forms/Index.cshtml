@@ -101,7 +101,7 @@ else
             <partial name="_EmptyState" model='new {
                 Icon = "fa-file-alt",
                 Title = Localizer.T("Empty.NoForms"),
-                Message = canManage ? Localizer.T("Form.CreatePrompt") : Localizer.T("Form.NoFormsMessage"),
+                Description = canManage ? Localizer.T("Form.CreatePrompt") : Localizer.T("Form.NoFormsMessage"),
                 ActionLink = canManage ? "/ClinicAdmin/Forms/Create" : "",
                 ActionText = canManage ? Localizer.T("Form.CreateForm") : ""
             }' />

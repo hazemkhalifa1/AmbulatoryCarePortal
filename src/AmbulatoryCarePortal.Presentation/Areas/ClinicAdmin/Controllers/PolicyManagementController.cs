@@ -80,7 +80,7 @@ public class PolicyManagementController : Controller
 
         var model = new CreatePolicyDocumentViewModel
         {
-            AvailableDepartments = _mapper.Map<List<DepartmentViewModel>>(departments),
+            AvailableDepartments = departments.Select(d => new DepartmentViewModel { Id = d.Id, Name = d.NameEn, ClinicId = d.ClinicId }).ToList(),
             CreatedDate = DateTime.Now
         };
 
@@ -96,7 +96,7 @@ public class PolicyManagementController : Controller
         {
             var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
             var departments = await _unitOfWork.Repository<Department>().FindAsync(d => d.ClinicId == clinicId);
-            model.AvailableDepartments = _mapper.Map<List<DepartmentViewModel>>(departments);
+            model.AvailableDepartments = departments.Select(d => new DepartmentViewModel { Id = d.Id, Name = d.NameEn, ClinicId = d.ClinicId }).ToList();
             return View(model);
         }
 
@@ -179,7 +179,7 @@ public class PolicyManagementController : Controller
             ExpiryDate = policy.ExpiryDate,
             DocumentStatus = policy.DocumentStatus.ToString(),
             VersionNumber = policy.VersionNumber,
-            AvailableDepartments = _mapper.Map<List<DepartmentViewModel>>(departments)
+            AvailableDepartments = departments.Select(d => new DepartmentViewModel { Id = d.Id, Name = d.NameEn, ClinicId = d.ClinicId }).ToList()
         };
 
         return View(model);
@@ -201,7 +201,7 @@ public class PolicyManagementController : Controller
         if (!ModelState.IsValid)
         {
             var departments = await _unitOfWork.Repository<Department>().FindAsync(d => d.ClinicId == clinicId);
-            model.AvailableDepartments = _mapper.Map<List<DepartmentViewModel>>(departments);
+            model.AvailableDepartments = departments.Select(d => new DepartmentViewModel { Id = d.Id, Name = d.NameEn, ClinicId = d.ClinicId }).ToList();
             return View(model);
         }
 

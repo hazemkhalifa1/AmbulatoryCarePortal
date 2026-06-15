@@ -103,7 +103,7 @@ public class ChecklistManagementController : Controller
 
         var model = new CreateChecklistViewModel
         {
-            AvailableDepartments = _mapper.Map<List<DepartmentViewModel>>(departments),
+            AvailableDepartments = departments.Select(d => new DepartmentViewModel { Id = d.Id, Name = d.NameEn, ClinicId = d.ClinicId }).ToList(),
             Frequencies = Enum.GetValues(typeof(ChecklistSchedule))
                 .Cast<ChecklistSchedule>()
                 .Select(f => f.ToString())
@@ -123,7 +123,7 @@ public class ChecklistManagementController : Controller
         {
             var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
             var departments = await _unitOfWork.Repository<Department>().FindAsync(d => d.ClinicId == clinicId);
-            model.AvailableDepartments = _mapper.Map<List<DepartmentViewModel>>(departments);
+            model.AvailableDepartments = departments.Select(d => new DepartmentViewModel { Id = d.Id, Name = d.NameEn, ClinicId = d.ClinicId }).ToList();
             return View(model);
         }
 

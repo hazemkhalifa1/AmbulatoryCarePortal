@@ -28,8 +28,13 @@ public class AuditMiddleware
             context.Request.Method != "GET")
         {
             var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var clinicId = context.User.FindFirst("ClinicId")?.Value;
+            var clinicIdClaim = context.User.FindFirst("ClinicId")?.Value;
             var ipAddress = context.Connection.RemoteIpAddress?.ToString();
+
+            if (!int.TryParse(clinicIdClaim, out var clinicId) || clinicId <= 0)
+            {
+                return;
+            }
 
             var actionType = context.Request.Method switch
             {
@@ -45,7 +50,7 @@ public class AuditMiddleware
                 try
                 {
                     await auditService.LogActionAsync(
-                        int.TryParse(clinicId, out var cid) ? cid : 0,
+                        clinicId,
                         actionType.ToString(),
                         $"{context.Request.Method} {context.Request.Path} ({sw.ElapsedMilliseconds}ms)",
                         "HTTP",

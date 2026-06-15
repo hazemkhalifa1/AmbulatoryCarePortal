@@ -69,7 +69,7 @@ public class DocumentTemplatesController : Controller
                 }
 
                 var pagedResult = await _unitOfWork.Repository<DocumentTemplate>()
-                    .GetPagedAsync(page, pageSize, predicate);
+                    .GetPagedAsync(page, pageSize, predicate, t => t.StandardCode);
 
                 var dtoList = pagedResult.Data.Select(t => new DocumentTemplateDto
                 {

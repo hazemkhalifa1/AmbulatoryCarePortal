@@ -155,7 +155,7 @@ public static class RolePermissionsSeeder
         Permissions.ManageDocuments, Permissions.UploadDocuments,
         Permissions.VerifyDocuments, Permissions.ExpiryNotifications,
         Permissions.ViewAuditLog,
-        Permissions.SendNotifications,
+        Permissions.ManageNotifications, Permissions.SendNotifications,
         Permissions.ViewDashboard, Permissions.GenerateReports,
         Permissions.ExportReports, Permissions.ViewAnalytics,
         Permissions.ViewSystemSettings

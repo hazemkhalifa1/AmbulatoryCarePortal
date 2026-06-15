@@ -154,7 +154,7 @@
                         <partial name="_EmptyState" model='new {
                             Icon = "fa-file-pdf",
                             Title = Localizer.T("Empty.NoPolicies"),
-                            Message = !string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || departmentFilter.HasValue
+                            Description = !string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || departmentFilter.HasValue
                                 ? Localizer.T("Empty.FilterAdjust")
                                 : "",
                             ActionLink = !string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(statusFilter) || departmentFilter.HasValue ? "" : Url.Action("Create"),

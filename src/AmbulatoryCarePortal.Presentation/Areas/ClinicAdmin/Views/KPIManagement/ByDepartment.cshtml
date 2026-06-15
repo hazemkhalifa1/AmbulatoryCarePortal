@@ -34,7 +34,7 @@
     <partial name="_EmptyState" model='new {
         Icon = "fa-chart-pie",
         Title = Localizer.T("KPI.NoKPIsMatch"),
-        Message = Localizer.T("KPI.NoKPIsMatch"),
+        Description = Localizer.T("KPI.NoKPIsMatch"),
         ActionLink = Url.Action("Create"),
         ActionText = Localizer.T("KPI.CreateNew")
     }' />
@@ -163,7 +163,7 @@ else
                                 <partial name="_EmptyState" model='new {
                                     Icon = "fa-chart-line",
                                     Title = Localizer.T("KPI.NoDepartmentKPIs"),
-                                    Message = "",
+                                    Description = "",
                                     ActionLink = Url.Action("Create"),
                                     ActionText = Localizer.T("KPI.CreateNew")
                                 }' />

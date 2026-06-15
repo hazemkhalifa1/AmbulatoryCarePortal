@@ -19,38 +19,7 @@
     </div>
 </div>
 
-<!-- Step 1: Clinic Type Selection -->
-<div class="card mb-4">
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <label class="form-label fw-bold">@Localizer.T("Doc.ClinicType") <span class="text-danger">*</span></label>
-                <select id="clinicTypeSelect" class="form-select form-select-lg">
-                    <option value="">-- @Localizer.T("Doc.SelectClinicType") --</option>
-                    <option value="AMB">AMB CBAHI</option>
-                    <option value="Dental">Dental CBAHI</option>
-                </select>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Step 2: Standards Tab Bar -->
-<div id="standardsSection" class="d-none mb-4">
-    <div class="card">
-        <div class="card-body">
-            <ul class="nav nav-pills mb-3" id="standardsTabs" role="tablist"></ul>
-            <div id="templatesTableContainer">
-                <div class="text-center py-4 text-muted">
-                    <i class="fas fa-hand-pointer fa-2x mb-2"></i>
-                    <p>@Localizer.T("Doc.SelectStandard")</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Step 3: Create Form -->
+<!-- Create Form -->
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="card template-form-card">
@@ -67,9 +36,12 @@
                         <div class="form-section-body">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="StandardCode" class="form-label">Standard Code <span class="text-danger">*</span></label>
-                                    <input asp-for="StandardCode" class="form-control" placeholder="e.g. LD1, FMS07" required aria-required="true" />
-                                    <span asp-validation-for="StandardCode" class="text-danger"></span>
+                                    <label class="form-label">@Localizer.T("Doc.ClinicType") <span class="text-danger">*</span></label>
+                                    <select id="clinicTypeSelect" class="form-select">
+                                        <option value="">-- @Localizer.T("Doc.SelectClinicType") --</option>
+                                        <option value="AMB">AMB CBAHI</option>
+                                        <option value="Dental">Dental CBAHI</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="DepartmentCategory" class="form-label">@Localizer.T("Template.DepartmentCategory") <span class="text-danger">*</span></label>
@@ -77,6 +49,13 @@
                                         <option value="">-- @Localizer.T("Doc.SelectStandard") --</option>
                                     </select>
                                     <span asp-validation-for="DepartmentCategory" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="StandardCode" class="form-label">Standard Code <span class="text-danger">*</span></label>
+                                    <input asp-for="StandardCode" class="form-control" placeholder="e.g. LD1, FMS07" required aria-required="true" />
+                                    <span asp-validation-for="StandardCode" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -174,65 +153,32 @@
                 return $.Deferred().resolve(standardsCache[clinicType]).promise();
             }
             return $.get('@Url.Action("GetStandards", "DocumentTemplates", new { area = "SuperAdmin" })', { clinicType: clinicType })
-                .done(function(data) { standardsCache[clinicType] = data.standards; });
+                .then(function(data) {
+                    standardsCache[clinicType] = data.standards;
+                    return data.standards;
+                });
         }
 
-        function renderStandardsTabs(standards) {
-            var $tabs = $('#standardsTabs').empty();
+        function populateDepartmentCategory(standards) {
             var $deptSelect = $('#departmentCategorySelect').empty().append('<option value="">-- @Localizer.T("Doc.SelectStandard") --');
-
             $.each(standards, function(i, s) {
-                var active = i === 0 ? 'active' : '';
-                $tabs.append('<li class="nav-item" role="presentation"><button class="nav-link ' + active + '" data-standard="' + s + '" type="button" role="tab">' + s + '</button></li>');
                 $deptSelect.append('<option value="' + s + '">' + s + '</option>');
             });
-
-            if (standards.length > 0) {
-                loadTemplatesForTab(standards[0]);
-            }
-        }
-
-        function loadTemplatesForTab(standard) {
-            var clinicType = $('#clinicTypeSelect').val();
-            var $container = $('#templatesTableContainer');
-            $container.html('<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2 text-muted">Loading templates...</p></div>');
-
-            $.get('@Url.Action("ByTypeAndStandard", "DocumentTemplates", new { area = "SuperAdmin" })', { clinicType: clinicType, standard: standard })
-                .done(function(data) {
-                    if (!data || data.length === 0) {
-                        $container.html('<div class="text-center py-4 text-muted"><i class="fas fa-file fa-2x mb-2"></i><p>@Localizer.T("Empty.NoTemplates")</p></div>');
-                        return;
-                    }
-                    var html = '<div class="table-responsive"><table class="table table-hover data-table"><thead><tr><th>@Localizer.T("Doc.StandardCode")</th><th>@Localizer.T("Doc.TitleEn")</th><th>@Localizer.T("Doc.TitleAr")</th><th>@Localizer.T("Common.Active")</th></tr></thead><tbody>';
-                    $.each(data, function(i, t) {
-                        html += '<tr><td><span class="badge badge-info">' + t.standardCode + '</span></td><td>' + t.titleEn + '</td><td>' + (t.titleAr || '&mdash;') + '</td><td>' + (t.isActive ? '<span class="badge badge-success">@Localizer.T("Common.Active")</span>' : '<span class="badge badge-secondary">@Localizer.T("Common.Inactive")</span>') + '</td></tr>';
-                    });
-                    html += '</tbody></table></div>';
-                    $container.html(html);
-                });
         }
 
         $('#clinicTypeSelect').on('change', function() {
             var val = $(this).val();
             $('#clinicTypeHidden').val(val);
 
-            if (!val) {
-                $('#standardsSection').addClass('d-none');
-                return;
-            }
+            var $deptSelect = $('#departmentCategorySelect').empty().append('<option value="">-- @Localizer.T("Doc.SelectStandard") --');
 
-            $('#standardsSection').removeClass('d-none');
-            $('#templatesTableContainer').html('<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2 text-muted">Loading standards...</p></div>');
+            if (!val) return;
+
+            $deptSelect.html('<option value="">Loading standards...</option>');
 
             loadStandards(val).done(function(standards) {
-                renderStandardsTabs(standards);
+                populateDepartmentCategory(standards);
             });
-        });
-
-        $('#standardsTabs').on('click', 'button', function() {
-            $('#standardsTabs button').removeClass('active');
-            $(this).addClass('active');
-            loadTemplatesForTab($(this).data('standard'));
         });
 
         document.getElementById('uploadBtn').addEventListener('click', function() {

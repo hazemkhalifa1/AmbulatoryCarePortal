@@ -108,7 +108,7 @@
                         <partial name="_EmptyState" model='new {
                             Icon = "fa-building",
                             Title = Localizer.T("Empty.NoDepartments"),
-                            Message = !string.IsNullOrEmpty(searchTerm) ? Localizer.T("Empty.FilterAdjust") : "",
+                            Description = !string.IsNullOrEmpty(searchTerm) ? Localizer.T("Empty.FilterAdjust") : "",
                             ActionLink = User.IsInRole("ClinicAdmin") && string.IsNullOrEmpty(searchTerm) ? Url.Action("Create") : "",
                             ActionText = User.IsInRole("ClinicAdmin") && string.IsNullOrEmpty(searchTerm) ? Localizer.T("Button.Create") : ""
                         }' />

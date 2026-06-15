@@ -22,6 +22,12 @@ public class AuditLogJob
     public async Task LogActionAsync(int clinicId, string actionType, string? description,
         string? targetObjectType, int? targetObjectId, string? userId, string? ipAddress)
     {
+        if (clinicId <= 0)
+        {
+            _logger.LogWarning("Skipping audit log: invalid ClinicId {ClinicId}", clinicId);
+            return;
+        }
+
         if (!Enum.TryParse<AuditActionType>(actionType, out var auditAction))
             auditAction = AuditActionType.Create;
 
