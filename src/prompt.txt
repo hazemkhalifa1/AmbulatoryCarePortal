@@ -1,0 +1,16 @@
+Improve the entire UI layer.
+
+Act as a Senior UI Architect.
+
+This is a Healthcare Compliance Platform.
+
+Redesign all dashboards and management screens using:
+
+- Bootstrap 5
+- Responsive Design
+- Modern Admin Panel Principles
+- Chart.js
+- Font Awesome
+- WCAG Accessibility
+
+Generate complete Razor Views and CSS.

@@ -46,7 +46,7 @@ function initializeConfirmation() {
 // SIDEBAR
 // ============================================================
 function initializeSidebar() {
-    var toggleBtn = document.querySelector('[data-widget="pushmenu"]');
+    var toggleBtn = document.querySelector('.header-hamburger');
     var sidebar = document.querySelector('.main-sidebar');
 
     if (toggleBtn) {
@@ -207,10 +207,11 @@ function initializeLanguageToggle() {
         });
     });
 
-    // Apply saved language
+    // Sync client state with server-rendered language
     var savedLang = localStorage.getItem('lang') || 'en';
-    if (savedLang === 'ar') {
-        setLanguage('ar');
+    var serverLang = document.documentElement.lang || 'en';
+    if (savedLang !== serverLang) {
+        setLanguage(savedLang);
     }
 
     // Legacy single-toggle fallback
@@ -226,28 +227,8 @@ function setLanguage(lang) {
     localStorage.setItem('lang', lang);
     document.cookie = 'lang=' + lang + '; path=/; max-age=31536000';
 
-    // Update segmented toggle active state
-    document.querySelectorAll('.header-lang-option').forEach(function (btn) {
-        var btnLang = btn.getAttribute('data-lang');
-        if (btnLang === lang) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-    });
-
-    var rtlLink = document.getElementById('bootstrap-rtl');
-    if (lang === 'ar') {
-        if (!rtlLink) {
-            var link = document.createElement('link');
-            link.id = 'bootstrap-rtl';
-            link.rel = 'stylesheet';
-            link.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css';
-            document.head.appendChild(link);
-        }
-    } else {
-        if (rtlLink) rtlLink.remove();
-    }
+    // Reload so server renders translations in the new language
+    location.reload();
 }
 
 // ============================================================

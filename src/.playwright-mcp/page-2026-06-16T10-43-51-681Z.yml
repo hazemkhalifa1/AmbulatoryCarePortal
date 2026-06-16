@@ -1,0 +1,52 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e6]: 
+      - heading "CBAHI Ambulatory Care" [level=1] [ref=e7]
+      - paragraph [ref=e8]: Enterprise compliance management platform for healthcare facilities. Streamline accreditation, monitor KPIs, and manage credentials.
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e12]: 
+          - generic [ref=e13]: Policy & Document Management
+        - generic [ref=e14]:
+          - generic [ref=e16]: 
+          - generic [ref=e17]: KPI Monitoring & Analytics
+        - generic [ref=e18]:
+          - generic [ref=e20]: 
+          - generic [ref=e21]: Staff Credentialing & Compliance
+        - generic [ref=e22]:
+          - generic [ref=e24]: 
+          - generic [ref=e25]: Automated Audit Readiness
+    - paragraph [ref=e27]: © 2026 CBAHI. All rights reserved. Saudi Healthcare Compliance.
+  - generic [ref=e29]:
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - generic [ref=e32]: 
+        - text: Secure Login
+      - heading "Welcome Back" [level=2] [ref=e33]
+      - paragraph [ref=e34]: Sign in to access the compliance portal
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]: Email Address
+          - generic [ref=e39]:
+            - generic [ref=e41]: 
+            - textbox "Email Address" [active] [ref=e42]:
+              - /placeholder: Enter your email
+        - generic [ref=e43]:
+          - generic [ref=e44]: Password
+          - generic [ref=e45]:
+            - generic [ref=e47]: 
+            - textbox "Password" [ref=e48]:
+              - /placeholder: Enter your password
+            - button "Password" [ref=e49] [cursor=pointer]:
+              - generic [ref=e50]: 
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - checkbox "Remember me" [ref=e53] [cursor=pointer]
+            - generic [ref=e54] [cursor=pointer]: Remember me
+          - link "Forgot password?" [ref=e55] [cursor=pointer]:
+            - /url: /Account/ForgotPassword
+        - button "Sign In" [ref=e56] [cursor=pointer]:
+          - generic [ref=e57]: Sign In
+      - generic [ref=e58]: © 2026 CBAHI Ambulatory Care Compliance Portal
