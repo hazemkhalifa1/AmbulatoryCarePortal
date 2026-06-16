@@ -45,7 +45,7 @@
                         <span class="progress-text">@Localizer.T("Clinic.ComplianceScore")</span>
                         <span class="fw-bold">@score.OverallScore.ToString("F1")%</span>
                     </div>
-                    <div class="progress" style="height: 8px; border-radius: 4px;">
+                    <div class="progress progress-md">
                         <div class="progress-bar bg-@gaugeColor"
                              style="width: @score.OverallScore%"
                              role="progressbar"
@@ -64,7 +64,7 @@
                             <span><i class="@component.Icon me-1" style="color:@component.Color"></i>@component.Name</span>
                             <span class="fw-bold">@component.Score.ToString("F1")% (w:@component.Weight%)</span>
                         </div>
-                        <div class="progress" style="height: 5px; border-radius: 3px;">
+                        <div class="progress progress-xs">
                             <div class="progress-bar bg-@compColor"
                                  style="width: @component.Score%"
                                  role="progressbar">

@@ -144,28 +144,10 @@
                             <strong class="@(statusClass == "critical" ? "text-danger" : statusClass == "urgent" ? "text-warning" : "text-info")">@doc.DaysUntilExpiry</strong> @Localizer.T("HR.Days")
                         </td>
                         <td>
-                            @if (doc.IsVerified)
-                            {
-                                <span class="status-pill active"><i class="fas fa-check"></i> @Localizer.T("HR.Verified")</span>
-                            }
-                            else
-                            {
-                                <span class="status-pill needs-review"><i class="fas fa-times"></i> @Localizer.T("HR.Pending")</span>
-                            }
+                            <span class="status-pill @StatusBadgeHelper.GetActiveStatusClass(doc.IsVerified)"><i class="fas @(doc.IsVerified ? "fa-check" : "fa-times")"></i> @Localizer.T(doc.IsVerified ? "HR.Verified" : "HR.Pending")</span>
                         </td>
                         <td>
-                            @if (statusClass == "critical")
-                            {
-                                <span class="status-pill inactive">@statusLabel</span>
-                            }
-                            else if (statusClass == "urgent")
-                            {
-                                <span class="status-pill needs-review">@statusLabel</span>
-                            }
-                            else
-                            {
-                                <span class="status-pill active">@statusLabel</span>
-                            }
+                            <span class="status-pill @(statusClass switch { "critical" => "inactive", "urgent" => "needs-review", _ => "active" })">@statusLabel</span>
                         </td>
                         <td>
                             <div class="cell-actions justify-content-end">

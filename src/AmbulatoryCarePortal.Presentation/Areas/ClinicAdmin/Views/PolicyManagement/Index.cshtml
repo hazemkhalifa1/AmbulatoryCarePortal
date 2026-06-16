@@ -95,32 +95,19 @@
                             }
                         </td>
                         <td>
-                            @{
-                                var statusBadge = policy.DocumentStatus switch
-                                {
-                                    DocumentStatus.Draft => "needs-review",
-                                    DocumentStatus.Pending => "needs-review",
-                                    DocumentStatus.Approved => "active",
-                                    DocumentStatus.Complete => "active",
-                                    DocumentStatus.MissingAttachment => "inactive",
-                                    DocumentStatus.Expired => "inactive",
-                                    _ => "needs-review"
-                                };
-                            }
-                            <span class="status-pill @statusBadge">@policy.DocumentStatus</span>
+                            <span class="status-pill @StatusBadgeHelper.GetDocumentStatusClass(policy.DocumentStatus)">@policy.DocumentStatus</span>
                         </td>
                         <td>@policy.DepartmentName</td>
                         <td><span class="compliance-badge compliant">v@(policy.VersionNumber)</span></td>
                         <td>
                             @if (policy.ExpiryDate.HasValue)
                             {
-                                var isExpiring = policy.ExpiryDate.Value <= DateTime.UtcNow.AddMonths(1);
-                                <span class="@(isExpiring ? "text-danger fw-bold" : "")">
+                                <span class="@ExpiryHelper.GetExpiryStatusClass(policy.ExpiryDate)">
                                     @policy.ExpiryDate.Value.ToString("yyyy-MM-dd")
                                 </span>
-                                if (isExpiring)
+                                if (ExpiryHelper.IsExpiringSoon(policy.ExpiryDate, 30))
                                 {
-                                    <br /><span class="compliance-badge non-compliant mt-1 d-inline-block">@Localizer.T("Policy.ExpiringSoon")</span>
+                                    <br /><span class="@ExpiryHelper.GetExpiryLabelClass(policy.ExpiryDate) mt-1 d-inline-block">@Localizer.T("Policy.ExpiringSoon")</span>
                                 }
                             }
                             else
@@ -199,28 +186,15 @@
     }
 </div>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteModalTitle"><i class="fas fa-exclamation-triangle me-2"></i>@Localizer.T("Policy.ConfirmDelete")</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
-            </div>
-            <form method="post" asp-action="Delete" id="deleteForm">
-                <input type="hidden" name="id" id="deletePolicyId" value="" />
-                <div class="modal-body">
-                    <p>@Localizer.T("Policy.DeleteConfirmMessage")</p>
-                    <p class="fw-bold text-danger" id="deletePolicyTitle"></p>
-                    <p class="text-muted small">@Localizer.T("Policy.DeleteWarning")</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Common.Cancel")</button>
-                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>@Localizer.T("Common.Delete")</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<partial name="_DeleteConfirmation" model='new {
+    ModalId = "deleteModal",
+    Title = Localizer.T("Policy.ConfirmDelete"),
+    Message = Localizer.T("Policy.DeleteConfirmMessage"),
+    Warning = Localizer.T("Policy.DeleteWarning"),
+    FormAction = "Delete",
+    HiddenInputId = "deletePolicyId",
+    DisplayTextId = "deletePolicyTitle"
+}' />
 
 @section Scripts {
     <script>

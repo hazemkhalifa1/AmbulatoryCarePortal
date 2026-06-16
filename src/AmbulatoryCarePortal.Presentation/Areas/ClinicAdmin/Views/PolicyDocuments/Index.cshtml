@@ -125,13 +125,9 @@
                             {
                                 <span class="status-pill active"><i class="fas fa-check-circle"></i> @Localizer.T("Common.Compliant")</span>
                             }
-                            else if (item.DocumentStatus == "NeedsReview" || item.DocumentStatus == "Draft")
-                            {
-                                <span class="status-pill needs-review">@item.DocumentStatus</span>
-                            }
                             else
                             {
-                                <span class="status-pill inactive">@item.DocumentStatus</span>
+                                <span class="status-pill @StatusBadgeHelper.GetDocumentStatusClass(item.DocumentStatus)">@item.DocumentStatus</span>
                             }
                         </td>
                         <td>@item.VersionNumber</td>

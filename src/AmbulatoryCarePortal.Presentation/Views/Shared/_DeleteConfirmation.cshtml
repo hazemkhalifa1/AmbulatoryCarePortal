@@ -1,0 +1,23 @@
+@model dynamic
+<div class="modal fade" id="@Model.ModalId" tabindex="-1" role="dialog" aria-labelledby="@(Model.ModalId)Title" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="@(Model.ModalId)Title"><i class="fas fa-exclamation-triangle me-2"></i>@Model.Title</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
+            </div>
+            <form method="post" asp-action="@Model.FormAction">
+                <input type="hidden" name="id" id="@Model.HiddenInputId" value="" />
+                <div class="modal-body">
+                    <p>@Model.Message</p>
+                    <p class="fw-bold text-danger" id="@Model.DisplayTextId"></p>
+                    <p class="text-muted small">@Model.Warning</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Common.Cancel")</button>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>@Localizer.T("Common.Delete")</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

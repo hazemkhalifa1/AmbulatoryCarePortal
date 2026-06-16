@@ -113,14 +113,7 @@
                         <td>@staff.DepartmentName</td>
                         <td class="text-center"><span class="fw-bold">@staff.DocumentCount</span></td>
                         <td>
-                            @if (staff.IsActive)
-                            {
-                                <span class="status-pill active">@Localizer.T("HR.Active")</span>
-                            }
-                            else
-                            {
-                                <span class="status-pill inactive">@Localizer.T("HR.Inactive")</span>
-                            }
+                            <span class="status-pill @StatusBadgeHelper.GetActiveStatusClass(staff.IsActive)">@Localizer.T(staff.IsActive ? "HR.Active" : "HR.Inactive")</span>
                         </td>
                         <td>
                             <div class="cell-actions justify-content-end">
@@ -186,14 +179,4 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(function () {
-            $('#tableSearch').on('keyup', function () {
-                var value = $(this).val().toLowerCase();
-                $('#staffTable tbody tr').filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
-            });
-        });
-    </script>
 }

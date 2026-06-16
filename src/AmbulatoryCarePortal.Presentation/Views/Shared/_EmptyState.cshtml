@@ -1,0 +1,12 @@
+@model dynamic
+
+<div class="empty-state text-center py-5">
+    <div class="empty-state-icon mb-3">
+        <i class="fas @Model.Icon fa-3x text-muted"></i>
+    </div>
+    <h5 class="text-muted">@Model.Title</h5>
+    @if (!string.IsNullOrEmpty(Model.Description as string))
+    {
+        <p class="text-muted small">@Model.Description</p>
+    }
+</div>

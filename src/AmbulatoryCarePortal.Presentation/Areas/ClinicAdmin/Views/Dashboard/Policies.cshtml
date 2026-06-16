@@ -2,8 +2,8 @@
 
 @{
     ViewData["Title"] = ViewBag.PageTitle ?? Localizer.T("Page.PolicyDocuments");
-    var expiredCount = Model.Data.Count(d => d.ExpiryDate.HasValue && d.ExpiryDate.Value <= DateTime.UtcNow);
-    var expiringSoonCount = Model.Data.Count(d => d.ExpiryDate.HasValue && d.ExpiryDate.Value > DateTime.UtcNow && d.ExpiryDate.Value <= DateTime.UtcNow.AddDays(30));
+    var expiredCount = Model.Data.Count(d => ExpiryHelper.IsExpired(d.ExpiryDate));
+    var expiringSoonCount = Model.Data.Count(d => ExpiryHelper.IsExpiringSoon(d.ExpiryDate));
     var approvedCount = Model.Data.Count(d => d.DocumentStatus == DocumentStatus.Approved || d.DocumentStatus == DocumentStatus.Complete);
 }
 
@@ -95,45 +95,19 @@
                         </td>
                         <td><span class="badge bg-secondary">@doc.StandardCode</span></td>
                         <td>
-                            @switch (doc.DocumentStatus)
-                            {
-                                case DocumentStatus.Draft:
-                                    <span class="status-pill needs-review">@Localizer.T("Policy.Draft")</span>
-                                    break;
-                                case DocumentStatus.NeedsReview:
-                                    <span class="status-pill needs-review">@Localizer.T("Policy.NeedsReview")</span>
-                                    break;
-                                case DocumentStatus.Pending:
-                                    <span class="status-pill needs-review">@Localizer.T("Policy.Pending")</span>
-                                    break;
-                                case DocumentStatus.Approved:
-                                    <span class="status-pill active">@Localizer.T("Policy.Approved")</span>
-                                    break;
-                                case DocumentStatus.Complete:
-                                    <span class="status-pill active">@Localizer.T("Policy.Complete")</span>
-                                    break;
-                                case DocumentStatus.MissingAttachment:
-                                    <span class="status-pill inactive">@Localizer.T("Policy.MissingAttachment")</span>
-                                    break;
-                                case DocumentStatus.Expired:
-                                    <span class="status-pill inactive">@Localizer.T("Policy.Expired")</span>
-                                    break;
-                                default:
-                                    <span class="status-pill needs-review">@doc.DocumentStatus</span>
-                                    break;
-                            }
+                            <span class="status-pill @StatusBadgeHelper.GetDocumentStatusClass(doc.DocumentStatus)">@Localizer.T("Policy." + doc.DocumentStatus)</span>
                         </td>
                         <td>@doc.DepartmentName</td>
                         <td><span class="compliance-badge compliant">v@(doc.VersionNumber)</span></td>
                         <td>
                             @if (doc.ExpiryDate.HasValue)
                             {
-                                <span>@doc.ExpiryDate.Value.ToString("dd/MM/yyyy")</span>
-                                if (doc.ExpiryDate.Value <= DateTime.UtcNow)
+                                <span class="@ExpiryHelper.GetExpiryStatusClass(doc.ExpiryDate)">@doc.ExpiryDate.Value.ToString("dd/MM/yyyy")</span>
+                                if (ExpiryHelper.IsExpired(doc.ExpiryDate))
                                 {
                                     <br /><span class="compliance-badge non-compliant mt-1 d-inline-block">@Localizer.T("Policy.Expired")</span>
                                 }
-                                else if (doc.ExpiryDate.Value <= DateTime.UtcNow.AddDays(30))
+                                else if (ExpiryHelper.IsExpiringSoon(doc.ExpiryDate))
                                 {
                                     <br /><span class="compliance-badge needs-attention mt-1 d-inline-block">@Localizer.T("Policy.ExpiringSoon")</span>
                                 }
@@ -209,14 +183,4 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(function () {
-            $('#tableSearch').on('keyup', function () {
-                var value = $(this).val().toLowerCase();
-                $('#policiesTable tbody tr').filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
-            });
-        });
-    </script>
 }

@@ -117,18 +117,7 @@
                             </a>
                         </td>
                         <td>
-                            @{
-                                var statusBadge = doc.DocumentStatus switch
-                                {
-                                    ClinicDocumentStatus.Complete => "active",
-                                    ClinicDocumentStatus.NeedsReview => "needs-review",
-                                    ClinicDocumentStatus.MissingAttachment => "inactive",
-                                    ClinicDocumentStatus.Expired => "inactive",
-                                    ClinicDocumentStatus.Draft => "needs-review",
-                                    _ => "needs-review"
-                                };
-                            }
-                            <span class="status-pill @statusBadge">@doc.DocumentStatus</span>
+                            <span class="status-pill @StatusBadgeHelper.GetClinicDocumentStatusClass(doc.DocumentStatus)">@doc.DocumentStatus</span>
                         </td>
                         <td>
                             @if (doc.ExpiryDate.HasValue)

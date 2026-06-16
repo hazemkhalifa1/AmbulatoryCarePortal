@@ -1532,8 +1532,11 @@ select.form-control {
     overflow: hidden;
 }
 
+.progress-xs { height: 5px; }
 .progress-sm { height: 4px; }
+.progress-md { height: 8px; }
 .progress-lg { height: 10px; border-radius: 5px; }
+.progress-xl { height: 20px; border-radius: 6px; }
 
 .progress-bar {
     background: var(--color-primary);
@@ -2267,6 +2270,7 @@ html[dir="rtl"] .table-toolbar .search-box input {
 
 /* Auto-dismiss toast */
 .developer-toast {
+    display: none;
     position: fixed;
     z-index: 10000;
     bottom: 3.5rem;
@@ -2277,17 +2281,24 @@ html[dir="rtl"] .table-toolbar .search-box input {
     box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
     padding: 0.75rem 1rem;
     min-width: 160px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(8px);
-    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
     pointer-events: auto;
 }
 
 .developer-toast.active {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+    display: block;
+    opacity: 0;
+    animation: devToastFadeIn 0.25s ease forwards;
+}
+
+@keyframes devToastFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.developer-toast:not(.active) {
+    transform: translateY(8px);
 }
 
 html[dir="rtl"] .developer-toast {

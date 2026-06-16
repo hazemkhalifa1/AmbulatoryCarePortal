@@ -143,14 +143,7 @@
                                         }
                                     </td>
                                     <td class="text-center">
-                                        @if (template.IsActive)
-                                        {
-                                            <span class="status-pill complete">@Localizer.T("Common.Active")</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="status-pill inactive">@Localizer.T("Common.Inactive")</span>
-                                        }
+                                        <span class="status-pill @(template.IsActive ? "complete" : "inactive")">@Localizer.T(template.IsActive ? "Common.Active" : "Common.Inactive")</span>
                                     </td>
                                     <td class="text-center">
                                         <div class="dropdown">
@@ -273,29 +266,15 @@
     }
 </div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteModalTitle"><i class="fas fa-exclamation-triangle me-2"></i>@Localizer.T("Common.Confirm")</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
-            </div>
-            <form method="post" asp-action="Delete" id="deleteForm">
-                <input type="hidden" name="id" id="deleteTemplateId" value="" />
-                <div class="modal-body">
-                    <p>Are you sure you want to delete the document template:</p>
-                    <p class="fw-bold text-danger" id="deleteTemplateCode"></p>
-                    <p class="text-muted small">This action cannot be undone. The template will be soft-deleted.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Button.Cancel")</button>
-                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>@Localizer.T("Common.Delete")</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<partial name="_DeleteConfirmation" model='new {
+    ModalId = "deleteModal",
+    Title = Localizer.T("Common.Confirm"),
+    Message = Localizer.T("Template.DeleteConfirmMessage"),
+    Warning = Localizer.T("Template.DeleteWarning"),
+    FormAction = "Delete",
+    HiddenInputId = "deleteTemplateId",
+    DisplayTextId = "deleteTemplateCode"
+}' />
 
 <!-- Assign to All Clinics Modal -->
 <div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalTitle" aria-hidden="true">
