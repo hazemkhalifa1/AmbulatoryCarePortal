@@ -1,0 +1,130 @@
+@model List<ClinicTemplateValueDto>
+@{
+    var assignment = (ClinicTemplateAssignmentDto)ViewBag.Assignment;
+    ViewData["Title"] = $"{assignment.StandardCode} - {assignment.TitleEn}";
+}
+
+<partial name="_PageHeader" model='new {
+    Title = $"{assignment.StandardCode} - {assignment.TitleEn}",
+    Icon = "fa-file-pen",
+    Subtitle = $"{Localizer.T("Clinic.AssignedTo")}: {assignment.ClinicName}",
+    Breadcrumb = ""
+}' />
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-tags me-2"></i>@Localizer.T("Template.FillVariables")</h3>
+            </div>
+            <div class="card-body">
+                @if (Model.Any())
+                {
+                    <form method="post" asp-action="SaveValues" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="assignmentId" value="@assignment.Id" />
+                        <input type="hidden" name="clinicId" value="@assignment.ClinicId" />
+
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <input type="hidden" name="values[@i].TemplateVariableId" value="@Model[i].TemplateVariableId" />
+                            var val = Model[i];
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    @val.DisplayName
+                                    @if (val.IsRequired)
+                                    {
+                                        <span class="text-danger">*</span>
+                                    }
+                                    @if (val.IsImage)
+                                    {
+                                        <span class="badge bg-info text-white ms-2"><i class="fas fa-image me-1"></i>@Localizer.T("Template.Image")</span>
+                                    }
+                                </label>
+
+                                @if (val.IsImage)
+                                {
+                                    <div>
+                                        @if (!string.IsNullOrEmpty(val.ImagePath))
+                                        {
+                                            <div class="mb-2">
+                                                <img src="@val.ImagePath" alt="@val.DisplayName" style="max-width:200px;max-height:200px;" class="img-thumbnail" />
+                                            </div>
+                                        }
+                                        <form method="post" asp-action="UploadImage" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="assignmentId" value="@assignment.Id" />
+                                            <input type="hidden" name="variableId" value="@val.TemplateVariableId" />
+                                            <input type="file" name="imageFile" class="form-control form-control-sm" accept="image/*" required />
+                                            <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-upload"></i></button>
+                                        </form>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <input type="text" name="values[@i].Value" class="form-control" value="@val.Value" placeholder="@val.DisplayName" @(val.IsRequired ? "required" : "") />
+                                }
+                            </div>
+                        }
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")</button>
+                            <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left me-1"></i>@Localizer.T("Common.Back")</a>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">@Localizer.T("Template.NoVariables")</h5>
+                        <p class="text-muted small">@Localizer.T("Template.NoVariablesHint")</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header"><h3 class="card-title"><i class="fas fa-info-circle me-2"></i>@Localizer.T("Common.Information")</h3></div>
+            <div class="card-body">
+                <div class="detail-list">
+                    <div class="detail-item">
+                        <span class="detail-label">@Localizer.T("Doc.StandardCode")</span>
+                        <span class="detail-value"><span class="badge badge-info">@assignment.StandardCode</span></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">@Localizer.T("Clinic.Status")</span>
+                        <span class="detail-value"><span class="status-pill complete">@assignment.AssignmentStatus</span></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">@Localizer.T("Template.GeneratedDocuments")</span>
+                        <span class="detail-value">@assignment.GeneratedDocumentCount</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h3 class="card-title"><i class="fas fa-file-export me-2"></i>@Localizer.T("Template.GenerateDocument")</h3></div>
+            <div class="card-body">
+                <p class="text-muted small">@Localizer.T("Template.GenerateDocumentHint")</p>
+                <div class="d-grid gap-2">
+                    <form method="post" asp-action="GenerateDocx" asp-route-assignmentId="@assignment.Id">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-success w-100 mb-2">
+                            <i class="fas fa-file-word me-1"></i>@Localizer.T("Template.GenerateDocx")
+                        </button>
+                    </form>
+                    <form method="post" asp-action="GeneratePdf" asp-route-assignmentId="@assignment.Id">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="fas fa-file-pdf me-1"></i>@Localizer.T("Template.GeneratePdf")
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

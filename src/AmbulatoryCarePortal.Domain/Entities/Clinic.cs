@@ -27,5 +27,7 @@ public class Clinic : BaseEntity
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     public ICollection<AuditTrail> AuditTrails { get; set; } = new List<AuditTrail>();
     public ICollection<ClinicDocument> ClinicDocuments { get; set; } = new List<ClinicDocument>();
+    public ICollection<ClinicTemplateAssignment> ClinicTemplateAssignments { get; set; } = new List<ClinicTemplateAssignment>();
+    public ICollection<GeneratedDocument> GeneratedDocuments { get; set; } = new List<GeneratedDocument>();
     public ICollection<ComplianceScoreSnapshot> ComplianceScoreSnapshots { get; set; } = new List<ComplianceScoreSnapshot>();
 }

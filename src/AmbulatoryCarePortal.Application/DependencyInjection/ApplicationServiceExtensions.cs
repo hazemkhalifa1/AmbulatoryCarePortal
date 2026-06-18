@@ -41,6 +41,9 @@ public static class ApplicationServiceExtensions
         // Document services
         services.AddScoped<IDocumentTemplateService, DocumentTemplateService>();
         services.AddScoped<IClinicDocumentService, ClinicDocumentService>();
+        services.AddScoped<ITemplateVariableService, TemplateVariableService>();
+        services.AddScoped<IClinicTemplateAssignmentService, ClinicTemplateAssignmentService>();
+        services.AddScoped<IDocumentGenerationService, DocumentGenerationService>();
 
         // Compliance Score Engine
         services.AddScoped<IComplianceScoreService, ComplianceScoreService>();

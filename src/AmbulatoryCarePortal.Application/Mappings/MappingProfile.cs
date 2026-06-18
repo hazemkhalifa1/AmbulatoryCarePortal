@@ -98,6 +98,25 @@ public class MappingProfile : Profile
         CreateMap<DocumentTemplate, DocumentTemplateDto>()
             .ForMember(dest => dest.ClinicType, opt => opt.MapFrom(src => src.ClinicType));
 
+        // Document Template Version Mappings
+        CreateMap<DocumentTemplateVersion, DocumentTemplateVersionDto>()
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
+
+        // Template Variable Mappings
+        CreateMap<TemplateVariable, TemplateVariableDto>();
+        CreateMap<CreateTemplateVariableDto, TemplateVariable>();
+        CreateMap<UpdateTemplateVariableDto, TemplateVariable>();
+
+        // Clinic Template Assignment Mappings
+        CreateMap<ClinicTemplateAssignment, ClinicTemplateAssignmentDto>();
+
+        // Clinic Template Value Mappings
+        CreateMap<ClinicTemplateValue, ClinicTemplateValueDto>();
+
+        // Generated Document Mappings
+        CreateMap<GeneratedDocument, GeneratedDocumentDto>()
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
+
         // ClinicDocument Mappings
         CreateMap<ClinicDocument, ClinicDocumentDto>();
         CreateMap<ClinicDocument, ClinicDocumentDetailDto>();

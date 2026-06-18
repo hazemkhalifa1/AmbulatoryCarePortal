@@ -1,0 +1,109 @@
+@model TemplateDetailsDto
+@{
+    ViewData["Title"] = $"{Localizer.T("Page.PreviewTemplate")}: {Model.StandardCode}";
+}
+
+<div class="fade-in">
+    <div class="template-hero mb-4">
+        <div class="template-hero-content">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="template-hero-title"><i class="fas fa-eye me-2"></i>@Localizer.T("Page.PreviewTemplate")</h1>
+                    <p class="template-hero-subtitle mb-0">@Model.StandardCode - @Model.TitleEn</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-1"></i>@Localizer.T("Common.Back")
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card detail-card mb-4">
+                <div class="card-header"><h3 class="card-title">@Localizer.T("Template.VariablesPreview")</h3></div>
+                <div class="card-body">
+                    @if (Model.Variables.Any())
+                    {
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>@Localizer.T("Template.Placeholder")</th>
+                                        <th>@Localizer.T("Template.DisplayName")</th>
+                                        <th class="text-center">@Localizer.T("Template.Type")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var v in Model.Variables)
+                                    {
+                                        <tr>
+                                            <td><code>{{@v.Name}}</code></td>
+                                            <td>@v.DisplayName</td>
+                                            <td class="text-center">
+                                                @if (v.IsImage)
+                                                {
+                                                    <span class="badge bg-info text-white"><i class="fas fa-image me-1"></i>Image</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Text</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center mb-0">@Localizer.T("Template.NoVariables")</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card detail-card mb-4">
+                <div class="card-header"><h3 class="card-title">@Localizer.T("Common.Information")</h3></div>
+                <div class="card-body">
+                    <div class="detail-list">
+                        <div class="detail-item">
+                            <span class="detail-label">@Localizer.T("Template.Version")</span>
+                            <span class="detail-value">v@(Model.CurrentVersion)</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">@Localizer.T("Template.Variables")</span>
+                            <span class="detail-value">@Model.Variables.Count</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">@Localizer.T("Clinic.Assignments")</span>
+                            <span class="detail-value">@Model.Assignments.Count</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">@Localizer.T("Template.GeneratedDocuments")</span>
+                            <span class="detail-value">@Model.GeneratedDocuments.Count</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">@Localizer.T("Common.CreatedAt")</span>
+                            <span class="detail-value">@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.TemplateFilePath))
+            {
+                <div class="card action-card">
+                    <div class="card-header"><h3 class="card-title"><i class="fas fa-file-word me-2"></i>@Localizer.T("Common.File")</h3></div>
+                    <div class="card-body text-center">
+                        <a href="@Model.TemplateFilePath" target="_blank" class="btn btn-primary btn-lg">
+                            <i class="fas fa-download me-2"></i>@Localizer.T("Common.Download") @Localizer.T("Common.Template")
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

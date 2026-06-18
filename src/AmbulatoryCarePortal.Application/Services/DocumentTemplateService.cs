@@ -54,10 +54,62 @@ public class DocumentTemplateService : IDocumentTemplateService
         return template == null ? null : _mapper.Map<DocumentTemplateDto>(template);
     }
 
+    public async Task<TemplateDetailsDto?> GetTemplateDetailsAsync(int id)
+    {
+        var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(id);
+        if (template == null) return null;
+
+        var variables = await _unitOfWork.Repository<TemplateVariable>()
+            .FindAsync(v => v.DocumentTemplateId == id);
+        var versions = await _unitOfWork.Repository<DocumentTemplateVersion>()
+            .FindAsync(v => v.DocumentTemplateId == id);
+        var assignments = await _unitOfWork.Repository<ClinicTemplateAssignment>()
+            .FindAsync(a => a.DocumentTemplateId == id);
+        var generated = await _unitOfWork.Repository<GeneratedDocument>()
+            .FindAsync(g => g.DocumentTemplateId == id);
+
+        var clinicIds = assignments.Select(a => a.ClinicId).ToHashSet();
+        var clinics = await _unitOfWork.Repository<Clinic>().FindAsync(c => clinicIds.Contains(c.Id));
+        var clinicMap = clinics.ToDictionary(c => c.Id, c => c.Name);
+
+        return new TemplateDetailsDto
+        {
+            Id = template.Id,
+            StandardCode = template.StandardCode,
+            TitleEn = template.TitleEn,
+            TitleAr = template.TitleAr,
+            Description = template.Description,
+            DepartmentCategory = template.DepartmentCategory,
+            ClinicType = template.ClinicType.ToString(),
+            TemplateFilePath = template.TemplateFilePath,
+            IsActive = template.IsActive,
+            CurrentVersion = template.CurrentVersion,
+            CreatedAt = template.CreatedAt,
+            Variables = _mapper.Map<List<TemplateVariableDto>>(variables.ToList()),
+            Versions = _mapper.Map<List<DocumentTemplateVersionDto>>(versions.OrderByDescending(v => v.VersionNumber).ToList()),
+            Assignments = assignments.Select(a => new ClinicTemplateAssignmentDto
+            {
+                Id = a.Id,
+                ClinicId = a.ClinicId,
+                ClinicName = clinicMap.GetValueOrDefault(a.ClinicId, "Unknown"),
+                DocumentTemplateId = a.DocumentTemplateId,
+                StandardCode = template.StandardCode,
+                TitleEn = template.TitleEn,
+                TitleAr = template.TitleAr,
+                AssignmentStatus = a.AssignmentStatus.ToString(),
+                ExpiryDate = a.ExpiryDate,
+                Notes = a.Notes,
+                CreatedAt = a.CreatedAt
+            }).ToList(),
+            GeneratedDocuments = _mapper.Map<List<GeneratedDocumentDto>>(generated.OrderByDescending(g => g.CreatedAt).ToList())
+        };
+    }
+
     public async Task<int> CreateTemplateAsync(CreateDocumentTemplateDto dto)
     {
         var template = _mapper.Map<DocumentTemplate>(dto);
         template.IsActive = true;
+        template.CurrentVersion = 1;
 
         await _unitOfWork.Repository<DocumentTemplate>().AddAsync(template);
         await _unitOfWork.SaveChangesAsync();
@@ -95,19 +147,66 @@ public class DocumentTemplateService : IDocumentTemplateService
         return true;
     }
 
-    public async Task<bool> UploadTemplateFileAsync(int id, string filePath)
+    public async Task<bool> UploadTemplateFileAsync(int id, string filePath, string changeLog, string userId)
     {
         var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(id);
         if (template == null)
             return false;
 
+        var oldPath = template.TemplateFilePath;
         template.TemplateFilePath = filePath;
+        template.CurrentVersion++;
         template.UpdatedAt = DateTime.UtcNow;
+        template.UpdatedBy = userId;
 
         _unitOfWork.Repository<DocumentTemplate>().Update(template);
+
+        var version = new DocumentTemplateVersion
+        {
+            DocumentTemplateId = id,
+            VersionNumber = template.CurrentVersion,
+            FilePath = filePath,
+            ChangeLog = string.IsNullOrEmpty(changeLog) ? $"Version {template.CurrentVersion}" : changeLog,
+            UploadedByUserId = userId,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _unitOfWork.Repository<DocumentTemplateVersion>().AddAsync(version);
         await _unitOfWork.SaveChangesAsync();
 
+        _logger.LogInformation("Template {TemplateId} file uploaded, now version {Version}", id, template.CurrentVersion);
         return true;
+    }
+
+    public async Task AssignToAllClinicsAsync(int templateId)
+    {
+        var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(templateId);
+        if (template == null)
+            return;
+
+        var activeClinics = await _unitOfWork.Repository<Clinic>().FindAsync(c => c.IsActive);
+
+        var existingAssignments = await _unitOfWork.Repository<ClinicTemplateAssignment>()
+            .FindAsync(cd => cd.DocumentTemplateId == templateId);
+        var existingClinicIds = existingAssignments.Select(a => a.ClinicId).ToHashSet();
+
+        var newAssignments = activeClinics
+            .Where(c => !existingClinicIds.Contains(c.Id))
+            .Select(c => new ClinicTemplateAssignment
+            {
+                ClinicId = c.Id,
+                DocumentTemplateId = templateId,
+                AssignmentStatus = ClinicDocumentStatus.NeedsReview,
+                CreatedAt = DateTime.UtcNow
+            }).ToList();
+
+        if (newAssignments.Count == 0)
+            return;
+
+        await _unitOfWork.Repository<ClinicTemplateAssignment>().AddRangeAsync(newAssignments);
+        await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Template {TemplateId} assigned to {Count} clinics via new system", templateId, newAssignments.Count);
     }
 
     public async Task<List<DocumentTemplateDto>> GetTemplatesByTypeAndStandardAsync(ClinicType clinicType, string standard)
@@ -119,34 +218,33 @@ public class DocumentTemplateService : IDocumentTemplateService
         return _mapper.Map<List<DocumentTemplateDto>>(templates.ToList());
     }
 
-    public async Task AssignToAllClinicsAsync(int templateId)
+    public async Task<List<DocumentTemplateVersionDto>> GetVersionsAsync(int templateId)
+    {
+        var versions = await _unitOfWork.Repository<DocumentTemplateVersion>()
+            .FindAsync(v => v.DocumentTemplateId == templateId);
+        return _mapper.Map<List<DocumentTemplateVersionDto>>(versions.OrderByDescending(v => v.VersionNumber).ToList());
+    }
+
+    public async Task<DocumentTemplateVersionDto?> GetVersionByIdAsync(int versionId)
+    {
+        var version = await _unitOfWork.Repository<DocumentTemplateVersion>().GetByIdAsync(versionId);
+        return version == null ? null : _mapper.Map<DocumentTemplateVersionDto>(version);
+    }
+
+    public async Task<bool> RestoreVersionAsync(int templateId, int versionId)
     {
         var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(templateId);
-        if (template == null)
-            return;
+        if (template == null) return false;
 
-        var activeClinics = await _unitOfWork.Repository<Clinic>().FindAsync(c => c.IsActive);
-        var existingAssignments = await _unitOfWork.Repository<ClinicDocument>()
-            .FindAsync(cd => cd.DocumentTemplateId == templateId);
+        var version = await _unitOfWork.Repository<DocumentTemplateVersion>().GetByIdAsync(versionId);
+        if (version == null || version.DocumentTemplateId != templateId) return false;
 
-        var existingClinicIds = existingAssignments.Select(a => a.ClinicId).ToHashSet();
-
-        var newAssignments = activeClinics
-            .Where(c => !existingClinicIds.Contains(c.Id))
-            .Select(c => new ClinicDocument
-            {
-                ClinicId = c.Id,
-                DocumentTemplateId = templateId,
-                DocumentStatus = ClinicDocumentStatus.NeedsReview,
-                CreatedAt = DateTime.UtcNow
-            }).ToList();
-
-        if (newAssignments.Count == 0)
-            return;
-
-        await _unitOfWork.Repository<ClinicDocument>().AddRangeAsync(newAssignments);
+        template.TemplateFilePath = version.FilePath;
+        template.UpdatedAt = DateTime.UtcNow;
+        _unitOfWork.Repository<DocumentTemplate>().Update(template);
         await _unitOfWork.SaveChangesAsync();
 
-        _logger.LogInformation("Template {TemplateId} assigned to {Count} clinics", templateId, newAssignments.Count);
+        _logger.LogInformation("Template {TemplateId} restored to version {Version}", templateId, version.VersionNumber);
+        return true;
     }
 }

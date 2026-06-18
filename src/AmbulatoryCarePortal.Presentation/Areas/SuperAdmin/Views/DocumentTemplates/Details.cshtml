@@ -1,0 +1,418 @@
+@model TemplateDetailsDto
+@{
+    ViewData["Title"] = $"{Model.StandardCode} - {Model.TitleEn}";
+    var activeTab = Context.Request.Query["tab"].FirstOrDefault() ?? "info";
+}
+
+<div class="fade-in">
+    <div class="template-hero mb-4">
+        <div class="template-hero-content">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <h1 class="template-hero-title mb-0"><i class="fas fa-file-alt me-2"></i>@Model.StandardCode - @Model.TitleEn</h1>
+                        <span class="status-pill @(Model.IsActive ? "complete" : "inactive")">@Localizer.T(Model.IsActive ? "Common.Active" : "Common.Inactive")</span>
+                    </div>
+                    <p class="template-hero-subtitle mb-0">
+                        @Model.ClinicType | v@(Model.CurrentVersion) | @Model.Variables.Count variables | @Model.Assignments.Count assignments
+                    </p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i>@Localizer.T("Common.Edit")
+                    </a>
+                    <a asp-action="Preview" asp-route-id="@Model.Id" class="btn btn-info text-white">
+                        <i class="fas fa-eye me-1"></i>@Localizer.T("Common.Preview")
+                    </a>
+                    <a asp-action="Index" class="btn btn-light">
+                        <i class="fas fa-arrow-left me-1"></i>@Localizer.T("Common.Back")
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs detail-tabs mb-4" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activeTab == "info" ? "active" : "")" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                <i class="fas fa-info-circle me-1"></i>@Localizer.T("Common.Information")
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activeTab == "variables" ? "active" : "")" id="variables-tab" data-bs-toggle="tab" data-bs-target="#variables" type="button" role="tab">
+                <i class="fas fa-tags me-1"></i>@Localizer.T("Template.Variables") <span class="badge bg-secondary ms-1">@Model.Variables.Count</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activeTab == "versions" ? "active" : "")" id="versions-tab" data-bs-toggle="tab" data-bs-target="#versions" type="button" role="tab">
+                <i class="fas fa-history me-1"></i>@Localizer.T("Template.Versions") <span class="badge bg-secondary ms-1">@Model.Versions.Count</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activeTab == "assignments" ? "active" : "")" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments" type="button" role="tab">
+                <i class="fas fa-hospital me-1"></i>@Localizer.T("Clinic.Assignments") <span class="badge bg-secondary ms-1">@Model.Assignments.Count</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activeTab == "generated" ? "active" : "")" id="generated-tab" data-bs-toggle="tab" data-bs-target="#generated" type="button" role="tab">
+                <i class="fas fa-file-export me-1"></i>@Localizer.T("Template.GeneratedDocuments") <span class="badge bg-secondary ms-1">@Model.GeneratedDocuments.Count</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade @(activeTab == "info" ? "show active" : "")" id="info" role="tabpanel">
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card detail-card h-100">
+                        <div class="card-header"><h3 class="card-title"><i class="fas fa-info-circle me-2"></i>@Localizer.T("Common.Information")</h3></div>
+                        <div class="card-body">
+                            <div class="detail-list">
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Common.Id")</span>
+                                    <span class="detail-value">@Model.Id</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Doc.StandardCode")</span>
+                                    <span class="detail-value"><span class="badge badge-info">@Model.StandardCode</span></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Doc.TitleEn")</span>
+                                    <span class="detail-value">@Model.TitleEn</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Doc.TitleAr")</span>
+                                    <span class="detail-value">@(Model.TitleAr ?? "&mdash;")</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Doc.ClinicType")</span>
+                                    <span class="detail-value">@Model.ClinicType</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Template.DepartmentCategory")</span>
+                                    <span class="detail-value">@(Model.DepartmentCategory ?? "&mdash;")</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Template.CurrentVersion")</span>
+                                    <span class="detail-value">v@(Model.CurrentVersion)</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Common.CreatedAt")</span>
+                                    <span class="detail-value">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card action-card h-100">
+                        <div class="card-header"><h3 class="card-title"><i class="fas fa-bolt me-2"></i>@Localizer.T("Dashboard.QuickActions")</h3></div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <form method="post" asp-action="ExtractVariables" asp-route-id="@Model.Id">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="action-btn action-btn-info" style="width:100%;cursor:pointer;font-family:inherit;font-size:inherit;line-height:inherit;text-align:inherit;">
+                                            <i class="fas fa-magic"></i>
+                                            <span>@Localizer.T("Template.ExtractVariables")</span>
+                                            <small>Parse DOCX placeholders</small>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <form method="post" asp-action="AssignToAllClinics" asp-route-id="@Model.Id">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="action-btn action-btn-primary" style="width:100%;cursor:pointer;font-family:inherit;font-size:inherit;line-height:inherit;text-align:inherit;">
+                                            <i class="fas fa-hospital"></i>
+                                            <span>@Localizer.T("Clinic.AssignToAll")</span>
+                                            <small>Assign to all active clinics</small>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="@Model.TemplateFilePath" target="_blank" class="action-btn action-btn-warning @(string.IsNullOrEmpty(Model.TemplateFilePath) ? "disabled" : "")">
+                                        <i class="fas fa-file-word"></i>
+                                        <span>@Localizer.T("Common.View") @Localizer.T("Common.File")</span>
+                                        <small>Open current DOCX template</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="card detail-card mb-4">
+                    <div class="card-header"><h3 class="card-title"><i class="fas fa-align-left me-2"></i>@Localizer.T("Common.Description")</h3></div>
+                    <div class="card-body">
+                        <p class="mb-0">@Model.Description</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="tab-pane fade @(activeTab == "variables" ? "show active" : "")" id="variables" role="tabpanel">
+            <div class="card detail-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0"><i class="fas fa-tags me-2"></i>@Localizer.T("Template.Variables")</h3>
+                    <form method="post" asp-action="ExtractVariables" asp-route-id="@Model.Id" class="m-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-info text-white">
+                            <i class="fas fa-magic me-1"></i>@Localizer.T("Template.ExtractVariables")
+                        </button>
+                    </form>
+                </div>
+                <div class="card-body">
+                    @if (Model.Variables.Any())
+                    {
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>@Localizer.T("Template.VariableName")</th>
+                                        <th>@Localizer.T("Template.DisplayName")</th>
+                                        <th class="text-center">@Localizer.T("Template.IsImage")</th>
+                                        <th class="text-center">@Localizer.T("Template.IsRequired")</th>
+                                        <th>@Localizer.T("Template.DefaultValue")</th>
+                                        <th class="text-center">@Localizer.T("Common.Actions")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var v in Model.Variables.Select((v, i) => new { v, i }))
+                                    {
+                                        <tr>
+                                            <td>@(v.i + 1)</td>
+                                            <td><code>{{@v.v.Name}}</code></td>
+                                            <td>
+                                                <span id="display-@v.v.Id">@v.v.DisplayName</span>
+                                                <input id="edit-@v.v.Id" class="form-control form-control-sm d-none" value="@v.v.DisplayName" style="width:200px;display:inline-block;" />
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="status-pill @(v.v.IsImage ? "complete" : "inactive")">@(v.v.IsImage ? "Yes" : "No")</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="status-pill @(v.v.IsRequired ? "complete" : "inactive")">@(v.v.IsRequired ? "Yes" : "No")</span>
+                                            </td>
+                                            <td>@(v.v.DefaultValue ?? "&mdash;")</td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn btn-sm btn-ghost" onclick="editVariable(@v.v.Id)">
+                                                    <i class="fas fa-edit text-warning"></i>
+                                                </button>
+                                                <form method="post" asp-action="DeleteVariable" asp-route-id="@v.v.Id" class="d-inline" onsubmit="return confirm('Delete this variable?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-ghost"><i class="fas fa-trash text-danger"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">@Localizer.T("Template.NoVariables")</h5>
+                            <p class="text-muted small">@Localizer.T("Template.ExtractVariablesHint")</p>
+                            <form method="post" asp-action="ExtractVariables" asp-route-id="@Model.Id">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-info text-white"><i class="fas fa-magic me-1"></i>@Localizer.T("Template.ExtractVariables")</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade @(activeTab == "versions" ? "show active" : "")" id="versions" role="tabpanel">
+            <div class="card detail-card">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-history me-2"></i>@Localizer.T("Template.Versions")</h3></div>
+                <div class="card-body">
+                    @if (Model.Versions.Any())
+                    {
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>@Localizer.T("Template.Version")</th>
+                                        <th>@Localizer.T("Template.ChangeLog")</th>
+                                        <th>@Localizer.T("Common.File")</th>
+                                        <th>@Localizer.T("Common.CreatedAt")</th>
+                                        <th class="text-center">@Localizer.T("Common.Actions")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ver in Model.Versions.OrderByDescending(v => v.VersionNumber))
+                                    {
+                                        <tr>
+                                            <td><span class="badge badge-info">v@(ver.VersionNumber)</span></td>
+                                            <td>@(ver.ChangeLog ?? "&mdash;")</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(ver.FilePath))
+                                                {
+                                                    <a href="@ver.FilePath" target="_blank"><i class="fas fa-download me-1"></i>@Localizer.T("Common.Download")</a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">&mdash;</span>
+                                                }
+                                            </td>
+                                            <td>@ver.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td class="text-center">
+                                                <form method="post" asp-action="RestoreVersion" asp-route-templateId="@Model.Id" asp-route-versionId="@ver.Id" class="d-inline" onsubmit="return confirm('Restore version v@(ver.VersionNumber)?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-ghost" title="Restore this version">
+                                                        <i class="fas fa-undo text-info"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">@Localizer.T("Template.NoVersions")</h5>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade @(activeTab == "assignments" ? "show active" : "")" id="assignments" role="tabpanel">
+            <div class="card detail-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0"><i class="fas fa-hospital me-2"></i>@Localizer.T("Clinic.Assignments")</h3>
+                    <form method="post" asp-action="AssignToAllClinics" asp-route-id="@Model.Id" class="m-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>@Localizer.T("Clinic.AssignToAll")</button>
+                    </form>
+                </div>
+                <div class="card-body">
+                    @if (Model.Assignments.Any())
+                    {
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>@Localizer.T("Clinic.Name")</th>
+                                        <th>@Localizer.T("Clinic.Status")</th>
+                                        <th class="text-center">@Localizer.T("Template.Values")</th>
+                                        <th class="text-center">@Localizer.T("Template.GeneratedDocuments")</th>
+                                        <th>@Localizer.T("Common.CreatedAt")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var a in Model.Assignments)
+                                    {
+                                        <tr>
+                                            <td class="fw-semibold">@a.ClinicName</td>
+                                            <td><span class="status-pill @(a.AssignmentStatus == "Active" ? "complete" : "inactive")">@a.AssignmentStatus</span></td>
+                                            <td class="text-center">@a.ValueCount</td>
+                                            <td class="text-center">@a.GeneratedDocumentCount</td>
+                                            <td>@a.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-hospital fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">@Localizer.T("Template.NoAssignments")</h5>
+                            <form method="post" asp-action="AssignToAllClinics" asp-route-id="@Model.Id">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-plus me-1"></i>@Localizer.T("Clinic.AssignToAll")</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade @(activeTab == "generated" ? "show active" : "")" id="generated" role="tabpanel">
+            <div class="card detail-card">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-file-export me-2"></i>@Localizer.T("Template.GeneratedDocuments")</h3></div>
+                <div class="card-body">
+                    @if (Model.GeneratedDocuments.Any())
+                    {
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>@Localizer.T("Common.FileName")</th>
+                                        <th>@Localizer.T("Common.Type")</th>
+                                        <th>@Localizer.T("Common.Size")</th>
+                                        <th>@Localizer.T("Common.CreatedAt")</th>
+                                        <th class="text-center">@Localizer.T("Common.Actions")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var g in Model.GeneratedDocuments.OrderByDescending(g => g.CreatedAt))
+                                    {
+                                        <tr>
+                                            <td>@g.FileName</td>
+                                            <td><span class="badge badge-info">@g.FileType.ToUpper()</span></td>
+                                            <td>@(g.FileSizeBytes / 1024) KB</td>
+                                            <td>@g.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td class="text-center">
+                                                <a href="@g.FilePath" target="_blank" class="btn btn-sm btn-ghost" title="Download">
+                                                    <i class="fas fa-download text-info"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-file-export fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">@Localizer.T("Template.NoGeneratedDocuments")</h5>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function editVariable(id) {
+            var display = document.getElementById('display-' + id);
+            var edit = document.getElementById('edit-' + id);
+            if (edit.classList.contains('d-none')) {
+                display.classList.add('d-none');
+                edit.classList.remove('d-none');
+                edit.focus();
+                edit.select();
+            } else {
+                var newValue = edit.value;
+                $.post('@Url.Action("UpdateVariable", "DocumentTemplates", new { area = "SuperAdmin" })', {
+                    id: id,
+                    displayName: newValue,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                }).done(function () {
+                    display.textContent = newValue;
+                    display.classList.remove('d-none');
+                    edit.classList.add('d-none');
+                }).fail(function () {
+                    edit.classList.add('d-none');
+                    display.classList.remove('d-none');
+                });
+            }
+        }
+    </script>
+}

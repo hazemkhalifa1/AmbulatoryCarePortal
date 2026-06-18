@@ -16,17 +16,23 @@ namespace AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers;
 public class DocumentTemplatesController : Controller
 {
     private readonly IDocumentTemplateService _templateService;
+    private readonly ITemplateVariableService _variableService;
+    private readonly IClinicTemplateAssignmentService _assignmentService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<DocumentTemplatesController> _logger;
     private readonly ITranslationService _localizer;
 
     public DocumentTemplatesController(
         IDocumentTemplateService templateService,
+        ITemplateVariableService variableService,
+        IClinicTemplateAssignmentService assignmentService,
         IUnitOfWork unitOfWork,
         ILogger<DocumentTemplatesController> logger,
         ITranslationService localizer)
     {
         _templateService = templateService;
+        _variableService = variableService;
+        _assignmentService = assignmentService;
         _unitOfWork = unitOfWork;
         _logger = logger;
         _localizer = localizer;
@@ -114,10 +120,22 @@ public class DocumentTemplatesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> ByTypeAndStandard(ClinicType clinicType, string standard)
+    public async Task<IActionResult> Details(int id)
     {
-        var templates = await _templateService.GetTemplatesByTypeAndStandardAsync(clinicType, standard);
-        return Json(templates);
+        var details = await _templateService.GetTemplateDetailsAsync(id);
+        if (details == null) return NotFound();
+
+        ViewBag.PageTitle = $"{details.StandardCode} - {details.TitleEn}";
+        return View(details);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ExtractVariables(int id)
+    {
+        var variables = await _variableService.ExtractVariablesFromFileAsync(id);
+        TempData["SuccessMessage"] = $"{variables.Count} variables extracted from template.";
+        return RedirectToAction(nameof(Details), new { id });
     }
 
     [HttpGet]
@@ -140,6 +158,7 @@ public class DocumentTemplatesController : Controller
         try
         {
             var templateId = await _templateService.CreateTemplateAsync(dto);
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
             if (templateFile != null && templateFile.Length > 0)
             {
@@ -153,13 +172,14 @@ public class DocumentTemplatesController : Controller
                     await templateFile.CopyToAsync(stream);
                 }
 
-                await _templateService.UploadTemplateFileAsync(templateId, $"/uploads/templates/{fileName}");
+                await _templateService.UploadTemplateFileAsync(templateId, $"/uploads/templates/{fileName}", "Initial upload", userId ?? "");
+
+                await _variableService.ExtractVariablesFromFileAsync(templateId);
             }
 
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var auditLog = new AuditTrail
             {
-                ActionType = Domain.Enums.AuditActionType.Create,
+                ActionType = AuditActionType.Create,
                 TargetObjectId = templateId,
                 TargetObjectType = nameof(DocumentTemplate),
                 Description = $"Created document template: {dto.StandardCode}",
@@ -210,7 +230,7 @@ public class DocumentTemplatesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, UpdateDocumentTemplateDto dto, IFormFile? templateFile)
+    public async Task<IActionResult> Edit(int id, UpdateDocumentTemplateDto dto, IFormFile? templateFile, string? changeLog)
     {
         if (id != dto.Id)
             return BadRequest();
@@ -226,6 +246,8 @@ public class DocumentTemplatesController : Controller
             var updated = await _templateService.UpdateTemplateAsync(dto);
             if (!updated)
                 return NotFound();
+
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
             if (templateFile != null && templateFile.Length > 0)
             {
@@ -247,13 +269,14 @@ public class DocumentTemplatesController : Controller
                     await templateFile.CopyToAsync(stream);
                 }
 
-                await _templateService.UploadTemplateFileAsync(id, $"/uploads/templates/{fileName}");
+                await _templateService.UploadTemplateFileAsync(id, $"/uploads/templates/{fileName}", changeLog ?? "Updated file", userId ?? "");
+
+                await _variableService.ExtractVariablesFromFileAsync(id);
             }
 
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var auditLog = new AuditTrail
             {
-                ActionType = Domain.Enums.AuditActionType.Update,
+                ActionType = AuditActionType.Update,
                 TargetObjectId = id,
                 TargetObjectType = nameof(DocumentTemplate),
                 Description = $"Updated document template: {dto.StandardCode}",
@@ -288,7 +311,7 @@ public class DocumentTemplatesController : Controller
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         var auditLog = new AuditTrail
         {
-            ActionType = Domain.Enums.AuditActionType.Delete,
+            ActionType = AuditActionType.Delete,
             TargetObjectId = id,
             TargetObjectType = nameof(DocumentTemplate),
             Description = $"Deleted document template Id: {id}",
@@ -308,9 +331,65 @@ public class DocumentTemplatesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AssignToAllClinics(int id)
     {
-        await _templateService.AssignToAllClinicsAsync(id);
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        await _assignmentService.AssignTemplateToAllClinicsAsync(id);
+
+        var auditLog = new AuditTrail
+        {
+            ActionType = AuditActionType.Create,
+            TargetObjectId = id,
+            TargetObjectType = nameof(ClinicTemplateAssignment),
+            Description = $"Assigned template to all clinics",
+            CreatedBy = userId,
+            ActionDate = DateTime.UtcNow,
+            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+        };
+
+        await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
+        await _unitOfWork.SaveChangesAsync();
 
         TempData["SuccessMessage"] = _localizer.T("Alert.Success.TemplateAssigned");
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateVariable(int id, UpdateTemplateVariableDto dto)
+    {
+        dto.Id = id;
+        var updated = await _variableService.UpdateVariableAsync(dto);
+        if (!updated) return NotFound();
+        return Json(new { success = true });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteVariable(int id)
+    {
+        var deleted = await _variableService.DeleteVariableAsync(id);
+        if (!deleted) return NotFound();
+        return Json(new { success = true });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RestoreVersion(int templateId, int versionId)
+    {
+        var restored = await _templateService.RestoreVersionAsync(templateId, versionId);
+        if (!restored) return NotFound();
+
+        TempData["SuccessMessage"] = "Template version restored successfully.";
+        return RedirectToAction(nameof(Details), new { id = templateId });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Preview(int id)
+    {
+        var details = await _templateService.GetTemplateDetailsAsync(id);
+        if (details == null) return NotFound();
+
+        ViewBag.PageTitle = _localizer.T("Page.PreviewTemplate");
+        return View(details);
     }
 }

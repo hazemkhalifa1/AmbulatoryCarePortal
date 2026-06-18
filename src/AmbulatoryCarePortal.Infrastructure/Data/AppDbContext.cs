@@ -27,8 +27,13 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<AuditTrail> AuditTrails { get; set; }
     public DbSet<DocumentTemplate> DocumentTemplates { get; set; }
+    public DbSet<DocumentTemplateVersion> DocumentTemplateVersions { get; set; }
+    public DbSet<TemplateVariable> TemplateVariables { get; set; }
     public DbSet<ClinicDocument> ClinicDocuments { get; set; }
     public DbSet<ClinicDocumentAttachment> ClinicDocumentAttachments { get; set; }
+    public DbSet<ClinicTemplateAssignment> ClinicTemplateAssignments { get; set; }
+    public DbSet<ClinicTemplateValue> ClinicTemplateValues { get; set; }
+    public DbSet<GeneratedDocument> GeneratedDocuments { get; set; }
     public DbSet<SystemSetting> SystemSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -62,8 +67,13 @@ public class AppDbContext : IdentityDbContext<AppUser>
         modelBuilder.Entity<Notification>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<AuditTrail>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<DocumentTemplate>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<DocumentTemplateVersion>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<TemplateVariable>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<ClinicDocument>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<ClinicDocumentAttachment>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<ClinicTemplateAssignment>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<ClinicTemplateValue>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<GeneratedDocument>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<SystemSetting>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<ComplianceScoreSnapshot>().HasQueryFilter(x => !x.IsDeleted);
     }
