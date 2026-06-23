@@ -1,43 +1,35 @@
-// CBAHI Portal - Enterprise JavaScript
-// Healthcare SaaS Platform | 2026
-
-document.addEventListener('DOMContentLoaded', function () {
-    initializeTooltips();
-    initializeConfirmation();
-    initializeSidebar();
-    initializeActiveNav();
-    initializeNotificationPolling();
-    initializePasswordToggle();
-    initializeTableSearch();
-    initializeLoadingButtons();
-    initializeLanguageToggle();
+// CBAHI Portal — Modern UI Interactions
+document.addEventListener('DOMContentLoaded', () => {
+    initTooltips();
+    initConfirmation();
+    initSidebar();
+    initActiveNav();
+    initNotificationPolling();
+    initPasswordToggle();
+    initTableSearch();
+    initLoadingButtons();
+    initLanguageToggle();
 });
 
 // ============================================================
 // TOOLTIPS
 // ============================================================
-function initializeTooltips() {
-    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
-        new bootstrap.Tooltip(el);
-    });
+function initTooltips() {
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 }
 
 // ============================================================
 // CONFIRMATION DIALOGS
 // ============================================================
-function initializeConfirmation() {
-    document.addEventListener('click', function (event) {
-        var target = event.target.closest('[data-confirm]');
+function initConfirmation() {
+    document.addEventListener('click', e => {
+        const target = e.target.closest('[data-confirm]');
         if (!target) return;
-        event.preventDefault();
-        var message = target.getAttribute('data-confirm');
-        if (confirm(message)) {
-            if (target.tagName === 'A') {
-                window.location.href = target.href;
-            } else if (target.tagName === 'BUTTON' || target.closest('form')) {
-                var form = target.closest('form');
-                if (form) form.submit();
-            }
+        e.preventDefault();
+        if (confirm(target.getAttribute('data-confirm'))) {
+            const form = target.closest('form');
+            if (form) form.submit();
+            else if (target.tagName === 'A') window.location.href = target.href;
         }
     });
 }
@@ -45,51 +37,53 @@ function initializeConfirmation() {
 // ============================================================
 // SIDEBAR
 // ============================================================
-function initializeSidebar() {
-    var toggleBtn = document.querySelector('.header-hamburger');
-    var sidebar = document.querySelector('.main-sidebar');
+function initSidebar() {
+    const toggle = document.querySelector('.header-hamburger');
+    const sidebar = document.querySelector('.app-sidebar');
 
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            toggleSidebar();
-        });
-    }
+    if (!toggle || !sidebar) return;
+
+    toggle.addEventListener('click', e => {
+        e.preventDefault();
+        toggleSidebar();
+    });
 
     // Mobile overlay
-    if (sidebar && window.innerWidth <= 991) {
-        var overlay = document.createElement('div');
-        overlay.className = 'sidebar-overlay';
-        document.body.appendChild(overlay);
-
-        overlay.addEventListener('click', function () {
-            toggleSidebar();
-        });
-
-        sidebar.addEventListener('click', function (e) {
-            e.stopPropagation();
-        });
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', () => toggleSidebar());
     }
 }
 
 function toggleSidebar() {
-    var body = document.body;
-    if (window.innerWidth <= 991) {
-        body.classList.toggle('sidebar-open');
+    const body = document.body;
+    if (window.innerWidth <= 1199) {
+        body.classList.toggle('sidebar-mobile-open');
     } else {
-        body.classList.toggle('sidebar-collapse');
+        body.classList.toggle('sidebar-collapsed');
     }
 }
 
 // ============================================================
 // ACTIVE NAV LINK
 // ============================================================
-function initializeActiveNav() {
-    var currentPath = window.location.pathname.toLowerCase();
-    document.querySelectorAll('.nav-sidebar .nav-link').forEach(function (link) {
-        var href = link.getAttribute('href');
-        if (href && currentPath.indexOf(href.toLowerCase()) === 0) {
+function initActiveNav() {
+    const path = window.location.pathname.toLowerCase();
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href !== '#' && path.startsWith(href.toLowerCase())) {
             link.classList.add('active');
+        }
+    });
+
+    // Expand parent collapse if child is active
+    document.querySelectorAll('.nav-sub .nav-link.active').forEach(active => {
+        const collapse = active.closest('.collapse');
+        if (collapse) {
+            const trigger = document.querySelector(`[data-bs-target="#${collapse.id}"]`);
+            if (trigger) trigger.setAttribute('aria-expanded', 'true');
+            collapse.classList.add('show');
         }
     });
 }
@@ -97,46 +91,43 @@ function initializeActiveNav() {
 // ============================================================
 // NOTIFICATION POLLING
 // ============================================================
-function initializeNotificationPolling() {
-    var badge = document.getElementById('notificationBadge');
+function initNotificationPolling() {
+    const badge = document.getElementById('notificationBadge');
     if (!badge) return;
 
-    function pollNotifications() {
-        fetch('/ClinicAdmin/Notifications/Index', {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-            .then(function (r) { return r.text(); })
-            .then(function (html) {
-                var parser = new DOMParser();
-                var doc = parser.parseFromString(html, 'text/html');
-                var count = doc.querySelector('[data-unread-count]');
-                if (count) {
-                    badge.textContent = count.getAttribute('data-unread-count');
-                    if (count.getAttribute('data-unread-count') !== '0') {
-                        badge.style.display = 'flex';
-                    } else {
-                        badge.style.display = 'none';
-                    }
-                }
-            })
-            .catch(function () { });
+    async function poll() {
+        try {
+            const res = await fetch('/ClinicAdmin/Notifications/Index', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const html = await res.text();
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const count = doc.querySelector('[data-unread-count]');
+            if (count) {
+                const n = count.getAttribute('data-unread-count');
+                badge.textContent = n;
+                badge.style.display = n !== '0' ? 'flex' : 'none';
+            }
+        } catch (err) {
+            console.debug('Notification poll failed');
+        }
     }
 
-    setInterval(pollNotifications, 60000);
+    setInterval(poll, 60000);
 }
 
 // ============================================================
-// PASSWORD TOGGLE (Login/Reset)
+// PASSWORD TOGGLE
 // ============================================================
-function initializePasswordToggle() {
-    document.querySelectorAll('.toggle-password').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var input = this.closest('.input-group').querySelector('.form-control');
+function initPasswordToggle() {
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const input = btn.closest('.input-group').querySelector('.form-control');
             if (!input) return;
-            var type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            input.setAttribute('type', type);
-            this.querySelector('i').classList.toggle('fa-eye');
-            this.querySelector('i').classList.toggle('fa-eye-slash');
+            const isPassword = input.getAttribute('type') === 'password';
+            input.setAttribute('type', isPassword ? 'text' : 'password');
+            btn.querySelector('i').classList.toggle('fa-eye');
+            btn.querySelector('i').classList.toggle('fa-eye-slash');
         });
     });
 }
@@ -144,27 +135,22 @@ function initializePasswordToggle() {
 // ============================================================
 // TABLE SEARCH
 // ============================================================
-function initializeTableSearch() {
-    document.querySelectorAll('[data-table-search]').forEach(function (input) {
-        var tableId = input.getAttribute('data-table-search');
-        var table = document.getElementById(tableId);
+function initTableSearch() {
+    document.querySelectorAll('[data-table-search]').forEach(input => {
+        const tableId = input.getAttribute('data-table-search');
+        const table = document.getElementById(tableId);
         if (!table) return;
 
-        input.addEventListener('keyup', function () {
-            var filter = this.value.toUpperCase();
-            var rows = table.getElementsByTagName('tr');
+        input.addEventListener('keyup', () => {
+            const filter = input.value.toUpperCase();
+            const rows = table.querySelectorAll('tbody tr');
 
-            for (var i = 1; i < rows.length; i++) {
-                var cells = rows[i].getElementsByTagName('td');
-                var found = false;
-                for (var j = 0; j < cells.length; j++) {
-                    if (cells[j] && cells[j].textContent.toUpperCase().indexOf(filter) > -1) {
-                        found = true;
-                        break;
-                    }
-                }
-                rows[i].style.display = found ? '' : 'none';
-            }
+            rows.forEach(row => {
+                const text = Array.from(row.querySelectorAll('td'))
+                    .map(cell => cell.textContent.toUpperCase())
+                    .join(' ');
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
         });
     });
 }
@@ -172,53 +158,36 @@ function initializeTableSearch() {
 // ============================================================
 // LOADING BUTTONS
 // ============================================================
-function initializeLoadingButtons() {
-    document.querySelectorAll('[data-loading]').forEach(function (btn) {
-        var form = btn.closest('form');
-        if (form) {
-            form.addEventListener('submit', function () {
-                btn.classList.add('loading');
-                btn.disabled = true;
-            });
+function initLoadingButtons() {
+    document.querySelectorAll('[data-loading]').forEach(btn => {
+        const form = btn.closest('form');
+        if (!form) return;
 
-            // Re-enable button if jQuery Validate blocks submission
-            if (typeof $ !== 'undefined') {
-                $(form).on('invalid-form.validate', function () {
-                    btn.classList.remove('loading');
-                    btn.disabled = false;
-                });
-            }
-        }
+        form.addEventListener('submit', () => {
+            btn.classList.add('loading');
+            btn.disabled = true;
+        });
     });
 }
 
 // ============================================================
-// LANGUAGE TOGGLE (Segmented Control)
+// LANGUAGE TOGGLE
 // ============================================================
-function initializeLanguageToggle() {
-    var langOptions = document.querySelectorAll('.header-lang-option');
-    if (!langOptions.length) return;
+function initLanguageToggle() {
+    const buttons = document.querySelectorAll('.header-lang-btn');
+    if (!buttons.length) return;
 
-    langOptions.forEach(function (btn) {
-        btn.addEventListener('click', function (e) {
-            var lang = this.getAttribute('data-lang');
-            if (!lang) return;
-            setLanguage(lang);
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+            if (lang) setLanguage(lang);
         });
     });
 
-    // Sync client state with server-rendered language
-    var savedLang = localStorage.getItem('lang') || 'en';
-    var serverLang = document.documentElement.lang || 'en';
-    if (savedLang !== serverLang) {
-        setLanguage(savedLang);
-    }
-
-    // Legacy single-toggle fallback
-    var oldToggle = document.getElementById('langToggle');
-    if (oldToggle) {
-        oldToggle.style.display = 'none';
-    }
+    // Sync
+    const saved = localStorage.getItem('lang');
+    const server = document.documentElement.lang || 'en';
+    if (saved && saved !== server) setLanguage(saved);
 }
 
 function setLanguage(lang) {
@@ -226,42 +195,37 @@ function setLanguage(lang) {
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     localStorage.setItem('lang', lang);
     document.cookie = 'lang=' + lang + '; path=/; max-age=31536000';
-
-    // Reload so server renders translations in the new language
     location.reload();
 }
 
 // ============================================================
-// SHOW ALERT
+// ALERT
 // ============================================================
-function showAlert(message, type) {
-    type = type || 'info';
-    var alertDiv = document.createElement('div');
-    alertDiv.className = 'alert alert-' + type + ' alert-dismissible fade show';
-    alertDiv.setAttribute('role', 'alert');
-    alertDiv.style.animation = 'fadeIn 0.3s ease-out';
-    alertDiv.innerHTML =
-        '<i class="fas fa-' + (type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle') + '"></i>' +
-        '<div class="alert-content">' + message + '</div>' +
-        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+function showAlert(message, type = 'info') {
+    const icons = { success: 'check-circle', danger: 'exclamation-circle', warning: 'exclamation-triangle' };
+    const div = document.createElement('div');
+    div.className = `alert alert-${type} alert-dismissible fade show`;
+    div.setAttribute('role', 'alert');
+    div.innerHTML = `
+        <i class="fas fa-${icons[type] || 'info-circle'}"></i>
+        <div class="alert-content">${message}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
 
-    var container = document.querySelector('.content > .container-fluid');
+    const container = document.querySelector('.content-area');
     if (container) {
-        container.insertBefore(alertDiv, container.firstChild);
+        container.insertBefore(div, container.firstChild);
     }
 
-    setTimeout(function () {
-        if (alertDiv.parentNode) alertDiv.remove();
-    }, 5000);
+    setTimeout(() => { if (div.parentNode) div.remove(); }, 5000);
 }
 
 // ============================================================
-// API CALL HELPER
+// API HELPER
 // ============================================================
-async function apiCall(url, method, data) {
-    method = method || 'GET';
-    var options = {
-        method: method,
+async function apiCall(url, method = 'GET', data = null) {
+    const options = {
+        method,
         headers: {
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
@@ -273,163 +237,114 @@ async function apiCall(url, method, data) {
     }
 
     try {
-        var response = await fetch(url, options);
-        if (!response.ok) {
-            throw new Error('HTTP error! status: ' + response.status);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('API Call Error:', error);
+        const res = await fetch(url, options);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+    } catch (err) {
+        console.error('API Error:', err);
         showAlert('An error occurred. Please try again.', 'danger');
-        throw error;
+        throw err;
     }
 }
 
 // ============================================================
-// DATE FORMATTING
+// FORMATTING HELPERS
 // ============================================================
-function formatDate(date, format) {
-    format = format || 'dd/mm/yyyy';
-    var d = new Date(date);
-    var day = String(d.getDate()).padStart(2, '0');
-    var month = String(d.getMonth() + 1).padStart(2, '0');
-    var year = d.getFullYear();
-
-    if (format === 'dd/mm/yyyy') return day + '/' + month + '/' + year;
-    if (format === 'yyyy-mm-dd') return year + '-' + month + '-' + day;
+function formatDate(date, format = 'dd/mm/yyyy') {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    if (format === 'dd/mm/yyyy') return `${day}/${month}/${year}`;
+    if (format === 'yyyy-mm-dd') return `${year}-${month}-${day}`;
     return d.toLocaleDateString();
 }
 
-// ============================================================
-// CURRENCY FORMATTING
-// ============================================================
-function formatCurrency(amount, currency) {
-    currency = currency || 'SAR';
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: currency
-    }).format(amount);
+function formatCurrency(amount, currency = 'SAR') {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
 }
 
-// ============================================================
-// PERCENTAGE FORMATTING
-// ============================================================
-function formatPercentage(value, decimals) {
-    decimals = decimals || 0;
+function formatPercentage(value, decimals = 0) {
     return Number(value).toFixed(decimals) + '%';
 }
 
 // ============================================================
-// EXPORT TABLE TO CSV
+// TABLE EXPORT / PRINT
 // ============================================================
-function exportTableToCSV(tableId, filename) {
-    filename = filename || 'export.csv';
-    var table = document.getElementById(tableId);
+function exportTableToCSV(tableId, filename = 'export.csv') {
+    const table = document.getElementById(tableId);
     if (!table) return;
 
-    var csv = [];
-    var headers = [];
-    table.querySelectorAll('thead th').forEach(function (th) {
-        headers.push('"' + th.textContent.trim() + '"');
-    });
-    csv.push(headers.join(','));
+    const rows = [];
+    const headers = Array.from(table.querySelectorAll('thead th'))
+        .map(th => `"${th.textContent.trim()}"`);
+    rows.push(headers.join(','));
 
-    table.querySelectorAll('tbody tr').forEach(function (row) {
-        var cells = [];
-        row.querySelectorAll('td').forEach(function (td) {
-            cells.push('"' + td.textContent.trim().replace(/"/g, '""') + '"');
-        });
-        csv.push(cells.join(','));
+    table.querySelectorAll('tbody tr').forEach(row => {
+        const cells = Array.from(row.querySelectorAll('td'))
+            .map(td => `"${td.textContent.trim().replace(/"/g, '""')}"`);
+        rows.push(cells.join(','));
     });
 
-    var csvContent = csv.join('\n');
-    var link = document.createElement('a');
-    link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+    const csv = rows.join('\n');
+    const link = document.createElement('a');
+    link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
     link.download = filename;
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
 }
 
-// ============================================================
-// PRINT TABLE
-// ============================================================
 function printTable(tableId) {
-    var table = document.getElementById(tableId);
+    const table = document.getElementById(tableId);
     if (!table) return;
-
-    var printWindow = window.open('', '', 'width=900,height=600');
-    printWindow.document.write('<html><head><title>Print</title>');
-    printWindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">');
-    printWindow.document.write('<style>body{padding:20px;font-family:Segoe UI,sans-serif}</style>');
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(table.outerHTML);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    printWindow.print();
+    const w = window.open('', '', 'width=900,height=600');
+    w.document.write(`<html><head><title>Print</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <style>body{padding:20px;font-family:system-ui,sans-serif}</style>
+        </head><body>${table.outerHTML}</body></html>`);
+    w.document.close();
+    w.print();
 }
 
 // ============================================================
-// SHOW/HIDE LOADING SPINNER
+// LOADING SPINNER
 // ============================================================
 function showLoading(element) {
-    if (typeof element === 'string') {
-        element = document.querySelector(element);
-    }
-    if (element) {
-        element.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
-        element.disabled = true;
-    }
+    const el = typeof element === 'string' ? document.querySelector(element) : element;
+    if (!el) return;
+    el.innerHTML = '<span class="spinner spinner-sm" role="status"></span> Loading...';
+    el.disabled = true;
 }
 
-function hideLoading(element, text) {
-    text = text || 'Submit';
-    if (typeof element === 'string') {
-        element = document.querySelector(element);
-    }
-    if (element) {
-        element.innerHTML = text;
-        element.disabled = false;
-    }
+function hideLoading(element, text = 'Submit') {
+    const el = typeof element === 'string' ? document.querySelector(element) : element;
+    if (!el) return;
+    el.innerHTML = text;
+    el.disabled = false;
 }
 
 // ============================================================
-// DEVELOPER TOAST (auto-dismiss)
+// DEVELOPER TOAST
 // ============================================================
-var developerToastTimer = null;
-
-document.addEventListener('click', function (e) {
-    var trigger = e.target.closest('[data-dev-card]');
+document.addEventListener('click', e => {
+    const trigger = e.target.closest('[data-dev-card]');
     if (!trigger) return;
     e.preventDefault();
 
-    var toast = document.getElementById('developerToast');
+    const toast = document.getElementById('developerToast');
     if (!toast) return;
-
-    if (developerToastTimer) {
-        clearTimeout(developerToastTimer);
-        developerToastTimer = null;
-    }
 
     toast.classList.remove('active');
     void toast.offsetWidth;
     toast.classList.add('active');
 
-    developerToastTimer = setTimeout(function () {
-        toast.classList.remove('active');
-        developerToastTimer = null;
-    }, 2800);
+    setTimeout(() => toast.classList.remove('active'), 2800);
 });
 
-document.addEventListener('keydown', function (e) {
+document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
-        var toast = document.getElementById('developerToast');
-        if (toast) {
-            toast.classList.remove('active');
-            if (developerToastTimer) {
-                clearTimeout(developerToastTimer);
-                developerToastTimer = null;
-            }
-        }
+        const toast = document.getElementById('developerToast');
+        if (toast) toast.classList.remove('active');
     }
 });

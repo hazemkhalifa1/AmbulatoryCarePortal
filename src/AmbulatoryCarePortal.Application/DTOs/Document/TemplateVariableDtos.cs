@@ -108,6 +108,8 @@ public class ClinicAssignmentDetailDto
     public string TitleEn { get; set; } = string.Empty;
     public string? TitleAr { get; set; }
     public string AssignmentStatus { get; set; } = string.Empty;
+    public string? TemplateFilePath { get; set; }
+    public bool HasTemplateFile => !string.IsNullOrEmpty(TemplateFilePath);
     public List<ClinicTemplateValueDto> VariableValues { get; set; } = new();
 }
 

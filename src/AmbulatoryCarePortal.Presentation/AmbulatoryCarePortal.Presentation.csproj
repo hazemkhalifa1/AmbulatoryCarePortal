@@ -29,8 +29,4 @@
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="10.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\uploads\templates\" />
-  </ItemGroup>
-
 </Project>

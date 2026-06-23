@@ -4,101 +4,91 @@
     ViewData["Title"] = Model.Name;
 }
 
-<!-- Hero Banner -->
-<div class="clinic-detail-hero mb-4">
-    <div class="hero-content">
-        <div class="d-flex justify-content-between align-items-start">
-            <div class="d-flex align-items-center gap-4">
-                @if (!string.IsNullOrEmpty(Model.LogoPath))
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-title">
+        @if (!string.IsNullOrEmpty(Model.LogoPath))
+        {
+            <img src="@Model.LogoPath" alt="@Model.Name logo" class="clinic-logo" />
+        }
+        else
+        {
+            <div class="clinic-logo-placeholder"><i class="fas fa-clinic-medical"></i></div>
+        }
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <h1>@Model.Name</h1>
+                @if (Model.IsActive)
                 {
-                    <div class="clinic-logo-wrapper">
-                        <img src="@Model.LogoPath" alt="@Model.Name logo" class="clinic-hero-logo" />
-                    </div>
+                    <span class="badge badge-success badge-lg">@Localizer.T("Common.Active")</span>
                 }
-                <div>
-                    <div class="d-flex align-items-center gap-3 mb-2">
-                        <h1 class="hero-title mb-0"><i class="fas fa-clinic-medical me-2"></i>@Model.Name</h1>
-                        @if (Model.IsActive)
-                        {
-                            <span class="badge badge-lg bg-success">@Localizer.T("Common.Active")</span>
-                        }
-                        else
-                        {
-                            <span class="badge badge-lg bg-danger">@Localizer.T("Common.Inactive")</span>
-                        }
-                    </div>
-                    <p class="hero-subtitle mb-0">@Model.NameAr</p>
-                </div>
+                else
+                {
+                    <span class="badge badge-danger badge-lg">@Localizer.T("Common.Inactive")</span>
+                }
             </div>
-            <div class="d-flex gap-2">
-                <a href="/SuperAdmin/Dashboard/Edit/@Model.Id" class="btn btn-primary">
-                    <i class="fas fa-edit me-1"></i>@Localizer.T("Common.Edit")
-                </a>
-                <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-light">
-                    <i class="fas fa-arrow-left me-1"></i>@Localizer.T("Common.Back")
-                </a>
-            </div>
+            <p class="page-header-subtitle">@Model.NameAr</p>
         </div>
+    </div>
+    <div class="page-header-actions">
+        <a href="/SuperAdmin/Dashboard/Edit/@Model.Id" class="btn btn-primary">
+            <i class="fas fa-edit"></i> @Localizer.T("Common.Edit")
+        </a>
+        <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> @Localizer.T("Common.Back")
+        </a>
     </div>
 </div>
 
-<!-- Stats Cards -->
+<!-- Metric Cards -->
 <div class="row mb-4">
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card stat-card-info">
-            <div class="stat-card-body">
-                <div class="stat-card-icon"><i class="fas fa-users"></i></div>
-                <div class="stat-card-content">
-                    <h3>@Model.UserCount</h3>
-                    <p>@Localizer.T("Clinic.Users")</p>
-                </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <div class="metric-icon primary"><i class="fas fa-users"></i></div>
             </div>
+            <div class="metric-label">@Localizer.T("Clinic.Users")</div>
+            <div class="metric-value">@Model.UserCount</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card stat-card-success">
-            <div class="stat-card-body">
-                <div class="stat-card-icon"><i class="fas fa-building"></i></div>
-                <div class="stat-card-content">
-                    <h3>@Model.DepartmentCount</h3>
-                    <p>@Localizer.T("Clinic.Departments")</p>
-                </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <div class="metric-icon success"><i class="fas fa-building"></i></div>
             </div>
+            <div class="metric-label">@Localizer.T("Clinic.Departments")</div>
+            <div class="metric-value">@Model.DepartmentCount</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card stat-card-warning">
-            <div class="stat-card-body">
-                <div class="stat-card-icon"><i class="fas fa-file-pdf"></i></div>
-                <div class="stat-card-content">
-                    <h3>@Model.PolicyDocumentCount</h3>
-                    <p>@Localizer.T("Clinic.Policies")</p>
-                </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <div class="metric-icon warning"><i class="fas fa-file-pdf"></i></div>
             </div>
+            <div class="metric-label">@Localizer.T("Clinic.Policies")</div>
+            <div class="metric-value">@Model.PolicyDocumentCount</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card stat-card-danger">
-            <div class="stat-card-body">
-                <div class="stat-card-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                <div class="stat-card-content">
-                    <h3>@Model.OpenGapCount</h3>
-                    <p>@Localizer.T("Clinic.OpenGaps")</p>
-                </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <div class="metric-icon danger"><i class="fas fa-exclamation-triangle"></i></div>
             </div>
+            <div class="metric-label">@Localizer.T("Clinic.OpenGaps")</div>
+            <div class="metric-value">@Model.OpenGapCount</div>
         </div>
     </div>
 </div>
 
 <div class="row">
-    <!-- Details Card -->
+    <!-- Details -->
     <div class="col-lg-5 mb-4">
-        <div class="card detail-card h-100">
+        <div class="card h-100">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-info-circle me-2"></i>@Localizer.T("Page.ClinicDetail")</h3>
+                <h3 class="card-title"><i class="fas fa-info-circle"></i> @Localizer.T("Page.ClinicDetail")</h3>
             </div>
             <div class="card-body">
-                <div class="detail-list">
+                <div class="detail-grid">
                     <div class="detail-item">
                         <span class="detail-label">@Localizer.T("Common.Type")</span>
                         <span class="detail-value">@Model.ClinicType</span>
@@ -118,14 +108,15 @@
                     <div class="detail-item">
                         <span class="detail-label">@Localizer.T("Clinic.ComplianceScore")</span>
                         <span class="detail-value">
-                            <div class="progress compliance-progress">
-                                <div class="progress-bar @(Model.ComplianceScore >= 80 ? "bg-success" : Model.ComplianceScore >= 60 ? "bg-warning" : "bg-danger")"
-                                     style="width: @Model.ComplianceScore%">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="max-width: 120px;">
+                                    <div class="progress-bar @(Model.ComplianceScore >= 80 ? "bg-success" : Model.ComplianceScore >= 60 ? "bg-warning" : "bg-danger")"
+                                         style="width: @Model.ComplianceScore%"></div>
                                 </div>
+                                <span class="font-semibold @(Model.ComplianceScore >= 80 ? "text-success" : Model.ComplianceScore >= 60 ? "text-warning" : "text-danger")">
+                                    @Model.ComplianceScore%
+                                </span>
                             </div>
-                            <small class="@(Model.ComplianceScore >= 80 ? "text-success" : Model.ComplianceScore >= 60 ? "text-warning" : "text-danger")">
-                                @Model.ComplianceScore%
-                            </small>
                         </span>
                     </div>
                 </div>
@@ -135,56 +126,48 @@
 
     <!-- Quick Actions -->
     <div class="col-lg-7 mb-4">
-        <div class="card action-card h-100">
+        <div class="card h-100">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-bolt me-2"></i>@Localizer.T("Dashboard.QuickActions")</h3>
+                <h3 class="card-title"><i class="fas fa-bolt"></i> @Localizer.T("Dashboard.QuickActions")</h3>
             </div>
             <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <a href="/SuperAdmin/Dashboard/AuditLog?clinicId=@Model.Id" class="action-btn action-btn-warning">
-                            <i class="fas fa-history"></i>
-                            <span>@Localizer.T("Common.View") @Localizer.T("Page.AuditLog")</span>
-                            <small>@Localizer.T("Dashboard.Action.ReviewAllActivities")</small>
-                        </a>
-                    </div>
-                    <div class="col-md-6">
-                        <a href="/SuperAdmin/UserManagement/Create?clinicId=@Model.Id" class="action-btn action-btn-info">
-                            <i class="fas fa-user-plus"></i>
-                            <span>@Localizer.T("Button.Add")</span>
-                            <small>@Localizer.T("Dashboard.Action.AssignPersonnel")</small>
-                        </a>
-                    </div>
-                    <div class="col-md-6">
-                        <form method="post" asp-area="SuperAdmin" asp-controller="DocumentTemplates" asp-action="AssignToAllClinics" asp-route-id="@Model.Id" style="margin: 0; padding: 0;">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="action-btn action-btn-primary" style="width: 100%; cursor: pointer; font-family: inherit; font-size: inherit; line-height: inherit; text-align: inherit;">
-                                <i class="fas fa-file-upload"></i>
-                                <span>@Localizer.T("Clinic.AssignTemplates")</span>
-                                <small>@Localizer.T("Dashboard.Action.LinkTemplates")</small>
-                            </button>
-                        </form>
-                    </div>
-                    <div class="col-md-6">
-                        <form method="post" action="/SuperAdmin/Dashboard/Delete/@Model.Id" style="margin: 0; padding: 0;" onsubmit="return confirm('@Localizer.T("Clinic.ConfirmDelete"): @Model.Name?');">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="action-btn action-btn-danger" style="width: 100%; cursor: pointer; font-family: inherit; font-size: inherit; line-height: inherit; text-align: inherit;">
-                                <i class="fas fa-trash"></i>
-                                <span>@Localizer.T("Common.Delete") @Localizer.T("Page.Clinic")</span>
-                                <small>@Localizer.T("Dashboard.Action.DeleteClinicWarning")</small>
-                            </button>
-                        </form>
-                    </div>
+                <div class="action-grid">
+                    <a href="/SuperAdmin/Dashboard/AuditLog?clinicId=@Model.Id" class="action-card-btn warning">
+                        <i class="fas fa-history"></i>
+                        <span class="action-title">@Localizer.T("Page.AuditLog")</span>
+                        <span class="action-desc">@Localizer.T("Dashboard.Action.ReviewAllActivities")</span>
+                    </a>
+                    <a href="/SuperAdmin/UserManagement/Create?clinicId=@Model.Id" class="action-card-btn info">
+                        <i class="fas fa-user-plus"></i>
+                        <span class="action-title">@Localizer.T("Button.Add")</span>
+                        <span class="action-desc">@Localizer.T("Dashboard.Action.AssignPersonnel")</span>
+                    </a>
+                    <form method="post" asp-area="SuperAdmin" asp-controller="DocumentTemplates" asp-action="AssignToAllClinics" asp-route-id="@Model.Id" class="h-100 m-0 p-0" style="display: contents;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="action-card-btn primary" style="cursor: pointer; font-family: inherit;">
+                            <i class="fas fa-file-upload"></i>
+                            <span class="action-title">@Localizer.T("Clinic.AssignTemplates")</span>
+                            <span class="action-desc">@Localizer.T("Dashboard.Action.LinkTemplates")</span>
+                        </button>
+                    </form>
+                    <form method="post" action="/SuperAdmin/Dashboard/Delete/@Model.Id" class="h-100 m-0 p-0" style="display: contents;" onsubmit="return confirm('@Localizer.T("Clinic.ConfirmDelete"): @Model.Name?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="action-card-btn danger" style="cursor: pointer; font-family: inherit;">
+                            <i class="fas fa-trash"></i>
+                            <span class="action-title">@Localizer.T("Common.Delete")</span>
+                            <span class="action-desc">@Localizer.T("Dashboard.Action.DeleteClinicWarning")</span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Global Document Values Section -->
-<div class="card mt-4">
+<!-- Global Document Values -->
+<div class="card mb-4">
     <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-globe me-2"></i>@Localizer.T("Template.GlobalValues")</h3>
+        <h3 class="card-title"><i class="fas fa-globe"></i> @Localizer.T("Template.GlobalValues")</h3>
     </div>
     <div class="card-body">
         @if (Model.GlobalTemplateValues.Any())
@@ -192,82 +175,89 @@
             <form method="post" asp-action="SaveGlobalValues" asp-route-clinicId="@Model.Id">
                 @Html.AntiForgeryToken()
 
-                @for (int g = 0; g < Model.GlobalTemplateValues.Count; g++)
-                {
-                    var gv = Model.GlobalTemplateValues[g];
-                    <input type="hidden" name="values[@g].VariableName" value="@gv.VariableName" />
+                <div class="row">
+                    @for (int g = 0; g < Model.GlobalTemplateValues.Count; g++)
+                    {
+                        var gv = Model.GlobalTemplateValues[g];
+                        <div class="col-md-6 mb-3">
+                            <input type="hidden" name="values[@g].VariableName" value="@gv.VariableName" />
+                            <label class="form-label">
+                                @gv.DisplayName
+                                <span class="text-muted font-medium text-xs">(@gv.VariableName)</span>
+                                @if (gv.IsImage)
+                                {
+                                    <span class="badge badge-info badge-sm ms-1"><i class="fas fa-image"></i> @Localizer.T("Template.Image")</span>
+                                }
+                                @if (gv.IsAutoPopulated)
+                                {
+                                    <span class="badge badge-neutral badge-sm ms-1"><i class="fas fa-cloud"></i> @Localizer.T("Template.AutoPopulated")</span>
+                                }
+                            </label>
 
-                    <div class="mb-3">
-                        <label class="form-label">
-                            @gv.DisplayName (@gv.VariableName)
-                            @if (gv.IsImage)
-                            {
-                                <span class="badge bg-info text-white ms-2"><i class="fas fa-image me-1"></i>@Localizer.T("Template.Image")</span>
-                            }
                             @if (gv.IsAutoPopulated)
                             {
-                                <span class="badge bg-secondary ms-2"><i class="fas fa-cloud me-1"></i>@Localizer.T("Template.AutoPopulated")</span>
-                            }
-                        </label>
-
-                        @if (gv.IsAutoPopulated)
-                        {
-                            @if (gv.IsImage)
-                            {
-                                <div>
-                                    @if (!string.IsNullOrEmpty(gv.ImagePath))
-                                    {
-                                        <div class="mb-2">
-                                            <img src="@gv.ImagePath" alt="@gv.DisplayName" style="max-width:200px;max-height:200px;" class="img-thumbnail" />
-                                        </div>
-                                    }
-                                    <input type="text" class="form-control" value="@gv.ImagePath" readonly />
-                                </div>
-                            }
-                            else
-                            {
-                                <input type="text" class="form-control" value="@gv.Value" readonly />
-                            }
-                        }
-                        else
-                        {
-                            @if (gv.IsImage)
-                            {
-                                <div>
-                                    @if (!string.IsNullOrEmpty(gv.ImagePath))
-                                    {
-                                        <div class="mb-2">
-                                            <img src="@gv.ImagePath" alt="@gv.DisplayName" style="max-width:200px;max-height:200px;" class="img-thumbnail" />
-                                        </div>
-                                    }
-                                    <input type="text" name="values[@g].Value" class="form-control" value="@gv.ImagePath" placeholder="@Localizer.T("Template.ImagePathPlaceholder")" />
-                                </div>
+                                if (gv.IsImage)
+                                {
+                                    <div>
+                                        @if (!string.IsNullOrEmpty(gv.ImagePath))
+                                        {
+                                            <div class="mb-2">
+                                                <img src="@gv.ImagePath" alt="@gv.DisplayName" style="max-width:160px; max-height:120px;" class="rounded-md border" />
+                                            </div>
+                                        }
+                                        <input type="text" class="form-control" value="@gv.ImagePath" readonly />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control" value="@gv.Value" readonly />
+                                }
                             }
                             else
                             {
-                                <input type="text" name="values[@g].Value" class="form-control" value="@gv.Value" placeholder="@gv.DisplayName" />
+                                if (gv.IsImage)
+                                {
+                                    <div>
+                                        @if (!string.IsNullOrEmpty(gv.ImagePath))
+                                        {
+                                            <div class="mb-2">
+                                                <img src="@gv.ImagePath" alt="@gv.DisplayName" style="max-width:160px; max-height:120px;" class="rounded-md border" />
+                                            </div>
+                                        }
+                                        <input type="text" name="values[@g].Value" class="form-control" value="@gv.ImagePath" placeholder="@Localizer.T("Template.ImagePathPlaceholder")" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <input type="text" name="values[@g].Value" class="form-control" value="@gv.Value" placeholder="@gv.DisplayName" />
+                                }
                             }
-                        }
-                    </div>
-                }
+                        </div>
+                    }
+                </div>
 
                 @if (Model.GlobalTemplateValues.Any(g => !g.IsAutoPopulated))
                 {
-                    <button type="submit" class="btn btn-info"><i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")</button>
+                    <div class="mt-2">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> @Localizer.T("Common.Save")</button>
+                    </div>
                 }
             </form>
         }
         else
         {
-            <p class="text-muted mb-0">@Localizer.T("Template.NoGlobalValues")</p>
+            <div class="empty-state">
+                <i class="fas fa-globe"></i>
+                <h4>@Localizer.T("Template.NoGlobalValues")</h4>
+            </div>
         }
     </div>
 </div>
 
-<!-- Document Values Section -->
-<div class="card mt-4">
+<!-- Document Values -->
+<div class="card">
     <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-file-pen me-2"></i>@Localizer.T("Template.DocumentValues")</h3>
+        <h3 class="card-title"><i class="fas fa-file-pen"></i> @Localizer.T("Template.DocumentValues")</h3>
     </div>
     <div class="card-body">
         @if (Model.DocumentAssignments.Any())
@@ -280,11 +270,22 @@
 
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseId">
-                                <span class="badge bg-primary me-2">@assignment.StandardCode</span>
+                            <button class="accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseId">
+                                <span class="badge badge-primary">@assignment.StandardCode</span>
                                 <span>@assignment.TitleEn</span>
-                                <span class="ms-2 text-muted small">(@assignment.TitleAr)</span>
-                                <span class="ms-auto me-2"><span class="status-pill complete">@assignment.AssignmentStatus</span></span>
+                                <span class="text-muted text-sm">(@assignment.TitleAr)</span>
+                                <span class="ms-auto d-flex align-items-center gap-2">
+                                    @if (assignment.HasTemplateFile)
+                                    {
+                                        <span class="badge badge-success badge-sm"><i class="fas fa-file"></i> @Localizer.T("Common.TemplateAttached")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-warning badge-sm"><i class="fas fa-exclamation-triangle"></i> @Localizer.T("Common.NoFile")</span>
+                                    }
+                                    <span class="status-pill @(assignment.AssignmentStatus == "Complete" ? "complete" : "pending")">@assignment.AssignmentStatus</span>
+                                </span>
+                                <i class="accordion-chevron fas fa-chevron-down"></i>
                             </button>
                         </h2>
                         <div id="@collapseId" class="accordion-collapse collapse" data-bs-parent="#documentValuesAccordion">
@@ -294,50 +295,57 @@
                                     <form method="post" asp-action="SaveDocumentValues" asp-route-clinicId="@Model.Id" asp-route-assignmentId="@assignment.AssignmentId">
                                         @Html.AntiForgeryToken()
 
-                                        @for (int v = 0; v < assignment.VariableValues.Count; v++)
-                                        {
-                                            var val = assignment.VariableValues[v];
-                                            <input type="hidden" name="values[@v].TemplateVariableId" value="@val.TemplateVariableId" />
+                                        <div class="row">
+                                            @for (int v = 0; v < assignment.VariableValues.Count; v++)
+                                            {
+                                                var val = assignment.VariableValues[v];
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="hidden" name="values[@v].TemplateVariableId" value="@val.TemplateVariableId" />
+                                                    <label class="form-label">
+                                                        @val.DisplayName
+                                                        <span class="text-muted font-medium text-xs">(@val.VariableName)</span>
+                                                        @if (val.IsRequired)
+                                                        {
+                                                            <span class="required">*</span>
+                                                        }
+                                                        @if (val.IsImage)
+                                                        {
+                                                            <span class="badge badge-info badge-sm ms-1"><i class="fas fa-image"></i> @Localizer.T("Template.Image")</span>
+                                                        }
+                                                    </label>
 
-                                            <div class="mb-3">
-                                                <label class="form-label">
-                                                    @val.DisplayName (@val.VariableName)
-                                                    @if (val.IsRequired)
-                                                    {
-                                                        <span class="text-danger">*</span>
-                                                    }
                                                     @if (val.IsImage)
                                                     {
-                                                        <span class="badge bg-info text-white ms-2"><i class="fas fa-image me-1"></i>@Localizer.T("Template.Image")</span>
+                                                        <div>
+                                                            @if (!string.IsNullOrEmpty(val.ImagePath))
+                                                            {
+                                                                <div class="mb-2">
+                                                                    <img src="@val.ImagePath" alt="@val.DisplayName" style="max-width:160px; max-height:120px;" class="rounded-md border" />
+                                                                </div>
+                                                            }
+                                                            <input type="text" name="values[@v].Value" class="form-control" value="@val.ImagePath" placeholder="@Localizer.T("Template.ImagePathPlaceholder")" />
+                                                        </div>
                                                     }
-                                                </label>
+                                                    else
+                                                    {
+                                                        <input type="text" name="values[@v].Value" class="form-control" value="@val.Value" placeholder="@val.DisplayName" @(val.IsRequired ? "required" : "") />
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
 
-                                                @if (val.IsImage)
-                                                {
-                                                    <div>
-                                                        @if (!string.IsNullOrEmpty(val.ImagePath))
-                                                        {
-                                                            <div class="mb-2">
-                                                                <img src="@val.ImagePath" alt="@val.DisplayName" style="max-width:200px;max-height:200px;" class="img-thumbnail" />
-                                                            </div>
-                                                        }
-                                                        <input type="text" name="values[@v].Value" class="form-control" value="@val.ImagePath" placeholder="@Localizer.T("Template.ImagePathPlaceholder")" />
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <input type="text" name="values[@v].Value" class="form-control" value="@val.Value" placeholder="@val.DisplayName" @(val.IsRequired ? "required" : "") />
-                                                }
-                                            </div>
-                                        }
-
-                                        <div class="d-flex gap-2">
-                                            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")</button>
-                                            <a asp-action="PreviewDocument" asp-route-assignmentId="@assignment.AssignmentId" target="_blank" class="btn btn-info text-white preview-btn">
-                                                <i class="fas fa-eye me-1"></i>@Localizer.T("Common.Preview")
+                                        <div class="d-flex gap-2 mt-2">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> @Localizer.T("Common.Save")
+                                            </button>
+                                            <a asp-action="PreviewDocument" asp-route-assignmentId="@assignment.AssignmentId" target="_blank" class="btn btn-info preview-btn">
+                                                <i class="fas fa-eye"></i> @Localizer.T("Common.Preview")
                                             </a>
-                                            <a asp-action="DownloadDocumentWord" asp-route-assignmentId="@assignment.AssignmentId" class="btn btn-success text-white">
-                                                <i class="fas fa-file-word me-1"></i>Word
+                                            <a asp-action="DownloadDocumentWord" asp-route-assignmentId="@assignment.AssignmentId" class="btn btn-secondary">
+                                                <i class="fas fa-file-word"></i> Word
+                                            </a>
+                                            <a asp-area="SuperAdmin" asp-controller="DocumentTemplates" asp-action="Edit" asp-route-id="@assignment.DocumentTemplateId" class="btn btn-outline-primary">
+                                                <i class="fas fa-upload"></i> @Localizer.T("Common.TemplateFile")
                                             </a>
                                         </div>
                                     </form>
@@ -347,11 +355,11 @@
                                     <div class="d-flex align-items-center justify-content-between">
                                         <p class="text-muted mb-0">@Localizer.T("Template.NoVariables")</p>
                                         <div class="d-flex gap-2">
-                                            <a asp-action="PreviewDocument" asp-route-assignmentId="@assignment.AssignmentId" target="_blank" class="btn btn-info text-white btn-sm">
-                                                <i class="fas fa-eye me-1"></i>@Localizer.T("Common.Preview")
+                                            <a asp-action="PreviewDocument" asp-route-assignmentId="@assignment.AssignmentId" target="_blank" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i> @Localizer.T("Common.Preview")
                                             </a>
-                                            <a asp-action="DownloadDocumentWord" asp-route-assignmentId="@assignment.AssignmentId" class="btn btn-success text-white btn-sm">
-                                                <i class="fas fa-file-word me-1"></i>Word
+                                            <a asp-action="DownloadDocumentWord" asp-route-assignmentId="@assignment.AssignmentId" class="btn btn-sm btn-secondary">
+                                                <i class="fas fa-file-word"></i> Word
                                             </a>
                                         </div>
                                     </div>
@@ -364,10 +372,10 @@
         }
         else
         {
-            <div class="text-center py-4">
-                <i class="fas fa-file-pen fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">@Localizer.T("Template.NoAssignments")</h5>
-                <p class="text-muted small">@Localizer.T("Template.NoAssignmentsHint")</p>
+            <div class="empty-state">
+                <i class="fas fa-file-pen"></i>
+                <h4>@Localizer.T("Template.NoAssignments")</h4>
+                <p>@Localizer.T("Template.NoAssignmentsHint")</p>
             </div>
         }
     </div>
@@ -375,40 +383,16 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <style>
-        .preview-btn .spinner-border {
-            width: 1rem;
-            height: 1rem;
-            border-width: 2px;
-            display: none;
-        }
-        .preview-btn.loading .spinner-border {
-            display: inline-block;
-        }
-        .preview-btn.loading .btn-text {
-            display: none;
-        }
-    </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.preview-btn').forEach(function (btn) {
-                var spinner = document.createElement('span');
-                spinner.className = 'spinner-border spinner-border-sm me-1';
-                spinner.setAttribute('role', 'status');
-                var btnText = document.createElement('span');
-                btnText.className = 'btn-text';
-                btnText.innerHTML = btn.innerHTML;
-                btn.innerHTML = '';
-                btn.appendChild(spinner);
-                btn.appendChild(btnText);
-
                 btn.addEventListener('click', function (e) {
                     var form = this.closest('form');
                     if (!form) return;
 
                     e.preventDefault();
                     var previewUrl = this.href;
-                    var submitBtn = form.querySelector('button[type="submit"]');
+
                     this.classList.add('loading');
 
                     fetch(form.action, {
@@ -420,11 +404,11 @@
                         if (response.ok) {
                             window.open(previewUrl, '_blank');
                         } else {
-                            alert('@Localizer.T("Alert.Error.ValuesSaveFailed")');
+                            showAlert('@Localizer.T("Alert.Error.ValuesSaveFailed")', 'danger');
                         }
                     })
                     .catch(function () {
-                        alert('@Localizer.T("Alert.Error.ValuesSaveFailed")');
+                        showAlert('@Localizer.T("Alert.Error.ValuesSaveFailed")', 'danger');
                     })
                     .finally(function () {
                         btn.classList.remove('loading');

@@ -1,270 +1,140 @@
 @model PagedResult<AuditTrailDto>
+@inject ITranslationService Localizer
 
 @{
     ViewData["Title"] = Localizer.T("Page.AuditLog");
-    var clinicId = ViewBag.ClinicId;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Hero Banner -->
-<div class="audit-hero mb-4">
-    <div class="audit-hero-content">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="audit-hero-title"><i class="fas fa-history me-2"></i>@Localizer.T("Page.AuditLog")</h1>
-                <p class="audit-hero-subtitle mb-0">@Localizer.T("Audit.Subtitle")</p>
-            </div>
-            <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinicId" class="btn btn-light btn-lg">
-                <i class="fas fa-arrow-left me-2"></i>@Localizer.T("Common.Back")
-            </a>
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-title">
+        <span class="page-icon"><i class="fas fa-history"></i></span>
+        <div>
+            <h1>@Localizer.T("Page.AuditLog")</h1>
+            <p class="page-header-subtitle">@Localizer.T("AuditLog.Subtitle")</p>
         </div>
+    </div>
+    <div class="page-header-actions">
+        <a href="/SuperAdmin/Dashboard" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> @Localizer.T("Common.Back")
+        </a>
     </div>
 </div>
 
-<!-- Stats Cards -->
+<!-- Metric Cards -->
 <div class="row mb-4">
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card stat-card-info">
-            <div class="stat-card-body">
-                <div class="stat-card-icon">
-                    <i class="fas fa-list"></i>
-                </div>
-                <div class="stat-card-content">
-                    <h3>@Model.TotalCount</h3>
-                    <p>@Localizer.T("Audit.TotalEntries")</p>
-                </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <div class="metric-icon primary"><i class="fas fa-list"></i></div>
             </div>
+            <div class="metric-label">@Localizer.T("AuditLog.Total")</div>
+            <div class="metric-value">@Model.TotalCount</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card stat-card-success">
-            <div class="stat-card-body">
-                <div class="stat-card-icon">
-                    <i class="fas fa-plus-circle"></i>
-                </div>
-                <div class="stat-card-content">
-                    <h3>@Model.Data.Count(d => d.ActionType == AuditActionType.Create)</h3>
-                    <p>@Localizer.T("Audit.Creations")</p>
-                </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <div class="metric-icon success"><i class="fas fa-plus-circle"></i></div>
             </div>
+            <div class="metric-label">@Localizer.T("AuditLog.Creates")</div>
+            <div class="metric-value">@Model.Data.Count(l => l.ActionType == AuditActionType.Create)</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card stat-card-warning">
-            <div class="stat-card-body">
-                <div class="stat-card-icon">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <div class="stat-card-content">
-                    <h3>@Model.Data.Count(d => d.ActionType == AuditActionType.Update)</h3>
-                    <p>@Localizer.T("Audit.Updates")</p>
-                </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <div class="metric-icon warning"><i class="fas fa-pen"></i></div>
             </div>
+            <div class="metric-label">@Localizer.T("AuditLog.Updates")</div>
+            <div class="metric-value">@Model.Data.Count(l => l.ActionType == AuditActionType.Update)</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card stat-card-danger">
-            <div class="stat-card-body">
-                <div class="stat-card-icon">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-                <div class="stat-card-content">
-                    <h3>@Model.Data.Count(d => d.ActionType == AuditActionType.Delete)</h3>
-                    <p>@Localizer.T("Audit.Deletions")</p>
-                </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <div class="metric-icon danger"><i class="fas fa-trash"></i></div>
             </div>
+            <div class="metric-label">@Localizer.T("AuditLog.Deletions")</div>
+            <div class="metric-value">@Model.Data.Count(l => l.ActionType == AuditActionType.Delete)</div>
         </div>
-    </div>
-</div>
-
-<!-- Filter Panel -->
-<div class="card audit-filter-card mb-4">
-    <div class="card-body">
-        <form method="get" action="/SuperAdmin/Dashboard/AuditLog" class="row g-3 align-items-end">
-            <input type="hidden" name="clinicId" value="@clinicId" />
-            <div class="col-md-3">
-                                <label class="form-label">@Localizer.T("Common.Search")</label>
-                                <input type="text" name="searchTerm" class="form-control" placeholder="@Localizer.T("Search.Placeholder")" value="@Context.Request.Query["searchTerm"]" />
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">@Localizer.T("Audit.ActionType")</label>
-                <select name="actionTypeFilter" class="form-select">
-                    <option value="">@Localizer.T("Common.All")</option>
-                    <option value="Create" selected="@(Context.Request.Query["actionTypeFilter"] == "Create")">@Localizer.T("Common.Create")</option>
-                    <option value="Update" selected="@(Context.Request.Query["actionTypeFilter"] == "Update")">@Localizer.T("Audit.Update")</option>
-                    <option value="Delete" selected="@(Context.Request.Query["actionTypeFilter"] == "Delete")">@Localizer.T("Common.Delete")</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">@Localizer.T("Audit.From")</label>
-                <input type="date" name="dateFrom" class="form-control" value="@Context.Request.Query["dateFrom"]" />
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">@Localizer.T("Audit.To")</label>
-                <input type="date" name="dateTo" class="form-control" value="@Context.Request.Query["dateTo"]" />
-            </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-primary me-2"><i class="fas fa-search me-1"></i>@Localizer.T("Common.Filter")</button>
-                <a href="/SuperAdmin/Dashboard/AuditLog?clinicId=@clinicId" class="btn btn-secondary"><i class="fas fa-undo me-1"></i>@Localizer.T("Common.Reset")</a>
-            </div>
-        </form>
     </div>
 </div>
 
 <!-- Audit Log Table -->
-<div class="card audit-table-card">
-    <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-list-alt me-2"></i>@Localizer.T("Page.AuditLog")</h3>
-        <div class="card-tools">
-            <span class="badge bg-info">@Localizer.T("Common.Page") @Model.PageNumber @Localizer.T("Common.Of") @Model.TotalPages</span>
-        </div>
-    </div>
+<div class="card">
     <div class="card-body p-0">
         @if (Model.Data.Any())
         {
-            <div class="table-responsive">
-                <table class="table table-hover audit-table" id="auditLogTable">
+            <div class="table-container border-0">
+                <table class="table" id="auditTable">
                     <thead>
                         <tr>
-                            <th>@Localizer.T("Common.Date")</th>
-                            <th>@Localizer.T("Audit.Action")</th>
-                            <th>@Localizer.T("Common.Description")</th>
-                            <th>@Localizer.T("Audit.Target")</th>
-                            <th>@Localizer.T("Audit.User")</th>
-                            <th>@Localizer.T("Audit.IP")</th>
+                            <th>@Localizer.T("AuditLog.Timestamp")</th>
+                            <th>@Localizer.T("AuditLog.User")</th>
+                            <th>@Localizer.T("AuditLog.Action")</th>
+                            <th>@Localizer.T("AuditLog.Entity")</th>
                             <th>@Localizer.T("Common.Details")</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var log in Model.Data)
                         {
+                            var badgeClass = log.ActionType == AuditActionType.Create ? "badge-success"
+                                : log.ActionType == AuditActionType.Update ? "badge-warning"
+                                : log.ActionType == AuditActionType.Delete ? "badge-danger"
+                                : "badge-neutral";
                             <tr>
-                                <td class="audit-date">@log.ActionDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td><span class="text-sm font-medium">@log.ActionDate.ToString("yyyy-MM-dd HH:mm")</span></td>
+                                <td>@log.UserName</td>
+                                <td><span class="badge @badgeClass">@log.ActionType</span></td>
+                                <td>@log.TargetObjectType <span class="text-muted text-xs">(#@log.TargetObjectId)</span></td>
                                 <td>
-                                    @switch (log.ActionType)
+                                    @if (!string.IsNullOrEmpty(log.Description))
                                     {
-                                        case AuditActionType.Create:
-                                            <span class="badge badge-audit badge-create"><i class="fas fa-plus-circle me-1"></i>@Localizer.T("Common.Create")</span>
-                                            break;
-                                        case AuditActionType.Update:
-                                            <span class="badge badge-audit badge-update"><i class="fas fa-edit me-1"></i>@Localizer.T("Audit.Update")</span>
-                                            break;
-                                        case AuditActionType.Delete:
-                                            <span class="badge badge-audit badge-delete"><i class="fas fa-trash me-1"></i>@Localizer.T("Common.Delete")</span>
-                                            break;
-                                        case AuditActionType.Login:
-                                            <span class="badge badge-audit badge-login"><i class="fas fa-sign-in-alt me-1"></i>@Localizer.T("Audit.Login")</span>
-                                            break;
-                                        default:
-                                            <span class="badge badge-audit badge-default">@log.ActionType</span>
-                                            break;
+                                        <span class="text-sm text-muted cell-sub">@log.Description</span>
                                     }
-                                </td>
-                                <td class="audit-description">@log.Description</td>
-                                <td><span class="target-badge">@log.TargetObjectType</span></td>
-                                <td class="audit-user">@log.UserName</td>
-                                <td><code class="audit-ip">@log.IpAddress</code></td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#auditModal@(log.Id)">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <div class="modal fade" id="auditModal@(log.Id)" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">@Localizer.T("Audit.Details")</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="audit-detail-grid">
-                                                        <div class="audit-detail-item">
-                                                            <span class="detail-label">@Localizer.T("Audit.Date")</span>
-                                                            <span class="detail-value">@log.ActionDate.ToString("dd/MM/yyyy HH:mm:ss")</span>
-                                                        </div>
-                                                        <div class="audit-detail-item">
-                                                            <span class="detail-label">@Localizer.T("Audit.Action")</span>
-                                                            <span class="detail-value">@log.ActionType</span>
-                                                        </div>
-                                                        <div class="audit-detail-item">
-                                                            <span class="detail-label">@Localizer.T("Audit.Description")</span>
-                                                            <span class="detail-value">@log.Description</span>
-                                                        </div>
-                                                        <div class="audit-detail-item">
-                                                            <span class="detail-label">@Localizer.T("Audit.TargetType")</span>
-                                                            <span class="detail-value">@log.TargetObjectType</span>
-                                                        </div>
-                                                        <div class="audit-detail-item">
-                                                            <span class="detail-label">@Localizer.T("Audit.TargetId")</span>
-                                                            <span class="detail-value">@log.TargetObjectId</span>
-                                                        </div>
-                                                        <div class="audit-detail-item">
-                                                            <span class="detail-label">@Localizer.T("Audit.User")</span>
-                                                            <span class="detail-value">@log.UserName</span>
-                                                        </div>
-                                                        <div class="audit-detail-item">
-                                                            <span class="detail-label">@Localizer.T("Audit.Clinic")</span>
-                                                            <span class="detail-value">@log.ClinicName</span>
-                                                        </div>
-                                                        <div class="audit-detail-item">
-                                                            <span class="detail-label">@Localizer.T("Audit.IP")</span>
-                                                            <span class="detail-value"><code>@log.IpAddress</code></span>
-                                                        </div>
-                                                    </div>
-                                                    @if (!string.IsNullOrEmpty(log.OldValues))
-                                                    {
-                                                        <div class="mt-3">
-                                                            <h6>@Localizer.T("Audit.OldValues")</h6>
-                                                            <pre class="audit-pre">@log.OldValues</pre>
-                                                        </div>
-                                                    }
-                                                    @if (!string.IsNullOrEmpty(log.NewValues))
-                                                    {
-                                                        <div class="mt-3">
-                                                            <h6>@Localizer.T("Audit.NewValues")</h6>
-                                                            <pre class="audit-pre">@log.NewValues</pre>
-                                                        </div>
-                                                    }
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Common.Close")</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <span class="text-sm text-muted">
+                    @Localizer.T("Common.Showing") @Model.Data.Count @Localizer.T("Common.Of") @Model.TotalCount
+                </span>
+                @if (Model.TotalPages > 1)
+                {
+                    <nav>
+                        <ul class="pagination mb-0">
+                            <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+                                <a class="page-link" href="?page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize"><i class="fas fa-chevron-left"></i></a>
+                            </li>
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                    <a class="page-link" href="?page=@i&pageSize=@Model.PageSize">@i</a>
+                                </li>
+                            }
+                            <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+                                <a class="page-link" href="?page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize"><i class="fas fa-chevron-right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
         }
         else
         {
             <div class="empty-state">
-                <i class="fas fa-history empty-icon"></i>
+                <i class="fas fa-history"></i>
                 <h4>@Localizer.T("Empty.NoAuditLogs")</h4>
                 <p>@Localizer.T("Empty.NoAuditLogsMessage")</p>
             </div>
         }
     </div>
-    @if (Model.TotalPages > 1)
-    {
-        <div class="card-footer">
-            <nav>
-                <ul class="pagination justify-content-center mb-0">
-                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                        <a href="?clinicId=@clinicId&page=@(Model.PageNumber - 1)&pageSize=@Model.PageSize&searchTerm=@Context.Request.Query["searchTerm"]&actionTypeFilter=@Context.Request.Query["actionTypeFilter"]&dateFrom=@Context.Request.Query["dateFrom"]&dateTo=@Context.Request.Query["dateTo"]" class="page-link">@Localizer.T("Common.Previous")</a>
-                    </li>
-                    @for (int i = 1; i <= Model.TotalPages; i++)
-                    {
-                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                            <a href="?clinicId=@clinicId&page=@i&pageSize=@Model.PageSize&searchTerm=@Context.Request.Query["searchTerm"]&actionTypeFilter=@Context.Request.Query["actionTypeFilter"]&dateFrom=@Context.Request.Query["dateFrom"]&dateTo=@Context.Request.Query["dateTo"]" class="page-link">@i</a>
-                        </li>
-                    }
-                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                        <a href="?clinicId=@clinicId&page=@(Model.PageNumber + 1)&pageSize=@Model.PageSize&searchTerm=@Context.Request.Query["searchTerm"]&actionTypeFilter=@Context.Request.Query["actionTypeFilter"]&dateFrom=@Context.Request.Query["dateFrom"]&dateTo=@Context.Request.Query["dateTo"]" class="page-link">@Localizer.T("Common.Next")</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    }
 </div>

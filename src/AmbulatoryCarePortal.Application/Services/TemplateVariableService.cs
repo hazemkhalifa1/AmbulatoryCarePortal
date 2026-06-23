@@ -55,8 +55,8 @@ public partial class TemplateVariableService : ITemplateVariableService
             return new List<TemplateVariableDto>();
 
         var fullPath = template.TemplateFilePath;
-        if (!Path.IsPathFullyQualified(fullPath))
-            fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fullPath.TrimStart('/'));
+        if (!(fullPath.Length >= 2 && fullPath[1] == ':' && char.IsLetter(fullPath[0])))
+            fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fullPath.TrimStart('/', '\\'));
 
         if (!File.Exists(fullPath))
         {

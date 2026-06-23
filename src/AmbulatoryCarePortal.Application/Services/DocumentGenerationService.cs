@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.Text.RegularExpressions;
 
 namespace AmbulatoryCarePortal.Application.Services;
 
@@ -53,8 +53,8 @@ public class DocumentGenerationService : IDocumentGenerationService
 
             using (var wordDoc = WordprocessingDocument.Open(memStream, true))
             {
-                ReplaceTextPlaceholders(wordDoc, textValues);
                 ReplaceImagePlaceholders(wordDoc, imageValues);
+                ReplaceTextPlaceholders(wordDoc, textValues);
             }
 
             fileBytes = memStream.ToArray();
@@ -279,7 +279,9 @@ public class DocumentGenerationService : IDocumentGenerationService
         }
 
         textValues["{{ClinicName}}"] = clinic.Name;
+        textValues["{{Clinic Name}}"] = clinic.Name;
         textValues["{{ClinicNameAr}}"] = clinic.NameAr ?? "";
+        textValues["{{Clinic Name Ar}}"] = clinic.NameAr ?? "";
         textValues["{{LicenseNumber}}"] = clinic.LicenseNumber ?? "";
         textValues["{{LicenseExpiry}}"] = clinic.LicenseExpiry?.ToString("yyyy-MM-dd") ?? "";
         textValues["{{CityEn}}"] = clinic.CityEn ?? "";
@@ -289,6 +291,10 @@ public class DocumentGenerationService : IDocumentGenerationService
 
         if (!string.IsNullOrEmpty(clinic.LogoPath))
             imageValues["logo"] = clinic.LogoPath;
+
+        textValues["{{logo}}"] = "";
+        textValues["{{Logo}}"] = "";
+        textValues["{{LOGO}}"] = "";
 
         var signers = await _unitOfWork.Repository<TemplateSigner>()
             .FindAsync(s => s.DocumentTemplateId == template.Id);
@@ -311,8 +317,11 @@ public class DocumentGenerationService : IDocumentGenerationService
 
     private static string ResolvePath(string path)
     {
-        if (Path.IsPathRooted(path)) return path;
-        return Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path.TrimStart('/'));
+        if (path.Length >= 2 && path[1] == ':' && char.IsLetter(path[0]))
+            return path;
+        if (path.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || path.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            path = new Uri(path).AbsolutePath;
+        return Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path.TrimStart('/', '\\'));
     }
 
     private static (string fileName, string relativePath) SaveGeneratedFile(DocumentTemplate template, Clinic clinic, byte[] fileBytes, string extension)
@@ -519,7 +528,46 @@ public class DocumentGenerationService : IDocumentGenerationService
 
     public async Task<byte[]?> PreviewPdfAsync(int assignmentId)
     {
-        return await GenerateInMemoryPdfAsync(assignmentId);
+        var assignment = await _unitOfWork.Repository<ClinicTemplateAssignment>().GetByIdAsync(assignmentId);
+        if (assignment == null) return null;
+
+        var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(assignment.DocumentTemplateId);
+        if (template == null) return null;
+
+        var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(assignment.ClinicId);
+        if (clinic == null) return null;
+
+        var (textValues, imageValues) = await BuildVariableMapsAsync(assignment, template, clinic);
+
+        if (!string.IsNullOrEmpty(template.TemplateFilePath))
+        {
+            var templatePath = ResolvePath(template.TemplateFilePath);
+            if (File.Exists(templatePath))
+            {
+                using (var stream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
+                using (var memStream = new MemoryStream())
+                {
+                    stream.CopyTo(memStream);
+                    memStream.Position = 0;
+
+                    using (var wordDoc = WordprocessingDocument.Open(memStream, true))
+                    {
+                        ReplaceTextPlaceholders(wordDoc, textValues);
+                        ReplaceImagePlaceholders(wordDoc, imageValues);
+                    }
+
+                    return memStream.ToArray();
+                }
+            }
+
+            _logger.LogWarning("Template file not found, generating minimal preview: {Path}", templatePath);
+        }
+        else
+        {
+            _logger.LogWarning("Template has no file path, generating minimal preview");
+        }
+
+        return CreateMinimalDocx(template, clinic, textValues);
     }
 
     public async Task<byte[]?> DownloadDocxAsync(int assignmentId)
@@ -558,8 +606,8 @@ public class DocumentGenerationService : IDocumentGenerationService
 
                     using (var wordDoc = WordprocessingDocument.Open(memStream, true))
                     {
-                        ReplaceTextPlaceholders(wordDoc, textValues);
                         ReplaceImagePlaceholders(wordDoc, imageValues);
+                        ReplaceTextPlaceholders(wordDoc, textValues);
                     }
 
                     return memStream.ToArray();

@@ -349,6 +349,7 @@ public class ClinicTemplateAssignmentService : IClinicTemplateAssignmentService
                 StandardCode = template.StandardCode,
                 TitleEn = template.TitleEn,
                 TitleAr = template.TitleAr,
+                TemplateFilePath = template.TemplateFilePath,
                 AssignmentStatus = a.AssignmentStatus.ToString(),
                 VariableValues = variableValues
             });

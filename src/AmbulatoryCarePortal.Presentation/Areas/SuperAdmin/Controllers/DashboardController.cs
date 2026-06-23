@@ -362,11 +362,11 @@ public class DashboardController : Controller
     {
         try
         {
-            var pdfBytes = await _generationService.PreviewPdfAsync(assignmentId);
-            if (pdfBytes == null)
+            var docxBytes = await _generationService.PreviewPdfAsync(assignmentId);
+            if (docxBytes == null)
                 return NotFound();
 
-            return File(pdfBytes, "application/pdf");
+            return File(docxBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"Preview_{assignmentId}.docx");
         }
         catch (Exception ex)
         {

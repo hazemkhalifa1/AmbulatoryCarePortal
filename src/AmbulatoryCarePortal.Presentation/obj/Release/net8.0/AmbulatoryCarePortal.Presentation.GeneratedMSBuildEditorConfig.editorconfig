@@ -39,12 +39,36 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcQ2hlY2tsaXN0TWFuYWdlbWVudFxWaWV3SGlzdG9yeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/ClinicDocumentFill/Fill.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcQ2xpbmljRG9jdW1lbnRGaWxsXEZpbGwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/ClinicDocumentFill/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcQ2xpbmljRG9jdW1lbnRGaWxsXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/ClinicDocuments/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcQ2xpbmljRG9jdW1lbnRzXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/ClinicDocuments/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcQ2xpbmljRG9jdW1lbnRzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/ClinicSignatures/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcQ2xpbmljU2lnbmF0dXJlc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/Dashboard/ComplianceCalendar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcRGFzaGJvYXJkXENvbXBsaWFuY2VDYWxlbmRhci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/Dashboard/ComplianceDashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcRGFzaGJvYXJkXENvbXBsaWFuY2VEYXNoYm9hcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/Dashboard/ComplianceScore.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcRGFzaGJvYXJkXENvbXBsaWFuY2VTY29yZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/Dashboard/ExpiringDocuments.cshtml]
@@ -67,6 +91,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcRGFzaGJvYXJkXFN0YWZmLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/DepartmentManagement/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcRGVwYXJ0bWVudE1hbmFnZW1lbnRcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/DepartmentManagement/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcRGVwYXJ0bWVudE1hbmFnZW1lbnRcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/DepartmentManagement/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcRGVwYXJ0bWVudE1hbmFnZW1lbnRcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/DepartmentManagement/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcRGVwYXJ0bWVudE1hbmFnZW1lbnRcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/Forms/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcRm9ybXNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -87,6 +127,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcSFJNYW5hZ2VtZW50XERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/HRManagement/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcSFJNYW5hZ2VtZW50XEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/HRManagement/ExpiringDocuments.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcSFJNYW5hZ2VtZW50XEV4cGlyaW5nRG9jdW1lbnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -97,6 +141,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/HRManagement/NonCompliantStaff.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcSFJNYW5hZ2VtZW50XE5vbkNvbXBsaWFudFN0YWZmLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/KPIManagement/ByDepartment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcS1BJTWFuYWdlbWVudFxCeURlcGFydG1lbnQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/KPIManagement/Compare.cshtml]
@@ -121,6 +169,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/Notifications/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcTm90aWZpY2F0aW9uc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/PolicyDocuments/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcUG9saWN5RG9jdW1lbnRzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/PolicyManagement/Create.cshtml]
@@ -151,6 +203,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcUmVwb3J0aW5nXFJlcG9ydEJ1aWxkZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/Shared/_ComplianceScoreWidget.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcU2hhcmVkXF9Db21wbGlhbmNlU2NvcmVXaWRnZXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/Shared/_EmptyState.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcU2hhcmVkXF9FbXB0eVN0YXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/Shared/_HealthMetricCard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcU2hhcmVkXF9IZWFsdGhNZXRyaWNDYXJkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/Shared/_PageHeader.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcU2hhcmVkXF9QYWdlSGVhZGVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -175,6 +243,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xEYXNoYm9hcmRcQ3JlYXRlQ2xpbmljLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Dashboard/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xEYXNoYm9hcmRcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Dashboard/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xEYXNoYm9hcmRcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -183,12 +255,68 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xEb2N1bWVudFRlbXBsYXRlc1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/DocumentTemplates/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xEb2N1bWVudFRlbXBsYXRlc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/DocumentTemplates/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xEb2N1bWVudFRlbXBsYXRlc1xFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/DocumentTemplates/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xEb2N1bWVudFRlbXBsYXRlc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/DocumentTemplates/Preview.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xEb2N1bWVudFRlbXBsYXRlc1xQcmV2aWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Settings/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTZXR0aW5nc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Settings/_BrandingSettingsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTZXR0aW5nc1xfQnJhbmRpbmdTZXR0aW5nc1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Settings/_DocumentTemplateSettingsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTZXR0aW5nc1xfRG9jdW1lbnRUZW1wbGF0ZVNldHRpbmdzUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Settings/_GeneralSettingsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTZXR0aW5nc1xfR2VuZXJhbFNldHRpbmdzUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Settings/_LocalizationSettingsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTZXR0aW5nc1xfTG9jYWxpemF0aW9uU2V0dGluZ3NQYXJ0aWFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Settings/_MailSettingsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTZXR0aW5nc1xfTWFpbFNldHRpbmdzUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Settings/_NotificationsSettingsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTZXR0aW5nc1xfTm90aWZpY2F0aW9uc1NldHRpbmdzUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Settings/_SettingsToggle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTZXR0aW5nc1xfU2V0dGluZ3NUb2dnbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Shared/_Pagination.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTaGFyZWRcX1BhZ2luYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Shared/_RoleBadge.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTaGFyZWRcX1JvbGVCYWRnZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Shared/_StatusBadge.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTaGFyZWRcX1N0YXR1c0JhZGdlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/Shared/_UserAvatar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcU3VwZXJBZG1pblxWaWV3c1xTaGFyZWRcX1VzZXJBdmF0YXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/SuperAdmin/Views/UserManagement/ActivityLog.cshtml]
@@ -219,6 +347,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxBY2Nlc3NEZW5pZWQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Account/ConfirmEmail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxDb25maXJtRW1haWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Account/ForgotPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -243,8 +375,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxFcnJvci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Shared/_DeleteConfirmation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9EZWxldGVDb25maXJtYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Shared/_DeveloperContactCard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9EZXZlbG9wZXJDb250YWN0Q2FyZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Shared/_EmptyState.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9FbXB0eVN0YXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Shared/_HealthMetricCard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9IZWFsdGhNZXRyaWNDYXJkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Shared/_Layout.cshtml]
@@ -253,6 +397,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Shared/_LoginLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpbkxheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Shared/_Pagination.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9QYWdpbmF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Shared/_StatusBadge.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TdGF0dXNCYWRnZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Views/Shared/_ValidationScriptsPartial.cshtml]

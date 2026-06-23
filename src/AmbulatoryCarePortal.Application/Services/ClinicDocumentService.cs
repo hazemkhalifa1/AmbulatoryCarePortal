@@ -174,9 +174,9 @@ public class ClinicDocumentService : IClinicDocumentService
 
         var templatePath = template.TemplateFilePath;
         var fullPath = templatePath;
-        if (!Path.IsPathRooted(templatePath))
+        if (!(templatePath.Length >= 2 && templatePath[1] == ':' && char.IsLetter(templatePath[0])))
         {
-            fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", templatePath.TrimStart('/'));
+            fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", templatePath.TrimStart('/', '\\'));
         }
 
         if (!File.Exists(fullPath))
