@@ -35,96 +35,96 @@
     };
 }
 
-<div class="fade-in">
-    <div class="row">
-        <div class="col-lg-8 col-md-10 offset-lg-2 offset-md-1">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas @getIcon"></i> @Model.ReportType @Localizer.T("Report.ReportConfiguration")</h3>
-                </div>
-                <form method="post" asp-action="@generateAction">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="ReportType" />
-                    <input type="hidden" asp-for="SelectedClinicIds" />
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Report.GenerateTitle", Model.ReportType),
+    Icon = getIcon,
+    Subtitle = Localizer.T("Report.ReportConfiguration"),
+    Breadcrumb = ""
+}' />
 
-                    <div class="card-body">
-                        @if (!ViewData.ModelState.IsValid)
-                        {
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <div asp-validation-summary="ModelOnly"></div>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="@Localizer.T("Common.Close")"></button>
-                            </div>
-                        }
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label asp-for="StartDate" class="form-label">@Localizer.T("Report.StartDate") <span class="required">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                        <input asp-for="StartDate" class="form-control" type="date" required />
-                                    </div>
-                                    <span asp-validation-for="StartDate" class="invalid-feedback"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label asp-for="EndDate" class="form-label">@Localizer.T("Report.EndDate") <span class="required">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                        <input asp-for="EndDate" class="form-control" type="date" required />
-                                    </div>
-                                    <span asp-validation-for="EndDate" class="invalid-feedback"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label asp-for="Format" class="form-label">@Localizer.T("Report.ExportFormat") <span class="required">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-file-export"></i></span>
-                                        <select asp-for="Format" class="form-control" required>
-                                            <option value="PDF">@Localizer.T("Report.PDF")</option>
-                                            <option value="Excel">@Localizer.T("Report.Excel")</option>
-                                            <option value="CSV">@Localizer.T("Report.CSV")</option>
-                                        </select>
-                                    </div>
-                                    <span asp-validation-for="Format" class="invalid-feedback"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3 d-flex align-items-end">
-                                @if (showCharts)
-                                {
-                                    <div class="form-check form-switch me-4">
-                                        <input asp-for="IncludeCharts" class="form-check-input" role="switch" />
-                                        <label asp-for="IncludeCharts" class="form-check-label">@Localizer.T("Report.IncludeCharts")</label>
-                                    </div>
-                                }
-                                @if (showAuditTrail)
-                                {
-                                    <div class="form-check form-switch">
-                                        <input asp-for="IncludeAuditTrail" class="form-check-input" role="switch" />
-                                        <label asp-for="IncludeAuditTrail" class="form-check-label">@Localizer.T("Report.IncludeAuditTrail")</label>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Index" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> @Localizer.T("Common.Back")
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-file-export"></i> @Localizer.T("Report.GenerateTitle", Model.ReportType)
-                            </button>
-                        </div>
-                    </div>
-                </form>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas @getIcon me-2"></i>@Model.ReportType @Localizer.T("Report.ReportConfiguration")</h3>
             </div>
+            <form method="post" asp-action="@generateAction">
+                <div class="card-body">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <div asp-validation-summary="ModelOnly"></div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="@Localizer.T("Common.Close")"></button>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label asp-for="StartDate" class="form-label">@Localizer.T("Report.StartDate") <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <input asp-for="StartDate" class="form-control" type="date" required />
+                                </div>
+                                <span asp-validation-for="StartDate" class="invalid-feedback"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label asp-for="EndDate" class="form-label">@Localizer.T("Report.EndDate") <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <input asp-for="EndDate" class="form-control" type="date" required />
+                                </div>
+                                <span asp-validation-for="EndDate" class="invalid-feedback"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label asp-for="Format" class="form-label">@Localizer.T("Report.ExportFormat") <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-file-export"></i></span>
+                                    <select asp-for="Format" class="form-control" required>
+                                        <option value="PDF">@Localizer.T("Report.PDF")</option>
+                                        <option value="Excel">@Localizer.T("Report.Excel")</option>
+                                        <option value="CSV">@Localizer.T("Report.CSV")</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="Format" class="invalid-feedback"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            @if (showCharts)
+                            {
+                                <div class="form-check form-switch me-4">
+                                    <input asp-for="IncludeCharts" class="form-check-input" role="switch" />
+                                    <label asp-for="IncludeCharts" class="form-check-label">@Localizer.T("Report.IncludeCharts")</label>
+                                </div>
+                            }
+                            @if (showAuditTrail)
+                            {
+                                <div class="form-check form-switch">
+                                    <input asp-for="IncludeAuditTrail" class="form-check-input" role="switch" />
+                                    <label asp-for="IncludeAuditTrail" class="form-check-label">@Localizer.T("Report.IncludeAuditTrail")</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>@Localizer.T("Common.Back")
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-file-export me-1"></i>@Localizer.T("Report.GenerateTitle", Model.ReportType)
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

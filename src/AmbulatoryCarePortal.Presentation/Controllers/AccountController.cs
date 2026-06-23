@@ -52,11 +52,6 @@ public class AccountController : Controller
         if (ModelState.IsValid)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user != null && !user.EmailConfirmed)
-            {
-                ModelState.AddModelError(string.Empty, _localizer.T("Alert.Error.EmailNotConfirmed"));
-                return View(model);
-            }
 
             var result = await _signInManager.PasswordSignInAsync(
                 model.Email,

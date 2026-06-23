@@ -1,9 +1,3 @@
-D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.csproj.AssemblyReference.cache
-D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.GeneratedMSBuildEditorConfig.editorconfig
-D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.AssemblyInfoInputs.cache
-D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.AssemblyInfo.cs
-D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.csproj.CoreCompileInputs.cache
-D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.sourcelink.json
 D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\bin\Debug\net8.0\testhost.dll
 D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\bin\Debug\net8.0\testhost.exe
 D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\bin\Debug\net8.0\xunit.runner.visualstudio.dotnetcore.testadapter.dll
@@ -307,6 +301,12 @@ D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\bin\Debug\n
 D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\bin\Debug\net8.0\AmbulatoryCarePortal.Application.pdb
 D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\bin\Debug\net8.0\AmbulatoryCarePortal.Infrastructure.pdb
 D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\bin\Debug\net8.0\AmbulatoryCarePortal.Domain.pdb
+D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.csproj.AssemblyReference.cache
+D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.GeneratedMSBuildEditorConfig.editorconfig
+D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.AssemblyInfoInputs.cache
+D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.AssemblyInfo.cs
+D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.csproj.CoreCompileInputs.cache
+D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.sourcelink.json
 D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\Ambulato.284B28AC.Up2Date
 D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\AmbulatoryCarePortal.Tests.dll
 D:\C# Projects\AmbulatoryCarePortal\tests\AmbulatoryCarePortal.Tests\obj\Debug\net8.0\refint\AmbulatoryCarePortal.Tests.dll

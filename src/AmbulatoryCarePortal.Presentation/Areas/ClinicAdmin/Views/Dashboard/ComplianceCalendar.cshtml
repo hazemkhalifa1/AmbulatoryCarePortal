@@ -10,297 +10,223 @@
     var startDayOfWeek = (int)firstDay.DayOfWeek;
 }
 
-<div class="row g-3 mb-4">
-    <div class="col-lg-3 col-md-6">
-        <partial name="_HealthMetricCard" model='new {
-            Icon = "fa-exclamation-triangle",
-            Color = Model.CriticalCount > 0 ? "danger" : "success",
-            Value = Model.CriticalCount.ToString(),
-            Label = Localizer.T("Calendar.Critical"),
-            Badge = Model.CriticalCount > 0 ? Localizer.T("Common.NeedsAttention") : Localizer.T("Common.NoIssues"),
-            Link = "",
-            LinkText = ""
-        }' />
-    </div>
-    <div class="col-lg-3 col-md-6">
-        <partial name="_HealthMetricCard" model='new {
-            Icon = "fa-clock",
-            Color = Model.WarningCount > 0 ? "warning" : "success",
-            Value = Model.WarningCount.ToString(),
-            Label = Localizer.T("Calendar.Warning"),
-            Badge = Localizer.T("Calendar.TotalUpcoming"),
-            Link = "",
-            LinkText = ""
-        }' />
-    </div>
-    <div class="col-lg-3 col-md-6">
-        <partial name="_HealthMetricCard" model='new {
-            Icon = "fa-info-circle",
-            Color = "info",
-            Value = Model.InfoCount.ToString(),
-            Label = Localizer.T("Calendar.Info"),
-            Badge = Localizer.T("Calendar.TotalUpcoming"),
-            Link = "",
-            LinkText = ""
-        }' />
-    </div>
-    <div class="col-lg-3 col-md-6">
-        <partial name="_HealthMetricCard" model='new {
-            Icon = "fa-calendar-week",
-            Color = Model.ThisWeekCount > 0 ? "primary" : "success",
-            Value = Model.ThisWeekCount.ToString(),
-            Label = Localizer.T("Calendar.ThisWeek"),
-            Badge = Localizer.T("Calendar.TotalUpcoming"),
-            Link = "",
-            LinkText = ""
-        }' />
-    </div>
-</div>
-
-<div class="row g-3">
-    <div class="col-lg-8">
-        <div class="form-card">
-            <div class="form-card-header">
-                <h3><i class="fas fa-calendar-alt text-primary"></i> @Localizer.T("Page.ComplianceCalendar")</h3>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-outline-primary active" id="gridViewBtn">
-                            <i class="fas fa-calendar"></i> @Localizer.T("Calendar.GridView")
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" id="listViewBtn">
-                            <i class="fas fa-list"></i> @Localizer.T("Calendar.ListView")
-                        </button>
-                    </div>
-                </div>
+<div class="fade-in">
+    <div class="page-header mb-4">
+        <div>
+            <div class="page-header-title">
+                <i class="fas fa-calendar-alt page-icon"></i>
+                <h1>@ViewData["Title"]</h1>
             </div>
-            <div class="form-card-body">
-                <div id="calendarGridView">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <button type="button" class="btn btn-sm btn-outline-secondary" id="prevMonth">
-                            <i class="fas fa-chevron-left"></i> @Localizer.T("Calendar.PreviousMonth")
-                        </button>
-                        <h5 class="mb-0" id="calendarMonthYear">@firstDay.ToString("MMMM yyyy")</h5>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" id="nextMonth">
-                            @Localizer.T("Calendar.NextMonth") <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-
-                    <div class="calendar-grid">
-                        <div class="calendar-header">
-                            @if (Localizer.IsRtl)
-                            {
-                                <span>@Localizer.T("Common.Sat")</span>
-                                <span>@Localizer.T("Common.Fri")</span>
-                                <span>@Localizer.T("Common.Thu")</span>
-                                <span>@Localizer.T("Common.Wed")</span>
-                                <span>@Localizer.T("Common.Tue")</span>
-                                <span>@Localizer.T("Common.Mon")</span>
-                                <span>@Localizer.T("Common.Sun")</span>
-                            }
-                            else
-                            {
-                                <span>@Localizer.T("Common.Sun")</span>
-                                <span>@Localizer.T("Common.Mon")</span>
-                                <span>@Localizer.T("Common.Tue")</span>
-                                <span>@Localizer.T("Common.Wed")</span>
-                                <span>@Localizer.T("Common.Thu")</span>
-                                <span>@Localizer.T("Common.Fri")</span>
-                                <span>@Localizer.T("Common.Sat")</span>
-                            }
-                        </div>
-                        <div class="calendar-body" id="calendarBody">
-                            @for (var i = 0; i < startDayOfWeek; i++)
-                            {
-                                <div class="calendar-day empty"></div>
-                            }
-                            @for (var day = 1; day <= daysInMonth; day++)
-                            {
-                                var date = new DateTime(currentYear, currentMonth, day);
-                                var dayItems = Model.Items.Where(i => i.DueDate.HasValue && i.DueDate.Value.Date == date).ToList();
-                                var isToday = date == today;
-                                var cssClass = isToday ? "calendar-day today" : "calendar-day";
-                                if (dayItems.Any())
-                                {
-                                    cssClass += " has-events";
-                                }
-
-                                <div class="@cssClass" data-date="@date.ToString("yyyy-MM-dd")">
-                                    <div class="day-number">@day</div>
-                                    @if (dayItems.Any())
-                                    {
-                                        <div class="day-events">
-                                            @foreach (var item in dayItems.Take(3))
-                                            {
-                                                var badgeClass = item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Critical ? "bg-danger"
-                                                    : item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Warning ? "bg-warning text-dark"
-                                                    : "bg-info";
-                                                <a href="@item.DetailUrl" class="day-event @badgeClass" title="@item.Title">
-                                                    @item.Title
-                                                </a>
-                                            }
-                                            @if (dayItems.Count > 3)
-                                            {
-                                                <span class="day-event more">+@(dayItems.Count - 3) @Localizer.T("Common.More")</span>
-                                            }
-                                        </div>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <div id="calendarListView" style="display:none">
-                    @if (Model.Items.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>@Localizer.T("Common.Type")</th>
-                                        <th>@Localizer.T("Common.Title")</th>
-                                        <th>@Localizer.T("Calendar.DaysRemaining")</th>
-                                        <th>@Localizer.T("Common.DueDate")</th>
-                                        <th>@Localizer.T("Common.Status")</th>
-                                        <th>@Localizer.T("Common.Actions")</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Items)
-                                    {
-                                        var badgeClass = item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Critical ? "danger"
-                                            : item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Warning ? "warning"
-                                            : "info";
-                                        var icon = item.ItemType switch
-                                        {
-                                            AmbulatoryCarePortal.Domain.Enums.ComplianceItemType.PolicyExpiry => "fa-file-shield",
-                                            AmbulatoryCarePortal.Domain.Enums.ComplianceItemType.HRDocumentExpiry => "fa-user-md",
-                                            AmbulatoryCarePortal.Domain.Enums.ComplianceItemType.KPIDue => "fa-chart-line",
-                                            AmbulatoryCarePortal.Domain.Enums.ComplianceItemType.ChecklistDue => "fa-clipboard-check",
-                                            AmbulatoryCarePortal.Domain.Enums.ComplianceItemType.ClinicDocumentExpiry => "fa-file-alt",
-                                            _ => "fa-calendar"
-                                        };
-                                        <tr>
-                                            <td>
-                                                <span class="badge bg-@badgeClass">
-                                                    <i class="fas @icon"></i>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <strong>@item.Title</strong>
-                                                @if (!string.IsNullOrEmpty(item.RelatedEntityName))
-                                                {
-                                                    <br /><small class="text-muted">@item.RelatedEntityName</small>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (item.DaysRemaining <= 0)
-                                                {
-                                                    <span class="text-danger fw-bold">@Localizer.T("Common.Overdue")</span>
-                                                }
-                                                else
-                                                {
-                                                    <span>@item.DaysRemaining @Localizer.T("Calendar.DaysRemaining")</span>
-                                                }
-                                            </td>
-                                            <td>@(item.DueDate?.ToString("yyyy-MM-dd") ?? "-")</td>
-                                            <td><span class="badge bg-@badgeClass">@item.Status</span></td>
-                                            <td>
-                                                @if (!string.IsNullOrEmpty(item.DetailUrl))
-                                                {
-                                                    <a href="@item.DetailUrl" class="btn btn-sm btn-outline-primary">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <partial name="_EmptyState" model='new {
-                            Icon = "fa-calendar-check",
-                            Title = Localizer.T("Common.NoData"),
-                            Description = Localizer.T("Common.NoUpcomingItems")
-                        }' />
-                    }
-                </div>
-            </div>
+            <p class="page-header-subtitle">@Localizer.T("Clinic.ComplianceCalendarDesc")</p>
         </div>
     </div>
 
-    <div class="col-lg-4 d-flex flex-column gap-3">
-        <div class="form-card">
-            <div class="form-card-header">
-                <h3><i class="fas fa-list-check text-info"></i> @Localizer.T("Calendar.ViewAll")</h3>
-            </div>
-            <div class="form-card-body">
-                <div class="upcoming-list">
-                    @{
-                        var upcomingItems = Model.Items.Where(i => i.DaysRemaining >= 0).OrderBy(i => i.DaysRemaining).Take(10).ToList();
-                    }
-                    @if (upcomingItems.Any())
-                    {
-                        @foreach (var item in upcomingItems)
-                        {
-                            var sevColor = item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Critical ? "danger"
-                                : item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Warning ? "warning"
-                                : "info";
-                            <div class="upcoming-item">
-                                <div class="upcoming-indicator bg-@sevColor"></div>
-                                <div class="upcoming-content">
-                                    <strong>@item.Title</strong>
-                                    <small class="text-muted">
-                                        @(item.DueDate?.ToString("yyyy-MM-dd") ?? "-")
-                                        (@(item.DaysRemaining) @Localizer.T("Calendar.DaysRemaining"))
-                                    </small>
-                                </div>
-                                @if (!string.IsNullOrEmpty(item.DetailUrl))
+    <div class="row g-3 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <partial name="_HealthMetricCard" model='new { Icon = "fa-exclamation-triangle", Color = Model.CriticalCount > 0 ? "danger" : "success", Value = Model.CriticalCount.ToString(), Label = Localizer.T("Calendar.Critical"), Badge = Model.CriticalCount > 0 ? Localizer.T("Common.NeedsAttention") : Localizer.T("Common.NoIssues"), Link = "" }' />
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <partial name="_HealthMetricCard" model='new { Icon = "fa-clock", Color = Model.WarningCount > 0 ? "warning" : "success", Value = Model.WarningCount.ToString(), Label = Localizer.T("Calendar.Warning"), Badge = Localizer.T("Calendar.TotalUpcoming"), Link = "" }' />
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <partial name="_HealthMetricCard" model='new { Icon = "fa-info-circle", Color = "info", Value = Model.InfoCount.ToString(), Label = Localizer.T("Calendar.Info"), Badge = Localizer.T("Calendar.TotalUpcoming"), Link = "" }' />
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <partial name="_HealthMetricCard" model='new { Icon = "fa-calendar-week", Color = Model.ThisWeekCount > 0 ? "primary" : "success", Value = Model.ThisWeekCount.ToString(), Label = Localizer.T("Calendar.ThisWeek"), Badge = Localizer.T("Calendar.TotalUpcoming"), Link = "" }' />
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-calendar-alt text-primary"></i> @Localizer.T("Page.ComplianceCalendar")</h3>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-outline-primary active" id="gridViewBtn"><i class="fas fa-calendar"></i> @Localizer.T("Calendar.GridView")</button>
+                            <button type="button" class="btn btn-outline-primary" id="listViewBtn"><i class="fas fa-list"></i> @Localizer.T("Calendar.ListView")</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="calendarGridView">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="prevMonth"><i class="fas fa-chevron-left"></i> @Localizer.T("Calendar.PreviousMonth")</button>
+                            <h5 class="mb-0" id="calendarMonthYear">@firstDay.ToString("MMMM yyyy")</h5>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="nextMonth">@Localizer.T("Calendar.NextMonth") <i class="fas fa-chevron-right"></i></button>
+                        </div>
+
+                        <div class="calendar-grid">
+                            <div class="calendar-header">
+                                @if (Localizer.IsRtl)
                                 {
-                                    <a href="@item.DetailUrl" class="upcoming-link">
-                                        <i class="fas fa-arrow-right"></i>
-                                    </a>
+                                    <span>@Localizer.T("Common.Sat")</span>
+                                    <span>@Localizer.T("Common.Fri")</span>
+                                    <span>@Localizer.T("Common.Thu")</span>
+                                    <span>@Localizer.T("Common.Wed")</span>
+                                    <span>@Localizer.T("Common.Tue")</span>
+                                    <span>@Localizer.T("Common.Mon")</span>
+                                    <span>@Localizer.T("Common.Sun")</span>
+                                }
+                                else
+                                {
+                                    <span>@Localizer.T("Common.Sun")</span>
+                                    <span>@Localizer.T("Common.Mon")</span>
+                                    <span>@Localizer.T("Common.Tue")</span>
+                                    <span>@Localizer.T("Common.Wed")</span>
+                                    <span>@Localizer.T("Common.Thu")</span>
+                                    <span>@Localizer.T("Common.Fri")</span>
+                                    <span>@Localizer.T("Common.Sat")</span>
                                 }
                             </div>
+                            <div class="calendar-body" id="calendarBody">
+                                @for (var i = 0; i < startDayOfWeek; i++)
+                                {
+                                    <div class="calendar-day empty"></div>
+                                }
+                                @for (var day = 1; day <= daysInMonth; day++)
+                                {
+                                    var date = new DateTime(currentYear, currentMonth, day);
+                                    var dayItems = Model.Items.Where(i => i.DueDate.HasValue && i.DueDate.Value.Date == date).ToList();
+                                    var isToday = date == today;
+                                    var cssClass = isToday ? "calendar-day today" : "calendar-day";
+                                    if (dayItems.Any()) { cssClass += " has-events"; }
+
+                                    <div class="@cssClass" data-date="@date.ToString("yyyy-MM-dd")">
+                                        <div class="day-number">@day</div>
+                                        @if (dayItems.Any())
+                                        {
+                                            <div class="day-events">
+                                                @foreach (var item in dayItems.Take(3))
+                                                {
+                                                    var badgeClass = item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Critical ? "bg-danger"
+                                                        : item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Warning ? "bg-warning text-dark"
+                                                        : "bg-info";
+                                                    <a href="@item.DetailUrl" class="day-event @badgeClass" title="@item.Title">@item.Title</a>
+                                                }
+                                                @if (dayItems.Count > 3)
+                                                {
+                                                    <span class="day-event more">+@(dayItems.Count - 3) @Localizer.T("Common.More")</span>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="calendarListView" style="display:none">
+                        @if (Model.Items.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>@Localizer.T("Common.Type")</th>
+                                            <th>@Localizer.T("Common.Title")</th>
+                                            <th>@Localizer.T("Calendar.DaysRemaining")</th>
+                                            <th>@Localizer.T("Common.DueDate")</th>
+                                            <th>@Localizer.T("Common.Status")</th>
+                                            <th>@Localizer.T("Common.Actions")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Items)
+                                        {
+                                            var badgeClass = item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Critical ? "danger"
+                                                : item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Warning ? "warning" : "info";
+                                            var icon = item.ItemType switch
+                                            {
+                                                AmbulatoryCarePortal.Domain.Enums.ComplianceItemType.PolicyExpiry => "fa-file-shield",
+                                                AmbulatoryCarePortal.Domain.Enums.ComplianceItemType.HRDocumentExpiry => "fa-user-md",
+                                                AmbulatoryCarePortal.Domain.Enums.ComplianceItemType.KPIDue => "fa-chart-line",
+                                                AmbulatoryCarePortal.Domain.Enums.ComplianceItemType.ChecklistDue => "fa-clipboard-check",
+                                                AmbulatoryCarePortal.Domain.Enums.ComplianceItemType.ClinicDocumentExpiry => "fa-file-alt",
+                                                _ => "fa-calendar"
+                                            };
+                                            <tr data-type="@item.ItemType">
+                                                <td><span class="badge bg-@badgeClass"><i class="fas @icon"></i></span></td>
+                                                <td>
+                                                    <strong>@item.Title</strong>
+                                                    @if (!string.IsNullOrEmpty(item.RelatedEntityName))
+                                                    {
+                                                        <br /><small class="text-muted">@item.RelatedEntityName</small>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (item.DaysRemaining <= 0) { <span class="text-danger fw-bold">@Localizer.T("Common.Overdue")</span> }
+                                                    else { <span>@item.DaysRemaining @Localizer.T("Calendar.DaysRemaining")</span> }
+                                                </td>
+                                                <td>@(item.DueDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                                <td><span class="badge bg-@badgeClass">@item.Status</span></td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(item.DetailUrl))
+                                                    {
+                                                        <a href="@item.DetailUrl" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         }
-                    }
-                    else
-                    {
-                        <p class="text-muted mb-0">@Localizer.T("Common.NoUpcomingItems")</p>
-                    }
+                        else
+                        {
+                            <partial name="_EmptyState" model='new { Icon = "fa-calendar-check", Title = Localizer.T("Common.NoData"), Description = Localizer.T("Common.NoUpcomingItems") }' />
+                        }
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="form-card">
-            <div class="form-card-header">
-                <h3><i class="fas fa-filter text-secondary"></i> @Localizer.T("Common.Filter")</h3>
+        <div class="col-lg-4 d-flex flex-column gap-3">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-list-check text-info"></i> @Localizer.T("Calendar.ViewAll")</h3>
+                </div>
+                <div class="card-body">
+                    <div class="upcoming-list">
+                        @{
+                            var upcomingItems = Model.Items.Where(i => i.DaysRemaining >= 0).OrderBy(i => i.DaysRemaining).Take(10).ToList();
+                        }
+                        @if (upcomingItems.Any())
+                        {
+                            @foreach (var item in upcomingItems)
+                            {
+                                var sevColor = item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Critical ? "danger"
+                                    : item.Severity == AmbulatoryCarePortal.Domain.Enums.ComplianceItemSeverity.Warning ? "warning" : "info";
+                                <div class="upcoming-item">
+                                    <div class="upcoming-indicator bg-@sevColor"></div>
+                                    <div class="upcoming-content">
+                                        <strong>@item.Title</strong>
+                                        <small class="text-muted">@(item.DueDate?.ToString("yyyy-MM-dd") ?? "-") (@(item.DaysRemaining) @Localizer.T("Calendar.DaysRemaining"))</small>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(item.DetailUrl))
+                                    {
+                                        <a href="@item.DetailUrl" class="upcoming-link"><i class="fas fa-arrow-right"></i></a>
+                                    }
+                                </div>
+                            }
+                        }
+                        else { <p class="text-muted mb-0">@Localizer.T("Common.NoUpcomingItems")</p> }
+                    </div>
+                </div>
             </div>
-            <div class="form-card-body">
-                <div class="filter-group">
-                    <label class="filter-label">
-                        <input type="checkbox" class="filter-type" value="PolicyExpiry" checked>
-                        @Localizer.T("Calendar.PolicyExpiry")
-                    </label>
-                    <label class="filter-label">
-                        <input type="checkbox" class="filter-type" value="HRDocumentExpiry" checked>
-                        @Localizer.T("Calendar.HRDocumentExpiry")
-                    </label>
-                    <label class="filter-label">
-                        <input type="checkbox" class="filter-type" value="KPIDue" checked>
-                        @Localizer.T("Calendar.KPIDue")
-                    </label>
-                    <label class="filter-label">
-                        <input type="checkbox" class="filter-type" value="ChecklistDue" checked>
-                        @Localizer.T("Calendar.ChecklistDue")
-                    </label>
-                    <label class="filter-label">
-                        <input type="checkbox" class="filter-type" value="ClinicDocumentExpiry" checked>
-                        @Localizer.T("Calendar.ClinicDocumentExpiry")
-                    </label>
+
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-filter text-secondary"></i> @Localizer.T("Common.Filter")</h3>
+                </div>
+                <div class="card-body">
+                    <div class="filter-group">
+                        <label class="filter-label"><input type="checkbox" class="filter-type" value="PolicyExpiry" checked> @Localizer.T("Calendar.PolicyExpiry")</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-type" value="HRDocumentExpiry" checked> @Localizer.T("Calendar.HRDocumentExpiry")</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-type" value="KPIDue" checked> @Localizer.T("Calendar.KPIDue")</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-type" value="ChecklistDue" checked> @Localizer.T("Calendar.ChecklistDue")</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-type" value="ClinicDocumentExpiry" checked> @Localizer.T("Calendar.ClinicDocumentExpiry")</label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -309,137 +235,29 @@
 
 @section Styles {
     <style>
-        .calendar-grid {
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-        }
-        .calendar-header {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            background: var(--color-bg-secondary);
-            font-weight: 600;
-            font-size: 0.8rem;
-            text-align: center;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--color-border);
-        }
-        .calendar-body {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-        }
-        .calendar-day {
-            min-height: 100px;
-            padding: 0.25rem;
-            border-right: 1px solid var(--color-border);
-            border-bottom: 1px solid var(--color-border);
-            background: var(--color-bg-primary);
-            transition: background 0.15s;
-        }
-        .calendar-day:nth-child(7n) {
-            border-right: none;
-        }
-        .calendar-day.today {
-            background: var(--color-primary-lighter);
-        }
-        .calendar-day.today .day-number {
-            background: var(--color-primary);
-            color: #fff;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .calendar-day.empty {
-            background: var(--color-bg-tertiary);
-        }
-        .day-number {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        .day-events {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .day-event {
-            font-size: 0.65rem;
-            padding: 1px 4px;
-            border-radius: 3px;
-            color: #fff;
-            text-decoration: none;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            display: block;
-        }
-        .day-event.more {
-            background: transparent;
-            color: var(--color-primary);
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .upcoming-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .upcoming-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem;
-            border-radius: var(--radius-sm);
-            background: var(--color-bg-secondary);
-            transition: background 0.15s;
-        }
-        .upcoming-item:hover {
-            background: var(--color-bg-tertiary);
-        }
-        .upcoming-indicator {
-            width: 4px;
-            height: 32px;
-            border-radius: 2px;
-            flex-shrink: 0;
-        }
-        .upcoming-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-        .upcoming-content strong {
-            font-size: 0.8rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .upcoming-content small {
-            font-size: 0.7rem;
-        }
-        .upcoming-link {
-            color: var(--color-primary);
-            flex-shrink: 0;
-        }
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .filter-label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-            padding: 0.25rem 0;
-        }
-        .filter-label input[type="checkbox"] {
-            cursor: pointer;
-        }
+        .calendar-grid { border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; }
+        .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--color-bg-secondary); font-weight: 600; font-size: 0.8rem; text-align: center; padding: 0.5rem 0; border-bottom: 1px solid var(--color-border); }
+        .calendar-body { display: grid; grid-template-columns: repeat(7, 1fr); }
+        .calendar-day { min-height: 100px; padding: 0.25rem; border-right: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); background: var(--color-bg-primary); transition: background 0.15s; }
+        .calendar-day:nth-child(7n) { border-right: none; }
+        .calendar-day.today { background: var(--color-primary-lighter); }
+        .calendar-day.today .day-number { background: var(--color-primary); color: #fff; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+        .calendar-day.empty { background: var(--color-bg-tertiary); }
+        .day-number { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .day-events { display: flex; flex-direction: column; gap: 2px; }
+        .day-event { font-size: 0.65rem; padding: 1px 4px; border-radius: 3px; color: #fff; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+        .day-event.more { background: transparent; color: var(--color-primary); font-weight: 600; cursor: pointer; }
+        .upcoming-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .upcoming-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: var(--radius-sm); background: var(--color-bg-secondary); transition: background 0.15s; }
+        .upcoming-item:hover { background: var(--color-bg-tertiary); }
+        .upcoming-indicator { width: 4px; height: 32px; border-radius: 2px; flex-shrink: 0; }
+        .upcoming-content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .upcoming-content strong { font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .upcoming-content small { font-size: 0.7rem; }
+        .upcoming-link { color: var(--color-primary); flex-shrink: 0; }
+        .filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .filter-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; cursor: pointer; padding: 0.25rem 0; }
+        .filter-label input[type="checkbox"] { cursor: pointer; }
     </style>
 }
 
@@ -448,64 +266,29 @@
         (function () {
             var currentMonth = @currentMonth;
             var currentYear = @currentYear;
-            var items = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Items.Select(i => new {
-                i.Id, i.Title, dueDate = i.DueDate?.ToString("yyyy-MM-dd"),
-                severity = i.Severity.ToString(),
-                type = i.ItemType.ToString(),
-                i.DaysRemaining, i.DetailUrl
-            })));
+            var items = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Items.Select(i => new { i.Id, i.Title, dueDate = i.DueDate?.ToString("yyyy-MM-dd"), severity = i.Severity.ToString(), type = i.ItemType.ToString(), i.DaysRemaining, i.DetailUrl })));
 
-            // View toggle
-            $('#gridViewBtn').on('click', function () {
-                $('#calendarGridView').show();
-                $('#calendarListView').hide();
-                $(this).addClass('active');
-                $('#listViewBtn').removeClass('active');
-            });
-            $('#listViewBtn').on('click', function () {
-                $('#calendarGridView').hide();
-                $('#calendarListView').show();
-                $(this).addClass('active');
-                $('#gridViewBtn').removeClass('active');
-            });
+            $('#gridViewBtn').on('click', function () { $('#calendarGridView').show(); $('#calendarListView').hide(); $(this).addClass('active'); $('#listViewBtn').removeClass('active'); });
+            $('#listViewBtn').on('click', function () { $('#calendarGridView').hide(); $('#calendarListView').show(); $(this).addClass('active'); $('#gridViewBtn').removeClass('active'); });
 
-            // Filter checkboxes for list view
             $('.filter-type').on('change', function () {
                 var activeTypes = [];
-                $('.filter-type:checked').each(function () {
-                    activeTypes.push($(this).val());
-                });
+                $('.filter-type:checked').each(function () { activeTypes.push($(this).val()); });
                 $('#calendarListView tbody tr').each(function () {
                     var type = $(this).data('type');
                     $(this).toggle(activeTypes.length === 0 || activeTypes.includes(type));
                 });
             });
 
-            // Month navigation (client-side filtering)
             function loadMonth(year, month) {
                 var date = new Date(year, month - 1, 1);
-                var monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                    'July', 'August', 'September', 'October', 'November', 'December'];
+                var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
                 $('#calendarMonthYear').text(monthNames[month - 1] + ' ' + year);
-
-                // Reload from server for proper calendar data
                 window.location.href = '?year=' + year + '&month=' + month;
             }
 
-            $('#prevMonth').on('click', function () {
-                if (currentMonth === 1) {
-                    loadMonth(currentYear - 1, 12);
-                } else {
-                    loadMonth(currentYear, currentMonth - 1);
-                }
-            });
-            $('#nextMonth').on('click', function () {
-                if (currentMonth === 12) {
-                    loadMonth(currentYear + 1, 1);
-                } else {
-                    loadMonth(currentYear, currentMonth + 1);
-                }
-            });
+            $('#prevMonth').on('click', function () { if (currentMonth === 1) { loadMonth(currentYear - 1, 12); } else { loadMonth(currentYear, currentMonth - 1); } });
+            $('#nextMonth').on('click', function () { if (currentMonth === 12) { loadMonth(currentYear + 1, 1); } else { loadMonth(currentYear, currentMonth + 1); } });
         })();
     </script>
 }

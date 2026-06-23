@@ -7,43 +7,55 @@
     var statusLabel = score.OverallScore >= 80 ? Localizer.T("Common.Compliant") : score.OverallScore >= 60 ? Localizer.T("Common.Partial") : Localizer.T("Common.NonCompliant");
 }
 
-<div class="row g-3 mb-4">
-    <div class="col-lg-4">
-        @await Html.PartialAsync("_ComplianceScoreWidget", Model)
-    </div>
-    <div class="col-lg-8">
-        <div class="form-card">
-            <div class="form-card-header">
-                <h3><i class="fas fa-chart-bar text-primary"></i> @Localizer.T("Clinic.ComponentBreakdown")</h3>
+<div class="fade-in">
+    <div class="page-header mb-4">
+        <div>
+            <div class="page-header-title">
+                <i class="fas fa-chart-pie page-icon"></i>
+                <h1>@ViewData["Title"]</h1>
             </div>
-            <div class="form-card-body">
-                <canvas id="scoreChart" height="200"></canvas>
-            </div>
+            <p class="page-header-subtitle">@Localizer.T("Clinic.ComplianceScoreDesc")</p>
         </div>
+    </div>
 
-        <div class="form-card mt-3">
-            <div class="form-card-header">
-                <h3><i class="fas fa-history text-info"></i> @Localizer.T("Common.RecentHistory")</h3>
+    <div class="row g-3 mb-4">
+        <div class="col-lg-4">
+            @await Html.PartialAsync("_ComplianceScoreWidget", Model)
+        </div>
+        <div class="col-lg-8">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-chart-bar text-primary"></i> @Localizer.T("Clinic.ComponentBreakdown")</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="scoreChart" height="200"></canvas>
+                </div>
             </div>
-            <div class="form-card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>@Localizer.T("Common.Date")</th>
-                                <th>@Localizer.T("Clinic.OverallScore")</th>
-                                <th>@Localizer.T("Clinic.MissingPolicies")</th>
-                                <th>@Localizer.T("Clinic.ExpiredDocuments")</th>
-                                <th>@Localizer.T("Clinic.OverdueChecklists")</th>
-                                <th>@Localizer.T("Common.Status")</th>
-                            </tr>
-                        </thead>
-                        <tbody id="scoreHistoryBody">
-                            <tr>
-                                <td colspan="6" class="text-center text-muted">@Localizer.T("Common.Loading")...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+            <div class="card card-primary mt-3">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-history text-info"></i> @Localizer.T("Common.RecentHistory")</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>@Localizer.T("Common.Date")</th>
+                                    <th>@Localizer.T("Clinic.OverallScore")</th>
+                                    <th>@Localizer.T("Clinic.MissingPolicies")</th>
+                                    <th>@Localizer.T("Clinic.ExpiredDocuments")</th>
+                                    <th>@Localizer.T("Clinic.OverdueChecklists")</th>
+                                    <th>@Localizer.T("Common.Status")</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scoreHistoryBody">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">@Localizer.T("Common.Loading")...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,20 +65,11 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js" asp-fallback-test="window.Chart" asp-fallback-src="~/lib/chart.js/chart.min.js"></script>
     <script>
-        function updateComplianceScore() {
-            $.post('@Url.Action("UpdateComplianceScore")', function (response) {
-                if (response.success) {
-                    location.reload();
-                }
-            });
-        }
-
-        $(function () {
+        (function () {
             $.get('@Url.Action("ScoreData")', function (data) {
                 var labels = data.components.map(function (c) { return c.name; });
                 var scores = data.components.map(function (c) { return c.score; });
                 var colors = data.components.map(function (c) { return c.color; });
-
                 new Chart(document.getElementById('scoreChart'), {
                     type: 'bar',
                     data: {
@@ -81,40 +84,33 @@
                     },
                     options: {
                         responsive: true,
-                        scales: {
-                            y: { beginAtZero: true, max: 100 }
-                        },
-                        plugins: {
-                            legend: { display: false }
-                        }
+                        scales: { y: { beginAtZero: true, max: 100 } },
+                        plugins: { legend: { display: false } }
                     }
                 });
             });
 
-            var loadHistory = function () {
-                $.get('@Url.Action("ScoreHistory")', function (history) {
-                    var tbody = $('#scoreHistoryBody');
-                    if (!history || history.length === 0) {
-                        tbody.html('<tr><td colspan="6" class="text-center text-muted">@Localizer.T("Common.NoData")</td></tr>');
-                        return;
-                    }
-                    var html = '';
-                    history.forEach(function (h) {
-                        var color = h.overallScore >= 80 ? 'success' : h.overallScore >= 60 ? 'warning' : 'danger';
-                        var label = h.overallScore >= 80 ? 'Compliant' : h.overallScore >= 60 ? 'Partial' : 'Non-Compliant';
-                        html += '<tr>' +
-                            '<td>' + new Date(h.calculatedAt).toLocaleDateString() + '</td>' +
-                            '<td class="fw-bold text-' + color + '">' + h.overallScore.toFixed(1) + '%</td>' +
-                            '<td>' + h.missingPolicies + '</td>' +
-                            '<td>' + h.expiredDocuments + '</td>' +
-                            '<td>' + h.overdueChecklists + '</td>' +
-                            '<td><span class="status-pill ' + color + '">' + label + '</span></td>' +
-                            '</tr>';
-                    });
-                    tbody.html(html);
+            $.get('@Url.Action("ScoreHistory")', function (history) {
+                var tbody = $('#scoreHistoryBody');
+                if (!history || history.length === 0) {
+                    tbody.html('<tr><td colspan="6" class="text-center text-muted py-4">@Localizer.T("Common.NoData")</td></tr>');
+                    return;
+                }
+                var html = '';
+                history.forEach(function (h) {
+                    var color = h.overallScore >= 80 ? 'success' : h.overallScore >= 60 ? 'warning' : 'danger';
+                    var label = h.overallScore >= 80 ? '@Localizer.T("Common.Compliant")' : h.overallScore >= 60 ? '@Localizer.T("Common.Partial")' : '@Localizer.T("Common.NonCompliant")';
+                    html += '<tr>' +
+                        '<td>' + new Date(h.calculatedAt).toLocaleDateString() + '</td>' +
+                        '<td class="fw-bold text-' + color + '">' + h.overallScore.toFixed(1) + '%</td>' +
+                        '<td>' + h.missingPolicies + '</td>' +
+                        '<td>' + h.expiredDocuments + '</td>' +
+                        '<td>' + h.overdueChecklists + '</td>' +
+                        '<td><span class="status-pill ' + (color === 'success' ? 'complete' : color === 'warning' ? 'partial' : 'non-compliant') + '">' + label + '</span></td>' +
+                        '</tr>';
                 });
-            };
-            loadHistory();
-        });
+                tbody.html(html);
+            });
+        })();
     </script>
 }

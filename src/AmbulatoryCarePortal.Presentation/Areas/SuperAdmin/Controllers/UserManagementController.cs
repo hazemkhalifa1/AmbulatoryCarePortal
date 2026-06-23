@@ -113,7 +113,7 @@ public class UserManagementController : Controller
             PhoneNumber = model.PhoneNumber,
             IsActive = model.IsActive,
             ClinicId = model.ClinicId,
-            EmailConfirmed = false
+            EmailConfirmed = true
         };
 
         var result = await _userManager.CreateAsync(user, password);
@@ -125,17 +125,7 @@ public class UserManagementController : Controller
                 await _userManager.AddToRoleAsync(user, model.SelectedRole);
             }
 
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var callbackUrl = Url.Action(
-                "ConfirmEmail",
-                "Account",
-                new { userId = user.Id, code },
-                Request.Scheme
-            );
-
             await _emailService.SendWelcomeEmailAsync(user.Email, model.FullName, password);
-            await _emailService.SendEmailAsync(user.Email, "Confirm your email",
-                $"Welcome to CBAHI Portal. Please confirm your email by clicking <a href='{callbackUrl}'>here</a>.");
 
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var auditLog = new AuditTrail

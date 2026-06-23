@@ -4,47 +4,34 @@
     ViewData["Title"] = @Localizer.T("Page.EnterKPIData");
 }
 
-<div class="row fade-in">
-    <div class="col-sm-6">
-        <h3><i class="fas fa-pen text-success me-2"></i>@Localizer.T("Page.EnterKPIData")</h3>
-    </div>
-    <div class="col-sm-6 text-end">
-        <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i>@Localizer.T("HR.BackToList")
-        </a>
-    </div>
-</div>
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Page.EnterKPIData"),
+    Icon = "fa-pen",
+    Subtitle = Model.KPIName,
+    Breadcrumb = ""
+}' />
 
 <div class="row">
     <div class="col-md-8">
-        <div class="card card-success">
+        <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-chart-line"></i> @Model.KPIName</h3>
+                <h3 class="card-title"><i class="fas fa-chart-line me-2"></i>@Model.KPIName</h3>
             </div>
             <div class="card-body">
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="detail-row">
-                            <span class="detail-label">@Localizer.T("KPI.KPIName")</span>
-                            <span class="detail-value">@Model.KPIName</span>
+                            <span class="detail-label">@Localizer.T("KPI.TargetValue")</span>
+                            <span class="detail-value fs-5 text-primary fw-bold">@Model.TargetValue.ToString("N2")</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">@Localizer.T("Common.Frequency")</span>
-                            <span class="detail-value"><span class="badge badge-secondary">@Model.Frequency</span></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="detail-row">
-                            <span class="detail-label">@Localizer.T("KPI.TargetValue")</span>
-                            <span class="detail-value fs-5 text-primary fw-bold">@Model.TargetValue.ToString("N2")</span>
+                            <span class="detail-value"><span class="status-pill info">@Model.Frequency</span></span>
                         </div>
                     </div>
                 </div>
 
                 <form asp-action="EnterData" method="post" enctype="multipart/form-data">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="KPIId" />
-
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -83,8 +70,7 @@
 
                     <div class="form-group">
                         <label asp-for="Notes" class="form-label">@Localizer.T("Common.Description")</label>
-                        <textarea asp-for="Notes" class="form-control" rows="3"
-                                  placeholder="@Localizer.T("KPI.DataNotesPlaceholder")"></textarea>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="@Localizer.T("KPI.DataNotesPlaceholder")"></textarea>
                         <span asp-validation-for="Notes" class="invalid-feedback"></span>
                     </div>
 
@@ -107,9 +93,9 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card card-info">
+        <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-info-circle"></i> @Localizer.T("KPI.EntryInfo")</h3>
+                <h3 class="card-title"><i class="fas fa-info-circle me-2"></i>@Localizer.T("KPI.EntryInfo")</h3>
             </div>
             <div class="card-body">
                 <div class="detail-row">

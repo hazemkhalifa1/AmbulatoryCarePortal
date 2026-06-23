@@ -35,11 +35,11 @@
     </div>
 }
 
-<div class="data-table-wrapper">
-    <div class="data-table-toolbar">
-        <div class="toolbar-left">
-            <span class="toolbar-title">@Localizer.T("Nav.PoliciesDocuments")</span>
-            <span class="toolbar-count">@Model.Count @Localizer.T("Doc.AttachmentCount")</span>
+<div class="table-container">
+    <div class="table-toolbar">
+        <div >
+            <span class="fw-semibold">@Localizer.T("Nav.PoliciesDocuments")</span>
+            <span class="text-muted ms-2 small">@Model.Count @Localizer.T("Doc.AttachmentCount")</span>
         </div>
         <div class="toolbar-right gap-2">
             <a asp-action="Index" asp-controller="PolicyManagement" asp-area="ClinicAdmin" class="btn btn-sm btn-outline-primary">
@@ -52,7 +52,7 @@
     </div>
 
     <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="@Localizer.T("Doc.FilterDocuments")">
-        <div class="data-table-toolbar" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+        <div class="table-toolbar" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
             <div class="toolbar-left gap-2 w-100 flex-wrap">
                 <input type="hidden" name="standardFilter" value="@standardFilter" />
                 <div class="search-box" style="max-width: 250px;">
@@ -79,7 +79,7 @@
         </div>
     </form>
 
-    <table class="data-table" role="table" aria-label="@Localizer.T("Nav.PoliciesDocuments")">
+    <table class="table table-hover" role="table" aria-label="@Localizer.T("Nav.PoliciesDocuments")">
         <thead>
             <tr>
                 <th scope="col">@Localizer.T("Doc.Type")</th>
@@ -152,7 +152,7 @@
                             }
                         </td>
                         <td>
-                            <div class="cell-actions justify-content-end">
+                            <div class="d-flex gap-1 justify-content-end">
                                 <a asp-action="Details" asp-route-id="@item.Id" asp-route-type="@item.Type" class="btn btn-sm btn-outline-info" title="@Localizer.T("Common.View")" aria-label="@Localizer.T("Common.View")">
                                     <i class="fas fa-eye"></i>
                                 </a>

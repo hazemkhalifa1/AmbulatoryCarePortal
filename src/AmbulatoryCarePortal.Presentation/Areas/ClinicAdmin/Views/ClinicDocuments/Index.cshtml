@@ -1,4 +1,4 @@
-@model List<ClinicDocumentDto>
+@model List<ClinicTemplateAssignmentDto>
 
 @{
     ViewData["Title"] = @Localizer.T("Page.ClinicDocuments");
@@ -34,11 +34,11 @@
     </div>
 }
 
-<div class="data-table-wrapper">
-    <div class="data-table-toolbar">
-        <div class="toolbar-left">
-            <span class="toolbar-title">@Localizer.T("Page.ClinicDocumentsList")</span>
-            <span class="toolbar-count">@Model.Count @Localizer.T("Doc.AttachmentCount")</span>
+<div class="table-container">
+    <div class="table-toolbar">
+        <div >
+            <span class="fw-semibold">@Localizer.T("Page.ClinicDocumentsList")</span>
+            <span class="text-muted ms-2 small">@Model.Count @Localizer.T("Doc.AttachmentCount")</span>
         </div>
         <div class="toolbar-right gap-2">
             <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="@Localizer.T("Doc.FilterDocuments")" class="d-flex gap-2">
@@ -68,15 +68,14 @@
         </div>
     </div>
 
-    <table class="data-table" role="table" aria-label="@Localizer.T("Page.ClinicDocuments")">
+    <table class="table table-hover" role="table" aria-label="@Localizer.T("Page.ClinicDocuments")">
         <thead>
             <tr>
                 <th scope="col">@Localizer.T("Doc.StandardCode")</th>
                 <th scope="col">@Localizer.T("Doc.DocumentHeading")</th>
-                <th scope="col">@Localizer.T("Doc.DepartmentHeading")</th>
-                <th scope="col" class="text-center">@Localizer.T("Doc.ViewHeading")</th>
-                <th scope="col" class="text-center">@Localizer.T("Doc.AttachHeading")</th>
                 <th scope="col">@Localizer.T("Common.Status")</th>
+                <th scope="col" class="text-center">@Localizer.T("Template.Values")</th>
+                <th scope="col" class="text-center">@Localizer.T("Template.GeneratedDocuments")</th>
                 <th scope="col">@Localizer.T("Doc.ExpiryDate")</th>
                 <th scope="col" class="text-end">@Localizer.T("Common.Actions")</th>
             </tr>
@@ -96,29 +95,10 @@
                             }
                         </td>
                         <td>
-                            @if (!string.IsNullOrEmpty(doc.DepartmentCategory))
-                            {
-                                @doc.DepartmentCategory
-                            }
-                            else
-                            {
-                                <span class="text-muted">&mdash;</span>
-                            }
+                            <span class="status-pill @StatusBadgeHelper.GetDocumentStatusClass(doc.AssignmentStatus)">@doc.AssignmentStatus</span>
                         </td>
-                        <td class="text-center">
-                            <a asp-action="Download" asp-route-id="@doc.Id" class="btn btn-sm btn-outline-primary" title="@Localizer.T("Doc.DownloadFilled")" aria-label="@Localizer.T("Doc.DownloadTitle")">
-                                <i class="fas fa-file-word"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a asp-action="Details" asp-route-id="@doc.Id" class="text-decoration-none" title="@doc.AttachmentCount @Localizer.T("Doc.AttachmentCount")" aria-label="@Localizer.T("Doc.ViewAttachments")">
-                                <i class="fas fa-paperclip"></i>
-                                <span class="fw-bold ms-1">@doc.AttachmentCount</span>
-                            </a>
-                        </td>
-                        <td>
-                            <span class="status-pill @StatusBadgeHelper.GetClinicDocumentStatusClass(doc.DocumentStatus)">@doc.DocumentStatus</span>
-                        </td>
+                        <td class="text-center">@doc.ValueCount</td>
+                        <td class="text-center">@doc.GeneratedDocumentCount</td>
                         <td>
                             @if (doc.ExpiryDate.HasValue)
                             {
@@ -130,7 +110,7 @@
                             }
                         </td>
                         <td>
-                            <div class="cell-actions justify-content-end">
+                            <div class="d-flex gap-1 justify-content-end">
                                 <a asp-action="Details" asp-route-id="@doc.Id" class="btn btn-sm btn-outline-info" title="@Localizer.T("Doc.ViewDetails")" aria-label="@Localizer.T("Doc.ViewDetails")">
                                     <i class="fas fa-eye"></i>
                                 </a>
@@ -145,7 +125,7 @@
             else
             {
                 <tr>
-                    <td colspan="8" class="text-center py-4">
+                    <td colspan="7" class="text-center py-4">
                         <partial name="_EmptyState" model='new {
                             Icon = "fa-file",
                             Title = Localizer.T("Empty.NoDocuments"),

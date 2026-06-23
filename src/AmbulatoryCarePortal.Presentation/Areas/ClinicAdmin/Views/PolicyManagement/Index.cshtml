@@ -16,13 +16,13 @@
     Breadcrumb = Localizer.T("Nav.Documents")
 }' />
 
-<div class="data-table-wrapper">
-    <div class="data-table-toolbar">
-        <div class="toolbar-left">
-            <span class="toolbar-title">@Localizer.T("Page.PolicyDocuments")</span>
-            <span class="toolbar-count">@totalCount @Localizer.T("Nav.Documents")</span>
+<div class="table-container">
+    <div class="table-toolbar">
+        <div >
+            <span class="fw-semibold">@Localizer.T("Page.PolicyDocuments")</span>
+            <span class="text-muted ms-2 small">@totalCount @Localizer.T("Nav.Documents")</span>
         </div>
-        <div class="toolbar-right">
+        <div class="d-flex gap-2">
             <a asp-action="Create" class="btn btn-sm btn-primary">
                 <i class="fas fa-plus"></i> @Localizer.T("Button.Create")
             </a>
@@ -30,7 +30,7 @@
     </div>
 
     <form method="get" asp-action="Index" id="filterForm" role="search" aria-label="@Localizer.T("Policy.FilterPolicies")">
-        <div class="data-table-toolbar" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+        <div class="table-toolbar" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
             <div class="toolbar-left gap-2 w-100">
                 <div class="search-box flex-grow-1" style="max-width: 300px;">
                     <i class="fas fa-search search-icon"></i>
@@ -56,7 +56,7 @@
         </div>
     </form>
 
-    <table class="data-table" id="policiesTable" role="table" aria-label="@Localizer.T("Page.PolicyDocuments")">
+    <table class="table table-hover" id="policiesTable" role="table" aria-label="@Localizer.T("Page.PolicyDocuments")">
         <thead>
             <tr>
                 <th scope="col">@Localizer.T("Common.Title")</th>
@@ -98,7 +98,7 @@
                             <span class="status-pill @StatusBadgeHelper.GetDocumentStatusClass(policy.DocumentStatus)">@policy.DocumentStatus</span>
                         </td>
                         <td>@policy.DepartmentName</td>
-                        <td><span class="compliance-badge compliant">v@(policy.VersionNumber)</span></td>
+                        <td><span class="status-pill compliant">v@(policy.VersionNumber)</span></td>
                         <td>
                             @if (policy.ExpiryDate.HasValue)
                             {
@@ -117,7 +117,7 @@
                         </td>
                         <td class="text-center"><span class="fw-bold">@policy.AttachmentCount</span></td>
                         <td>
-                            <div class="cell-actions justify-content-end">
+                            <div class="d-flex gap-1 justify-content-end">
                                 <a asp-action="Details" asp-route-id="@policy.Id" class="btn btn-sm btn-outline-info" title="@Localizer.T("Common.Details")" aria-label="@Localizer.T("Common.View")">
                                     <i class="fas fa-eye"></i>
                                 </a>
@@ -155,7 +155,7 @@
 
     @if (totalPages > 1)
     {
-        <div class="data-table-pagination">
+        <div class="table-footer">
             <div class="page-info">@Localizer.T("Policy.PageInfo", currentPage, totalPages, totalCount)</div>
             <div class="page-links">
                 <a asp-action="Index" asp-route-page="1" asp-route-searchTerm="@searchTerm" asp-route-statusFilter="@statusFilter" asp-route-departmentFilter="@departmentFilter" class="@(currentPage == 1 ? "disabled" : "")" aria-label="@Localizer.T("Policy.FirstPage")">

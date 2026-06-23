@@ -39,14 +39,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcQ2hlY2tsaXN0TWFuYWdlbWVudFxWaWV3SGlzdG9yeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/ClinicDocumentFill/Fill.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcQ2xpbmljRG9jdW1lbnRGaWxsXEZpbGwuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/ClinicDocumentFill/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcQ2xpbmljRG9jdW1lbnRGaWxsXEluZGV4LmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
 [D:/C\# Projects/AmbulatoryCarePortal/src/AmbulatoryCarePortal.Presentation/Areas/ClinicAdmin/Views/ClinicDocuments/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQ2xpbmljQWRtaW5cVmlld3NcQ2xpbmljRG9jdW1lbnRzXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

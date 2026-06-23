@@ -124,15 +124,15 @@ public class ClinicService : IClinicService
         var activeTemplates = await _unitOfWork.Repository<DocumentTemplate>().FindAsync(t => t.IsActive);
         if (activeTemplates.Any())
         {
-            var clinicDocuments = activeTemplates.Select(t => new ClinicDocument
+            var assignments = activeTemplates.Select(t => new ClinicTemplateAssignment
             {
                 ClinicId = clinic.Id,
                 DocumentTemplateId = t.Id,
-                DocumentStatus = Domain.Enums.ClinicDocumentStatus.NeedsReview,
+                AssignmentStatus = Domain.Enums.ClinicDocumentStatus.NeedsReview,
                 CreatedAt = DateTime.UtcNow
             }).ToList();
 
-            await _unitOfWork.Repository<ClinicDocument>().AddRangeAsync(clinicDocuments);
+            await _unitOfWork.Repository<ClinicTemplateAssignment>().AddRangeAsync(assignments);
             await _unitOfWork.SaveChangesAsync();
         }
 

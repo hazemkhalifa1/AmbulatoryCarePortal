@@ -1,8 +1,0 @@
-wwwroot\css\app.css
-wwwroot\css\login.css
-wwwroot\css\site.css
-wwwroot\js\site.js
-wwwroot\uploads\clinic-logos\clinic_10_aajdoxso.11y.png
-wwwroot\uploads\clinic-logos\clinic_11_i1ppjm0r.0fl.png
-wwwroot\uploads\clinic-logos\clinic_1_guywqsxj.o1r.png
-wwwroot\uploads\templates\DN-1_5xgbmiwk.scx.docx

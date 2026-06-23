@@ -12,6 +12,13 @@
     var totalPages = totalCount > 0 ? (int)Math.Ceiling((double)totalCount / pageSize) : 1;
 }
 
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Page.StaffManagement"),
+    Icon = "fa-users",
+    Subtitle = "",
+    Breadcrumb = ""
+}' />
+
 <div class="row g-3 mb-4">
     <div class="col-lg-4 col-md-6">
         <partial name="_HealthMetricCard" model='new {
@@ -46,11 +53,11 @@
     </div>
 </div>
 
-<div class="data-table-wrapper">
-    <div class="data-table-toolbar">
-        <div class="toolbar-left">
-            <span class="toolbar-title"><i class="fas fa-users me-2"></i>@Localizer.T("Page.StaffManagement")</span>
-            <span class="toolbar-count">@totalCount @Localizer.T("HR.StaffCount")</span>
+<div class="table-container">
+    <div class="table-toolbar">
+        <div >
+            <span class="fw-semibold"><i class="fas fa-users me-2"></i>@Localizer.T("Page.StaffManagement")</span>
+            <span class="text-muted ms-2 small">@totalCount @Localizer.T("HR.StaffCount")</span>
         </div>
         <div class="toolbar-right gap-2">
             <a asp-action="ExpiringDocuments" class="btn btn-sm btn-outline-warning">
@@ -66,7 +73,7 @@
     </div>
 
     <form method="get" asp-action="Index" role="search">
-        <div class="data-table-toolbar" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+        <div class="table-toolbar" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
             <div class="toolbar-left gap-2 w-100 flex-wrap">
                 <div class="search-box" style="max-width: 250px;">
                     <i class="fas fa-search search-icon"></i>
@@ -90,7 +97,7 @@
         </div>
     </form>
 
-    <table class="data-table" id="staffTable">
+    <table class="table table-hover" id="staffTable">
         <thead>
             <tr>
                 <th scope="col">@Localizer.T("HR.Name")</th>
@@ -130,14 +137,14 @@
                         </td>
                         <td class="text-center">
                             <span class="fw-bold" title="@Localizer.T("HR.TotalDocuments")">@item.TotalDocuments</span>
-                            <span class="compliance-badge compliant ms-1" title="@Localizer.T("HR.Verified")">@item.ValidDocuments</span>
+                            <span class="status-pill compliant ms-1" title="@Localizer.T("HR.Verified")">@item.ValidDocuments</span>
                             @if (item.ExpiringDocuments > 0)
                             {
-                                <span class="compliance-badge needs-attention ms-1" title="@Localizer.T("HR.ExpiringSoon")">@item.ExpiringDocuments</span>
+                                <span class="status-pill needs-review ms-1" title="@Localizer.T("HR.ExpiringSoon")">@item.ExpiringDocuments</span>
                             }
                             @if (item.ExpiredDocuments > 0)
                             {
-                                <span class="compliance-badge non-compliant ms-1" title="@Localizer.T("Common.Expired")">@item.ExpiredDocuments</span>
+                                <span class="status-pill non-compliant ms-1" title="@Localizer.T("Common.Expired")">@item.ExpiredDocuments</span>
                             }
                         </td>
                         <td>
@@ -161,7 +168,7 @@
                             }
                         </td>
                         <td>
-                            <div class="cell-actions justify-content-end">
+                            <div class="d-flex gap-1 justify-content-end">
                                 <a asp-action="Edit" asp-route-id="@item.Staff.Id" class="btn btn-sm btn-outline-primary" title="@Localizer.T("Common.Edit")" aria-label="@Localizer.T("Common.Edit")">
                                     <i class="fas fa-edit"></i>
                                 </a>
@@ -192,7 +199,7 @@
 
     @if (totalPages > 1)
     {
-        <div class="data-table-pagination">
+        <div class="table-footer">
             <div class="page-info">
                 @Localizer.T("HR.Showing") @Model.Count @Localizer.T("HR.Of") @totalCount
             </div>

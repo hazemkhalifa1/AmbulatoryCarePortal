@@ -5,20 +5,19 @@
     ViewData["Title"] = Localizer.T("Page.ExecuteChecklist");
 }
 
-<div class="row fade-in">
-    <div class="col-sm-6">
-        <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i> @Localizer.T("HR.BackToList")
-        </a>
-    </div>
-</div>
+<partial name="_PageHeader" model='new {
+    Title = Model.TemplateName,
+    Icon = "fa-play-circle",
+    Subtitle = Localizer.T("Page.ExecuteChecklist"),
+    Breadcrumb = ""
+}' />
 
 <form asp-action="Execute" asp-route-templateId="@Model.TemplateId" method="post" enctype="multipart/form-data">
-    <div class="card card-success">
+    <div class="card card-primary mb-3">
         <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-play-circle"></i> @Model.TemplateName</h3>
+            <h3 class="card-title"><i class="fas fa-play-circle me-2"></i>@Model.TemplateName</h3>
             <div class="card-tools">
-                <span class="badge badge-secondary">
+                <span class="status-pill info">
                     <i class="fas fa-calendar me-1"></i> @Model.ExecutedDate.ToString("yyyy-MM-dd HH:mm")
                 </span>
             </div>
@@ -29,7 +28,7 @@
     {
         for (int i = 0; i < Model.Items.Count; i++)
         {
-            <div class="card card-secondary mb-2">
+            <div class="card card-primary mb-2">
                 <div class="card-body">
                     <div class="row align-items-start">
                         <div class="col-md-7">
@@ -78,9 +77,9 @@
         </div>
     }
 
-    <div class="card card-secondary">
+    <div class="card card-primary">
         <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-paperclip"></i> @Localizer.T("Checklist.AdditionalDetails")</h3>
+            <h3 class="card-title"><i class="fas fa-paperclip me-2"></i>@Localizer.T("Checklist.AdditionalDetails")</h3>
         </div>
         <div class="card-body">
             <div class="form-group">

@@ -7,22 +7,21 @@
     var templateId = ViewBag.TemplateId as int? ?? 0;
 }
 
-<div class="row fade-in">
-    <div class="col-sm-6">
-        <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i> @Localizer.T("HR.BackToList")
-        </a>
-    </div>
-    <div class="col-sm-6 text-sm-end">
-        <a asp-action="Execute" asp-route-templateId="@templateId" class="btn btn-success">
-            <i class="fas fa-play me-1"></i> @Localizer.T("Checklist.ExecuteNow")
-        </a>
-    </div>
-</div>
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Page.ChecklistHistory"),
+    Icon = "fa-history",
+    Subtitle = templateName,
+    Breadcrumb = ""
+}' />
 
-<div class="card card-info">
+<div class="card card-primary">
     <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-history"></i> @Localizer.T("Checklist.ExecutionHistory"): <strong>@templateName</strong></h3>
+        <h3 class="card-title"><i class="fas fa-history me-2"></i>@Localizer.T("Checklist.ExecutionHistory"): <strong>@templateName</strong></h3>
+        <div class="card-tools">
+            <a asp-action="Execute" asp-route-templateId="@templateId" class="btn btn-success btn-sm">
+                <i class="fas fa-play me-1"></i> @Localizer.T("Checklist.ExecuteNow")
+            </a>
+        </div>
     </div>
     <div class="card-body p-0">
         @if (Model.Any())
@@ -36,7 +35,6 @@
                             <th class="text-center">@Localizer.T("Checklist.TotalItems")</th>
                             <th class="text-center">@Localizer.T("Checklist.YesCount")</th>
                             <th class="text-center">@Localizer.T("Checklist.CompletionRate")</th>
-                            <th class="text-center">@Localizer.T("Checklist.Completion")</th>
                             <th class="text-center">@Localizer.T("Common.Actions")</th>
                         </tr>
                     </thead>
@@ -61,20 +59,9 @@
                                         <small class="text-nowrap">@item.CompletionRate%</small>
                                     </div>
                                 </td>
-                                <td style="min-width: 120px;">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="progress flex-grow-1 progress-md">
-                                            <div class="progress-bar @(item.CompletionRate >= 80 ? "bg-success" : item.CompletionRate >= 50 ? "bg-warning" : "bg-danger")"
-                                                 style="width: @item.CompletionRate%" role="progressbar"
-                                                 aria-valuenow="@item.CompletionRate" aria-valuemin="0" aria-valuemax="100" aria-label="@Localizer.T("Checklist.Completion") @item.CompletionRate%"></div>
-                                        </div>
-                                        <small class="text-nowrap">@item.CompletionRate%</small>
-                                    </div>
-                                </td>
                                 <td class="text-center">
                                     <form asp-action="Approve" asp-route-roundId="@item.Round.Id" method="post" class="d-inline"
                                           onsubmit="return confirm('@Localizer.T("Checklist.ApproveConfirm")')">
-                                        @Html.AntiForgeryToken()
                                         <button type="submit" class="btn btn-sm btn-success" title="@Localizer.T("Checklist.Approve")" aria-label="@Localizer.T("Checklist.ApproveAria")">
                                             <i class="fas fa-check-double me-1"></i> @Localizer.T("Checklist.Approve")
                                         </button>
@@ -88,15 +75,14 @@
         }
         else
         {
-            <div class="card-body">
-                <div class="empty-state">
-                    <i class="fas fa-history empty-icon"></i>
-                    <h4>@Localizer.T("Checklist.NoExecutionHistory")</h4>
-                    <p>@Localizer.T("Checklist.NoHistoryMessage")</p>
-                    <a asp-action="Execute" asp-route-templateId="@templateId" class="btn btn-success">
-                        <i class="fas fa-play me-1"></i> @Localizer.T("Checklist.ExecuteNow")
-                    </a>
-                </div>
+            <div class="text-center py-4">
+                <partial name="_EmptyState" model='new {
+                    Icon = "fa-history",
+                    Title = Localizer.T("Checklist.NoExecutionHistory"),
+                    Description = Localizer.T("Checklist.NoHistoryMessage"),
+                    ActionLink = Url.Action("Execute", new { templateId }),
+                    ActionText = Localizer.T("Checklist.ExecuteNow")
+                }' />
             </div>
         }
     </div>

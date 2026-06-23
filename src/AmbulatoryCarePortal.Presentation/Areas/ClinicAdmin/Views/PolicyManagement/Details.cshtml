@@ -20,8 +20,8 @@
 
 <div class="row g-4">
     <div class="col-lg-8">
-        <div class="form-card">
-            <div class="form-card-header">
+        <div class="card card-primary">
+            <div class="card-header">
                 <h3><i class="fas fa-info-circle me-2"></i>@Localizer.T("Policy.Information")</h3>
                 <div>
                     <a asp-action="Edit" asp-route-id="@Model.Policy.Id" class="btn btn-sm btn-outline-warning">
@@ -29,7 +29,7 @@
                     </a>
                 </div>
             </div>
-            <div class="form-card-body">
+            <div class="card-body">
                 <div class="detail-row">
                     <span class="detail-label">@Localizer.T("Common.Title")</span>
                     <span class="detail-value">@Model.Policy.Title</span>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">@Localizer.T("Common.Version")</span>
-                    <span class="detail-value"><span class="compliance-badge compliant">v@(Model.Policy.VersionNumber)</span></span>
+                    <span class="detail-value"><span class="status-pill compliant">v@(Model.Policy.VersionNumber)</span></span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">@Localizer.T("Doc.Attachments")</span>
@@ -101,15 +101,15 @@
             </div>
         </div>
 
-        <div class="form-card mt-4">
-            <div class="form-card-header">
+        <div class="card card-primary mt-4">
+            <div class="card-header">
                 <h3><i class="fas fa-paperclip me-2"></i>@Localizer.T("Doc.EvidenceAttachments")</h3>
                 <div><span class="badge bg-secondary">@Model.EvidenceCount @Localizer.T("Doc.Attachments")</span></div>
             </div>
-            <div class="form-card-body">
+            <div class="card-body">
                 @if (Model.Evidence.Any())
                 {
-                    <table class="data-table" id="evidenceTable" role="table" aria-label="@Localizer.T("Doc.EvidenceAttachments")">
+                    <table class="table table-hover" id="evidenceTable" role="table" aria-label="@Localizer.T("Doc.EvidenceAttachments")">
                         <thead>
                             <tr>
                                 <th scope="col">@Localizer.T("HR.DocumentName")</th>
@@ -179,11 +179,11 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="form-card">
-            <div class="form-card-header">
+        <div class="card card-primary">
+            <div class="card-header">
                 <h3><i class="fas fa-check-circle me-2"></i>@Localizer.T("Common.Approval")</h3>
             </div>
-            <div class="form-card-body text-center">
+            <div class="card-body text-center">
                 @if (Model.Status == "Approved")
                 {
                     <div class="py-3">
@@ -222,11 +222,11 @@
             </div>
         </div>
 
-        <div class="form-card mt-4">
-            <div class="form-card-header">
+        <div class="card card-primary mt-4">
+            <div class="card-header">
                 <h3><i class="fas fa-cog me-2"></i>@Localizer.T("Common.Actions")</h3>
             </div>
-            <div class="form-card-body">
+            <div class="card-body">
                 <div class="d-grid gap-2">
                     <a asp-action="Edit" asp-route-id="@Model.Policy.Id" class="btn btn-outline-warning">
                         <i class="fas fa-edit me-1"></i> @Localizer.T("Common.Edit")

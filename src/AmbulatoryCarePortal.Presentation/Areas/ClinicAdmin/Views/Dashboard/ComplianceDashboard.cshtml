@@ -3,95 +3,54 @@
 
 @{
     ViewData["Title"] = ViewBag.PageTitle ?? Localizer.T("Page.ComplianceDashboard");
-    var today = DateTime.UtcNow.Date;
-    var month = today.Month;
-    var year = today.Year;
-    var firstDay = new DateTime(year, month, 1);
-    var daysInMonth = DateTime.DaysInMonth(year, month);
-    var startDow = (int)firstDay.DayOfWeek;
-    var calendarEvents = Model.CalendarItems
-        .Where(i => i.DueDate.HasValue && i.DueDate.Value.Year == year && i.DueDate.Value.Month == month)
-        .GroupBy(i => i.DueDate!.Value.Day)
-        .ToDictionary(g => g.Key, g => g.ToList());
-    var hasCalendarEvents = calendarEvents.Count > 0;
+    var scoreColor = Model.ScoreColor;
+    var scorePillVariant = scoreColor == "success" ? "complete" : scoreColor == "warning" ? "partial" : "non-compliant";
 }
 
 <div class="fade-in">
 
-    @* ===== Summary Cards ===== *@
-    <div class="row g-3 mb-4">
-        <div class="col-lg-3 col-md-6">
-            <partial name="_HealthMetricCard" model='new {
-                Icon = "fa-shield-alt",
-                Color = Model.ScoreColor,
-                Value = Model.OverallScore.ToString("F1") + "%",
-                Label = Localizer.T("Clinic.ComplianceScore"),
-                Badge = Localizer.T("Common." + Model.ScoreStatus),
-                Link = Url.Action("ComplianceScore"),
-                LinkText = Localizer.T("Common.ViewDetails")
-            }' />
+    <div class="page-header mb-4">
+        <div>
+            <div class="page-header-title">
+                <i class="fas fa-shield-alt page-icon"></i>
+                <h1>@ViewData["Title"]</h1>
+            </div>
+            <p class="page-header-subtitle">@Localizer.T("Clinic.ComplianceOverview")</p>
         </div>
-        <div class="col-lg-3 col-md-6">
-            <partial name="_HealthMetricCard" model='new {
-                Icon = "fa-exclamation-triangle",
-                Color = Model.OpenCapaCount > 0 ? "danger" : "success",
-                Value = Model.OpenCapaCount.ToString(),
-                Label = Localizer.T("Compliance.OpenCAPAs"),
-                Badge = Model.OverdueCapaCount > 0
-                    ? Model.OverdueCapaCount + " " + Localizer.T("Compliance.Overdue")
-                    : Localizer.T("Common.NoIssues"),
-                Link = "",
-                LinkText = ""
-            }' />
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <partial name="_HealthMetricCard" model='new {
-                Icon = "fa-clock",
-                Color = Model.ExpiringCredentials > 0 ? "warning" : "success",
-                Value = Model.ExpiringCredentials.ToString(),
-                Label = Localizer.T("Compliance.ExpiringThisMonth"),
-                Badge = Localizer.T("Compliance.NeedsRenewal"),
-                Link = Url.Action("ExpiringDocuments"),
-                LinkText = Localizer.T("Common.ViewDetails")
-            }' />
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <partial name="_HealthMetricCard" model='new {
-                Icon = "fa-times-circle",
-                Color = Model.OverdueChecklists + Model.ExpiredDocuments > 0 ? "danger" : "success",
-                Value = (Model.OverdueChecklists + Model.ExpiredDocuments).ToString(),
-                Label = Localizer.T("Compliance.OverdueItems"),
-                Badge = Localizer.T("Compliance.RequiresAction"),
-                Link = "",
-                LinkText = ""
-            }' />
+        <div class="page-header-actions">
+            <span class="status-pill @scorePillVariant">@Localizer.T("Common." + Model.ScoreStatus)</span>
         </div>
     </div>
 
-    @* ===== Row: Score Gauge + KPI Trends ===== *@
+    <div class="row g-3 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <partial name="_HealthMetricCard" model='new { Icon = "fa-shield-alt", Color = Model.ScoreColor, Value = Model.OverallScore.ToString("F1") + "%", Label = Localizer.T("Clinic.ComplianceScore"), Badge = Localizer.T("Common." + Model.ScoreStatus), Link = Url.Action("ComplianceScore"), LinkText = Localizer.T("Common.ViewDetails") }' />
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <partial name="_HealthMetricCard" model='new { Icon = "fa-exclamation-triangle", Color = Model.OpenCapaCount > 0 ? "danger" : "success", Value = Model.OpenCapaCount.ToString(), Label = Localizer.T("Compliance.OpenCAPAs"), Badge = Model.OverdueCapaCount > 0 ? Model.OverdueCapaCount + " " + Localizer.T("Compliance.Overdue") : Localizer.T("Common.NoIssues"), Link = "" }' />
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <partial name="_HealthMetricCard" model='new { Icon = "fa-clock", Color = Model.ExpiringCredentials > 0 ? "warning" : "success", Value = Model.ExpiringCredentials.ToString(), Label = Localizer.T("Compliance.ExpiringThisMonth"), Badge = Localizer.T("Compliance.NeedsRenewal"), Link = Url.Action("ExpiringDocuments"), LinkText = Localizer.T("Common.ViewDetails") }' />
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <partial name="_HealthMetricCard" model='new { Icon = "fa-times-circle", Color = Model.OverdueChecklists + Model.ExpiredDocuments > 0 ? "danger" : "success", Value = (Model.OverdueChecklists + Model.ExpiredDocuments).ToString(), Label = Localizer.T("Compliance.OverdueItems"), Badge = Localizer.T("Compliance.RequiresAction"), Link = "" }' />
+        </div>
+    </div>
+
     <div class="row g-3 mb-4">
         <div class="col-lg-5">
-            <div class="form-card h-100">
-                <div class="form-card-header">
-                    <h3><i class="fas fa-shield-alt text-primary"></i> @Localizer.T("Clinic.ComplianceScore")</h3>
-                    <span class="compliance-badge @Model.ScoreColor">
-                        <span class="badge-dot"></span>
-                        @Localizer.T("Common." + Model.ScoreStatus)
-                    </span>
+            <div class="card card-primary h-100">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-shield-alt text-primary"></i> @Localizer.T("Clinic.ComplianceScore")</h3>
+                    <span class="status-pill @scorePillVariant">@Localizer.T("Common." + Model.ScoreStatus)</span>
                 </div>
-                <div class="form-card-body">
+                <div class="card-body">
                     <div class="text-center mb-4">
                         <div class="readiness-score">
                             <div class="score-ring" style="width:160px;height:160px;margin:0 auto;">
                                 <svg width="160" height="160" viewBox="0 0 120 120">
                                     <circle cx="60" cy="60" r="54" fill="none" stroke="var(--color-border)" stroke-width="8"/>
-                                    <circle cx="60" cy="60" r="54" fill="none"
-                                            stroke="var(--color-@Model.ScoreColor)"
-                                            stroke-width="8"
-                                            stroke-dasharray="339.292"
-                                            stroke-dashoffset="@(339.292m * (1m - Model.OverallScore / 100m))"
-                                            stroke-linecap="round"
-                                            transform="rotate(-90, 60, 60)"/>
+                                    <circle cx="60" cy="60" r="54" fill="none" stroke="var(--color-@Model.ScoreColor)" stroke-width="8" stroke-dasharray="339.292" stroke-dashoffset="@(339.292m * (1m - Model.OverallScore / 100m))" stroke-linecap="round" transform="rotate(-90, 60, 60)"/>
                                 </svg>
                                 <div class="score-value @Model.ScoreColor">@Model.OverallScore.ToString("F0")%</div>
                             </div>
@@ -114,32 +73,28 @@
             </div>
         </div>
         <div class="col-lg-7">
-            <div class="form-card h-100">
-                <div class="form-card-header">
-                    <h3><i class="fas fa-chart-line text-success"></i> @Localizer.T("Compliance.ScoreTrend")</h3>
+            <div class="card card-primary h-100">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-chart-line text-success"></i> @Localizer.T("Compliance.ScoreTrend")</h3>
                 </div>
-                <div class="form-card-body">
+                <div class="card-body">
                     <canvas id="trendChart" height="240"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    @* ===== Row: Upcoming Expiries + Open CAPAs ===== *@
     <div class="row g-3 mb-4">
         <div class="col-lg-5">
-            <div class="form-card h-100">
-                <div class="form-card-header">
-                    <h3><i class="fas fa-hourglass-half text-warning"></i> @Localizer.T("Compliance.UpcomingExpiries")</h3>
+            <div class="card card-primary h-100">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-hourglass-half text-warning"></i> @Localizer.T("Compliance.UpcomingExpiries")</h3>
                     <span class="badge bg-warning">@Model.UpcomingExpiries.Count</span>
                 </div>
-                <div class="form-card-body p-0">
+                <div class="card-body p-0">
                     @if (Model.UpcomingExpiries.Count == 0)
                     {
-                        <partial name="_EmptyState" model='new {
-                            Icon = "fa-calendar-check",
-                            Title = Localizer.T("Compliance.NoUpcomingExpiries")
-                        }' />
+                        <partial name="_EmptyState" model='new { Icon = "fa-calendar-check", Title = Localizer.T("Compliance.NoUpcomingExpiries") }' />
                     }
                     else
                     {
@@ -174,18 +129,15 @@
             </div>
         </div>
         <div class="col-lg-7">
-            <div class="form-card h-100">
-                <div class="form-card-header">
-                    <h3><i class="fas fa-tasks text-danger"></i> @Localizer.T("Compliance.OpenCAPAs")</h3>
+            <div class="card card-primary h-100">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-tasks text-danger"></i> @Localizer.T("Compliance.OpenCAPAs")</h3>
                     <span class="small text-muted">@Model.OpenCapas.Count @Localizer.T("Compliance.TotalOpen")</span>
                 </div>
-                <div class="form-card-body p-0">
+                <div class="card-body p-0">
                     @if (Model.OpenCapas.Count == 0)
                     {
-                        <partial name="_EmptyState" model='new {
-                            Icon = "fa-check-circle",
-                            Title = Localizer.T("Compliance.NoOpenCAPAs")
-                        }' />
+                        <partial name="_EmptyState" model='new { Icon = "fa-check-circle", Title = Localizer.T("Compliance.NoOpenCAPAs") }' />
                     }
                     else
                     {
@@ -204,20 +156,8 @@
                                 <tbody>
                                     @foreach (var capa in Model.OpenCapas)
                                     {
-                                        var sevBadge = capa.Severity switch
-                                        {
-                                            "Critical" => "danger",
-                                            "High" => "warning",
-                                            "Medium" => "info",
-                                            _ => "secondary"
-                                        };
-                                        var statusBadge = capa.Status switch
-                                        {
-                                            "Open" => "danger",
-                                            "InProgress" => "warning",
-                                            "UnderReview" => "info",
-                                            _ => "secondary"
-                                        };
+                                        var sevBadge = capa.Severity switch { "Critical" => "danger", "High" => "warning", "Medium" => "info", _ => "secondary" };
+                                        var statusBadge = capa.Status switch { "Open" => "danger", "InProgress" => "warning", "UnderReview" => "info", _ => "secondary" };
                                         var isOverdue = capa.TargetDate.HasValue && capa.TargetDate.Value < DateTime.UtcNow;
                                         <tr class="@(isOverdue ? "table-danger" : "")">
                                             <td class="fw-semibold">@capa.Title</td>
@@ -228,29 +168,13 @@
                                                 {
                                                     <span class="@(isOverdue ? "text-danger fw-bold" : "")">
                                                         @capa.TargetDate.Value.ToString("dd/MM/yyyy")
-                                                        @if (isOverdue)
-                                                        {
-                                                            <i class="fas fa-exclamation-circle ms-1"></i>
-                                                        }
+                                                        @if (isOverdue) { <i class="fas fa-exclamation-circle ms-1"></i> }
                                                     </span>
                                                 }
-                                                else
-                                                {
-                                                    <span class="text-muted">@Localizer.T("HR.NA")</span>
-                                                }
+                                                else { <span class="text-muted">@Localizer.T("HR.NA")</span> }
                                             </td>
                                             <td><span class="badge bg-@sevBadge">@capa.Severity</span></td>
-                                            <td>
-                                                <span class="status-pill @statusBadge">
-                                                    @(capa.Status switch
-                                                    {
-                                                        "Open" => Localizer.T("Common.Open"),
-                                                        "InProgress" => Localizer.T("Common.InProgress"),
-                                                        "UnderReview" => Localizer.T("Common.UnderReview"),
-                                                        _ => capa.Status
-                                                    })
-                                                </span>
-                                            </td>
+                                            <td><span class="status-pill @statusBadge">@(capa.Status switch { "Open" => Localizer.T("Common.Open"), "InProgress" => Localizer.T("Common.InProgress"), "UnderReview" => Localizer.T("Common.UnderReview"), _ => capa.Status })</span></td>
                                         </tr>
                                     }
                                 </tbody>
@@ -262,100 +186,25 @@
         </div>
     </div>
 
-    @* ===== Row: Department Performance + Compliance Calendar ===== *@
     <div class="row g-3 mb-4">
         <div class="col-lg-7">
-            <div class="form-card h-100">
-                <div class="form-card-header">
-                    <h3><i class="fas fa-building text-info"></i> @Localizer.T("Compliance.DepartmentPerformance")</h3>
+            <div class="card card-primary h-100">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-building text-info"></i> @Localizer.T("Compliance.DepartmentPerformance")</h3>
                 </div>
-                <div class="form-card-body">
-                    <canvas id="deptChart" height="220"
-                            data-scores='@JsonSerializer.Serialize(Model.DepartmentPerformance.Select(d => new { d.Name, d.Score, d.CompletedItems, d.TotalItems }))'></canvas>
+                <div class="card-body">
+                    <canvas id="deptChart" height="220" data-scores='@JsonSerializer.Serialize(Model.DepartmentPerformance.Select(d => new { d.Name, d.Score, d.CompletedItems, d.TotalItems }))'></canvas>
                 </div>
             </div>
         </div>
         <div class="col-lg-5">
-            <div class="form-card h-100">
-                <div class="form-card-header">
-                    <h3><i class="fas fa-calendar-alt text-primary"></i> @Localizer.T("Page.ComplianceCalendar")</h3>
-                    <a href="@Url.Action("ComplianceCalendar")" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-external-link-alt"></i>
-                    </a>
+            <div class="card card-primary h-100">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-calendar-alt text-primary"></i> @Localizer.T("Page.ComplianceCalendar")</h3>
+                    <a href="@Url.Action("ComplianceCalendar")" class="btn btn-sm btn-outline-primary"><i class="fas fa-external-link-alt"></i></a>
                 </div>
-                <div class="form-card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="fw-semibold">@firstDay.ToString("MMMM yyyy")</span>
-                        <span class="small text-muted">@Model.CalendarItems.Count @Localizer.T("Calendar.Events")</span>
-                    </div>
-                    <div class="mini-calendar">
-                        <div class="mini-cal-header">
-                            @if (Localizer.IsRtl)
-                            {
-                                <span>@Localizer.T("Common.Sat")</span>
-                                <span>@Localizer.T("Common.Fri")</span>
-                                <span>@Localizer.T("Common.Thu")</span>
-                                <span>@Localizer.T("Common.Wed")</span>
-                                <span>@Localizer.T("Common.Tue")</span>
-                                <span>@Localizer.T("Common.Mon")</span>
-                                <span>@Localizer.T("Common.Sun")</span>
-                            }
-                            else
-                            {
-                                <span>@Localizer.T("Common.Sun")</span>
-                                <span>@Localizer.T("Common.Mon")</span>
-                                <span>@Localizer.T("Common.Tue")</span>
-                                <span>@Localizer.T("Common.Wed")</span>
-                                <span>@Localizer.T("Common.Thu")</span>
-                                <span>@Localizer.T("Common.Fri")</span>
-                                <span>@Localizer.T("Common.Sat")</span>
-                            }
-                        </div>
-                        <div class="mini-cal-grid">
-                            @for (int i = 0; i < startDow; i++)
-                            {
-                                <div class="mini-cal-day empty"></div>
-                            }
-                            @for (int day = 1; day <= daysInMonth; day++)
-                            {
-                                var dayHasEvents = calendarEvents.ContainsKey(day);
-                                var isToday = day == today.Day;
-                                var cls = isToday ? "today" : "";
-                                cls += dayHasEvents ? " has-event" : "";
-                                <div class="mini-cal-day @cls">
-                                    <span class="day-num">@day</span>
-                                    @if (dayHasEvents)
-                                    {
-                                        <span class="event-dot"></span>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    </div>
-                    @if (hasCalendarEvents)
-                    {
-                        <div class="mt-3">
-                            <div class="small fw-semibold mb-1">@Localizer.T("Calendar.UpcomingThisMonth")</div>
-                            @foreach (var dayEntry in calendarEvents.OrderBy(kv => kv.Key).Take(3))
-                            {
-                                var dayDate = new DateTime(year, month, dayEntry.Key);
-                                foreach (var evt in dayEntry.Value.Take(2))
-                                {
-                                    var dotColor = evt.Severity switch
-                                    {
-                                        ComplianceItemSeverity.Critical => "danger",
-                                        ComplianceItemSeverity.Warning => "warning",
-                                        _ => "info"
-                                    };
-                                    <div class="d-flex align-items-center gap-2 small py-1">
-                                        <span class="badge-dot bg-@dotColor" style="width:8px;height:8px;display:inline-block;border-radius:50%;padding:0">&nbsp;</span>
-                                        <span class="text-truncate flex-grow-1">@evt.Title</span>
-                                        <span class="text-muted flex-shrink-0">@dayDate.ToString("dd MMM")</span>
-                                    </div>
-                                }
-                            }
-                        </div>
-                    }
+                <div class="card-body">
+                    <div id="complianceCalendar">@Localizer.T("Common.Loading")...</div>
                 </div>
             </div>
         </div>
@@ -365,76 +214,31 @@
 
 @section Styles {
     <style>
-        .mini-calendar {
-            --cal-cell-size: 32px;
-        }
-        .mini-cal-header {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            text-align: center;
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--color-muted, #6c757d);
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        .mini-cal-header span {
-            padding: 4px 0;
-        }
-        .mini-cal-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
-        }
-        .mini-cal-day {
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            position: relative;
-            cursor: default;
-            background: var(--color-bg-secondary, #f8f9fa);
-        }
-        .mini-cal-day.empty {
-            background: transparent;
-        }
-        .mini-cal-day.today {
-            background: var(--color-primary, #0d6efd);
-            color: #fff;
-            font-weight: 700;
-        }
-        .mini-cal-day.has-event:not(.today) {
-            background: var(--color-warning-light, #fff3cd);
-        }
-        .mini-cal-day .event-dot {
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background: var(--color-danger, #dc3545);
-            position: absolute;
-            bottom: 3px;
-        }
-        .mini-cal-day.today .event-dot {
-            background: #fff;
-        }
+        .mini-calendar { --cal-cell-size: 32px; }
+        .mini-cal-header { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 10px; font-weight: 600; color: var(--color-muted, #6c757d); text-transform: uppercase; margin-bottom: 4px; }
+        .mini-cal-header span { padding: 4px 0; }
+        .mini-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .mini-cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 6px; font-size: 12px; font-weight: 500; position: relative; cursor: default; background: var(--color-bg-secondary, #f8f9fa); }
+        .mini-cal-day.empty { background: transparent; }
+        .mini-cal-day.today { background: var(--color-primary, #0d6efd); color: #fff; font-weight: 700; }
+        .mini-cal-day.has-event:not(.today) { background: var(--color-warning-light, #fff3cd); }
+        .mini-cal-day .event-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--color-danger, #dc3545); position: absolute; bottom: 3px; }
+        .mini-cal-day.today .event-dot { background: #fff; }
     </style>
 }
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        (function () {
+            setTimeout(function () {
+                $('#complianceCalendar').load('@Url.Action("CalendarPartial")');
+            }, 100);
 
-            // ---- KPI Trend Line Chart ----
             var trendCtx = document.getElementById('trendChart');
             if (trendCtx) {
                 var trendLabels = @JsonSerializer.Serialize(Model.ScoreTrend.Select(t => t.Date.ToString("MMM dd")));
                 var trendData = @JsonSerializer.Serialize(Model.ScoreTrend.Select(t => (double)t.Score));
-
                 new Chart(trendCtx, {
                     type: 'line',
                     data: {
@@ -462,38 +266,24 @@
                             legend: { display: false },
                             tooltip: {
                                 callbacks: {
-                                    label: function (ctx) {
-                                        return ctx.parsed.y.toFixed(1) + '%';
-                                    }
+                                    label: function (ctx) { return ctx.parsed.y.toFixed(1) + '%'; }
                                 }
                             }
                         },
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100,
-                                ticks: {
-                                    callback: function (v) { return v + '%'; }
-                                }
-                            },
-                            x: {
-                                grid: { display: false }
-                            }
+                            y: { beginAtZero: true, max: 100, ticks: { callback: function (v) { return v + '%'; } } },
+                            x: { grid: { display: false } }
                         }
                     }
                 });
             }
 
-            // ---- Department Performance Horizontal Bar Chart ----
             var deptCtx = document.getElementById('deptChart');
             if (deptCtx) {
                 var deptData = JSON.parse(deptCtx.getAttribute('data-scores'));
                 var deptLabels = deptData.map(function (d) { return d.Name; });
                 var deptScores = deptData.map(function (d) { return d.Score; });
-                var deptColors = deptScores.map(function (s) {
-                    return s >= 80 ? '#198754' : s >= 60 ? '#ffc107' : '#dc3545';
-                });
-
+                var deptColors = deptScores.map(function (s) { return s >= 80 ? '#198754' : s >= 60 ? '#ffc107' : '#dc3545'; });
                 new Chart(deptCtx, {
                     type: 'bar',
                     data: {
@@ -517,27 +307,18 @@
                                 callbacks: {
                                     label: function (ctx) {
                                         var d = deptData[ctx.dataIndex];
-                                        return ctx.parsed.x.toFixed(1) + '% (' + d.CompletedItems + '/' + d.TotalItems + ' ' + '@Localizer.T("Compliance.Items")' + ')';
+                                        return ctx.parsed.x.toFixed(1) + '% (' + d.CompletedItems + '/' + d.TotalItems + ' @Localizer.T("Compliance.Items")' + ')';
                                     }
                                 }
                             }
                         },
                         scales: {
-                            x: {
-                                beginAtZero: true,
-                                max: 100,
-                                ticks: {
-                                    callback: function (v) { return v + '%'; }
-                                }
-                            },
-                            y: {
-                                grid: { display: false }
-                            }
+                            x: { beginAtZero: true, max: 100, ticks: { callback: function (v) { return v + '%'; } } },
+                            y: { grid: { display: false } }
                         }
                     }
                 });
             }
-
-        });
+        })();
     </script>
 }

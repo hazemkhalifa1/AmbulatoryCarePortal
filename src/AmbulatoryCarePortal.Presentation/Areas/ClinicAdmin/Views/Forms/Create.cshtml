@@ -4,61 +4,63 @@
     ViewData["Title"] = Localizer.T("Button.Add");
 }
 
-<div class="fade-in">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card card-success">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-file-alt"></i> @Localizer.T("Form.CreateForm")
-                    </h3>
-                </div>
-                <form method="post" asp-action="Create">
-                    <div class="card-body">
-                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Form.CreateForm"),
+    Icon = "fa-file-alt",
+    Subtitle = "",
+    Breadcrumb = ""
+}' />
 
-                        <div class="form-group">
-                            <label asp-for="Title" class="form-label">@Localizer.T("Common.TitleEnglish") <span class="required">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-heading"></i></span>
-                                <input asp-for="Title" class="form-control" required />
-                            </div>
-                            <span asp-validation-for="Title" class="invalid-feedback"></span>
-                        </div>
-
-                        <div class="form-group">
-                            <label asp-for="TitleAr" class="form-label">@Localizer.T("Common.ArabicTitle")</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-heading"></i></span>
-                                <input asp-for="TitleAr" class="form-control" dir="rtl" />
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label asp-for="Category" class="form-label">@Localizer.T("Common.Category")</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-tag"></i></span>
-                                <select asp-for="Category" class="form-control">
-                                    <option value="">@Localizer.T("Common.SelectCategory")</option>
-                                    <option value="Incident">@Localizer.T("Form.Incident")</option>
-                                    <option value="Consent">@Localizer.T("Form.Consent")</option>
-                                    <option value="Referral">@Localizer.T("Form.Referral")</option>
-                                    <option value="Complaint">@Localizer.T("Form.Complaint")</option>
-                                    <option value="Maintenance">@Localizer.T("Form.Maintenance")</option>
-                                    <option value="Assessment">@Localizer.T("Form.Assessment")</option>
-                                    <option value="Screening">@Localizer.T("Form.Screening")</option>
-                                    <option value="Other">@Localizer.T("Common.Other")</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> @Localizer.T("Form.CreateForm")</button>
-                        <a href="/ClinicAdmin/Forms" class="btn btn-secondary float-end">@Localizer.T("Common.Cancel")</a>
-                    </div>
-                </form>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-file-alt me-2"></i>@Localizer.T("Form.CreateForm")</h3>
             </div>
+            <form method="post" asp-action="Create">
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Title" class="form-label">@Localizer.T("Common.TitleEnglish") <span class="required">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-heading"></i></span>
+                            <input asp-for="Title" class="form-control" required />
+                        </div>
+                        <span asp-validation-for="Title" class="invalid-feedback"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="TitleAr" class="form-label">@Localizer.T("Common.ArabicTitle")</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-heading"></i></span>
+                            <input asp-for="TitleAr" class="form-control" dir="rtl" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Category" class="form-label">@Localizer.T("Common.Category")</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            <select asp-for="Category" class="form-control">
+                                <option value="">@Localizer.T("Common.SelectCategory")</option>
+                                <option value="Incident">@Localizer.T("Form.Incident")</option>
+                                <option value="Consent">@Localizer.T("Form.Consent")</option>
+                                <option value="Referral">@Localizer.T("Form.Referral")</option>
+                                <option value="Complaint">@Localizer.T("Form.Complaint")</option>
+                                <option value="Maintenance">@Localizer.T("Form.Maintenance")</option>
+                                <option value="Assessment">@Localizer.T("Form.Assessment")</option>
+                                <option value="Screening">@Localizer.T("Form.Screening")</option>
+                                <option value="Other">@Localizer.T("Common.Other")</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>@Localizer.T("Form.CreateForm")</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-times me-1"></i>@Localizer.T("Common.Cancel")</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>

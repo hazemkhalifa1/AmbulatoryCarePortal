@@ -164,7 +164,8 @@ public static class RolePermissionsSeeder
         Permissions.ViewDashboard, Permissions.GenerateReports,
         Permissions.ExportReports, Permissions.ViewAnalytics,
         Permissions.ViewSystemSettings,
-        Permissions.ManageSignatures
+        Permissions.ManageSignatures,
+        Permissions.ViewSignatures
     };
 
     private static string[] GetClinicViewerPermissions() => new[]

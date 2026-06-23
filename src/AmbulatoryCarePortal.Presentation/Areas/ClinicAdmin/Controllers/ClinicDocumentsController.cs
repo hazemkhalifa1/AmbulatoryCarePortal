@@ -13,29 +13,38 @@ namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 [Authorize(Policy = "Permission.documents.manage")]
 public class ClinicDocumentsController : Controller
 {
-    private readonly IClinicDocumentService _clinicDocumentService;
+    private readonly IClinicTemplateAssignmentService _assignmentService;
+    private readonly IDocumentGenerationService _generationService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ClinicDocumentsController> _logger;
     private readonly ITranslationService _localizer;
 
     public ClinicDocumentsController(
-        IClinicDocumentService clinicDocumentService,
+        IClinicTemplateAssignmentService assignmentService,
+        IDocumentGenerationService generationService,
         IUnitOfWork unitOfWork,
         ILogger<ClinicDocumentsController> logger,
         ITranslationService localizer)
     {
-        _clinicDocumentService = clinicDocumentService;
+        _assignmentService = assignmentService;
+        _generationService = generationService;
         _unitOfWork = unitOfWork;
         _logger = logger;
         _localizer = localizer;
     }
 
+    private int GetCurrentClinicId()
+    {
+        var claim = User.FindFirst("ClinicId");
+        if (claim != null && int.TryParse(claim.Value, out var id))
+            return id;
+        return 0;
+    }
+
     [HttpGet]
     public async Task<IActionResult> Index(string? searchTerm = null, string? statusFilter = null, string? standardFilter = null)
     {
-        var clinicId = User.FindFirst("ClinicId") != null
-            ? int.Parse(User.FindFirst("ClinicId")?.Value ?? "0")
-            : 0;
+        var clinicId = GetCurrentClinicId();
 
         var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(clinicId);
         string[]? standards = null;
@@ -45,169 +54,80 @@ public class ClinicDocumentsController : Controller
             standards = ClinicTypeStandards.GetStandards(clinic.ClinicType);
         }
 
-        var documents = await _clinicDocumentService.GetClinicDocumentsAsync(clinicId, searchTerm, statusFilter, standardFilter);
+        var assignments = await _assignmentService.GetAssignmentsByClinicAsync(clinicId, searchTerm, statusFilter);
+
+        if (!string.IsNullOrEmpty(standardFilter) && assignments.Any())
+        {
+            assignments = assignments.Where(a =>
+                a.StandardCode.StartsWith(standardFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
 
         ViewBag.SearchTerm = searchTerm;
         ViewBag.StatusFilter = statusFilter;
         ViewBag.StandardFilter = standardFilter;
         ViewBag.Standards = standards;
 
-        return View(documents);
+        return View(assignments);
     }
 
     [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
-        var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
+        var clinicId = GetCurrentClinicId();
 
-        var docDetail = await _clinicDocumentService.GetClinicDocumentDetailsAsync(id);
-        if (docDetail == null)
+        var assignment = await _assignmentService.GetAssignmentByIdAsync(id);
+        if (assignment == null)
             return NotFound();
 
-        var clinicDoc = await _unitOfWork.Repository<ClinicDocument>().GetByIdAsync(id);
-        if (clinicDoc == null || clinicDoc.ClinicId != clinicId)
+        if (assignment.ClinicId != clinicId)
             return Forbid();
 
-        return View(docDetail);
+        var variableValues = await _assignmentService.GetValuesForAssignmentAsync(id);
+        var generatedDocs = await _generationService.GetGeneratedDocumentsAsync(id);
+
+        ViewBag.VariableValues = variableValues;
+        ViewBag.GeneratedDocuments = generatedDocs;
+
+        return View(assignment);
     }
 
     [HttpGet]
     public async Task<IActionResult> Download(int id)
     {
-        var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
+        var clinicId = GetCurrentClinicId();
 
-        var clinicDoc = await _unitOfWork.Repository<ClinicDocument>().GetByIdAsync(id);
-        if (clinicDoc == null || clinicDoc.ClinicId != clinicId)
+        var assignment = await _assignmentService.GetAssignmentByIdAsync(id);
+        if (assignment == null || assignment.ClinicId != clinicId)
             return Forbid();
 
-        var result = await _clinicDocumentService.DownloadDocumentAsync(id);
-        if (result == null)
+        var fileBytes = await _generationService.PreviewDocxAsync(id);
+        if (fileBytes == null)
         {
             TempData["ErrorMessage"] = _localizer.T("Alert.Error.TemplateFileNotFound");
             return RedirectToAction(nameof(Index));
         }
 
-        return File(result.Value.FileContent,
+        var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(clinicId);
+        var clinicName = clinic?.Name ?? "Clinic";
+        var fileName = $"{clinicName}_{assignment.StandardCode}.docx";
+
+        return File(fileBytes,
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            result.Value.FileName);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UploadEvidence(int clinicDocumentId, IFormFile evidenceFile, string? notes)
-    {
-        var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        var clinicDoc = await _unitOfWork.Repository<ClinicDocument>().GetByIdAsync(clinicDocumentId);
-        if (clinicDoc == null || clinicDoc.ClinicId != clinicId)
-            return Forbid();
-
-        if (evidenceFile == null || evidenceFile.Length == 0)
-        {
-            TempData["ErrorMessage"] = _localizer.T("Alert.Error.NoFileSelected");
-            return RedirectToAction(nameof(Details), new { id = clinicDocumentId });
-        }
-
-        var fileName = Path.GetRandomFileName() + Path.GetExtension(evidenceFile.FileName);
-        var filePath = Path.Combine("wwwroot/uploads/document-evidence", fileName);
-
-        Directory.CreateDirectory(Path.GetDirectoryName(filePath) ?? "");
-
-        using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await evidenceFile.CopyToAsync(stream);
-        }
-
-        var uploaded = await _clinicDocumentService.UploadEvidenceAsync(
-            clinicDocumentId,
-            evidenceFile.FileName,
-            $"/uploads/document-evidence/{fileName}",
-            Path.GetExtension(evidenceFile.FileName),
-            userId ?? "",
-            notes
-        );
-
-        if (!uploaded)
-        {
-            TempData["ErrorMessage"] = _localizer.T("Alert.Error.EvidenceAttachFailed");
-            return RedirectToAction(nameof(Details), new { id = clinicDocumentId });
-        }
-
-        var auditLog = new AuditTrail
-        {
-            ActionType = AuditActionType.Upload,
-            TargetObjectId = clinicDocumentId,
-            TargetObjectType = nameof(ClinicDocumentAttachment),
-            Description = $"Uploaded evidence for clinic document Id: {clinicDocumentId}",
-            ClinicId = clinicId,
-            CreatedBy = userId,
-            ActionDate = DateTime.UtcNow,
-            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
-        };
-
-        await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
-        await _unitOfWork.SaveChangesAsync();
-
-        _logger.LogInformation("Evidence uploaded for clinic document {DocumentId} by {UserId}", clinicDocumentId, userId);
-        TempData["SuccessMessage"] = _localizer.T("Alert.Success.EvidenceUploaded");
-
-        return RedirectToAction(nameof(Details), new { id = clinicDocumentId });
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteAttachment(int attachmentId)
-    {
-        var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        var attachment = await _unitOfWork.Repository<ClinicDocumentAttachment>().GetByIdAsync(attachmentId);
-        if (attachment == null)
-            return NotFound();
-
-        var clinicDoc = await _unitOfWork.Repository<ClinicDocument>().GetByIdAsync(attachment.ClinicDocumentId);
-        if (clinicDoc == null || clinicDoc.ClinicId != clinicId)
-            return Forbid();
-
-        var deleted = await _clinicDocumentService.DeleteAttachmentAsync(attachmentId);
-        if (!deleted)
-        {
-            TempData["ErrorMessage"] = _localizer.T("Alert.Error.AttachmentDeleteFailed");
-            return RedirectToAction(nameof(Details), new { id = attachment.ClinicDocumentId });
-        }
-
-        var auditLog = new AuditTrail
-        {
-            ActionType = AuditActionType.Delete,
-            TargetObjectId = attachmentId,
-            TargetObjectType = nameof(ClinicDocumentAttachment),
-            Description = $"Deleted evidence attachment for clinic document Id: {attachment.ClinicDocumentId}",
-            ClinicId = clinicId,
-            CreatedBy = userId,
-            ActionDate = DateTime.UtcNow,
-            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
-        };
-
-        await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
-        await _unitOfWork.SaveChangesAsync();
-
-        TempData["SuccessMessage"] = _localizer.T("Alert.Success.AttachmentDeleted");
-        return RedirectToAction(nameof(Details), new { id = attachment.ClinicDocumentId });
+            fileName);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateStatus(int id, ClinicDocumentStatus status)
     {
-        var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
+        var clinicId = GetCurrentClinicId();
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        var clinicDoc = await _unitOfWork.Repository<ClinicDocument>().GetByIdAsync(id);
-        if (clinicDoc == null || clinicDoc.ClinicId != clinicId)
+        var assignment = await _assignmentService.GetAssignmentByIdAsync(id);
+        if (assignment == null || assignment.ClinicId != clinicId)
             return Forbid();
 
-        var updated = await _clinicDocumentService.UpdateStatusAsync(id, status);
+        var updated = await _assignmentService.UpdateAssignmentStatusAsync(id, status.ToString());
         if (!updated)
         {
             TempData["ErrorMessage"] = _localizer.T("Alert.Error.StatusUpdateFailed");
@@ -218,8 +138,8 @@ public class ClinicDocumentsController : Controller
         {
             ActionType = AuditActionType.Update,
             TargetObjectId = id,
-            TargetObjectType = nameof(ClinicDocument),
-            Description = $"Updated clinic document status to {status}",
+            TargetObjectType = nameof(ClinicTemplateAssignment),
+            Description = $"Updated assignment status to {status}",
             ClinicId = clinicId,
             CreatedBy = userId,
             ActionDate = DateTime.UtcNow,

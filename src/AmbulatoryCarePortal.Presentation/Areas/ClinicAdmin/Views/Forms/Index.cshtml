@@ -12,7 +12,7 @@
     Breadcrumb = ""
 }' />
 
-<div class="data-table-toolbar mb-4">
+<div class="table-toolbar mb-4">
     <div class="toolbar-left gap-2 w-100">
         <form method="get" class="d-flex gap-2 flex-grow-1" style="max-width: 400px;">
             <div class="search-box flex-grow-1">
@@ -36,17 +36,17 @@
         @foreach (var form in Model)
         {
             <div class="col-lg-4 col-md-6">
-                <div class="form-card h-100">
-                    <div class="form-card-header">
+                <div class="card card-primary h-100">
+                    <div class="card-header">
                         <h5 class="mb-0">@form.Title</h5>
                         @if (!string.IsNullOrEmpty(form.TitleAr))
                         {
                             <small class="text-muted" dir="rtl">@form.TitleAr</small>
                         }
                     </div>
-                    <div class="form-card-body">
+                    <div class="card-body">
                         <div class="mb-3">
-                            <span class="compliance-badge compliant me-1">v@(form.VersionNumber)</span>
+                            <span class="status-pill compliant me-1">v@(form.VersionNumber)</span>
                             @if (!string.IsNullOrEmpty(form.Category))
                             {
                                 <span class="status-pill needs-review">@form.Category</span>
@@ -65,7 +65,7 @@
                             <small class="text-muted">@Localizer.T("Form.Published"): @form.PublishedAt.Value.ToString("dd/MM/yyyy")</small>
                         }
                     </div>
-                    <div class="form-card-footer">
+                    <div class="card-footer">
                         <div class="d-flex gap-2 flex-wrap">
                             <a href="/ClinicAdmin/Forms/Versions/@form.Id" class="btn btn-sm btn-outline-info">
                                 <i class="fas fa-history"></i> @Localizer.T("Common.Versions")
@@ -96,8 +96,8 @@
 }
 else
 {
-    <div class="form-card">
-        <div class="form-card-body">
+    <div class="card card-primary">
+        <div class="card-body">
             <partial name="_EmptyState" model='new {
                 Icon = "fa-file-alt",
                 Title = Localizer.T("Empty.NoForms"),

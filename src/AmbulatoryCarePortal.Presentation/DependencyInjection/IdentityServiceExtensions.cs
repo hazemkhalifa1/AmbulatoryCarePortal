@@ -20,8 +20,8 @@ public static class IdentityServiceExtensions
             options.Lockout.MaxFailedAccessAttempts = 5;
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 
-            options.SignIn.RequireConfirmedEmail = true;
-            options.SignIn.RequireConfirmedAccount = true;
+            options.SignIn.RequireConfirmedEmail = false;
+            options.SignIn.RequireConfirmedAccount = false;
             options.User.RequireUniqueEmail = true;
         })
         .AddEntityFrameworkStores<AppDbContext>()

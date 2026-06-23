@@ -1,148 +1,184 @@
-@model ClinicDocumentDetailDto
-
+@model ClinicTemplateAssignmentDto
 @{
     ViewData["Title"] = $"{Model.StandardCode} - {Model.TitleEn}";
-    var statusBadge = Model.DocumentStatus switch
+    var variableValues = (List<ClinicTemplateValueDto>?)ViewBag.VariableValues ?? new();
+    var activeTab = Context.Request.Query["tab"].FirstOrDefault() ?? "info";
+
+    var statusBadge = Model.AssignmentStatus switch
     {
-        ClinicDocumentStatus.Complete => "success",
-        ClinicDocumentStatus.NeedsReview => "warning",
-        ClinicDocumentStatus.MissingAttachment => "danger",
-        ClinicDocumentStatus.Expired => "secondary",
-        ClinicDocumentStatus.Draft => "info",
+        "Complete" => "success",
+        "NeedsReview" => "warning",
+        "MissingAttachment" => "danger",
+        "Expired" => "secondary",
+        "Draft" => "info",
         _ => "secondary"
-    };
-    var statusLabel = Model.DocumentStatus switch
-    {
-        ClinicDocumentStatus.Complete => "Complete",
-        ClinicDocumentStatus.NeedsReview => "Needs Review",
-        ClinicDocumentStatus.MissingAttachment => "Missing Attachment",
-        ClinicDocumentStatus.Expired => "Expired",
-        ClinicDocumentStatus.Draft => "Draft",
-        _ => Model.DocumentStatus.ToString()
     };
     var canEdit = User.IsInRole("ClinicAdmin");
 }
 
 <div class="fade-in">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-file me-2"></i>@Localizer.T("Doc.DocumentInformation")</h3>
-                    <div class="card-tools">
-                        <a asp-action="Download" asp-route-id="@Model.Id" class="btn btn-success btn-sm" aria-label="@Localizer.T("Doc.DownloadTitle")">
-                            <i class="fas fa-download"></i> @Localizer.T("Button.Download")
-                        </a>
+    <div class="template-hero mb-4">
+        <div class="template-hero-content">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <h1 class="template-hero-title mb-0"><i class="fas fa-file-alt me-2"></i>@Model.StandardCode - @Model.TitleEn</h1>
+                        <span class="status-pill @statusBadge">@Model.AssignmentStatus</span>
                     </div>
+                    <p class="template-hero-subtitle mb-0">
+                        @variableValues.Count @Localizer.T("Template.Variables")
+                    </p>
                 </div>
-                <div class="card-body">
-                    <div class="detail-row">
-                        <span class="detail-label">@Localizer.T("Doc.StandardCode")</span>
-                        <span class="detail-value"><span class="badge badge-info">@Model.StandardCode</span></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">@Localizer.T("Doc.TitleEn")</span>
-                        <span class="detail-value">@Model.TitleEn</span>
-                    </div>
-                    @if (!string.IsNullOrEmpty(Model.TitleAr))
-                    {
-                        <div class="detail-row">
-                            <span class="detail-label">@Localizer.T("Doc.TitleAr")</span>
-                            <span class="detail-value" dir="rtl">@Model.TitleAr</span>
-                        </div>
-                    }
-                    <div class="detail-row">
-                        <span class="detail-label">@Localizer.T("Doc.DepartmentCategory")</span>
-                        <span class="detail-value">
-                            @if (!string.IsNullOrEmpty(Model.DepartmentCategory))
-                            {
-                                @Model.DepartmentCategory
-                            }
-                            else
-                            {
-                                <span class="text-muted">&mdash;</span>
-                            }
-                        </span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">@Localizer.T("Common.Status")</span>
-                        <span class="detail-value">
-                            <span class="badge badge-@statusBadge fs-6">@statusLabel</span>
-                        </span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">@Localizer.T("Doc.ExpiryDate")</span>
-                        <span class="detail-value">
-                            @if (Model.ExpiryDate.HasValue)
-                            {
-                                <span>@Model.ExpiryDate.Value.ToString("yyyy-MM-dd")</span>
-                            }
-                            else
-                            {
-                                <span class="text-muted">&mdash;</span>
-                            }
-                        </span>
-                    </div>
-                    @if (!string.IsNullOrEmpty(Model.Notes))
-                    {
-                        <div class="detail-row">
-                            <span class="detail-label">@Localizer.T("Doc.Notes")</span>
-                            <span class="detail-value">@Model.Notes</span>
-                        </div>
-                    }
+                <div class="d-flex gap-2">
+                    <a asp-action="Download" asp-route-id="@Model.Id" class="btn btn-success">
+                        <i class="fas fa-download me-1"></i>@Localizer.T("Button.Download")
+                    </a>
+                    <a asp-action="Index" class="btn btn-light">
+                        <i class="fas fa-arrow-left me-1"></i>@Localizer.T("Common.Back")
+                    </a>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="card card-info">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-paperclip me-2"></i>@Localizer.T("Doc.Attachments")</h3>
-                    <div class="card-tools">
-                        <span class="badge badge-info">@Model.Attachments.Count @Localizer.T("Doc.AttachmentCount")</span>
+    <ul class="nav nav-tabs detail-tabs mb-4" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activeTab == "info" ? "active" : "")" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                <i class="fas fa-info-circle me-1"></i>@Localizer.T("Common.Information")
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activeTab == "variables" ? "active" : "")" id="variables-tab" data-bs-toggle="tab" data-bs-target="#variables" type="button" role="tab">
+                <i class="fas fa-tags me-1"></i>@Localizer.T("Template.Variables") <span class="badge bg-secondary ms-1">@variableValues.Count</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade @(activeTab == "info" ? "show active" : "")" id="info" role="tabpanel">
+            <div class="row">
+                <div class="col-lg-8 mb-4">
+                    <div class="card detail-card h-100">
+                        <div class="card-header"><h3 class="card-title"><i class="fas fa-info-circle me-2"></i>@Localizer.T("Doc.DocumentInformation")</h3></div>
+                        <div class="card-body">
+                            <div class="detail-list">
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Doc.StandardCode")</span>
+                                    <span class="detail-value"><span class="badge badge-info">@Model.StandardCode</span></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Doc.TitleEn")</span>
+                                    <span class="detail-value">@Model.TitleEn</span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.TitleAr))
+                                {
+                                    <div class="detail-item">
+                                        <span class="detail-label">@Localizer.T("Doc.TitleAr")</span>
+                                        <span class="detail-value" dir="rtl">@Model.TitleAr</span>
+                                    </div>
+                                }
+                                <div class="detail-item">
+                                    <span class="detail-label">@Localizer.T("Doc.ExpiryDate")</span>
+                                    <span class="detail-value">@(Model.ExpiryDate?.ToString("yyyy-MM-dd") ?? "&mdash;")</span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.Notes))
+                                {
+                                    <div class="detail-item">
+                                        <span class="detail-label">@Localizer.T("Doc.Notes")</span>
+                                        <span class="detail-value">@Model.Notes</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="card action-card mb-4">
+                        <div class="card-header"><h3 class="card-title"><i class="fas fa-check-circle me-2"></i>@Localizer.T("Common.Status")</h3></div>
+                        <div class="card-body text-center">
+                            <div class="py-2">
+                                <i class="fas @(Model.AssignmentStatus == "Complete" ? "fa-check-circle text-success" : Model.AssignmentStatus == "Expired" ? "fa-calendar-times text-danger" : "fa-hourglass-half text-warning") fa-4x mb-2"></i>
+                                <h4 class="mb-1">@Model.AssignmentStatus</h4>
+                                <p class="text-muted small">@Localizer.T("Doc.DocumentStatus")</p>
+                            </div>
+                            @if (canEdit && Model.AssignmentStatus != "Complete")
+                            {
+                                <form method="post" asp-action="UpdateStatus" class="mt-2">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" name="status" value="Complete" class="btn btn-success btn-sm"
+                                                onclick="return confirm('@Localizer.T("Doc.ConfirmMarkComplete")')">
+                                            <i class="fas fa-check me-1"></i> @Localizer.T("Doc.MarkComplete")
+                                        </button>
+                                        <button type="submit" name="status" value="NeedsReview" class="btn btn-warning btn-sm"
+                                                onclick="return confirm('@Localizer.T("Doc.ConfirmMarkNeedsReview")')">
+                                            <i class="fas fa-redo me-1"></i> @Localizer.T("Doc.MarkNeedsReview")
+                                        </button>
+                                        <button type="submit" name="status" value="MissingAttachment" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('@Localizer.T("Doc.ConfirmMarkMissingAttachment")')">
+                                            <i class="fas fa-paperclip me-1"></i> @Localizer.T("Doc.MarkMissingAttachment")
+                                        </button>
+                                    </div>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                    <div class="card action-card">
+                        <div class="card-header"><h3 class="card-title"><i class="fas fa-bolt me-2"></i>@Localizer.T("Dashboard.QuickActions")</h3></div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a asp-action="Download" asp-route-id="@Model.Id" class="btn btn-success">
+                                    <i class="fas fa-download me-1"></i> @Localizer.T("Doc.DownloadDocument")
+                                </a>
+                                <a asp-action="Index" class="btn btn-light">
+                                    <i class="fas fa-arrow-left me-1"></i> @Localizer.T("Doc.BackToList")
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade @(activeTab == "variables" ? "show active" : "")" id="variables" role="tabpanel">
+            <div class="card detail-card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0"><i class="fas fa-tags me-2"></i>@Localizer.T("Template.Variables")</h3>
+                </div>
                 <div class="card-body">
-                    @if (Model.Attachments.Any())
+                    @if (variableValues.Any())
                     {
                         <div class="table-container">
-                            <table class="table table-hover" role="table" aria-label="@Localizer.T("Doc.Attachments")">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th scope="col">@Localizer.T("Doc.FileName")</th>
-                                        <th scope="col">@Localizer.T("Doc.FileType")</th>
-                                        <th scope="col">@Localizer.T("Doc.UploadedAt")</th>
-                                        <th scope="col">@Localizer.T("Doc.Notes")</th>
-                                        <th scope="col" class="text-center">@Localizer.T("Common.Actions")</th>
+                                        <th>#</th>
+                                        <th>@Localizer.T("Template.VariableName")</th>
+                                        <th>@Localizer.T("Template.Value")</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var attachment in Model.Attachments)
+                                    @foreach (var v in variableValues.Select((x, i) => new { x, i }))
                                     {
                                         <tr>
-                                            <td>@attachment.FileName</td>
-                                            <td><span class="badge badge-secondary">@attachment.FileType</span></td>
-                                            <td>@attachment.UploadedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                            <td>@(v.i + 1)</td>
+                                            <td>@v.x.DisplayName</td>
                                             <td>
-                                                @if (!string.IsNullOrEmpty(attachment.Notes))
+                                                @if (v.x.IsImage)
                                                 {
-                                                    @attachment.Notes
+                                                    if (!string.IsNullOrEmpty(v.x.ImagePath))
+                                                    {
+                                                        <img src="@v.x.ImagePath" alt="@v.x.DisplayName" style="max-width:150px;max-height:150px;" class="img-thumbnail" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">&mdash;</span>
+                                                    }
                                                 }
                                                 else
                                                 {
-                                                    <span class="text-muted">&mdash;</span>
-                                                }
-                                            </td>
-                                            <td class="text-center">
-                                                @if (canEdit)
-                                                {
-                                                    <button type="button" class="btn btn-sm btn-danger" title="@Localizer.T("Common.Delete")" aria-label="@Localizer.T("Common.Delete")"
-                                                            data-bs-toggle="modal" data-bs-target="#deleteAttachmentModal"
-                                                            data-attachment-id="@attachment.Id" data-attachment-name="@attachment.FileName">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge badge-success"><i class="fas fa-check"></i> @Localizer.T("Doc.Uploaded")</span>
+                                                    <span>@(!string.IsNullOrEmpty(v.x.Value) ? v.x.Value : "&mdash;")</span>
                                                 }
                                             </td>
                                         </tr>
@@ -153,129 +189,13 @@
                     }
                     else
                     {
-                        <div class="empty-state">
-                            <i class="fas fa-paperclip empty-icon"></i>
-                            <h4>@Localizer.T("Doc.NoAttachments")</h4>
-                            <p>@Localizer.T("Empty.NoAttachments")</p>
+                        <div class="text-center py-4">
+                            <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">@Localizer.T("Template.NoVariables")</h5>
                         </div>
                     }
-
-                    @if (canEdit)
-                    {
-                        <hr />
-                        <h5 class="mb-3"><i class="fas fa-upload me-2"></i>@Localizer.T("Doc.UploadAttachment")</h5>
-                        <form method="post" asp-action="UploadEvidence" enctype="multipart/form-data" role="form" aria-label="@Localizer.T("Doc.UploadAttachmentForm")">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="clinicDocumentId" value="@Model.Id" />
-                            <div class="row g-3">
-                                <div class="col-md-5">
-                                    <input type="file" name="evidenceFile" class="form-control" required aria-required="true" aria-label="@Localizer.T("Doc.AttachmentFile")" />
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" name="notes" class="form-control" placeholder="@Localizer.T("Doc.NotesPlaceholder")" aria-label="@Localizer.T("Doc.NotesPlaceholder")" />
-                                </div>
-                                <div class="col-md-3">
-                                    <button type="submit" class="btn btn-success w-100" aria-label="@Localizer.T("Doc.UploadAttachmentAction")">
-                                        <i class="fas fa-upload me-1"></i> @Localizer.T("Button.Upload")
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card card-@(Model.DocumentStatus == ClinicDocumentStatus.Complete ? "success" : "warning")">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-check-circle me-2"></i>@Localizer.T("Common.Status")</h3>
-                </div>
-                <div class="card-body text-center">
-                    <div class="py-3">
-                        <i class="fas @(Model.DocumentStatus == ClinicDocumentStatus.Complete ? "fa-check-circle text-success" : Model.DocumentStatus == ClinicDocumentStatus.Expired ? "fa-calendar-times text-danger" : "fa-hourglass-half text-warning") fa-4x mb-3"></i>
-                        <h5 class="@(Model.DocumentStatus == ClinicDocumentStatus.Complete ? "text-success" : Model.DocumentStatus == ClinicDocumentStatus.Expired ? "text-danger" : "text-warning")">@statusLabel</h5>
-                        <p class="text-muted">@Localizer.T("Doc.DocumentStatus")</p>
-                    </div>
-
-                    @if (canEdit && Model.DocumentStatus != ClinicDocumentStatus.Complete)
-                    {
-                        <form method="post" asp-action="UpdateStatus" aria-label="@Localizer.T("Doc.UpdateStatusForm")" class="mt-3">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="id" value="@Model.Id" />
-                            <div class="d-grid gap-2">
-                                <button type="submit" name="status" value="Complete" class="btn btn-success"
-                                        onclick="return confirm('@Localizer.T("Doc.ConfirmMarkComplete")')">
-                                    <i class="fas fa-check me-1"></i> @Localizer.T("Doc.MarkComplete")
-                                </button>
-                                <button type="submit" name="status" value="NeedsReview" class="btn btn-warning"
-                                        onclick="return confirm('@Localizer.T("Doc.ConfirmMarkNeedsReview")')">
-                                    <i class="fas fa-redo me-1"></i> @Localizer.T("Doc.MarkNeedsReview")
-                                </button>
-                                <button type="submit" name="status" value="MissingAttachment" class="btn btn-danger"
-                                        onclick="return confirm('@Localizer.T("Doc.ConfirmMarkMissingAttachment")')">
-                                    <i class="fas fa-paperclip me-1"></i> @Localizer.T("Doc.MarkMissingAttachment")
-                                </button>
-                            </div>
-                        </form>
-                    }
-                </div>
-            </div>
-
-            <div class="card card-secondary">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-cog me-2"></i>@Localizer.T("Common.Actions")</h3>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a asp-action="Download" asp-route-id="@Model.Id" class="btn btn-success" aria-label="@Localizer.T("Doc.DownloadFilled")">
-                            <i class="fas fa-download me-1"></i> @Localizer.T("Doc.DownloadDocument")
-                        </a>
-                        <a asp-action="Index" class="btn btn-secondary" aria-label="@Localizer.T("Doc.BackToDocumentList")">
-                            <i class="fas fa-arrow-left me-1"></i> @Localizer.T("Doc.BackToList")
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Delete Attachment Modal -->
-<div class="modal fade" id="deleteAttachmentModal" tabindex="-1" role="dialog" aria-labelledby="deleteAttachmentModalTitle" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteAttachmentModalTitle"><i class="fas fa-exclamation-triangle me-2"></i>@Localizer.T("Doc.ConfirmDelete")</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@Localizer.T("Common.Close")"></button>
-            </div>
-            <form method="post" asp-action="DeleteAttachment" id="deleteAttachmentForm">
-                <input type="hidden" name="attachmentId" id="deleteAttachmentId" value="" />
-                <div class="modal-body">
-                    <p>@Localizer.T("Doc.DeleteConfirmMessage")</p>
-                    <p class="fw-bold text-danger" id="deleteAttachmentName"></p>
-                    <p class="text-muted small">@Localizer.T("Doc.DeleteWarning")</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Common.Cancel")</button>
-                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>@Localizer.T("Common.Delete")</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var deleteModal = document.getElementById('deleteAttachmentModal');
-            if (deleteModal) {
-                deleteModal.addEventListener('show.bs.modal', function (event) {
-                    var button = event.relatedTarget;
-                    document.getElementById('deleteAttachmentId').value = button.getAttribute('data-attachment-id');
-                    document.getElementById('deleteAttachmentName').textContent = button.getAttribute('data-attachment-name');
-                });
-            }
-        });
-    </script>
-}

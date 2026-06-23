@@ -12,8 +12,8 @@
 
 <div class="row g-4">
     <div class="col-lg-8">
-        <div class="form-card">
-            <div class="form-card-header">
+        <div class="card card-primary">
+            <div class="card-header">
                 <h3><i class="fas fa-info-circle me-2"></i>@Localizer.T("Department.Information")</h3>
                 @if (User.IsInRole("ClinicAdmin"))
                 {
@@ -24,7 +24,7 @@
                     </div>
                 }
             </div>
-            <div class="form-card-body">
+            <div class="card-body">
                 <div class="detail-row">
                     <span class="detail-label">@Localizer.T("Common.Name")</span>
                     <span class="detail-value">@Model.NameEn</span>
@@ -92,11 +92,11 @@
             </div>
         </div>
 
-        <div class="form-card mt-3">
-            <div class="form-card-header">
+        <div class="card card-primary mt-3">
+            <div class="card-header">
                 <h3><i class="fas fa-cog me-2"></i>@Localizer.T("Common.Actions")</h3>
             </div>
-            <div class="form-card-body">
+            <div class="card-body">
                 <div class="d-grid gap-2">
                     @if (User.IsInRole("ClinicAdmin"))
                     {

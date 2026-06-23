@@ -4,23 +4,19 @@
     ViewData["Title"] = @Localizer.T("Page.CompareKPIs");
 }
 
-<div class="row fade-in">
-    <div class="col-sm-6">
-        <h3><i class="fas fa-arrows-alt-h text-warning me-2"></i>@Localizer.T("Page.CompareKPIs")</h3>
-    </div>
-    <div class="col-sm-6 text-end">
-        <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i>@Localizer.T("HR.BackToList")
-        </a>
-    </div>
-</div>
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Page.CompareKPIs"),
+    Icon = "fa-arrows-alt-h",
+    Subtitle = "",
+    Breadcrumb = ""
+}' />
 
-<div class="card card-warning">
-    <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-chart-simple"></i> @Localizer.T("Page.CompareKPIs")</h3>
-        <div class="card-tools">
-            <span class="badge badge-success me-1"><i class="fas fa-check-circle"></i> @Localizer.T("KPI.OnTarget")</span>
-            <span class="badge badge-danger"><i class="fas fa-exclamation-circle"></i> @Localizer.T("KPI.BelowTarget")</span>
+<div class="card card-primary">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title mb-0"><i class="fas fa-chart-simple me-2"></i>@Localizer.T("Page.CompareKPIs")</h3>
+        <div>
+            <span class="status-pill complete me-1"><i class="fas fa-check-circle me-1"></i>@Localizer.T("KPI.OnTarget")</span>
+            <span class="status-pill inactive"><i class="fas fa-exclamation-circle me-1"></i>@Localizer.T("KPI.BelowTarget")</span>
         </div>
     </div>
     <div class="card-body p-0">
@@ -48,7 +44,7 @@
                             var isOnTarget = item.Status == "On Target";
                             <tr>
                                 <td class="text-center">
-                                    <span class="badge badge-secondary">@rank</span>
+                                    <span class="badge bg-secondary">@rank</span>
                                 </td>
                                 <td>
                                     <div class="fw-semibold">@item.KPIName</div>
@@ -77,13 +73,13 @@
                                 <td class="text-center">
                                     @if (isOnTarget)
                                     {
-                                        <span class="badge badge-success fs-6 px-3 py-2">
+                                        <span class="status-pill complete fs-6">
                                             <i class="fas fa-check-circle me-1"></i>@Localizer.T("KPI.OnTarget")
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="badge badge-danger fs-6 px-3 py-2">
+                                        <span class="status-pill inactive fs-6">
                                             <i class="fas fa-exclamation-circle me-1"></i>@Localizer.T("KPI.BelowTarget")
                                         </span>
                                     }
@@ -95,13 +91,14 @@
                     else
                     {
                         <tr>
-                            <td colspan="6">
-                                <div class="empty-state">
-                                    <i class="fas fa-chart-simple empty-icon"></i>
-                                    <h4>@Localizer.T("KPI.NoKPIsMatch")</h4>
-                                    <p>@Localizer.T("KPI.NoKPIsMatch")</p>
-                                    <a asp-action="Index" class="btn btn-primary">@Localizer.T("Common.View")</a>
-                                </div>
+                            <td colspan="6" class="text-center py-4">
+                                <partial name="_EmptyState" model='new {
+                                    Icon = "fa-chart-simple",
+                                    Title = Localizer.T("KPI.NoKPIsMatch"),
+                                    Description = Localizer.T("KPI.NoKPIsMatch"),
+                                    ActionLink = Url.Action("Index"),
+                                    ActionText = Localizer.T("Common.View")
+                                }' />
                             </td>
                         </tr>
                     }

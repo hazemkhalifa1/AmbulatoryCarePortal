@@ -249,4 +249,3 @@ D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Presentation\obj\De
 D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Presentation\obj\Debug\net8.0\AmbulatoryCarePortal.Presentation.pdb
 D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Presentation\obj\Debug\net8.0\AmbulatoryCarePortal.Presentation.genruntimeconfig.cache
 D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Presentation\obj\Debug\net8.0\ref\AmbulatoryCarePortal.Presentation.dll
-D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Presentation\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
