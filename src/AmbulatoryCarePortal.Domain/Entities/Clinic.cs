@@ -30,4 +30,5 @@ public class Clinic : BaseEntity
     public ICollection<ClinicTemplateAssignment> ClinicTemplateAssignments { get; set; } = new List<ClinicTemplateAssignment>();
     public ICollection<GeneratedDocument> GeneratedDocuments { get; set; } = new List<GeneratedDocument>();
     public ICollection<ComplianceScoreSnapshot> ComplianceScoreSnapshots { get; set; } = new List<ComplianceScoreSnapshot>();
+    public ICollection<ClinicSignature> ClinicSignatures { get; set; } = new List<ClinicSignature>();
 }

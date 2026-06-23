@@ -19,4 +19,5 @@ public class DocumentTemplate : BaseEntity
     public ICollection<DocumentTemplateVersion> Versions { get; set; } = new List<DocumentTemplateVersion>();
     public ICollection<ClinicTemplateAssignment> ClinicAssignments { get; set; } = new List<ClinicTemplateAssignment>();
     public ICollection<GeneratedDocument> GeneratedDocuments { get; set; } = new List<GeneratedDocument>();
+    public ICollection<TemplateSigner> TemplateSigners { get; set; } = new List<TemplateSigner>();
 }

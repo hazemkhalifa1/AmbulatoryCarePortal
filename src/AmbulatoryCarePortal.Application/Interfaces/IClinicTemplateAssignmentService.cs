@@ -15,4 +15,8 @@ public interface IClinicTemplateAssignmentService
     Task<List<ClinicTemplateValueDto>> GetValuesForAssignmentAsync(int assignmentId);
     Task<bool> UpsertValuesAsync(int assignmentId, int clinicId, List<UpsertClinicTemplateValueDto> values, string userId);
     Task<bool> UploadVariableImageAsync(int assignmentId, int variableId, int clinicId, string fileName, string filePath, string userId);
+    Task<List<ClinicAssignmentDetailDto>> GetClinicAssignmentsWithDetailsAsync(int clinicId);
+    Task<bool> UpsertSuperAdminValuesAsync(int assignmentId, List<UpsertClinicTemplateValueDto> values, string userId);
+    Task<List<GlobalTemplateValueDto>> GetGlobalTemplateValuesForClinicAsync(int clinicId);
+    Task<bool> SaveGlobalTemplateValuesAsync(int clinicId, List<UpsertGlobalTemplateValueDto> values, string userId);
 }

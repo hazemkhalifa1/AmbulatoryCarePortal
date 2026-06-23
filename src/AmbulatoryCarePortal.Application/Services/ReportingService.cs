@@ -14,11 +14,6 @@ public class ReportingService : IReportingService
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ReportingService> _logger;
 
-    static ReportingService()
-    {
-        QuestPDF.Settings.License = LicenseType.Community;
-    }
-
     public ReportingService(IUnitOfWork unitOfWork, ILogger<ReportingService> logger)
     {
         _unitOfWork = unitOfWork;

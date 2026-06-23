@@ -10,6 +10,7 @@ using AmbulatoryCarePortal.Infrastructure.Data.Seed;
 using AmbulatoryCarePortal.Infrastructure.DependencyInjection;
 using AmbulatoryCarePortal.Presentation.DependencyInjection;
 using AmbulatoryCarePortal.Presentation.Middleware;
+using QuestPDF.Infrastructure;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -54,6 +55,8 @@ try
 
     builder.Services.AddRazorPages();
     builder.Services.AddControllersWithViews();
+
+    QuestPDF.Settings.License = LicenseType.Community;
 
     var app = builder.Build();
 

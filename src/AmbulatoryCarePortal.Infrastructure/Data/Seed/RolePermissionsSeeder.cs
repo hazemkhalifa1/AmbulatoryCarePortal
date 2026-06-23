@@ -70,6 +70,10 @@ public static class RolePermissionsSeeder
         public const string ViewSystemSettings = "system.settings.view";
         public const string ManageEmailSettings = "system.email.manage";
         public const string BackupSystem = "system.backup";
+
+        // Signature Management
+        public const string ManageSignatures = "signatures.manage";
+        public const string ViewSignatures = "signatures.view";
     }
 
     public static async Task SeedRolesWithPermissionsAsync(RoleManager<IdentityRole> roleManager)
@@ -135,7 +139,8 @@ public static class RolePermissionsSeeder
         Permissions.ViewDashboard, Permissions.GenerateReports,
         Permissions.ExportReports, Permissions.ViewAnalytics,
         Permissions.ConfigureSystem, Permissions.ViewSystemSettings,
-        Permissions.ManageEmailSettings, Permissions.BackupSystem
+        Permissions.ManageEmailSettings, Permissions.BackupSystem,
+        Permissions.ManageSignatures, Permissions.ViewSignatures
     };
 
     private static string[] GetClinicAdminPermissions() => new[]
@@ -158,7 +163,8 @@ public static class RolePermissionsSeeder
         Permissions.ManageNotifications, Permissions.SendNotifications,
         Permissions.ViewDashboard, Permissions.GenerateReports,
         Permissions.ExportReports, Permissions.ViewAnalytics,
-        Permissions.ViewSystemSettings
+        Permissions.ViewSystemSettings,
+        Permissions.ManageSignatures
     };
 
     private static string[] GetClinicViewerPermissions() => new[]
@@ -172,7 +178,8 @@ public static class RolePermissionsSeeder
         Permissions.ViewStaff,
         Permissions.ViewDashboard,
         Permissions.ViewAnalytics,
-        Permissions.ViewAuditLog
+        Permissions.ViewAuditLog,
+        Permissions.ViewSignatures
     };
 }
 

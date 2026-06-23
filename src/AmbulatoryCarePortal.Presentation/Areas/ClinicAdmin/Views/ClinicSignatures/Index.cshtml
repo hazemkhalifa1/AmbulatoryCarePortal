@@ -1,0 +1,415 @@
+@model List<SignerViewModel>
+@{
+    ViewData["Title"] = Localizer.T("Page.Signatures");
+    var canManage = User.HasClaim("Permission", "signatures.manage");
+}
+
+<partial name="_PageHeader" model='new {
+    Title = Localizer.T("Page.Signatures"),
+    Icon = "fa-signature",
+    Subtitle = Localizer.T("Page.Signatures.Subtitle"),
+    Breadcrumb = ""
+}' />
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-users me-2"></i>@Localizer.T("Signatures.RequiredSigners")</h3>
+            </div>
+            <div class="card-body">
+                @if (Model.Any())
+                {
+                    <div class="table-container">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@Localizer.T("Signatures.SignerCode")</th>
+                                    <th>@Localizer.T("Signatures.SignerDisplayName")</th>
+                                    <th>@Localizer.T("Signatures.SignerTitle")</th>
+                                    <th>@Localizer.T("Signatures.CurrentSignature")</th>
+                                    <th>@Localizer.T("Signatures.SignerInformation")</th>
+                                    @if (canManage)
+                                    {
+                                        <th class="text-center">@Localizer.T("Common.Actions")</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var signer in Model)
+                                {
+                                    <tr>
+                                        <td><span class="badge badge-info">@signer.SignerCode</span></td>
+                                        <td class="fw-semibold">@signer.SignerDisplayName</td>
+                                        <td>@signer.SignerTitle</td>
+                                        <td>
+                                            @if (signer.HasSignature)
+                                            {
+                                                <img src="@signer.SignatureImagePath" alt="@signer.SignerDisplayName" class="signature-preview" />
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted"><i class="fas fa-times-circle text-danger me-1"></i>@Localizer.T("Signatures.NoSignature")</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (signer.HasSignature)
+                                            {
+                                                <div class="small">
+                                                    <div><strong>@Localizer.T("Signatures.Name"):</strong> @signer.CurrentSignerName</div>
+                                                    <div><strong>@Localizer.T("Signatures.Title"):</strong> @signer.CurrentSignerTitle</div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">@Localizer.T("Signatures.NotConfigured")</span>
+                                            }
+                                        </td>
+                                        @if (canManage)
+                                        {
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-primary" onclick="openDrawModal('@signer.SignerCode', '@signer.SignerDisplayName', '@signer.SignerTitle')">
+                                                        <i class="fas fa-pen me-1"></i>@Localizer.T("Signatures.Draw")
+                                                    </button>
+                                                    <button type="button" class="btn btn-info" onclick="openUploadModal('@signer.SignerCode', '@signer.SignerDisplayName', '@signer.SignerTitle')">
+                                                        <i class="fas fa-upload me-1"></i>@Localizer.T("Signatures.Upload")
+                                                    </button>
+                                                    @if (signer.HasSignature)
+                                                    {
+                                                        <button type="button" class="btn btn-danger" onclick="deleteSignature('@signer.SignerCode')">
+                                                            <i class="fas fa-trash me-1"></i>@Localizer.T("Common.Delete")
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <partial name="_EmptyState" model='new {
+                        Icon = "fa-signature",
+                        Title = Localizer.T("Signatures.NoSigners"),
+                        Message = Localizer.T("Signatures.NoSignersHint"),
+                        ButtonText = "",
+                        ButtonUrl = ""
+                    }' />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (canManage)
+{
+    <!-- Draw Signature Modal -->
+    <div class="modal fade" id="drawSignatureModal" tabindex="-1" aria-labelledby="drawSignatureModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="drawSignatureModalLabel"><i class="fas fa-pen me-2"></i>@Localizer.T("Signatures.DrawSignature")</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="drawSignatureForm" method="post" asp-action="SaveSignature">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="signerCode" id="drawSignerCode" />
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer.T("Signatures.SignerName")</label>
+                            <input type="text" name="signerName" id="drawSignerName" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer.T("Signatures.SignerTitle")</label>
+                            <input type="text" name="signerTitle" id="drawSignerTitle" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer.T("Signatures.DrawArea")</label>
+                            <div class="signature-pad-wrapper">
+                                <canvas id="signaturePad" class="signature-canvas" width="600" height="200"></canvas>
+                            </div>
+                            <div class="mt-2">
+                                <button type="button" class="btn btn-sm btn-warning" id="clearSignature">
+                                    <i class="fas fa-eraser me-1"></i>@Localizer.T("Signatures.Clear")
+                                </button>
+                            </div>
+                            <input type="hidden" name="signatureData" id="signatureData" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Common.Cancel")</button>
+                        <button type="submit" class="btn btn-primary" id="saveSignatureBtn">
+                            <i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Signature Modal -->
+    <div class="modal fade" id="uploadSignatureModal" tabindex="-1" aria-labelledby="uploadSignatureModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadSignatureModalLabel"><i class="fas fa-upload me-2"></i>@Localizer.T("Signatures.UploadSignature")</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="uploadSignatureForm" method="post" asp-action="UploadSignature" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="signerCode" id="uploadSignerCode" />
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer.T("Signatures.SignerName")</label>
+                            <input type="text" name="signerName" id="uploadSignerName" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer.T("Signatures.SignerTitle")</label>
+                            <input type="text" name="signerTitle" id="uploadSignerTitle" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer.T("Signatures.UploadFile")</label>
+                            <div class="upload-dropzone" id="signatureDropzone">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-2"></i>
+                                <p class="mb-1">@Localizer.T("Signatures.DragDropHint")</p>
+                                <p class="small text-muted">PNG, JPG (Max 2 MB)</p>
+                                <input type="file" name="signatureFile" id="signatureFileInput" class="form-control" accept="image/png,image/jpeg,image/jpg" required style="display:none" />
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('signatureFileInput').click()">
+                                    <i class="fas fa-folder-open me-1"></i>@Localizer.T("Signatures.BrowseFiles")
+                                </button>
+                            </div>
+                            <div id="uploadPreview" class="mt-2" style="display:none">
+                                <img id="uploadPreviewImage" class="img-thumbnail" style="max-width:300px;max-height:100px;" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer.T("Common.Cancel")</button>
+                        <button type="submit" class="btn btn-primary" id="uploadSignatureBtn">
+                            <i class="fas fa-upload me-1"></i>@Localizer.T("Signatures.Upload")
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Styles {
+    <style>
+        .signature-pad-wrapper {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            background: #fff;
+            padding: 4px;
+        }
+        .signature-canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            cursor: crosshair;
+            touch-action: none;
+        }
+        .signature-preview {
+            max-width: 150px;
+            max-height: 50px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 4px;
+            background: #fff;
+        }
+        .upload-dropzone {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        .upload-dropzone:hover,
+        .upload-dropzone.dragover {
+            border-color: #0d6efd;
+            background: #e9ecef;
+        }
+        .upload-dropzone.has-file {
+            border-color: #198754;
+            background: #d1e7dd;
+        }
+    </style>
+}
+
+@section Scripts {
+    @if (canManage)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.2.0/dist/signature_pad.umd.min.js"></script>
+        <script>
+            let signaturePad = null;
+            let currentSignerCode = '';
+            let currentSignerDisplayName = '';
+            let currentSignerTitle = '';
+
+            function openDrawModal(signerCode, displayName, title) {
+                currentSignerCode = signerCode;
+                currentSignerDisplayName = displayName;
+                currentSignerTitle = title;
+
+                document.getElementById('drawSignerCode').value = signerCode;
+                document.getElementById('drawSignerName').value = displayName;
+                document.getElementById('drawSignerTitle').value = title;
+
+                const modal = new bootstrap.Modal(document.getElementById('drawSignatureModal'));
+                modal.show();
+
+                setTimeout(() => {
+                    const canvas = document.getElementById('signaturePad');
+                    const rect = canvas.parentElement.getBoundingClientRect();
+                    canvas.width = Math.min(600, rect.width - 16);
+                    canvas.height = 200;
+
+                    if (signaturePad) {
+                        signaturePad.clear();
+                    } else {
+                        signaturePad = new SignaturePad(canvas, {
+                            backgroundColor: 'rgba(255, 255, 255, 0)',
+                            penColor: '#000000',
+                            minWidth: 1,
+                            maxWidth: 3
+                        });
+                    }
+                }, 300);
+            }
+
+            document.getElementById('clearSignature')?.addEventListener('click', function() {
+                if (signaturePad) {
+                    signaturePad.clear();
+                }
+            });
+
+            document.getElementById('drawSignatureForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (!signaturePad || signaturePad.isEmpty()) {
+                    alert('@Localizer.T("Signatures.DrawRequired")');
+                    return;
+                }
+
+                const dataUrl = signaturePad.toDataURL('image/png');
+                document.getElementById('signatureData').value = dataUrl;
+
+                const btn = document.getElementById('saveSignatureBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>@Localizer.T("Common.Saving")...';
+
+                const formData = new FormData(this);
+
+                fetch('@Url.Action("SaveSignature")', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('@Localizer.T("Alert.Error.Generic")');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save me-1"></i>@Localizer.T("Common.Save")';
+                });
+            });
+
+            function openUploadModal(signerCode, displayName, title) {
+                document.getElementById('uploadSignerCode').value = signerCode;
+                document.getElementById('uploadSignerName').value = displayName;
+                document.getElementById('uploadSignerTitle').value = title;
+
+                document.getElementById('uploadPreview').style.display = 'none';
+                document.getElementById('signatureFileInput').value = '';
+                document.getElementById('signatureDropzone').classList.remove('has-file');
+
+                const modal = new bootstrap.Modal(document.getElementById('uploadSignatureModal'));
+                modal.show();
+            }
+
+            document.getElementById('signatureFileInput')?.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        document.getElementById('uploadPreviewImage').src = ev.target.result;
+                        document.getElementById('uploadPreview').style.display = 'block';
+                        document.getElementById('signatureDropzone').classList.add('has-file');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            const dropzone = document.getElementById('signatureDropzone');
+            if (dropzone) {
+                dropzone.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('dragover');
+                });
+
+                dropzone.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                });
+
+                dropzone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        document.getElementById('signatureFileInput').files = files;
+                        const event = new Event('change');
+                        document.getElementById('signatureFileInput').dispatchEvent(event);
+                    }
+                });
+            }
+
+            function deleteSignature(signerCode) {
+                if (!confirm('@Localizer.T("Signatures.DeleteConfirm")')) return;
+
+                const formData = new FormData();
+                formData.append('signerCode', signerCode);
+                formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+
+                fetch('@Url.Action("DeleteSignature")', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('@Localizer.T("Alert.Error.Generic")');
+                });
+            }
+        </script>
+    }
+}

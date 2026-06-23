@@ -146,32 +146,22 @@
                                         <span class="status-pill @(template.IsActive ? "complete" : "inactive")">@Localizer.T(template.IsActive ? "Common.Active" : "Common.Inactive")</span>
                                     </td>
                                     <td class="text-center">
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm btn-ghost" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="fas fa-ellipsis-v"></i>
+                                        <div class="d-flex justify-content-center gap-1">
+                                            <a asp-action="Edit" asp-route-id="@template.Id" class="btn btn-sm btn-ghost" title="@Localizer.T("Common.Edit")">
+                                                <i class="fas fa-edit text-warning"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-ghost"
+                                                    data-bs-toggle="modal" data-bs-target="#assignModal"
+                                                    data-template-id="@template.Id" data-template-code="@template.StandardCode"
+                                                    title="@Localizer.T("Clinic.AssignTemplates")">
+                                                <i class="fas fa-hospital text-info"></i>
                                             </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li>
-                                                    <a asp-action="Edit" asp-route-id="@template.Id" class="dropdown-item">
-                                                        <i class="fas fa-edit text-warning"></i> @Localizer.T("Common.Edit")
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <button type="button" class="dropdown-item"
-                                                            data-bs-toggle="modal" data-bs-target="#assignModal"
-                                                            data-template-id="@template.Id" data-template-code="@template.StandardCode">
-                                                        <i class="fas fa-hospital text-info"></i> @Localizer.T("Clinic.AssignTemplates")
-                                                    </button>
-                                                </li>
-                                                <li><hr class="dropdown-divider"></li>
-                                                <li>
-                                                    <button type="button" class="dropdown-item text-danger"
-                                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                            data-template-id="@template.Id" data-template-code="@template.StandardCode">
-                                                        <i class="fas fa-trash"></i> @Localizer.T("Common.Delete")
-                                                    </button>
-                                                </li>
-                                            </ul>
+                                            <button type="button" class="btn btn-sm btn-ghost text-danger"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                    data-template-id="@template.Id" data-template-code="@template.StandardCode"
+                                                    title="@Localizer.T("Common.Delete")">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

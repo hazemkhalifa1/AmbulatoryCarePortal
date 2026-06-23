@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
@@ -15,12 +16,16 @@ public class DocumentGenerationService : IDocumentGenerationService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<DocumentGenerationService> _logger;
+    private readonly IClinicSignatureService _signatureService;
 
-    public DocumentGenerationService(IUnitOfWork unitOfWork, ILogger<DocumentGenerationService> logger)
+    private static readonly Regex s_normalizePlaceholderRegex = new(
+        @"\{\{\s*(.*?)\s*\}\}", RegexOptions.Compiled);
+
+    public DocumentGenerationService(IUnitOfWork unitOfWork, ILogger<DocumentGenerationService> logger, IClinicSignatureService signatureService)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
-        QuestPDF.Settings.License = LicenseType.Community;
+        _signatureService = signatureService;
     }
 
     public async Task<GeneratedDocumentDto?> GenerateDocxAsync(int assignmentId, string userId)
@@ -116,54 +121,93 @@ public class DocumentGenerationService : IDocumentGenerationService
         return MapToDto(generatedDoc);
     }
 
-    private byte[] GeneratePdfDocument(DocumentTemplate template, Clinic clinic, Dictionary<string, string> textValues, Dictionary<string, string> imageValues)
+    private byte[]? GeneratePdfDocument(DocumentTemplate template, Clinic clinic, Dictionary<string, string> textValues, Dictionary<string, string> imageValues)
     {
-        var templatePath = ResolvePath(template.TemplateFilePath);
-        string templateText;
-
-        if (File.Exists(templatePath))
+        try
         {
-            using (var wordDoc = WordprocessingDocument.Open(templatePath, false))
+            var templatePath = ResolvePath(template.TemplateFilePath);
+            string templateText;
+
+            if (File.Exists(templatePath))
             {
-                var body = wordDoc.MainDocumentPart?.Document?.Body;
-                if (body != null)
+                using (var wordDoc = WordprocessingDocument.Open(templatePath, false))
                 {
-                    var texts = body.Descendants<Text>().Select(t => t.Text ?? "");
-                    templateText = string.Join("", texts);
-                }
-                else
-                {
-                    templateText = $"{template.TitleEn} - {template.StandardCode}";
+                    var mainPart = wordDoc.MainDocumentPart;
+                    if (mainPart == null)
+                    {
+                        templateText = $"{template.TitleEn} - {template.StandardCode}";
+                    }
+                    else
+                    {
+                        var allParagraphs = new List<string>();
+
+                        var body = mainPart.Document?.Body;
+                        if (body != null)
+                        {
+                            var bodyParas = body.Descendants<Paragraph>().Select(p =>
+                                string.Join("", p.Descendants<Text>().Select(t => t.Text ?? "")));
+                            allParagraphs.AddRange(bodyParas);
+                        }
+
+                        foreach (var headerPart in mainPart.HeaderParts)
+                        {
+                            if (headerPart.RootElement != null)
+                            {
+                                var headerParas = headerPart.RootElement.Descendants<Paragraph>().Select(p =>
+                                    string.Join("", p.Descendants<Text>().Select(t => t.Text ?? "")));
+                                allParagraphs.AddRange(headerParas);
+                            }
+                        }
+
+                        foreach (var footerPart in mainPart.FooterParts)
+                        {
+                            if (footerPart.RootElement != null)
+                            {
+                                var footerParas = footerPart.RootElement.Descendants<Paragraph>().Select(p =>
+                                    string.Join("", p.Descendants<Text>().Select(t => t.Text ?? "")));
+                                allParagraphs.AddRange(footerParas);
+                            }
+                        }
+
+                        templateText = string.Join("\n", allParagraphs);
+                    }
                 }
             }
-        }
-        else
-        {
-            templateText = $"{template.TitleEn} - {template.StandardCode}";
-        }
-
-        foreach (var kvp in textValues)
-            templateText = templateText.Replace(kvp.Key, kvp.Value);
-
-        return QuestPDF.Fluent.Document.Create(container =>
-        {
-            container.Page(page =>
+            else
             {
-                page.Size(PageSizes.A4);
-                page.Margin(40);
-                page.DefaultTextStyle(x => x.FontSize(11).FontFamily("Arial"));
+                templateText = $"{template.TitleEn} - {template.StandardCode}";
+            }
 
-                page.Header().Element(c => ComposeHeader(c, template, clinic, imageValues));
-                page.Content().Element(c => ComposeContent(c, templateText));
-                page.Footer().AlignCenter().Text(x =>
+            templateText = s_normalizePlaceholderRegex.Replace(templateText, m => "{{" + m.Groups[1].Value.Trim() + "}}");
+
+            foreach (var kvp in textValues)
+                templateText = templateText.Replace(kvp.Key, kvp.Value);
+
+            return QuestPDF.Fluent.Document.Create(container =>
+            {
+                container.Page(page =>
                 {
-                    x.Span("Generated by CBAHI Portal - ");
-                    x.CurrentPageNumber();
-                    x.Span(" of ");
-                    x.TotalPages();
+                    page.Size(PageSizes.A4);
+                    page.Margin(40);
+                    page.DefaultTextStyle(x => x.FontSize(11).FontFamily("Arial"));
+
+                    page.Header().Element(c => ComposeHeader(c, template, clinic, imageValues));
+                    page.Content().Element(c => ComposeContent(c, templateText));
+                    page.Footer().AlignCenter().Text(x =>
+                    {
+                        x.Span("Generated by CBAHI Portal - ");
+                        x.CurrentPageNumber();
+                        x.Span(" of ");
+                        x.TotalPages();
+                    });
                 });
-            });
-        }).GeneratePdf();
+            }).GeneratePdf();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "PDF generation failed for template {Template} - {Code}", template.TitleEn, template.StandardCode);
+            return null;
+        }
     }
 
     private void ComposeHeader(IContainer container, DocumentTemplate template, Clinic clinic, Dictionary<string, string> imageValues)
@@ -172,15 +216,19 @@ public class DocumentGenerationService : IDocumentGenerationService
         {
             col.Item().Row(row =>
             {
-                if (imageValues.TryGetValue("logo", out var logoPath) || imageValues.Values.Any())
+                if (imageValues.TryGetValue("logo", out var logoPath) && !string.IsNullOrEmpty(logoPath))
                 {
-                    var firstImage = imageValues.Values.FirstOrDefault();
-                    if (firstImage != null)
+                    var fullPath = ResolvePath(logoPath);
+                    if (File.Exists(fullPath))
                     {
-                        var fullPath = ResolvePath(firstImage);
-                        if (File.Exists(fullPath))
+                        try
                         {
                             row.ConstantItem(80).Image(fullPath, ImageScaling.FitArea);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to load logo image for PDF header: {Path}", fullPath);
+                            row.ConstantItem(80).Text("[Logo]").FontSize(8).FontColor(Colors.Grey.Medium);
                         }
                     }
                 }
@@ -241,6 +289,22 @@ public class DocumentGenerationService : IDocumentGenerationService
 
         if (!string.IsNullOrEmpty(clinic.LogoPath))
             imageValues["logo"] = clinic.LogoPath;
+
+        var signers = await _unitOfWork.Repository<TemplateSigner>()
+            .FindAsync(s => s.DocumentTemplateId == template.Id);
+
+        foreach (var signer in signers)
+        {
+            var sigImagePath = await _signatureService.ResolveSignatureImagePathAsync(clinic.Id, signer.SignerCode);
+            if (!string.IsNullOrEmpty(sigImagePath))
+                imageValues[$"{{{{{signer.SignerCode}_SIGNATURE}}}}".ToLowerInvariant()] = sigImagePath;
+
+            var signerName = await _signatureService.ResolveSignerNameAsync(clinic.Id, signer.SignerCode);
+            textValues[$"{{{{{signer.SignerCode}_NAME}}}}"] = signerName ?? "";
+
+            var signerTitle = await _signatureService.ResolveSignerTitleAsync(clinic.Id, signer.SignerCode);
+            textValues[$"{{{{{signer.SignerCode}_TITLE}}}}"] = signerTitle ?? "";
+        }
 
         return (textValues, imageValues);
     }
@@ -354,18 +418,23 @@ public class DocumentGenerationService : IDocumentGenerationService
 
     private static void ReplaceInElement(OpenXmlElement element, Dictionary<string, string> variables)
     {
-        foreach (var text in element.Descendants<Text>())
+        foreach (var para in element.Descendants<Paragraph>().ToList())
         {
-            if (text.Text == null) continue;
+            var texts = para.Descendants<Text>().ToList();
+            if (texts.Count == 0) continue;
 
-            var modified = text.Text;
+            var fullText = string.Concat(texts.Select(t => t.Text ?? ""));
+
+            fullText = s_normalizePlaceholderRegex.Replace(fullText, m => "{{" + m.Groups[1].Value.Trim() + "}}");
+
             foreach (var kvp in variables)
-            {
-                modified = modified.Replace(kvp.Key, kvp.Value);
-            }
+                fullText = fullText.Replace(kvp.Key, kvp.Value);
 
-            if (modified != text.Text)
-                text.Text = modified;
+            if (texts[0].Text != fullText)
+                texts[0].Text = fullText;
+            for (int i = 1; i < texts.Count; i++)
+                if (texts[i].Text != "")
+                    texts[i].Text = "";
         }
     }
 
@@ -440,5 +509,119 @@ public class DocumentGenerationService : IDocumentGenerationService
                 }
             }
         }
+    }
+
+
+    public async Task<byte[]?> PreviewDocxAsync(int assignmentId)
+    {
+        return await GenerateInMemoryDocxAsync(assignmentId);
+    }
+
+    public async Task<byte[]?> PreviewPdfAsync(int assignmentId)
+    {
+        return await GenerateInMemoryPdfAsync(assignmentId);
+    }
+
+    public async Task<byte[]?> DownloadDocxAsync(int assignmentId)
+    {
+        return await GenerateInMemoryDocxAsync(assignmentId);
+    }
+
+    public async Task<byte[]?> DownloadPdfAsync(int assignmentId)
+    {
+        return await GenerateInMemoryPdfAsync(assignmentId);
+    }
+
+    private async Task<byte[]?> GenerateInMemoryDocxAsync(int assignmentId)
+    {
+        var assignment = await _unitOfWork.Repository<ClinicTemplateAssignment>().GetByIdAsync(assignmentId);
+        if (assignment == null) return null;
+
+        var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(assignment.DocumentTemplateId);
+        if (template == null) return null;
+
+        var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(assignment.ClinicId);
+        if (clinic == null) return null;
+
+        var (textValues, imageValues) = await BuildVariableMapsAsync(assignment, template, clinic);
+
+        if (!string.IsNullOrEmpty(template.TemplateFilePath))
+        {
+            var templatePath = ResolvePath(template.TemplateFilePath);
+            if (File.Exists(templatePath))
+            {
+                using (var stream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
+                using (var memStream = new MemoryStream())
+                {
+                    stream.CopyTo(memStream);
+                    memStream.Position = 0;
+
+                    using (var wordDoc = WordprocessingDocument.Open(memStream, true))
+                    {
+                        ReplaceTextPlaceholders(wordDoc, textValues);
+                        ReplaceImagePlaceholders(wordDoc, imageValues);
+                    }
+
+                    return memStream.ToArray();
+                }
+            }
+        }
+
+        return CreateMinimalDocx(template, clinic, textValues);
+    }
+
+    private static byte[] CreateMinimalDocx(DocumentTemplate template, Clinic clinic, Dictionary<string, string> textValues)
+    {
+        using (var memStream = new MemoryStream())
+        {
+            using (var wordDoc = WordprocessingDocument.Create(memStream, WordprocessingDocumentType.Document))
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.Document = new DocumentFormat.OpenXml.Wordprocessing.Document();
+                var body = new Body();
+
+                var titlePara = new Paragraph(
+                    new Run(new Text(template.TitleEn) { Space = SpaceProcessingModeValues.Preserve })
+                );
+                body.Append(titlePara);
+
+                var codePara = new Paragraph(
+                    new Run(new Text($"{template.StandardCode} - {clinic.Name}") { Space = SpaceProcessingModeValues.Preserve })
+                );
+                body.Append(codePara);
+
+                foreach (var kvp in textValues)
+                {
+                    var replacedValue = kvp.Value.Replace("{{", "").Replace("}}", "");
+                    var para = new Paragraph(
+                        new ParagraphProperties(
+                            new SpacingBetweenLines { After = "200" }
+                        ),
+                        new Run(new Text($"{kvp.Key.Replace("{{", "").Replace("}}", "")}: {replacedValue}") { Space = SpaceProcessingModeValues.Preserve })
+                    );
+                    body.Append(para);
+                }
+
+                mainPart.Document.Body = body;
+            }
+
+            return memStream.ToArray();
+        }
+    }
+
+    private async Task<byte[]?> GenerateInMemoryPdfAsync(int assignmentId)
+    {
+        var assignment = await _unitOfWork.Repository<ClinicTemplateAssignment>().GetByIdAsync(assignmentId);
+        if (assignment == null) return null;
+
+        var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(assignment.DocumentTemplateId);
+        if (template == null) return null;
+
+        var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(assignment.ClinicId);
+        if (clinic == null) return null;
+
+        var (textValues, imageValues) = await BuildVariableMapsAsync(assignment, template, clinic);
+
+        return GeneratePdfDocument(template, clinic, textValues, imageValues);
     }
 }

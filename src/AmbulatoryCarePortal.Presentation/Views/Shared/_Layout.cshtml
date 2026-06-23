@@ -158,6 +158,12 @@
                                     <p>@Localizer.T("Nav.ComplianceScore")</p>
                                 </a>
                             </li>
+                            <li class="nav-item" role="none">
+                                <a href="/ClinicAdmin/ClinicSignatures" class="nav-link @(Context.Request.Path.ToString().Contains("ClinicSignatures") ? "active" : "")" role="menuitem" data-title="@Localizer.T("Nav.Signatures")">
+                                    <i class="nav-icon fas fa-signature"></i>
+                                    <p>@Localizer.T("Nav.Signatures")</p>
+                                </a>
+                            </li>
                             <li class="nav-header" role="presentation">@Localizer.T("Nav.Staff")</li>
                             <li class="nav-item" role="none">
                                 <a href="/ClinicAdmin/HRManagement" class="nav-link" role="menuitem" data-title="@Localizer.T("Nav.HRCredentialing")">

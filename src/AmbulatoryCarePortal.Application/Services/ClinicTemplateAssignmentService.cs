@@ -308,4 +308,236 @@ public class ClinicTemplateAssignmentService : IClinicTemplateAssignmentService
         await _unitOfWork.SaveChangesAsync();
         return true;
     }
+
+
+    public async Task<List<ClinicAssignmentDetailDto>> GetClinicAssignmentsWithDetailsAsync(int clinicId)
+    {
+        var assignments = await _unitOfWork.Repository<ClinicTemplateAssignment>()
+            .FindAsync(a => a.ClinicId == clinicId);
+
+        var result = new List<ClinicAssignmentDetailDto>();
+
+        foreach (var a in assignments)
+        {
+            var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(a.DocumentTemplateId);
+            if (template == null) continue;
+
+            var variables = await _unitOfWork.Repository<TemplateVariable>()
+                .FindAsync(v => v.DocumentTemplateId == a.DocumentTemplateId);
+            var values = await _unitOfWork.Repository<ClinicTemplateValue>()
+                .FindAsync(v => v.ClinicTemplateAssignmentId == a.Id);
+
+            var valueByVarId = values.ToDictionary(v => v.TemplateVariableId, v => v);
+
+            var variableValues = variables.Select(v => new ClinicTemplateValueDto
+            {
+                Id = valueByVarId.TryGetValue(v.Id, out var val) ? val.Id : 0,
+                ClinicTemplateAssignmentId = a.Id,
+                TemplateVariableId = v.Id,
+                VariableName = v.Name,
+                DisplayName = v.DisplayName,
+                IsImage = v.IsImage,
+                IsRequired = v.IsRequired,
+                Value = val?.Value,
+                ImagePath = val?.ImagePath
+            }).ToList();
+
+            result.Add(new ClinicAssignmentDetailDto
+            {
+                AssignmentId = a.Id,
+                DocumentTemplateId = a.DocumentTemplateId,
+                StandardCode = template.StandardCode,
+                TitleEn = template.TitleEn,
+                TitleAr = template.TitleAr,
+                AssignmentStatus = a.AssignmentStatus.ToString(),
+                VariableValues = variableValues
+            });
+        }
+
+        return result.OrderBy(x => x.StandardCode).ToList();
+    }
+
+    public async Task<bool> UpsertSuperAdminValuesAsync(int assignmentId, List<UpsertClinicTemplateValueDto> values, string userId)
+    {
+        var assignment = await _unitOfWork.Repository<ClinicTemplateAssignment>().GetByIdAsync(assignmentId);
+        if (assignment == null) return false;
+
+        var variables = await _unitOfWork.Repository<TemplateVariable>()
+            .FindAsync(v => v.DocumentTemplateId == assignment.DocumentTemplateId);
+        var isImageByVarId = variables.ToDictionary(v => v.Id, v => v.IsImage);
+
+        var existingValues = await _unitOfWork.Repository<ClinicTemplateValue>()
+            .FindAsync(v => v.ClinicTemplateAssignmentId == assignmentId);
+        var existingByVarId = existingValues.ToDictionary(v => v.TemplateVariableId);
+
+        foreach (var dto in values)
+        {
+            if (dto.Value == null) continue;
+
+            var isImage = isImageByVarId.TryGetValue(dto.TemplateVariableId, out var img) && img;
+
+            if (existingByVarId.TryGetValue(dto.TemplateVariableId, out var existing))
+            {
+                if (isImage)
+                    existing.ImagePath = dto.Value;
+                else
+                    existing.Value = dto.Value;
+                existing.UpdatedAt = DateTime.UtcNow;
+                existing.UpdatedBy = userId;
+                _unitOfWork.Repository<ClinicTemplateValue>().Update(existing);
+            }
+            else
+            {
+                var newVal = new ClinicTemplateValue
+                {
+                    ClinicTemplateAssignmentId = assignmentId,
+                    TemplateVariableId = dto.TemplateVariableId,
+                    CreatedBy = userId,
+                    CreatedAt = DateTime.UtcNow
+                };
+                if (isImage)
+                    newVal.ImagePath = dto.Value;
+                else
+                    newVal.Value = dto.Value;
+                await _unitOfWork.Repository<ClinicTemplateValue>().AddAsync(newVal);
+            }
+        }
+
+        await _unitOfWork.SaveChangesAsync();
+        _logger.LogInformation("Super Admin upserted values for assignment {AssignmentId}", assignmentId);
+        return true;
+    }
+
+    private static readonly HashSet<string> AutoGlobalNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "ClinicName", "Clinic Name", "Clinic_Name",
+        "ClinicNameAr", "Clinic Name Ar", "Clinic_Name_Ar",
+        "ClinicLogo", "Clinic Logo", "Clinic_Logo",
+        "Logo", "LogoPath"
+    };
+
+    public async Task<List<GlobalTemplateValueDto>> GetGlobalTemplateValuesForClinicAsync(int clinicId)
+    {
+        var assignments = await _unitOfWork.Repository<ClinicTemplateAssignment>()
+            .FindAsync(a => a.ClinicId == clinicId);
+
+        if (!assignments.Any()) return new List<GlobalTemplateValueDto>();
+
+        var allValues = new List<(TemplateVariable Variable, ClinicTemplateValue? Value)>();
+
+        foreach (var a in assignments)
+        {
+            var variables = await _unitOfWork.Repository<TemplateVariable>()
+                .FindAsync(v => v.DocumentTemplateId == a.DocumentTemplateId);
+            var values = await _unitOfWork.Repository<ClinicTemplateValue>()
+                .FindAsync(v => v.ClinicTemplateAssignmentId == a.Id);
+            var valueByVarId = values.ToDictionary(v => v.TemplateVariableId);
+
+            foreach (var v in variables)
+            {
+                if (valueByVarId.TryGetValue(v.Id, out var existing))
+                    allValues.Add((v, existing));
+                else
+                    allValues.Add((v, null));
+            }
+        }
+
+        var groups = allValues.GroupBy(x => x.Variable.Name, StringComparer.OrdinalIgnoreCase).ToList();
+
+        var globalNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var g in groups)
+        {
+            var distinctTemplateIds = g.Select(x => x.Variable.DocumentTemplateId).Distinct().Count();
+            if (distinctTemplateIds >= 2 || AutoGlobalNames.Contains(g.Key))
+                globalNames.Add(g.Key);
+        }
+
+        var result = new List<GlobalTemplateValueDto>();
+        foreach (var name in globalNames)
+        {
+            var entries = allValues.Where(x => string.Equals(x.Variable.Name, name, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (entries.Count == 0) continue;
+
+            var first = entries.First().Variable;
+            var withValue = entries.FirstOrDefault(x => x.Value != null);
+            var isAuto = AutoGlobalNames.Contains(name);
+
+            result.Add(new GlobalTemplateValueDto
+            {
+                VariableName = first.Name,
+                DisplayName = first.DisplayName,
+                IsImage = first.IsImage,
+                IsRequired = first.IsRequired,
+                Value = withValue.Value?.Value,
+                ImagePath = withValue.Value?.ImagePath,
+                IsAutoPopulated = isAuto
+            });
+        }
+
+        return result;
+    }
+
+    public async Task<bool> SaveGlobalTemplateValuesAsync(int clinicId, List<UpsertGlobalTemplateValueDto> values, string userId)
+    {
+        var assignments = await _unitOfWork.Repository<ClinicTemplateAssignment>()
+            .FindAsync(a => a.ClinicId == clinicId);
+
+        if (!assignments.Any()) return false;
+
+        var assignmentTemplateIds = assignments.Select(a => a.DocumentTemplateId).Distinct().ToList();
+        var allVariables = new List<TemplateVariable>();
+        foreach (var templateId in assignmentTemplateIds)
+        {
+            var vars = await _unitOfWork.Repository<TemplateVariable>()
+                .FindAsync(v => v.DocumentTemplateId == templateId);
+            allVariables.AddRange(vars);
+        }
+
+        var assignmentIds = assignments.Select(a => a.Id).ToList();
+        var allExistingValues = await _unitOfWork.Repository<ClinicTemplateValue>()
+            .FindAsync(v => assignmentIds.Contains(v.ClinicTemplateAssignmentId));
+        var existingByKey = allExistingValues.ToDictionary(v => (v.ClinicTemplateAssignmentId, v.TemplateVariableId));
+
+        foreach (var dto in values)
+        {
+            if (string.IsNullOrEmpty(dto.Value)) continue;
+
+            var matchingVars = allVariables
+                .Where(v => v.Name.Equals(dto.VariableName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            foreach (var variable in matchingVars)
+            {
+                var relevantAssignments = assignments.Where(a => a.DocumentTemplateId == variable.DocumentTemplateId);
+
+                foreach (var assignment in relevantAssignments)
+                {
+                    var key = (assignment.Id, variable.Id);
+                    if (existingByKey.TryGetValue(key, out var existing))
+                    {
+                        existing.Value = dto.Value;
+                        existing.UpdatedAt = DateTime.UtcNow;
+                        existing.UpdatedBy = userId;
+                        _unitOfWork.Repository<ClinicTemplateValue>().Update(existing);
+                    }
+                    else
+                    {
+                        var newVal = new ClinicTemplateValue
+                        {
+                            ClinicTemplateAssignmentId = assignment.Id,
+                            TemplateVariableId = variable.Id,
+                            Value = dto.Value,
+                            CreatedBy = userId,
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        await _unitOfWork.Repository<ClinicTemplateValue>().AddAsync(newVal);
+                    }
+                }
+            }
+        }
+
+        await _unitOfWork.SaveChangesAsync();
+        _logger.LogInformation("Global template values saved for clinic {ClinicId}", clinicId);
+        return true;
+    }
 }

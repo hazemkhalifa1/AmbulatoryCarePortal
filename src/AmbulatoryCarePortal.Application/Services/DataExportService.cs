@@ -15,11 +15,6 @@ public class DataExportService : IDataExportService
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<DataExportService> _logger;
 
-    static DataExportService()
-    {
-        QuestPDF.Settings.License = LicenseType.Community;
-    }
-
     public DataExportService(IUnitOfWork unitOfWork, ILogger<DataExportService> logger)
     {
         _unitOfWork = unitOfWork;

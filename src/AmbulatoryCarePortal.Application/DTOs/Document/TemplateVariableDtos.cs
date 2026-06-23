@@ -100,6 +100,34 @@ public class TemplateVariablePreviewDto
     public string? CurrentValue { get; set; }
 }
 
+public class ClinicAssignmentDetailDto
+{
+    public int AssignmentId { get; set; }
+    public int DocumentTemplateId { get; set; }
+    public string StandardCode { get; set; } = string.Empty;
+    public string TitleEn { get; set; } = string.Empty;
+    public string? TitleAr { get; set; }
+    public string AssignmentStatus { get; set; } = string.Empty;
+    public List<ClinicTemplateValueDto> VariableValues { get; set; } = new();
+}
+
+public class GlobalTemplateValueDto
+{
+    public string VariableName { get; set; } = string.Empty;
+    public string DisplayName { get; set; } = string.Empty;
+    public bool IsImage { get; set; }
+    public bool IsRequired { get; set; }
+    public string? Value { get; set; }
+    public string? ImagePath { get; set; }
+    public bool IsAutoPopulated { get; set; }
+}
+
+public class UpsertGlobalTemplateValueDto
+{
+    public string VariableName { get; set; } = string.Empty;
+    public string? Value { get; set; }
+}
+
 public class TemplateDetailsDto
 {
     public int Id { get; set; }

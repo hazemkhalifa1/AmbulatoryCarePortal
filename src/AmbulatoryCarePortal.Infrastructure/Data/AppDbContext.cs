@@ -35,6 +35,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<ClinicTemplateValue> ClinicTemplateValues { get; set; }
     public DbSet<GeneratedDocument> GeneratedDocuments { get; set; }
     public DbSet<SystemSetting> SystemSettings { get; set; }
+    public DbSet<ClinicSignature> ClinicSignatures { get; set; }
+    public DbSet<TemplateSigner> TemplateSigners { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -76,5 +78,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
         modelBuilder.Entity<GeneratedDocument>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<SystemSetting>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<ComplianceScoreSnapshot>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<ClinicSignature>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<TemplateSigner>().HasQueryFilter(x => !x.IsDeleted);
     }
 }

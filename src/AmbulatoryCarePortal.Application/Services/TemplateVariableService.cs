@@ -3,6 +3,7 @@ using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AutoMapper;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using Microsoft.Extensions.Logging;
 
@@ -31,6 +32,22 @@ public partial class TemplateVariableService : ITemplateVariableService
         return _mapper.Map<List<TemplateVariableDto>>(variables.ToList());
     }
 
+    private static void ExtractFromElement(OpenXmlElement element, HashSet<string> placeholders)
+    {
+        if (element == null) return;
+
+        foreach (var paragraph in element.Descendants<DocumentFormat.OpenXml.Wordprocessing.Paragraph>())
+        {
+            var fullText = string.Concat(paragraph.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>()
+                .Select(t => t.Text ?? ""));
+            if (string.IsNullOrEmpty(fullText)) continue;
+
+            var matches = PlaceholderRegex().Matches(fullText);
+            foreach (Match match in matches)
+                placeholders.Add(match.Groups[1].Value.Trim());
+        }
+    }
+
     public async Task<List<TemplateVariableDto>> ExtractVariablesFromFileAsync(int templateId)
     {
         var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(templateId);
@@ -38,7 +55,7 @@ public partial class TemplateVariableService : ITemplateVariableService
             return new List<TemplateVariableDto>();
 
         var fullPath = template.TemplateFilePath;
-        if (!Path.IsPathRooted(fullPath))
+        if (!Path.IsPathFullyQualified(fullPath))
             fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fullPath.TrimStart('/'));
 
         if (!File.Exists(fullPath))
@@ -54,43 +71,18 @@ public partial class TemplateVariableService : ITemplateVariableService
             if (wordDoc.MainDocumentPart?.Document?.Body == null)
                 return new List<TemplateVariableDto>();
 
-            var texts = wordDoc.MainDocumentPart.Document.Body.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>();
-            foreach (var text in texts)
-            {
-                if (text.Text == null) continue;
-                var matches = PlaceholderRegex().Matches(text.Text);
-                foreach (Match match in matches)
-                    placeholders.Add(match.Groups[1].Value.Trim());
-            }
+            ExtractFromElement(wordDoc.MainDocumentPart.Document.Body, placeholders);
 
             if (wordDoc.MainDocumentPart.HeaderParts != null)
             {
                 foreach (var header in wordDoc.MainDocumentPart.HeaderParts)
-                {
-                    if (header.RootElement == null) continue;
-                    foreach (var text in header.RootElement.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>())
-                    {
-                        if (text.Text == null) continue;
-                        var matches = PlaceholderRegex().Matches(text.Text);
-                        foreach (Match match in matches)
-                            placeholders.Add(match.Groups[1].Value.Trim());
-                    }
-                }
+                ExtractFromElement(header.RootElement, placeholders);
             }
 
             if (wordDoc.MainDocumentPart.FooterParts != null)
             {
                 foreach (var footer in wordDoc.MainDocumentPart.FooterParts)
-                {
-                    if (footer.RootElement == null) continue;
-                    foreach (var text in footer.RootElement.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>())
-                    {
-                        if (text.Text == null) continue;
-                        var matches = PlaceholderRegex().Matches(text.Text);
-                        foreach (Match match in matches)
-                            placeholders.Add(match.Groups[1].Value.Trim());
-                    }
-                }
+                ExtractFromElement(footer.RootElement, placeholders);
             }
         }
 
@@ -103,8 +95,7 @@ public partial class TemplateVariableService : ITemplateVariableService
         {
             if (existingNames.Contains(placeholder)) continue;
 
-            var isImage = placeholder.Contains("logo", StringComparison.OrdinalIgnoreCase)
-                || placeholder.Contains("Logo", StringComparison.OrdinalIgnoreCase);
+            var isImage = placeholder.Contains("logo", StringComparison.OrdinalIgnoreCase);
 
             var variable = new TemplateVariable
             {

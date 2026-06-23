@@ -1,3 +1,4 @@
+using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Domain.Enums;
 
 namespace AmbulatoryCarePortal.Application.DTOs.Clinic;
@@ -58,4 +59,6 @@ public class ClinicDetailDto
     public int DepartmentCount { get; set; }
     public int PolicyDocumentCount { get; set; }
     public int OpenGapCount { get; set; }
+    public List<ClinicAssignmentDetailDto> DocumentAssignments { get; set; } = new();
+    public List<GlobalTemplateValueDto> GlobalTemplateValues { get; set; } = new();
 }

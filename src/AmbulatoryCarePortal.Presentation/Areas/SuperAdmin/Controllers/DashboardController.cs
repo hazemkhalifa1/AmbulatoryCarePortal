@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Enums;
 using AmbulatoryCarePortal.Domain.Entities;
@@ -17,19 +19,25 @@ public class DashboardController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<DashboardController> _logger;
     private readonly ITranslationService _localizer;
+    private readonly IClinicTemplateAssignmentService _assignmentService;
+    private readonly IDocumentGenerationService _generationService;
 
     public DashboardController(
         IClinicService clinicService,
         IAuditService auditService,
         IUnitOfWork unitOfWork,
         ILogger<DashboardController> logger,
-        ITranslationService localizer)
+        ITranslationService localizer,
+        IClinicTemplateAssignmentService assignmentService,
+        IDocumentGenerationService generationService)
     {
         _clinicService = clinicService;
         _auditService = auditService;
         _unitOfWork = unitOfWork;
         _logger = logger;
         _localizer = localizer;
+        _assignmentService = assignmentService;
+        _generationService = generationService;
     }
 
     public async Task<IActionResult> Index()
@@ -315,6 +323,88 @@ public class DashboardController : Controller
         }
 
         return RedirectToAction(nameof(Clinics));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveDocumentValues(int clinicId, int assignmentId, List<UpsertClinicTemplateValueDto> values)
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "";
+        var saved = await _assignmentService.UpsertSuperAdminValuesAsync(assignmentId, values, userId);
+
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+        {
+            if (saved)
+                return Ok();
+            return BadRequest();
+        }
+
+        if (!saved)
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.ValuesSaveFailed");
+        else
+            TempData["SuccessMessage"] = _localizer.T("Alert.Success.ValuesSaved");
+
+        return RedirectToAction(nameof(ClinicDetail), new { id = clinicId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveGlobalValues(int clinicId, List<UpsertGlobalTemplateValueDto> values)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+        await _assignmentService.SaveGlobalTemplateValuesAsync(clinicId, values, userId);
+        TempData["SuccessMessage"] = _localizer.T("Alert.Success.ValuesSaved");
+        return RedirectToAction(nameof(ClinicDetail), new { id = clinicId });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> PreviewDocument(int assignmentId)
+    {
+        try
+        {
+            var pdfBytes = await _generationService.PreviewPdfAsync(assignmentId);
+            if (pdfBytes == null)
+                return NotFound();
+
+            return File(pdfBytes, "application/pdf");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to preview document for assignment {AssignmentId}", assignmentId);
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.DocumentGenerationFailed");
+            return RedirectToAction(nameof(Clinics));
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DownloadDocumentWord(int assignmentId)
+    {
+        try
+        {
+            var assignment = await _unitOfWork.Repository<ClinicTemplateAssignment>().GetByIdAsync(assignmentId);
+            if (assignment == null)
+            {
+                TempData["ErrorMessage"] = _localizer.T("Alert.Error.DocumentGenerationFailed");
+                return RedirectToAction(nameof(Clinics));
+            }
+
+            var docBytes = await _generationService.PreviewDocxAsync(assignmentId);
+            if (docBytes == null)
+            {
+                TempData["ErrorMessage"] = _localizer.T("Alert.Error.TemplateFileNotFound");
+                return RedirectToAction(nameof(ClinicDetail), new { id = assignment.ClinicId });
+            }
+
+            var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(assignment.DocumentTemplateId);
+            var fileName = $"{template?.StandardCode ?? "document"}_{DateTime.Now:yyyyMMddHHmmss}.docx";
+            return File(docBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to download document for assignment {AssignmentId}", assignmentId);
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.DocumentGenerationFailed");
+            return RedirectToAction(nameof(Clinics));
+        }
     }
 
     public async Task<IActionResult> AuditLog(int clinicId, int page = 1, int pageSize = 20, string? searchTerm = null, string? actionTypeFilter = null, DateTime? dateFrom = null, DateTime? dateTo = null)

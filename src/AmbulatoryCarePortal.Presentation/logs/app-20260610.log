@@ -1,0 +1,766 @@
+2026-06-10 02:26:57.035 +03:00 [INF] User profile is available. Using 'C:\Users\Hazem Khalifa\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-06-10 02:27:07.107 +03:00 [INF] Executed DbCommand (258ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT 1
+2026-06-10 02:27:07.506 +03:00 [INF] Executed DbCommand (260ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-10 02:27:07.621 +03:00 [INF] Executed DbCommand (95ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT 1
+2026-06-10 02:27:07.736 +03:00 [INF] Executed DbCommand (105ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-10 02:27:08.003 +03:00 [INF] Executed DbCommand (171ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-06-10 02:27:08.137 +03:00 [INF] No migrations were applied. The database is already up to date.
+2026-06-10 02:27:09.820 +03:00 [INF] Executed DbCommand (379ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2026-06-10 02:27:10.621 +03:00 [INF] Executed DbCommand (148ms) [Parameters=[@__role_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[ClaimType], [a].[ClaimValue]
+FROM [AspNetRoleClaims] AS [a]
+WHERE [a].[RoleId] = @__role_Id_0
+2026-06-10 02:27:10.755 +03:00 [INF] Executed DbCommand (105ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2026-06-10 02:27:10.877 +03:00 [INF] Executed DbCommand (107ms) [Parameters=[@__role_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[ClaimType], [a].[ClaimValue]
+FROM [AspNetRoleClaims] AS [a]
+WHERE [a].[RoleId] = @__role_Id_0
+2026-06-10 02:27:11.063 +03:00 [INF] Executed DbCommand (164ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2026-06-10 02:27:11.232 +03:00 [INF] Executed DbCommand (154ms) [Parameters=[@__role_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[ClaimType], [a].[ClaimValue]
+FROM [AspNetRoleClaims] AS [a]
+WHERE [a].[RoleId] = @__role_Id_0
+2026-06-10 02:27:11.454 +03:00 [INF] Executed DbCommand (105ms) [Parameters=[@__normalizedEmail_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(2) [a].[Id], [a].[AccessFailedCount], [a].[ClinicId], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[DepartmentId], [a].[Email], [a].[EmailConfirmed], [a].[FullNameAr], [a].[FullNameEn], [a].[IsActive], [a].[LastLoginAt], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[ProfilePhotoPath], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [AspNetUsers] AS [a]
+WHERE [a].[NormalizedEmail] = @__normalizedEmail_0
+2026-06-10 02:27:11.970 +03:00 [INF] Executed DbCommand (99ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:27:12.380 +03:00 [INF] Executed DbCommand (132ms) [Parameters=[@__clinic_Id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [d].[DepartmentCode]
+FROM [Departments] AS [d]
+WHERE [d].[IsDeleted] = CAST(0 AS bit) AND [d].[ClinicId] = @__clinic_Id_0
+2026-06-10 02:27:13.647 +03:00 [INF] Notification Background Service started
+2026-06-10 02:27:14.061 +03:00 [INF] Executed DbCommand (149ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT [h].[Id], [h].[CreatedAt], [h].[CreatedBy], [h].[DocumentName], [h].[DocumentNameAr], [h].[DocumentType], [h].[ExpiryDate], [h].[FilePath], [h].[HrStaffId], [h].[IsDeleted], [h].[IsVerified], [h].[IssueDate], [h].[UpdatedAt], [h].[UpdatedBy], [h].[UploadedAt], [h].[UploadedByUserId], [h].[VerifiedByUserId], [h].[VerifiedDate], [h].[VersionNumber]
+FROM [HrDocuments] AS [h]
+WHERE [h].[IsDeleted] = CAST(0 AS bit) AND [h].[ExpiryDate] IS NOT NULL AND [h].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:27:14.109 +03:00 [INF] Document expiry check completed
+2026-06-10 02:27:14.333 +03:00 [INF] Executed DbCommand (178ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit) AND [c].[IsActive] = CAST(1 AS bit)
+2026-06-10 02:27:14.733 +03:00 [INF] Executed DbCommand (116ms) [Parameters=[@__clinic_Id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [PolicyDocuments] AS [p]
+WHERE [p].[IsDeleted] = CAST(0 AS bit) AND [p].[ClinicId] = @__clinic_Id_0 AND [p].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:27:14.870 +03:00 [INF] Now listening on: https://localhost:2167
+2026-06-10 02:27:14.904 +03:00 [INF] Now listening on: http://localhost:2168
+2026-06-10 02:27:15.040 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-10 02:27:15.044 +03:00 [INF] Hosting environment: Development
+2026-06-10 02:27:15.047 +03:00 [INF] Content root path: D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Presentation
+2026-06-10 02:27:15.172 +03:00 [INF] Executed DbCommand (292ms) [Parameters=[@__clinic_Id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [PolicyDocuments] AS [p]
+WHERE [p].[IsDeleted] = CAST(0 AS bit) AND [p].[ClinicId] = @__clinic_Id_0 AND [p].[DocumentStatus] = 5 AND [p].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:27:15.380 +03:00 [INF] Executed DbCommand (173ms) [Parameters=[@__clinic_Id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [PolicyDocuments] AS [p]
+WHERE [p].[IsDeleted] = CAST(0 AS bit) AND [p].[ClinicId] = @__clinic_Id_0 AND [p].[DocumentStatus] = 6 AND [p].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:27:15.616 +03:00 [INF] Compliance alerts created
+2026-06-10 02:27:15.880 +03:00 [INF] Executed DbCommand (210ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT [c].[Id], [c].[ClinicId], [c].[CreatedAt], [c].[CreatedBy], [c].[DepartmentId], [c].[Description], [c].[Frequency], [c].[IsActive], [c].[IsDeleted], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [ChecklistTemplates] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit) AND [c].[IsActive] = CAST(1 AS bit) AND [c].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:27:16.096 +03:00 [INF] Checklist reminders processed
+2026-06-10 02:27:16.390 +03:00 [ERR] Error in NotificationBackgroundService cycle
+System.InvalidOperationException: 'AmbulatoryCarePortal.Infrastructure.UnitOfWork.UnitOfWork' type only implements IAsyncDisposable. Use DisposeAsync to dispose the container.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.Dispose()
+   at AmbulatoryCarePortal.Application.Services.NotificationBackgroundService.ExecuteAsync(CancellationToken stoppingToken) in D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\Services\NotificationBackgroundService.cs:line 39
+2026-06-10 02:27:16.718 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ - null null
+2026-06-10 02:27:18.921 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Controllers.HomeController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:27:18.959 +03:00 [INF] Route matched with {action = "Index", controller = "Home", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller AmbulatoryCarePortal.Presentation.Controllers.HomeController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:27:19.051 +03:00 [INF] Executing RedirectResult, redirecting to /Account/Login.
+2026-06-10 02:27:19.071 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Controllers.HomeController.Index (AmbulatoryCarePortal.Presentation) in 88.1207ms
+2026-06-10 02:27:19.078 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Controllers.HomeController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:27:19.112 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ - 302 null null 2426.249ms
+2026-06-10 02:27:19.130 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/Account/Login - null null
+2026-06-10 02:27:19.182 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Controllers.AccountController.Login (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:27:19.223 +03:00 [INF] Route matched with {action = "Login", controller = "Account", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Login(System.String) on controller AmbulatoryCarePortal.Presentation.Controllers.AccountController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:27:19.347 +03:00 [INF] Executing ViewResult, running view Login.
+2026-06-10 02:27:20.263 +03:00 [INF] Executed ViewResult - view Login executed in 937.2432ms.
+2026-06-10 02:27:20.304 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:27:20.293 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/css/login.css?v=s_p4A3yFR4m-FvjdLATqpAQEs9IaIqA1Oo_wxsGD8aI - null null
+2026-06-10 02:27:20.276 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/js/site.js?v=pY3IPADwA8KVhG5VneFRKNyjlO7LfcZFbOyjsRvRkCk - null null
+2026-06-10 02:27:20.318 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Controllers.AccountController.Login (AmbulatoryCarePortal.Presentation) in 1085.2909ms
+2026-06-10 02:27:20.355 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 50.7928ms
+2026-06-10 02:27:20.364 +03:00 [INF] The file /css/login.css was not modified
+2026-06-10 02:27:20.364 +03:00 [INF] The file /js/site.js was not modified
+2026-06-10 02:27:20.369 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Controllers.AccountController.Login (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:27:20.384 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/css/login.css?v=s_p4A3yFR4m-FvjdLATqpAQEs9IaIqA1Oo_wxsGD8aI - 304 null text/css 90.3166ms
+2026-06-10 02:27:20.386 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/js/site.js?v=pY3IPADwA8KVhG5VneFRKNyjlO7LfcZFbOyjsRvRkCk - 304 null text/javascript 110.0668ms
+2026-06-10 02:27:20.409 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/Account/Login - 200 null text/html; charset=utf-8 1279.9979ms
+2026-06-10 02:27:20.441 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:27:20.947 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 505.3397ms
+2026-06-10 02:27:21.336 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/favicon.ico - null null
+2026-06-10 02:27:21.360 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/favicon.ico - 404 0 null 27.1925ms
+2026-06-10 02:27:21.376 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:2167/favicon.ico, Response status code: 404
+2026-06-10 02:27:23.509 +03:00 [INF] Request starting HTTP/2 POST https://localhost:2167/Account/Login - application/x-www-form-urlencoded 257
+2026-06-10 02:27:23.571 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Controllers.AccountController.Login (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:27:23.673 +03:00 [INF] Route matched with {action = "Login", controller = "Account", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(AmbulatoryCarePortal.Presentation.ViewModels.LoginViewModel, System.String) on controller AmbulatoryCarePortal.Presentation.Controllers.AccountController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:27:24.255 +03:00 [INF] Executed DbCommand (109ms) [Parameters=[@__normalizedUserName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[ClinicId], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[DepartmentId], [a].[Email], [a].[EmailConfirmed], [a].[FullNameAr], [a].[FullNameEn], [a].[IsActive], [a].[LastLoginAt], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[ProfilePhotoPath], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [AspNetUsers] AS [a]
+WHERE [a].[NormalizedUserName] = @__normalizedUserName_0
+2026-06-10 02:27:24.715 +03:00 [INF] Executed DbCommand (123ms) [Parameters=[@__user_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[Id], [a].[ClaimType], [a].[ClaimValue], [a].[UserId]
+FROM [AspNetUserClaims] AS [a]
+WHERE [a].[UserId] = @__user_Id_0
+2026-06-10 02:27:24.930 +03:00 [INF] Executed DbCommand (112ms) [Parameters=[@__userId_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a0].[Name]
+FROM [AspNetUserRoles] AS [a]
+INNER JOIN [AspNetRoles] AS [a0] ON [a].[RoleId] = [a0].[Id]
+WHERE [a].[UserId] = @__userId_0
+2026-06-10 02:27:25.053 +03:00 [INF] Executed DbCommand (98ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2026-06-10 02:27:25.255 +03:00 [INF] Executed DbCommand (191ms) [Parameters=[@__role_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[ClaimType], [a].[ClaimValue]
+FROM [AspNetRoleClaims] AS [a]
+WHERE [a].[RoleId] = @__role_Id_0
+2026-06-10 02:27:25.295 +03:00 [INF] AuthenticationScheme: Identity.Application signed in.
+2026-06-10 02:27:25.306 +03:00 [INF] User admin@cbahi-portal.com logged in successfully.
+2026-06-10 02:27:25.324 +03:00 [INF] Executing LocalRedirectResult, redirecting to /.
+2026-06-10 02:27:25.327 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Controllers.AccountController.Login (AmbulatoryCarePortal.Presentation) in 1637.7485ms
+2026-06-10 02:27:25.336 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Controllers.AccountController.Login (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:27:25.358 +03:00 [INF] Request finished HTTP/2 POST https://localhost:2167/Account/Login - 302 null null 1849.4226ms
+2026-06-10 02:27:25.365 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ - null null
+2026-06-10 02:27:25.393 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Controllers.HomeController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:27:25.397 +03:00 [INF] Route matched with {action = "Index", controller = "Home", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller AmbulatoryCarePortal.Presentation.Controllers.HomeController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:27:25.411 +03:00 [INF] Executing RedirectResult, redirecting to /SuperAdmin.
+2026-06-10 02:27:25.427 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Controllers.HomeController.Index (AmbulatoryCarePortal.Presentation) in 23.4973ms
+2026-06-10 02:27:25.436 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Controllers.HomeController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:27:25.440 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ - 302 null null 74.9654ms
+2026-06-10 02:27:25.451 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin - null null
+2026-06-10 02:27:25.481 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:27:25.493 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "Index", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index() on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:27:26.269 +03:00 [INF] Executed DbCommand (103ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:27:26.430 +03:00 [INF] Executed DbCommand (102ms) [Parameters=[@__p_0='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+ORDER BY [c].[Name]
+OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+2026-06-10 02:27:27.337 +03:00 [INF] Executing ViewResult, running view Index.
+2026-06-10 02:27:28.175 +03:00 [INF] Executed ViewResult - view Index executed in 855.8956ms.
+2026-06-10 02:27:28.367 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/css/site.css?v=a2NZOtkBou4Tc3XFirHOw-wx1wYyZA-DOwLqQJPheg4 - null null
+2026-06-10 02:27:28.367 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:27:28.368 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Index (AmbulatoryCarePortal.Presentation) in 2866.0116ms
+2026-06-10 02:27:28.378 +03:00 [INF] The file /css/site.css was not modified
+2026-06-10 02:27:28.395 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/css/site.css?v=a2NZOtkBou4Tc3XFirHOw-wx1wYyZA-DOwLqQJPheg4 - 304 null text/css 28.7232ms
+2026-06-10 02:27:28.389 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:27:28.386 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 18.8139ms
+2026-06-10 02:27:28.405 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:27:28.414 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin - 200 null text/html; charset=utf-8 2963.4283ms
+2026-06-10 02:27:28.541 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 136.4745ms
+2026-06-10 02:28:29.019 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:28:29.083 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:28:29.096 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:28:29.100 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 87.6028ms
+2026-06-10 02:29:29.002 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:29:29.024 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:29:29.029 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:29:29.032 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 35.5111ms
+2026-06-10 02:30:29.003 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:30:29.030 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:30:29.034 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:30:29.037 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 34.4384ms
+2026-06-10 02:31:13.276 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/Clinics - null null
+2026-06-10 02:31:13.314 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Clinics (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:13.336 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "Clinics", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Clinics(Int32, Int32) on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:31:13.461 +03:00 [INF] Executed DbCommand (95ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:31:13.580 +03:00 [INF] Executed DbCommand (105ms) [Parameters=[@__p_0='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+ORDER BY [c].[Name]
+OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+2026-06-10 02:31:14.045 +03:00 [INF] Executing ViewResult, running view Clinics.
+2026-06-10 02:31:14.516 +03:00 [INF] Executed ViewResult - view Clinics executed in 472.8281ms.
+2026-06-10 02:31:14.664 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:31:14.691 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Clinics (AmbulatoryCarePortal.Presentation) in 1338.6909ms
+2026-06-10 02:31:14.718 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Clinics (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:14.710 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 45.3114ms
+2026-06-10 02:31:14.730 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/Clinics - 200 null text/html; charset=utf-8 1455.5247ms
+2026-06-10 02:31:14.825 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:31:15.007 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 182.4126ms
+2026-06-10 02:31:19.474 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/ClinicDetail/1 - null null
+2026-06-10 02:31:19.500 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.ClinicDetail (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:19.529 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "ClinicDetail", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ClinicDetail(Int32) on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:31:19.727 +03:00 [INF] Executed DbCommand (107ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit) AND [c].[Id] = @__id_0
+2026-06-10 02:31:19.853 +03:00 [INF] Executed DbCommand (106ms) [Parameters=[@__clinicId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+WHERE [a].[ClinicId] = @__clinicId_0
+2026-06-10 02:31:19.985 +03:00 [INF] Executed DbCommand (110ms) [Parameters=[@__clinicId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [Departments] AS [d]
+WHERE [d].[IsDeleted] = CAST(0 AS bit) AND [d].[ClinicId] = @__clinicId_0
+2026-06-10 02:31:20.154 +03:00 [INF] Executed DbCommand (128ms) [Parameters=[@__clinicId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [PolicyDocuments] AS [p]
+WHERE [p].[IsDeleted] = CAST(0 AS bit) AND [p].[ClinicId] = @__clinicId_0
+2026-06-10 02:31:20.389 +03:00 [INF] Executed DbCommand (183ms) [Parameters=[@__clinicId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [PolicyDocuments] AS [p]
+WHERE [p].[IsDeleted] = CAST(0 AS bit) AND [p].[ClinicId] = @__clinicId_0 AND [p].[DocumentStatus] IN (5, 6, 1)
+2026-06-10 02:31:20.939 +03:00 [INF] Executing ViewResult, running view ClinicDetail.
+2026-06-10 02:31:20.993 +03:00 [INF] Executed ViewResult - view ClinicDetail executed in 56.5025ms.
+2026-06-10 02:31:20.998 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.ClinicDetail (AmbulatoryCarePortal.Presentation) in 1436.1121ms
+2026-06-10 02:31:21.004 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.ClinicDetail (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:21.008 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/ClinicDetail/1 - 200 null text/html; charset=utf-8 1533.9331ms
+2026-06-10 02:31:21.110 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:31:21.110 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:31:21.124 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 13.4238ms
+2026-06-10 02:31:21.346 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 236.0855ms
+2026-06-10 02:31:30.585 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/Clinics - null null
+2026-06-10 02:31:30.600 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Clinics (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:30.604 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "Clinics", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Clinics(Int32, Int32) on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:31:30.739 +03:00 [INF] Executed DbCommand (123ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:31:30.845 +03:00 [INF] Executed DbCommand (99ms) [Parameters=[@__p_0='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+ORDER BY [c].[Name]
+OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+2026-06-10 02:31:30.855 +03:00 [INF] Executing ViewResult, running view Clinics.
+2026-06-10 02:31:30.866 +03:00 [INF] Executed ViewResult - view Clinics executed in 10.469ms.
+2026-06-10 02:31:30.874 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Clinics (AmbulatoryCarePortal.Presentation) in 260.5005ms
+2026-06-10 02:31:30.886 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Clinics (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:30.983 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:31:30.983 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:31:31.056 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/Clinics - 200 null text/html; charset=utf-8 470.202ms
+2026-06-10 02:31:31.065 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 82.0183ms
+2026-06-10 02:31:31.169 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 185.5806ms
+2026-06-10 02:31:32.071 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard - null null
+2026-06-10 02:31:32.085 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:32.090 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "Index", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index() on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:31:32.207 +03:00 [INF] Executed DbCommand (109ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:31:32.311 +03:00 [INF] Executed DbCommand (97ms) [Parameters=[@__p_0='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+ORDER BY [c].[Name]
+OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+2026-06-10 02:31:32.321 +03:00 [INF] Executing ViewResult, running view Index.
+2026-06-10 02:31:32.335 +03:00 [INF] Executed ViewResult - view Index executed in 13.3432ms.
+2026-06-10 02:31:32.344 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Index (AmbulatoryCarePortal.Presentation) in 247.5195ms
+2026-06-10 02:31:32.358 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:32.394 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard - 200 null text/html; charset=utf-8 322.4571ms
+2026-06-10 02:31:32.434 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:31:32.434 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:31:32.446 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 12.8676ms
+2026-06-10 02:31:32.561 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 126.9771ms
+2026-06-10 02:31:40.404 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/AuditLog - null null
+2026-06-10 02:31:40.421 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:40.452 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "AuditLog", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] AuditLog(Int32, Int32) on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:31:40.619 +03:00 [INF] Executed DbCommand (116ms) [Parameters=[@__clinicId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[Id], [a].[ActionDate], [a].[ActionType], [a].[ClinicId], [a].[CreatedAt], [a].[CreatedBy], [a].[Description], [a].[IpAddress], [a].[IsDeleted], [a].[NewValues], [a].[OldValues], [a].[PolicyDocumentId], [a].[TargetObjectId], [a].[TargetObjectType], [a].[UpdatedAt], [a].[UpdatedBy], [a].[UserId]
+FROM [AuditTrails] AS [a]
+WHERE [a].[IsDeleted] = CAST(0 AS bit) AND [a].[ClinicId] = @__clinicId_0
+2026-06-10 02:31:41.181 +03:00 [INF] Executing ViewResult, running view AuditLog.
+2026-06-10 02:31:42.112 +03:00 [INF] Executed ViewResult - view AuditLog executed in 933.3881ms.
+2026-06-10 02:31:42.119 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation) in 1657.9877ms
+2026-06-10 02:31:42.124 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:42.132 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/AuditLog - 200 null text/html; charset=utf-8 1727.9853ms
+2026-06-10 02:31:42.519 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:31:42.523 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:31:42.537 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/AuditLog - null null
+2026-06-10 02:31:42.820 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 499 14970 application/javascript; charset=utf-8 300.724ms
+2026-06-10 02:31:42.893 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:42.897 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 374.6481ms
+2026-06-10 02:31:42.913 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "AuditLog", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] AuditLog(Int32, Int32) on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:31:43.082 +03:00 [INF] Executed DbCommand (129ms) [Parameters=[@__clinicId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[Id], [a].[ActionDate], [a].[ActionType], [a].[ClinicId], [a].[CreatedAt], [a].[CreatedBy], [a].[Description], [a].[IpAddress], [a].[IsDeleted], [a].[NewValues], [a].[OldValues], [a].[PolicyDocumentId], [a].[TargetObjectId], [a].[TargetObjectType], [a].[UpdatedAt], [a].[UpdatedBy], [a].[UserId]
+FROM [AuditTrails] AS [a]
+WHERE [a].[IsDeleted] = CAST(0 AS bit) AND [a].[ClinicId] = @__clinicId_0
+2026-06-10 02:31:43.095 +03:00 [INF] Executing ViewResult, running view AuditLog.
+2026-06-10 02:31:43.115 +03:00 [INF] Executed ViewResult - view AuditLog executed in 20.0389ms.
+2026-06-10 02:31:43.122 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation) in 169.8099ms
+2026-06-10 02:31:43.128 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:31:43.138 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/AuditLog - 200 null text/html; charset=utf-8 601.2896ms
+2026-06-10 02:31:43.235 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:31:43.235 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:31:43.360 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 124.9822ms
+2026-06-10 02:31:43.506 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 270.7661ms
+2026-06-10 02:32:44.001 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:32:44.031 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:32:44.034 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:32:44.036 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 35.4829ms
+2026-06-10 02:33:44.639 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:33:44.670 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:33:44.677 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:33:44.682 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 43.2441ms
+2026-06-10 02:34:44.015 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:34:44.034 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:34:44.036 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:34:44.039 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 24.0839ms
+2026-06-10 02:35:49.602 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:35:49.688 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:35:49.785 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:35:49.790 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 187.8682ms
+2026-06-10 02:36:07.276 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/AuditLog - null null
+2026-06-10 02:36:07.307 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:36:07.312 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "AuditLog", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] AuditLog(Int32, Int32) on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:36:07.423 +03:00 [INF] Executed DbCommand (99ms) [Parameters=[@__clinicId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[Id], [a].[ActionDate], [a].[ActionType], [a].[ClinicId], [a].[CreatedAt], [a].[CreatedBy], [a].[Description], [a].[IpAddress], [a].[IsDeleted], [a].[NewValues], [a].[OldValues], [a].[PolicyDocumentId], [a].[TargetObjectId], [a].[TargetObjectType], [a].[UpdatedAt], [a].[UpdatedBy], [a].[UserId]
+FROM [AuditTrails] AS [a]
+WHERE [a].[IsDeleted] = CAST(0 AS bit) AND [a].[ClinicId] = @__clinicId_0
+2026-06-10 02:36:07.433 +03:00 [INF] Executing ViewResult, running view AuditLog.
+2026-06-10 02:36:07.469 +03:00 [INF] Executed ViewResult - view AuditLog executed in 35.9557ms.
+2026-06-10 02:36:07.505 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation) in 183.5462ms
+2026-06-10 02:36:07.519 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:36:07.525 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/AuditLog - 200 null text/html; charset=utf-8 248.7864ms
+2026-06-10 02:36:07.562 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:36:07.564 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:36:07.575 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 12.8976ms
+2026-06-10 02:36:07.690 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 126.7622ms
+2026-06-10 02:36:40.868 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/AuditLog - null null
+2026-06-10 02:36:40.888 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:36:40.907 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "AuditLog", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] AuditLog(Int32, Int32) on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:36:41.052 +03:00 [INF] Executed DbCommand (131ms) [Parameters=[@__clinicId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[Id], [a].[ActionDate], [a].[ActionType], [a].[ClinicId], [a].[CreatedAt], [a].[CreatedBy], [a].[Description], [a].[IpAddress], [a].[IsDeleted], [a].[NewValues], [a].[OldValues], [a].[PolicyDocumentId], [a].[TargetObjectId], [a].[TargetObjectType], [a].[UpdatedAt], [a].[UpdatedBy], [a].[UserId]
+FROM [AuditTrails] AS [a]
+WHERE [a].[IsDeleted] = CAST(0 AS bit) AND [a].[ClinicId] = @__clinicId_0
+2026-06-10 02:36:41.072 +03:00 [INF] Executing ViewResult, running view AuditLog.
+2026-06-10 02:36:41.184 +03:00 [INF] Executed ViewResult - view AuditLog executed in 115.0928ms.
+2026-06-10 02:36:41.190 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation) in 272.7542ms
+2026-06-10 02:36:41.196 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.AuditLog (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:36:41.206 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/AuditLog - 200 null text/html; charset=utf-8 337.8843ms
+2026-06-10 02:36:41.294 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:36:41.297 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:36:41.312 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 17.5232ms
+2026-06-10 02:36:41.404 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 107.7032ms
+2026-06-10 02:36:57.043 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/Clinics - null null
+2026-06-10 02:36:57.064 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Clinics (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:36:57.080 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "Clinics", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Clinics(Int32, Int32) on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 02:36:57.202 +03:00 [INF] Executed DbCommand (113ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 02:36:57.308 +03:00 [INF] Executed DbCommand (97ms) [Parameters=[@__p_0='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+ORDER BY [c].[Name]
+OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+2026-06-10 02:36:57.322 +03:00 [INF] Executing ViewResult, running view Clinics.
+2026-06-10 02:36:57.341 +03:00 [INF] Executed ViewResult - view Clinics executed in 21.2485ms.
+2026-06-10 02:36:57.355 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Clinics (AmbulatoryCarePortal.Presentation) in 267.8395ms
+2026-06-10 02:36:57.371 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Clinics (AmbulatoryCarePortal.Presentation)'
+2026-06-10 02:36:57.386 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/Dashboard/Clinics - 200 null text/html; charset=utf-8 344.5277ms
+2026-06-10 02:36:57.452 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 02:36:57.455 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 02:36:57.463 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 11.6779ms
+2026-06-10 02:36:57.534 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 79.2042ms
+2026-06-10 02:38:01.419 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:38:01.466 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:38:01.484 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:38:01.488 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 70.1173ms
+2026-06-10 02:38:58.490 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:38:58.525 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:38:58.531 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:38:58.534 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 44.6712ms
+2026-06-10 02:39:57.998 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:39:58.018 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:39:58.023 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:39:58.025 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 27.1281ms
+2026-06-10 02:40:58.005 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:40:58.027 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:40:58.032 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:40:58.035 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 30.2856ms
+2026-06-10 02:41:57.999 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:41:58.020 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:41:58.024 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:41:58.027 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 30.1869ms
+2026-06-10 02:42:57.998 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:42:58.021 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:42:58.024 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:42:58.027 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 29.6997ms
+2026-06-10 02:44:57.004 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:44:57.035 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:44:57.040 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:44:57.045 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 41.4672ms
+2026-06-10 02:45:58.003 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:45:58.027 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:45:58.030 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:45:58.032 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 28.8249ms
+2026-06-10 02:46:58.011 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:46:58.031 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:46:58.034 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:46:58.036 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 24.7682ms
+2026-06-10 02:48:57.008 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:48:57.043 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:48:57.047 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:48:57.049 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 40.9762ms
+2026-06-10 02:50:58.664 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:50:58.699 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:50:58.702 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:50:58.706 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 41.778ms
+2026-06-10 02:52:57.103 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:52:57.155 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:52:57.161 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:52:57.167 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 65.1942ms
+2026-06-10 02:54:57.792 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:55:05.366 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:55:05.405 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:55:05.431 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 7638.4124ms
+2026-06-10 02:56:57.015 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:56:57.034 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:56:57.036 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:56:57.039 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 24.4546ms
+2026-06-10 02:58:57.007 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 02:58:58.276 +03:00 [INF] Executed DbCommand (121ms) [Parameters=[@__p_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[ClinicId], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[DepartmentId], [a].[Email], [a].[EmailConfirmed], [a].[FullNameAr], [a].[FullNameEn], [a].[IsActive], [a].[LastLoginAt], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[ProfilePhotoPath], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [AspNetUsers] AS [a]
+WHERE [a].[Id] = @__p_0
+2026-06-10 02:58:58.403 +03:00 [INF] Executed DbCommand (100ms) [Parameters=[@__user_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[Id], [a].[ClaimType], [a].[ClaimValue], [a].[UserId]
+FROM [AspNetUserClaims] AS [a]
+WHERE [a].[UserId] = @__user_Id_0
+2026-06-10 02:58:58.524 +03:00 [INF] Executed DbCommand (109ms) [Parameters=[@__userId_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a0].[Name]
+FROM [AspNetUserRoles] AS [a]
+INNER JOIN [AspNetRoles] AS [a0] ON [a].[RoleId] = [a0].[Id]
+WHERE [a].[UserId] = @__userId_0
+2026-06-10 02:58:58.648 +03:00 [INF] Executed DbCommand (111ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2026-06-10 02:58:58.757 +03:00 [INF] Executed DbCommand (102ms) [Parameters=[@__role_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[ClaimType], [a].[ClaimValue]
+FROM [AspNetRoleClaims] AS [a]
+WHERE [a].[RoleId] = @__role_Id_0
+2026-06-10 02:58:58.771 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 02:58:58.774 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 02:58:58.777 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 1770.489ms
+2026-06-10 03:00:57.011 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:00:57.035 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:00:57.039 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:00:57.041 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 29.9533ms
+2026-06-10 03:02:57.021 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:02:57.122 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:02:57.149 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:02:57.160 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 138.631ms
+2026-06-10 03:04:57.019 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:04:57.046 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:04:57.068 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:04:57.074 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 55.3592ms
+2026-06-10 03:06:57.071 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:06:59.358 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:07:00.037 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:07:00.706 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 3635.614ms
+2026-06-10 03:08:57.003 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:08:57.050 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:08:57.066 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:08:57.073 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 69.7148ms
+2026-06-10 03:10:57.034 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:10:57.043 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:10:57.049 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:10:57.052 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 18.4117ms
+2026-06-10 03:12:57.063 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:12:57.099 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:12:57.104 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:12:57.109 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 45.6096ms
+2026-06-10 03:14:01.310 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:14:01.350 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:14:01.358 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:14:01.363 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 53.0244ms
+2026-06-10 03:15:57.323 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:15:57.351 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:15:57.389 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:15:57.392 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 72.5029ms
+2026-06-10 03:17:57.323 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:17:57.393 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:17:57.531 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:17:57.534 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 211.493ms
+2026-06-10 03:19:57.021 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:19:57.048 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:19:57.051 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:19:57.053 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 33.5743ms
+2026-06-10 03:21:57.012 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:21:57.168 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:21:57.329 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:21:57.426 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 413.5912ms
+2026-06-10 03:23:57.167 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 03:23:57.361 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 03:23:57.675 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 03:23:57.941 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 776.5112ms
+2026-06-10 03:30:23.656 +03:00 [FTL] Application terminated unexpectedly
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Presentation\Program.cs:line 60
+2026-06-10 04:23:15.736 +03:00 [FTL] Application terminated unexpectedly
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Presentation\Program.cs:line 60
+2026-06-10 04:27:49.335 +03:00 [INF] User profile is available. Using 'C:\Users\Hazem Khalifa\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-06-10 04:27:59.255 +03:00 [INF] Executed DbCommand (690ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT 1
+2026-06-10 04:28:00.458 +03:00 [INF] Executed DbCommand (1,118ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-10 04:28:00.916 +03:00 [INF] Executed DbCommand (445ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT 1
+2026-06-10 04:28:01.218 +03:00 [INF] Executed DbCommand (293ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-10 04:28:01.609 +03:00 [INF] Executed DbCommand (315ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-06-10 04:28:01.709 +03:00 [INF] No migrations were applied. The database is already up to date.
+2026-06-10 04:28:03.303 +03:00 [INF] Executed DbCommand (559ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2026-06-10 04:28:04.932 +03:00 [INF] Executed DbCommand (1,401ms) [Parameters=[@__role_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[ClaimType], [a].[ClaimValue]
+FROM [AspNetRoleClaims] AS [a]
+WHERE [a].[RoleId] = @__role_Id_0
+2026-06-10 04:28:06.018 +03:00 [INF] Executed DbCommand (1,045ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2026-06-10 04:28:06.488 +03:00 [INF] Executed DbCommand (445ms) [Parameters=[@__role_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[ClaimType], [a].[ClaimValue]
+FROM [AspNetRoleClaims] AS [a]
+WHERE [a].[RoleId] = @__role_Id_0
+2026-06-10 04:28:06.785 +03:00 [INF] Executed DbCommand (238ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2026-06-10 04:28:07.179 +03:00 [INF] Executed DbCommand (387ms) [Parameters=[@__role_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[ClaimType], [a].[ClaimValue]
+FROM [AspNetRoleClaims] AS [a]
+WHERE [a].[RoleId] = @__role_Id_0
+2026-06-10 04:28:08.005 +03:00 [INF] Executed DbCommand (773ms) [Parameters=[@__normalizedEmail_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(2) [a].[Id], [a].[AccessFailedCount], [a].[ClinicId], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[DepartmentId], [a].[Email], [a].[EmailConfirmed], [a].[FullNameAr], [a].[FullNameEn], [a].[IsActive], [a].[LastLoginAt], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[ProfilePhotoPath], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [AspNetUsers] AS [a]
+WHERE [a].[NormalizedEmail] = @__normalizedEmail_0
+2026-06-10 04:28:08.775 +03:00 [INF] Executed DbCommand (525ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 04:28:09.580 +03:00 [INF] Executed DbCommand (626ms) [Parameters=[@__clinic_Id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [d].[DepartmentCode]
+FROM [Departments] AS [d]
+WHERE [d].[IsDeleted] = CAST(0 AS bit) AND [d].[ClinicId] = @__clinic_Id_0
+2026-06-10 04:28:10.420 +03:00 [INF] Notification Background Service started
+2026-06-10 04:28:11.022 +03:00 [INF] Executed DbCommand (411ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT [h].[Id], [h].[CreatedAt], [h].[CreatedBy], [h].[DocumentName], [h].[DocumentNameAr], [h].[DocumentType], [h].[ExpiryDate], [h].[FilePath], [h].[HrStaffId], [h].[IsDeleted], [h].[IsVerified], [h].[IssueDate], [h].[UpdatedAt], [h].[UpdatedBy], [h].[UploadedAt], [h].[UploadedByUserId], [h].[VerifiedByUserId], [h].[VerifiedDate], [h].[VersionNumber]
+FROM [HrDocuments] AS [h]
+WHERE [h].[IsDeleted] = CAST(0 AS bit) AND [h].[ExpiryDate] IS NOT NULL AND [h].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 04:28:11.040 +03:00 [INF] Document expiry check completed
+2026-06-10 04:28:11.193 +03:00 [INF] Now listening on: https://localhost:2167
+2026-06-10 04:28:11.196 +03:00 [INF] Now listening on: http://localhost:2168
+2026-06-10 04:28:11.308 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-10 04:28:11.310 +03:00 [INF] Hosting environment: Development
+2026-06-10 04:28:11.312 +03:00 [INF] Content root path: D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Presentation
+2026-06-10 04:28:11.388 +03:00 [INF] Executed DbCommand (317ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit) AND [c].[IsActive] = CAST(1 AS bit)
+2026-06-10 04:28:12.559 +03:00 [INF] Executed DbCommand (515ms) [Parameters=[@__clinic_Id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [PolicyDocuments] AS [p]
+WHERE [p].[IsDeleted] = CAST(0 AS bit) AND [p].[ClinicId] = @__clinic_Id_0 AND [p].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 04:28:12.797 +03:00 [INF] Executed DbCommand (178ms) [Parameters=[@__clinic_Id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [PolicyDocuments] AS [p]
+WHERE [p].[IsDeleted] = CAST(0 AS bit) AND [p].[ClinicId] = @__clinic_Id_0 AND [p].[DocumentStatus] = 5 AND [p].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 04:28:13.005 +03:00 [INF] Executed DbCommand (188ms) [Parameters=[@__clinic_Id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [PolicyDocuments] AS [p]
+WHERE [p].[IsDeleted] = CAST(0 AS bit) AND [p].[ClinicId] = @__clinic_Id_0 AND [p].[DocumentStatus] = 6 AND [p].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 04:28:13.030 +03:00 [INF] Compliance alerts created
+2026-06-10 04:28:13.133 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ - null null
+2026-06-10 04:28:14.235 +03:00 [INF] Executed DbCommand (1,159ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT [c].[Id], [c].[ClinicId], [c].[CreatedAt], [c].[CreatedBy], [c].[DepartmentId], [c].[Description], [c].[Frequency], [c].[IsActive], [c].[IsDeleted], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [ChecklistTemplates] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit) AND [c].[IsActive] = CAST(1 AS bit) AND [c].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 04:28:14.253 +03:00 [INF] Checklist reminders processed
+2026-06-10 04:28:14.587 +03:00 [ERR] Error in NotificationBackgroundService cycle
+System.InvalidOperationException: 'AmbulatoryCarePortal.Infrastructure.UnitOfWork.UnitOfWork' type only implements IAsyncDisposable. Use DisposeAsync to dispose the container.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.Dispose()
+   at AmbulatoryCarePortal.Application.Services.NotificationBackgroundService.ExecuteAsync(CancellationToken stoppingToken) in D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\Services\NotificationBackgroundService.cs:line 39
+2026-06-10 04:28:16.405 +03:00 [INF] Executed DbCommand (294ms) [Parameters=[@__p_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[ClinicId], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[DepartmentId], [a].[Email], [a].[EmailConfirmed], [a].[FullNameAr], [a].[FullNameEn], [a].[IsActive], [a].[LastLoginAt], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[ProfilePhotoPath], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [AspNetUsers] AS [a]
+WHERE [a].[Id] = @__p_0
+2026-06-10 04:28:16.997 +03:00 [INF] Executed DbCommand (513ms) [Parameters=[@__user_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[Id], [a].[ClaimType], [a].[ClaimValue], [a].[UserId]
+FROM [AspNetUserClaims] AS [a]
+WHERE [a].[UserId] = @__user_Id_0
+2026-06-10 04:28:17.333 +03:00 [INF] Executed DbCommand (274ms) [Parameters=[@__userId_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a0].[Name]
+FROM [AspNetUserRoles] AS [a]
+INNER JOIN [AspNetRoles] AS [a0] ON [a].[RoleId] = [a0].[Id]
+WHERE [a].[UserId] = @__userId_0
+2026-06-10 04:28:17.730 +03:00 [INF] Executed DbCommand (362ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='120']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2026-06-10 04:28:18.135 +03:00 [INF] Executed DbCommand (398ms) [Parameters=[@__role_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='120']
+SELECT [a].[ClaimType], [a].[ClaimValue]
+FROM [AspNetRoleClaims] AS [a]
+WHERE [a].[RoleId] = @__role_Id_0
+2026-06-10 04:28:18.165 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Controllers.HomeController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 04:28:18.199 +03:00 [INF] Route matched with {action = "Index", controller = "Home", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller AmbulatoryCarePortal.Presentation.Controllers.HomeController (AmbulatoryCarePortal.Presentation).
+2026-06-10 04:28:18.304 +03:00 [INF] Executing RedirectResult, redirecting to /SuperAdmin.
+2026-06-10 04:28:18.320 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Controllers.HomeController.Index (AmbulatoryCarePortal.Presentation) in 100.6214ms
+2026-06-10 04:28:18.325 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Controllers.HomeController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 04:28:18.373 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ - 302 null null 5257.5728ms
+2026-06-10 04:28:18.390 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin - null null
+2026-06-10 04:28:18.447 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 04:28:18.472 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "Index", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index() on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController (AmbulatoryCarePortal.Presentation).
+2026-06-10 04:28:19.201 +03:00 [INF] Executed DbCommand (208ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 04:28:20.134 +03:00 [INF] Executed DbCommand (890ms) [Parameters=[@__p_0='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [c].[Id], [c].[CityAr], [c].[CityEn], [c].[ClinicType], [c].[ComplianceScore], [c].[CreatedAt], [c].[CreatedBy], [c].[IsActive], [c].[IsDeleted], [c].[LicenseExpiry], [c].[LicenseNumber], [c].[LogoPath], [c].[Name], [c].[NameAr], [c].[UpdatedAt], [c].[UpdatedBy]
+FROM [Clinics] AS [c]
+WHERE [c].[IsDeleted] = CAST(0 AS bit)
+ORDER BY [c].[Name]
+OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+2026-06-10 04:28:20.836 +03:00 [INF] Executing ViewResult, running view Index.
+2026-06-10 04:28:21.816 +03:00 [INF] Executed ViewResult - view Index executed in 1010.5058ms.
+2026-06-10 04:28:21.830 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Index (AmbulatoryCarePortal.Presentation) in 3353.5414ms
+2026-06-10 04:28:21.836 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DashboardController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 04:28:21.865 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin - 200 null text/html; charset=utf-8 3475.7134ms
+2026-06-10 04:28:22.022 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 04:28:22.059 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 37.9927ms
+2026-06-10 04:28:22.484 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 04:28:22.722 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 238.5942ms
+2026-06-10 04:28:57.011 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 04:28:57.077 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 04:28:57.089 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 04:28:57.092 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 81.2457ms
+2026-06-10 04:29:23.008 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 04:29:23.051 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 04:29:23.055 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 04:29:23.059 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 53.4391ms
+2026-06-10 04:30:19.169 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/DocumentTemplates - null null
+2026-06-10 04:30:19.220 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DocumentTemplatesController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 04:30:19.259 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "Index", controller = "DocumentTemplates"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index(Int32, Int32, System.String) on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DocumentTemplatesController (AmbulatoryCarePortal.Presentation).
+2026-06-10 04:30:19.587 +03:00 [INF] Executed DbCommand (210ms) [Parameters=[], CommandType='"Text"', CommandTimeout='120']
+SELECT COUNT(*)
+FROM [DocumentTemplates] AS [d]
+WHERE [d].[IsDeleted] = CAST(0 AS bit)
+2026-06-10 04:30:19.718 +03:00 [INF] Executed DbCommand (94ms) [Parameters=[@__p_0='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='120']
+SELECT [d].[Id], [d].[CreatedAt], [d].[CreatedBy], [d].[DepartmentCategory], [d].[Description], [d].[IsActive], [d].[IsDeleted], [d].[StandardCode], [d].[TemplateFilePath], [d].[TitleAr], [d].[TitleEn], [d].[UpdatedAt], [d].[UpdatedBy]
+FROM [DocumentTemplates] AS [d]
+WHERE [d].[IsDeleted] = CAST(0 AS bit)
+ORDER BY [d].[StandardCode]
+OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+2026-06-10 04:30:20.289 +03:00 [INF] Executing ViewResult, running view Index.
+2026-06-10 04:30:21.152 +03:00 [INF] Executed ViewResult - view Index executed in 865.6573ms.
+2026-06-10 04:30:21.161 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DocumentTemplatesController.Index (AmbulatoryCarePortal.Presentation) in 1892.341ms
+2026-06-10 04:30:21.168 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DocumentTemplatesController.Index (AmbulatoryCarePortal.Presentation)'
+2026-06-10 04:30:21.176 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/DocumentTemplates - 200 null text/html; charset=utf-8 2007.8902ms
+2026-06-10 04:30:21.259 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 04:30:21.260 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 04:30:21.272 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 13.3882ms
+2026-06-10 04:30:21.368 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 107.4064ms
+2026-06-10 04:30:25.662 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/SuperAdmin/DocumentTemplates/Create - null null
+2026-06-10 04:30:25.688 +03:00 [INF] Executing endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DocumentTemplatesController.Create (AmbulatoryCarePortal.Presentation)'
+2026-06-10 04:30:25.705 +03:00 [INF] Route matched with {area = "SuperAdmin", action = "Create", controller = "DocumentTemplates"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Create() on controller AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DocumentTemplatesController (AmbulatoryCarePortal.Presentation).
+2026-06-10 04:30:26.250 +03:00 [INF] Executing ViewResult, running view Create.
+2026-06-10 04:30:26.458 +03:00 [INF] Executed ViewResult - view Create executed in 209.4598ms.
+2026-06-10 04:30:26.464 +03:00 [INF] Executed action AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DocumentTemplatesController.Create (AmbulatoryCarePortal.Presentation) in 747.8745ms
+2026-06-10 04:30:26.472 +03:00 [INF] Executed endpoint 'AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers.DocumentTemplatesController.Create (AmbulatoryCarePortal.Presentation)'
+2026-06-10 04:30:26.490 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/SuperAdmin/DocumentTemplates/Create - 200 null text/html; charset=utf-8 825.9234ms
+2026-06-10 04:30:26.573 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-10 04:30:26.574 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/_vs/browserLink - null null
+2026-06-10 04:30:26.613 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_framework/aspnetcore-browser-refresh.js - 200 14970 application/javascript; charset=utf-8 40.783ms
+2026-06-10 04:30:26.793 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/_vs/browserLink - 200 null text/javascript; charset=UTF-8 219.3301ms
+2026-06-10 04:30:57.036 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 04:30:57.081 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 04:30:57.088 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 04:30:57.095 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 70.0232ms
+2026-06-10 04:31:27.011 +03:00 [INF] Request starting HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - null null
+2026-06-10 04:31:27.040 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (ClinicAdmin|ClinicViewer)
+2026-06-10 04:31:27.046 +03:00 [INF] AuthenticationScheme: Identity.Application was forbidden.
+2026-06-10 04:31:27.052 +03:00 [INF] Request finished HTTP/2 GET https://localhost:2167/ClinicAdmin/Notifications/Index - 403 0 null 43.9454ms

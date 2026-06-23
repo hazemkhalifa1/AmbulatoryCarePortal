@@ -107,6 +107,11 @@ public class DocumentTemplateService : IDocumentTemplateService
 
     public async Task<int> CreateTemplateAsync(CreateDocumentTemplateDto dto)
     {
+        var existing = await _unitOfWork.Repository<DocumentTemplate>()
+            .FindAsync(t => t.StandardCode == dto.StandardCode && !t.IsDeleted);
+        if (existing.Any())
+            throw new InvalidOperationException($"A template with StandardCode '{dto.StandardCode}' already exists.");
+
         var template = _mapper.Map<DocumentTemplate>(dto);
         template.IsActive = true;
         template.CurrentVersion = 1;
@@ -123,6 +128,14 @@ public class DocumentTemplateService : IDocumentTemplateService
         var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(dto.Id);
         if (template == null)
             return false;
+
+        if (template.StandardCode != dto.StandardCode)
+        {
+            var existing = await _unitOfWork.Repository<DocumentTemplate>()
+                .FindAsync(t => t.StandardCode == dto.StandardCode && !t.IsDeleted);
+            if (existing.Any())
+                throw new InvalidOperationException($"A template with StandardCode '{dto.StandardCode}' already exists.");
+        }
 
         _mapper.Map(dto, template);
         template.UpdatedAt = DateTime.UtcNow;

@@ -48,6 +48,10 @@ public static class ApplicationServiceExtensions
         // Compliance Score Engine
         services.AddScoped<IComplianceScoreService, ComplianceScoreService>();
 
+        // Signature Management
+        services.AddScoped<IClinicSignatureService, ClinicSignatureService>();
+        services.AddScoped<ITemplateSignerService, TemplateSignerService>();
+
         // Settings
         services.AddScoped<ISettingsService, SettingsService>();
 

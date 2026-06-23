@@ -1,0 +1,16 @@
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\bin\Release\net8.0\AmbulatoryCarePortal.Application.deps.json
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\bin\Release\net8.0\AmbulatoryCarePortal.Application.dll
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\bin\Release\net8.0\AmbulatoryCarePortal.Application.pdb
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\bin\Release\net8.0\AmbulatoryCarePortal.Domain.dll
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\bin\Release\net8.0\AmbulatoryCarePortal.Domain.pdb
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\AmbulatoryCarePortal.Application.csproj.AssemblyReference.cache
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\AmbulatoryCarePortal.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\AmbulatoryCarePortal.Application.AssemblyInfoInputs.cache
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\AmbulatoryCarePortal.Application.AssemblyInfo.cs
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\AmbulatoryCarePortal.Application.csproj.CoreCompileInputs.cache
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\AmbulatoryCarePortal.Application.sourcelink.json
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\Ambulato.F3D308D2.Up2Date
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\AmbulatoryCarePortal.Application.dll
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\refint\AmbulatoryCarePortal.Application.dll
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\AmbulatoryCarePortal.Application.pdb
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Application\obj\Release\net8.0\ref\AmbulatoryCarePortal.Application.dll

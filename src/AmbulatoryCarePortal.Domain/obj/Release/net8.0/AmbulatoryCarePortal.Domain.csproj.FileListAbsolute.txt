@@ -1,0 +1,13 @@
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\bin\Release\net8.0\AmbulatoryCarePortal.Domain.deps.json
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\bin\Release\net8.0\AmbulatoryCarePortal.Domain.dll
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\bin\Release\net8.0\AmbulatoryCarePortal.Domain.pdb
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\obj\Release\net8.0\AmbulatoryCarePortal.Domain.csproj.AssemblyReference.cache
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\obj\Release\net8.0\AmbulatoryCarePortal.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\obj\Release\net8.0\AmbulatoryCarePortal.Domain.AssemblyInfoInputs.cache
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\obj\Release\net8.0\AmbulatoryCarePortal.Domain.AssemblyInfo.cs
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\obj\Release\net8.0\AmbulatoryCarePortal.Domain.csproj.CoreCompileInputs.cache
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\obj\Release\net8.0\AmbulatoryCarePortal.Domain.sourcelink.json
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\obj\Release\net8.0\AmbulatoryCarePortal.Domain.dll
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\obj\Release\net8.0\refint\AmbulatoryCarePortal.Domain.dll
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\obj\Release\net8.0\AmbulatoryCarePortal.Domain.pdb
+D:\C# Projects\AmbulatoryCarePortal\src\AmbulatoryCarePortal.Domain\obj\Release\net8.0\ref\AmbulatoryCarePortal.Domain.dll

@@ -1,5 +1,6 @@
 using AmbulatoryCarePortal.Application.Common;
 using AmbulatoryCarePortal.Application.DTOs.Clinic;
+using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
@@ -14,12 +15,14 @@ public class ClinicService : IClinicService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly UserManager<AppUser> _userManager;
+    private readonly IClinicTemplateAssignmentService _assignmentService;
 
-    public ClinicService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<AppUser> userManager)
+    public ClinicService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<AppUser> userManager, IClinicTemplateAssignmentService assignmentService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _userManager = userManager;
+        _assignmentService = assignmentService;
     }
 
     public async Task<PagedResult<ClinicDto>> GetAllClinicsAsync(int pageNumber, int pageSize)
@@ -63,6 +66,38 @@ public class ClinicService : IClinicService
         dto.DepartmentCount = departmentCount;
         dto.PolicyDocumentCount = policyCount;
         dto.OpenGapCount = openGapCount;
+
+        var assignments = await _assignmentService.GetClinicAssignmentsWithDetailsAsync(clinicId);
+        var globalValues = await _assignmentService.GetGlobalTemplateValuesForClinicAsync(clinicId);
+
+        foreach (var gv in globalValues)
+        {
+            if (gv.VariableName.StartsWith("ClinicName", StringComparison.OrdinalIgnoreCase) ||
+                gv.VariableName.Equals("Clinic Name", StringComparison.OrdinalIgnoreCase) ||
+                gv.VariableName.Equals("Clinic_Name", StringComparison.OrdinalIgnoreCase))
+            {
+                gv.Value = clinic.Name;
+            }
+
+            if (gv.VariableName.Contains("logo", StringComparison.OrdinalIgnoreCase) ||
+                gv.VariableName.Contains("Logo", StringComparison.OrdinalIgnoreCase))
+            {
+                gv.ImagePath = clinic.LogoPath;
+            }
+        }
+
+        var globalNames = globalValues.Select(g => g.VariableName)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var assignment in assignments)
+        {
+            assignment.VariableValues = assignment.VariableValues
+                .Where(v => !globalNames.Contains(v.VariableName))
+                .ToList();
+        }
+
+        dto.DocumentAssignments = assignments;
+        dto.GlobalTemplateValues = globalValues;
 
         return dto;
     }

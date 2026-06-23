@@ -111,5 +111,10 @@ public static class PermissionPolicies
             p.Requirements.Add(new PermissionRequirement(Permissions.ManageEmailSettings)));
         options.AddPolicy(PolicyName(Permissions.BackupSystem), p =>
             p.Requirements.Add(new PermissionRequirement(Permissions.BackupSystem)));
+
+        options.AddPolicy(PolicyName(Permissions.ManageSignatures), p =>
+            p.Requirements.Add(new PermissionRequirement(Permissions.ManageSignatures)));
+        options.AddPolicy(PolicyName(Permissions.ViewSignatures), p =>
+            p.Requirements.Add(new PermissionRequirement(Permissions.ViewSignatures)));
     }
 }

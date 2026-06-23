@@ -135,6 +135,12 @@ public class MappingProfile : Profile
 
         // SystemSetting Mappings
         CreateMap<SystemSetting, SystemSettingDto>();
+
+        // Signature Mappings
+        CreateMap<ClinicSignature, ClinicSignatureDto>();
+        CreateMap<CreateClinicSignatureDto, ClinicSignature>();
+        CreateMap<TemplateSigner, TemplateSignerDto>();
+        CreateMap<CreateTemplateSignerDto, TemplateSigner>();
     }
 }
 

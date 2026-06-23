@@ -1,6 +1,3 @@
-using System.Linq.Expressions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using AmbulatoryCarePortal.Application.Common;
 using AmbulatoryCarePortal.Application.Constants;
 using AmbulatoryCarePortal.Application.DTOs.Document;
@@ -8,6 +5,9 @@ using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
 using AmbulatoryCarePortal.Presentation.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.SuperAdmin.Controllers;
 
@@ -59,13 +59,13 @@ public class DocumentTemplatesController : Controller
             var allForType = await _unitOfWork.Repository<DocumentTemplate>()
                 .FindAsync(t => t.ClinicType == parsedType && !t.IsDeleted);
             ViewBag.DocumentCounts = allForType
-                .GroupBy(t => t.StandardCode)
+                .GroupBy(t => t.DepartmentCategory)
                 .ToDictionary(g => g.Key, g => g.Count());
 
             if (!string.IsNullOrEmpty(standard))
             {
                 Expression<Func<DocumentTemplate, bool>> predicate = t =>
-                    t.ClinicType == parsedType && t.StandardCode == standard && !t.IsDeleted;
+                    t.ClinicType == parsedType && t.DepartmentCategory == standard && !t.IsDeleted;
 
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
