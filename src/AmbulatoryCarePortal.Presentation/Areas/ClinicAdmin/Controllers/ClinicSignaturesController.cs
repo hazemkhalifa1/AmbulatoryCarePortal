@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AmbulatoryCarePortal.Application.Interfaces;
+using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Presentation.Helpers;
 
 namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
@@ -171,7 +172,11 @@ public class ClinicSignaturesController : Controller
             if (docxBytes == null)
                 return NotFound();
 
-            return File(docxBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"Preview_{assignmentId}.docx");
+            var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(assignment.ClinicId);
+            var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(assignment.DocumentTemplateId);
+            var fileName = $"{clinic?.Name ?? "Clinic"}_{template?.StandardCode ?? "document"}.docx";
+            var safeName = string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
+            return File(docxBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", safeName);
         }
         catch (Exception ex)
         {
@@ -196,9 +201,11 @@ public class ClinicSignaturesController : Controller
             if (docBytes == null)
                 return NotFound();
 
-            var template = await _unitOfWork.Repository<AmbulatoryCarePortal.Domain.Entities.DocumentTemplate>().GetByIdAsync(assignment.DocumentTemplateId);
-            var fileName = $"{template?.StandardCode ?? "document"}_{DateTime.Now:yyyyMMddHHmmss}.docx";
-            return File(docBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileName);
+            var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(assignment.ClinicId);
+            var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(assignment.DocumentTemplateId);
+            var fileName = $"{clinic?.Name ?? "Clinic"}_{template?.StandardCode ?? "document"}.docx";
+            var safeName = string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
+            return File(docBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", safeName);
         }
         catch (Exception ex)
         {

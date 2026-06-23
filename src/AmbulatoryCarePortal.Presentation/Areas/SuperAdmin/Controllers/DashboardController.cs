@@ -366,7 +366,12 @@ public class DashboardController : Controller
             if (docxBytes == null)
                 return NotFound();
 
-            return File(docxBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"Preview_{assignmentId}.docx");
+            var assignment = await _unitOfWork.Repository<ClinicTemplateAssignment>().GetByIdAsync(assignmentId);
+            var clinic = assignment != null ? await _unitOfWork.Repository<Clinic>().GetByIdAsync(assignment.ClinicId) : null;
+            var template = assignment != null ? await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(assignment.DocumentTemplateId) : null;
+            var fileName = $"{clinic?.Name ?? "Clinic"}_{template?.StandardCode ?? "document"}.docx";
+            var safeName = string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
+            return File(docxBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", safeName);
         }
         catch (Exception ex)
         {
@@ -395,9 +400,11 @@ public class DashboardController : Controller
                 return RedirectToAction(nameof(ClinicDetail), new { id = assignment.ClinicId });
             }
 
+            var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(assignment.ClinicId);
             var template = await _unitOfWork.Repository<DocumentTemplate>().GetByIdAsync(assignment.DocumentTemplateId);
-            var fileName = $"{template?.StandardCode ?? "document"}_{DateTime.Now:yyyyMMddHHmmss}.docx";
-            return File(docBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileName);
+            var fileName = $"{clinic?.Name ?? "Clinic"}_{template?.StandardCode ?? "document"}.docx";
+            var safeName = string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
+            return File(docBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", safeName);
         }
         catch (Exception ex)
         {

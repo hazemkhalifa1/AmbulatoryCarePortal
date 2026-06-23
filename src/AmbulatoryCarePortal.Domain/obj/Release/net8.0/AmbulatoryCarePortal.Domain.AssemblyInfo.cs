@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AmbulatoryCarePortal.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cc8b0ecb4c96d37dc85303f56a0eefe8fe5411bf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+067e04d9c0855881038a14b333c0f1f57d568807")]
 [assembly: System.Reflection.AssemblyProductAttribute("AmbulatoryCarePortal.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AmbulatoryCarePortal.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
