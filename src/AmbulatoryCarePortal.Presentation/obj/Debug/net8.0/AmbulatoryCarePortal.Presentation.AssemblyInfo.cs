@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AmbulatoryCarePortal.Presentation")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+067e04d9c0855881038a14b333c0f1f57d568807")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+239606a566a9808a93a6b4122cd63a78c9c24504")]
 [assembly: System.Reflection.AssemblyProductAttribute("AmbulatoryCarePortal.Presentation")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AmbulatoryCarePortal.Presentation")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

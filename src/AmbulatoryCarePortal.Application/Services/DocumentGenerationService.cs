@@ -3,6 +3,7 @@ using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Validation;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Extensions.Logging;
 using QuestPDF.Fluent;
@@ -20,6 +21,7 @@ public class DocumentGenerationService : IDocumentGenerationService
 
     private static readonly Regex s_normalizePlaceholderRegex = new(
         @"\{\{\s*(.*?)\s*\}\}", RegexOptions.Compiled);
+    private static int _nextDocPrId;
 
     public DocumentGenerationService(IUnitOfWork unitOfWork, ILogger<DocumentGenerationService> logger, IClinicSignatureService signatureService)
     {
@@ -53,8 +55,9 @@ public class DocumentGenerationService : IDocumentGenerationService
 
             using (var wordDoc = WordprocessingDocument.Open(memStream, true))
             {
-                ReplaceImagePlaceholders(wordDoc, imageValues);
                 ReplaceTextPlaceholders(wordDoc, textValues);
+                ReplaceImagePlaceholders(wordDoc, imageValues);
+                ValidateDocument(wordDoc, "After SDK processing (GenerateDocx)");
             }
 
             fileBytes = memStream.ToArray();
@@ -273,7 +276,7 @@ public class DocumentGenerationService : IDocumentGenerationService
             if (!varMap.TryGetValue(val.TemplateVariableId, out var v)) continue;
 
             if (v.IsImage && !string.IsNullOrEmpty(val.ImagePath))
-                imageValues[v.Name.ToLowerInvariant()] = val.ImagePath;
+                imageValues[$"{{{{{v.Name}}}}}"] = val.ImagePath;
             else if (!string.IsNullOrEmpty(val.Value))
                 textValues[$"{{{{{v.Name}}}}}"] = val.Value;
         }
@@ -290,7 +293,11 @@ public class DocumentGenerationService : IDocumentGenerationService
         textValues["{{CurrentYear}}"] = DateTime.Now.Year.ToString();
 
         if (!string.IsNullOrEmpty(clinic.LogoPath))
+        {
+            imageValues["{{logo}}"] = clinic.LogoPath;
+            // also expose a helper key without braces for other consumers (e.g. PDF rendering)
             imageValues["logo"] = clinic.LogoPath;
+        }
 
         var signers = await _unitOfWork.Repository<TemplateSigner>()
             .FindAsync(s => s.DocumentTemplateId == template.Id);
@@ -299,7 +306,12 @@ public class DocumentGenerationService : IDocumentGenerationService
         {
             var sigImagePath = await _signatureService.ResolveSignatureImagePathAsync(clinic.Id, signer.SignerCode);
             if (!string.IsNullOrEmpty(sigImagePath))
-                imageValues[$"{{{{{signer.SignerCode}_SIGNATURE}}}}".ToLowerInvariant()] = sigImagePath;
+            {
+                // keep placeholder form with braces for DOCX replacements
+                imageValues[$"{{{{{signer.SignerCode}_SIGNATURE}}}}"] = sigImagePath;
+                // also add a helper key without braces
+                imageValues[$"{signer.SignerCode}_SIGNATURE"] = sigImagePath;
+            }
 
             var signerName = await _signatureService.ResolveSignerNameAsync(clinic.Id, signer.SignerCode);
             textValues[$"{{{{{signer.SignerCode}_NAME}}}}"] = signerName ?? "";
@@ -443,97 +455,6 @@ public class DocumentGenerationService : IDocumentGenerationService
         }
     }
 
-    private void ReplaceImagePlaceholders(WordprocessingDocument doc, Dictionary<string, string> imageMap)
-    {
-        if (imageMap.Count == 0 || doc.MainDocumentPart?.Document?.Body == null) return;
-
-        ReplaceImagesInContainer(doc.MainDocumentPart.Document.Body, doc.MainDocumentPart, imageMap);
-    }
-
-    private void ReplaceImagesInContainer<T>(OpenXmlElement container, T part, Dictionary<string, string> imageMap) where T : OpenXmlPartContainer, ISupportedRelationship<ImagePart>
-    {
-        var paragraphs = container.Descendants<Paragraph>().ToList();
-        foreach (var para in paragraphs)
-        {
-            var fullText = string.Concat(para.Descendants<Text>().Select(t => t.Text));
-
-            bool matched = false;
-            foreach (var kvp in imageMap)
-            {
-                if (!fullText.Contains(kvp.Key, StringComparison.OrdinalIgnoreCase)) continue;
-                matched = true;
-
-                InjectImageIntoParagraph(para, part, kvp.Key, kvp.Value);
-                break;
-            }
-
-            if (!matched && fullText.Contains("{{}}", StringComparison.OrdinalIgnoreCase))
-            {
-                var first = imageMap.First();
-                InjectImageIntoParagraph(para, part, "{{}}", first.Value);
-            }
-        }
-    }
-
-    private void InjectImageIntoParagraph<T>(Paragraph para, T part, string placeholder, string imagePath) where T : OpenXmlPartContainer, ISupportedRelationship<ImagePart>
-    {
-        var fullImagePath = ResolvePath(imagePath);
-        if (!File.Exists(fullImagePath)) return;
-
-        try
-        {
-            var imageBytes = File.ReadAllBytes(fullImagePath);
-
-            var imagePart = part.AddImagePart(ImagePartType.Png);
-            using (var imgStream = new MemoryStream(imageBytes))
-            {
-                imagePart.FeedData(imgStream);
-            }
-
-            var relationshipId = part.GetIdOfPart(imagePart);
-
-            foreach (var text in para.Descendants<Text>().Where(t => t.Text.Contains(placeholder, StringComparison.OrdinalIgnoreCase)).ToList())
-            {
-                text.Text = text.Text.Replace(placeholder, "", StringComparison.OrdinalIgnoreCase);
-
-                var run = text.Parent as Run ?? text.Ancestors<Run>().FirstOrDefault();
-                if (run == null) continue;
-
-                var drawing = new Drawing(
-                    new DocumentFormat.OpenXml.Drawing.Wordprocessing.Inline(
-                        new DocumentFormat.OpenXml.Drawing.Wordprocessing.Extent { Cx = 914400L * 3, Cy = 914400L * 3 },
-                        new DocumentFormat.OpenXml.Drawing.Wordprocessing.EffectExtent { LeftEdge = 0L, TopEdge = 0L, RightEdge = 0L, BottomEdge = 0L },
-                        new DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties { Id = (uint)Math.Abs(placeholder.GetHashCode()), Name = "Image" },
-                        new DocumentFormat.OpenXml.Drawing.Graphic(
-                            new DocumentFormat.OpenXml.Drawing.GraphicData(
-                                new DocumentFormat.OpenXml.Drawing.Pictures.Picture(
-                                    new DocumentFormat.OpenXml.Drawing.Pictures.BlipFill(
-                                        new DocumentFormat.OpenXml.Drawing.Blip { Embed = relationshipId },
-                                        new DocumentFormat.OpenXml.Drawing.Stretch(new DocumentFormat.OpenXml.Drawing.FillRectangle())
-                                    ),
-                                    new DocumentFormat.OpenXml.Drawing.Pictures.ShapeProperties(
-                                        new DocumentFormat.OpenXml.Drawing.Transform2D(
-                                            new DocumentFormat.OpenXml.Drawing.Offset { X = 0L, Y = 0L },
-                                            new DocumentFormat.OpenXml.Drawing.Extents { Cx = 914400L * 3, Cy = 914400L * 3 }
-                                        ),
-                                        new DocumentFormat.OpenXml.Drawing.PresetGeometry { Preset = DocumentFormat.OpenXml.Drawing.ShapeTypeValues.Rectangle }
-                                    )
-                                )
-                            )
-                            { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" }
-                        )
-                    )
-                );
-
-                run.Append(drawing);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to inject image {ImagePath} into document", imagePath);
-        }
-    }
-
     public async Task<byte[]?> PreviewDocxAsync(int assignmentId)
     {
         return await GenerateInMemoryDocxAsync(assignmentId);
@@ -567,11 +488,8 @@ public class DocumentGenerationService : IDocumentGenerationService
                     {
                         ReplaceTextPlaceholders(wordDoc, textValues);
                         ReplaceImagePlaceholders(wordDoc, imageValues);
+                        ValidateDocument(wordDoc, "After SDK processing (PreviewPdf)");
                     }
-
-                    var debugPath = Path.Combine(Path.GetTempPath(), $"debug_preview_{assignmentId}.docx");
-                    File.WriteAllBytes(debugPath, memStream.ToArray());
-                    _logger.LogInformation("DEBUG: Saved debug copy to {Path}", debugPath);
 
                     return memStream.ToArray();
                 }
@@ -623,10 +541,10 @@ public class DocumentGenerationService : IDocumentGenerationService
 
                     using (var wordDoc = WordprocessingDocument.Open(memStream, true))
                     {
-                        ReplaceImagePlaceholders(wordDoc, imageValues);
                         ReplaceTextPlaceholders(wordDoc, textValues);
+                        ReplaceImagePlaceholders(wordDoc, imageValues);
+                        ValidateDocument(wordDoc, "After SDK processing (GenerateInMemory)");
                     }
-
                     return memStream.ToArray();
                 }
             }
@@ -688,5 +606,212 @@ public class DocumentGenerationService : IDocumentGenerationService
         var (textValues, imageValues) = await BuildVariableMapsAsync(assignment, template, clinic);
 
         return GeneratePdfDocument(template, clinic, textValues, imageValues);
+    }
+
+    private void ValidateDocument(WordprocessingDocument doc, string stage)
+    {
+        try
+        {
+            var validator = new OpenXmlValidator();
+            var errors = validator.Validate(doc).ToList();
+            if (errors.Count > 0)
+            {
+                _logger.LogWarning("OpenXmlValidator found {Count} error(s) at stage: {Stage}", errors.Count, stage);
+                foreach (var err in errors)
+                {
+                    _logger.LogWarning("  Validation: {Desc} | Part: {Part}",
+                        err.Description, err.Part?.Uri);
+                }
+            }
+            else
+            {
+                _logger.LogInformation("OpenXmlValidator: {Stage} — no errors", stage);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "OpenXmlValidator failed at stage: {Stage}", stage);
+        }
+    }
+    private void ReplaceImagePlaceholders(
+    WordprocessingDocument doc,
+    Dictionary<string, string> imageMap)
+    {
+        if (imageMap.Count == 0 || doc.MainDocumentPart == null)
+            return;
+
+        if (doc.MainDocumentPart.Document?.Body != null)
+        {
+            ProcessContainer(
+                doc.MainDocumentPart.Document.Body,
+                doc.MainDocumentPart,
+                imageMap);
+        }
+
+        foreach (var header in doc.MainDocumentPart.HeaderParts)
+        {
+            if (header.RootElement != null)
+            {
+                ProcessContainer(
+                    header.RootElement,
+                    header,
+                    imageMap);
+            }
+        }
+
+        foreach (var footer in doc.MainDocumentPart.FooterParts)
+        {
+            if (footer.RootElement != null)
+            {
+                ProcessContainer(
+                    footer.RootElement,
+                    footer,
+                    imageMap);
+            }
+        }
+    }
+
+    private void ProcessContainer<TPart>(
+        OpenXmlElement container,
+        TPart part,
+        Dictionary<string, string> imageMap)
+        where TPart : OpenXmlPartContainer, ISupportedRelationship<ImagePart>
+    {
+        foreach (var paragraph in container.Descendants<Paragraph>().ToList())
+        {
+            var text = string.Concat(
+                paragraph.Descendants<Text>()
+                         .Select(t => t.Text ?? string.Empty));
+
+            foreach (var kvp in imageMap)
+            {
+                if (!text.Contains(
+                        kvp.Key,
+                        StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                ReplaceParagraphWithImage(
+                    paragraph,
+                    part,
+                    kvp.Value);
+
+                break;
+            }
+        }
+    }
+
+    private void ReplaceParagraphWithImage<TPart>(
+        Paragraph paragraph,
+        TPart part,
+        string imagePath)
+        where TPart : OpenXmlPartContainer, ISupportedRelationship<ImagePart>
+    {
+        var fullPath = ResolvePath(imagePath);
+
+        if (!File.Exists(fullPath))
+            return;
+
+        var imagePart = part.AddImagePart(
+            Path.GetExtension(fullPath).ToLowerInvariant() switch
+            {
+                ".jpg" => ImagePartType.Jpeg,
+                ".jpeg" => ImagePartType.Jpeg,
+                ".gif" => ImagePartType.Gif,
+                ".bmp" => ImagePartType.Bmp,
+                _ => ImagePartType.Png
+            });
+
+        using var stream = File.OpenRead(fullPath);
+        imagePart.FeedData(stream);
+
+        string relationshipId = part.GetIdOfPart(imagePart);
+
+        paragraph.RemoveAllChildren<Run>();
+
+        // obtain a thread-safe unique id for the drawing's DocProperties
+        var docPrId = (uint)Interlocked.Increment(ref _nextDocPrId);
+
+        paragraph.Append(new Run(CreateImageDrawing(relationshipId, docPrId)));
+    }
+
+    private static Drawing CreateImageDrawing(string relationshipId, uint docPrId)
+    {
+        const long width = 685800L;
+        const long height = 685800L;
+
+        return new Drawing(
+            new DocumentFormat.OpenXml.Drawing.Wordprocessing.Inline(
+                new DocumentFormat.OpenXml.Drawing.Wordprocessing.Extent
+                {
+                    Cx = width,
+                    Cy = height
+                },
+                new DocumentFormat.OpenXml.Drawing.Wordprocessing.EffectExtent
+                {
+                    LeftEdge = 0L,
+                    TopEdge = 0L,
+                    RightEdge = 0L,
+                    BottomEdge = 0L
+                },
+                new DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties
+                {
+                    Id = docPrId,
+                    Name = "Picture"
+                },
+                new DocumentFormat.OpenXml.Drawing.Wordprocessing.NonVisualGraphicFrameDrawingProperties(
+                    new DocumentFormat.OpenXml.Drawing.GraphicFrameLocks
+                    {
+                        NoChangeAspect = true
+                    }),
+                new DocumentFormat.OpenXml.Drawing.Graphic(
+                    new DocumentFormat.OpenXml.Drawing.GraphicData(
+                        new DocumentFormat.OpenXml.Drawing.Pictures.Picture(
+                            new DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureProperties(
+                                new DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties
+                                {
+                                    Id = docPrId,
+                                    Name = "Image"
+                                },
+                                new DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureDrawingProperties()
+                            ),
+                            new DocumentFormat.OpenXml.Drawing.Pictures.BlipFill(
+                                new DocumentFormat.OpenXml.Drawing.Blip
+                                {
+                                    Embed = relationshipId
+                                },
+                                new DocumentFormat.OpenXml.Drawing.Stretch(
+                                    new DocumentFormat.OpenXml.Drawing.FillRectangle()
+                                )
+                            ),
+                            new DocumentFormat.OpenXml.Drawing.Pictures.ShapeProperties(
+                                new DocumentFormat.OpenXml.Drawing.Transform2D(
+                                    new DocumentFormat.OpenXml.Drawing.Offset
+                                    {
+                                        X = 0L,
+                                        Y = 0L
+                                    },
+                                    new DocumentFormat.OpenXml.Drawing.Extents
+                                    {
+                                        Cx = width,
+                                        Cy = height
+                                    }
+                                ),
+                                new DocumentFormat.OpenXml.Drawing.PresetGeometry(
+                                    new DocumentFormat.OpenXml.Drawing.AdjustValueList()
+                                )
+                                {
+                                    Preset =
+                                        DocumentFormat.OpenXml.Drawing.ShapeTypeValues.Rectangle
+                                }
+                            )
+                        )
+                    )
+                    {
+                        Uri =
+                        "http://schemas.openxmlformats.org/drawingml/2006/picture"
+                    }
+                )
+            )
+        );
     }
 }
