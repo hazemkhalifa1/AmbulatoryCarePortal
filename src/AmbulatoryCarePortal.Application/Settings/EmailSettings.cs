@@ -13,7 +13,6 @@ public class EmailSettings
 
     public bool EnableSsl { get; set; } = true;
 
-    [EmailAddress]
     public string SenderEmail { get; set; } = string.Empty;
 
     public string SenderName { get; set; } = string.Empty;

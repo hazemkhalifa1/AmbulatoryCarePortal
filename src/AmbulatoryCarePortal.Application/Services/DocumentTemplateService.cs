@@ -153,10 +153,43 @@ public class DocumentTemplateService : IDocumentTemplateService
         if (template == null)
             return false;
 
+        var versions = await _unitOfWork.Repository<DocumentTemplateVersion>()
+            .FindAsync(v => v.DocumentTemplateId == id);
+        if (versions.Any())
+            _unitOfWork.Repository<DocumentTemplateVersion>().SoftDeleteRange(versions);
+
+        var variables = await _unitOfWork.Repository<TemplateVariable>()
+            .FindAsync(v => v.DocumentTemplateId == id);
+        if (variables.Any())
+            _unitOfWork.Repository<TemplateVariable>().SoftDeleteRange(variables);
+
+        var signers = await _unitOfWork.Repository<TemplateSigner>()
+            .FindAsync(s => s.DocumentTemplateId == id);
+        if (signers.Any())
+            _unitOfWork.Repository<TemplateSigner>().SoftDeleteRange(signers);
+
+        var assignments = await _unitOfWork.Repository<ClinicTemplateAssignment>()
+            .FindAsync(a => a.DocumentTemplateId == id);
+        if (assignments.Any())
+        {
+            var assignmentIds = assignments.Select(a => a.Id).ToList();
+            var values = await _unitOfWork.Repository<ClinicTemplateValue>()
+                .FindAsync(v => assignmentIds.Contains(v.ClinicTemplateAssignmentId));
+            if (values.Any())
+                _unitOfWork.Repository<ClinicTemplateValue>().SoftDeleteRange(values);
+
+            _unitOfWork.Repository<ClinicTemplateAssignment>().SoftDeleteRange(assignments);
+        }
+
+        var generatedDocs = await _unitOfWork.Repository<GeneratedDocument>()
+            .FindAsync(g => g.DocumentTemplateId == id);
+        if (generatedDocs.Any())
+            _unitOfWork.Repository<GeneratedDocument>().SoftDeleteRange(generatedDocs);
+
         _unitOfWork.Repository<DocumentTemplate>().SoftDelete(template);
         await _unitOfWork.SaveChangesAsync();
 
-        _logger.LogInformation("Document template {StandardCode} deleted", template.StandardCode);
+        _logger.LogInformation("Document template {StandardCode} and all related entities deleted", template.StandardCode);
         return true;
     }
 

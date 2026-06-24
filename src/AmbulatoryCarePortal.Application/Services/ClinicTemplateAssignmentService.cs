@@ -207,8 +207,15 @@ public class ClinicTemplateAssignmentService : IClinicTemplateAssignmentService
         var assignment = await _unitOfWork.Repository<ClinicTemplateAssignment>().GetByIdAsync(id);
         if (assignment == null) return false;
 
+        var values = await _unitOfWork.Repository<ClinicTemplateValue>()
+            .FindAsync(v => v.ClinicTemplateAssignmentId == id);
+        if (values.Any())
+            _unitOfWork.Repository<ClinicTemplateValue>().SoftDeleteRange(values);
+
         _unitOfWork.Repository<ClinicTemplateAssignment>().SoftDelete(assignment);
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Clinic template assignment {AssignmentId} deleted with related values", id);
         return true;
     }
 

@@ -304,9 +304,29 @@ public class DocumentTemplatesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-        var deleted = await _templateService.DeleteTemplateAsync(id);
-        if (!deleted)
+        var template = await _templateService.GetTemplateByIdAsync(id);
+        if (template == null)
             return NotFound();
+
+        if (!string.IsNullOrEmpty(template.TemplateFilePath))
+        {
+            var filePath = Path.Combine("wwwroot", template.TemplateFilePath.TrimStart('/'));
+            if (System.IO.File.Exists(filePath))
+                System.IO.File.Delete(filePath);
+        }
+
+        var versions = await _templateService.GetVersionsAsync(id);
+        foreach (var version in versions)
+        {
+            if (!string.IsNullOrEmpty(version.FilePath))
+            {
+                var versionPath = Path.Combine("wwwroot", version.FilePath.TrimStart('/'));
+                if (System.IO.File.Exists(versionPath))
+                    System.IO.File.Delete(versionPath);
+            }
+        }
+
+        await _templateService.DeleteTemplateAsync(id);
 
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         var auditLog = new AuditTrail
@@ -314,7 +334,7 @@ public class DocumentTemplatesController : Controller
             ActionType = AuditActionType.Delete,
             TargetObjectId = id,
             TargetObjectType = nameof(DocumentTemplate),
-            Description = $"Deleted document template Id: {id}",
+            Description = $"Deleted document template: {template.StandardCode}",
             CreatedBy = userId,
             ActionDate = DateTime.UtcNow,
             IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
