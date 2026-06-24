@@ -322,6 +322,8 @@ public class ClinicTemplateAssignmentService : IClinicTemplateAssignmentService
         var assignments = await _unitOfWork.Repository<ClinicTemplateAssignment>()
             .FindAsync(a => a.ClinicId == clinicId);
 
+        var signatureNames = await GetSignatureVariableNamesForClinicAsync(clinicId);
+
         var result = new List<ClinicAssignmentDetailDto>();
 
         foreach (var a in assignments)
@@ -336,18 +338,20 @@ public class ClinicTemplateAssignmentService : IClinicTemplateAssignmentService
 
             var valueByVarId = values.ToDictionary(v => v.TemplateVariableId, v => v);
 
-            var variableValues = variables.Select(v => new ClinicTemplateValueDto
-            {
-                Id = valueByVarId.TryGetValue(v.Id, out var val) ? val.Id : 0,
-                ClinicTemplateAssignmentId = a.Id,
-                TemplateVariableId = v.Id,
-                VariableName = v.Name,
-                DisplayName = v.DisplayName,
-                IsImage = v.IsImage,
-                IsRequired = v.IsRequired,
-                Value = val?.Value,
-                ImagePath = val?.ImagePath
-            }).ToList();
+        var variableValues = variables
+            .Where(v => !signatureNames.Contains(v.Name))
+            .Select(v => new ClinicTemplateValueDto
+        {
+            Id = valueByVarId.TryGetValue(v.Id, out var val) ? val.Id : 0,
+            ClinicTemplateAssignmentId = a.Id,
+            TemplateVariableId = v.Id,
+            VariableName = v.Name,
+            DisplayName = v.DisplayName,
+            IsImage = v.IsImage,
+            IsRequired = v.IsRequired,
+            Value = val?.Value,
+            ImagePath = val?.ImagePath
+        }).ToList();
 
             result.Add(new ClinicAssignmentDetailDto
             {
@@ -424,6 +428,53 @@ public class ClinicTemplateAssignmentService : IClinicTemplateAssignmentService
         "Logo", "LogoPath"
     };
 
+    private async Task<HashSet<string>> GetSignatureVariableNamesForClinicAsync(int clinicId)
+    {
+        var assignments = await _unitOfWork.Repository<ClinicTemplateAssignment>()
+            .FindAsync(a => a.ClinicId == clinicId);
+
+        var templateIds = assignments.Select(a => a.DocumentTemplateId).Distinct().ToList();
+        if (templateIds.Count == 0)
+            return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        var signatureNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var templateId in templateIds)
+        {
+            var templateSigners = await _unitOfWork.Repository<TemplateSigner>()
+                .FindAsync(s => s.DocumentTemplateId == templateId);
+            foreach (var signer in templateSigners)
+            {
+                signatureNames.Add($"{signer.SignerCode}_SIGNATURE");
+                signatureNames.Add($"{signer.SignerCode}_NAME");
+                signatureNames.Add($"{signer.SignerCode}_TITLE");
+            }
+
+            var variables = await _unitOfWork.Repository<TemplateVariable>()
+                .FindAsync(v => v.DocumentTemplateId == templateId);
+
+            var sigCodeVars = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var v in variables)
+            {
+                if (v.Name.IndexOf("Signature", StringComparison.OrdinalIgnoreCase) >= 0)
+                    signatureNames.Add(v.Name);
+                if (v.Name.EndsWith("_SIGNATURE", StringComparison.OrdinalIgnoreCase))
+                    sigCodeVars.Add(v.Name);
+            }
+
+            foreach (var sigVar in sigCodeVars)
+            {
+                var underscoreIndex = sigVar.LastIndexOf('_');
+                if (underscoreIndex <= 0) continue;
+                var prefix = sigVar[..underscoreIndex];
+                signatureNames.Add($"{prefix}_NAME");
+                signatureNames.Add($"{prefix}_TITLE");
+            }
+        }
+
+        return signatureNames;
+    }
+
     public async Task<List<GlobalTemplateValueDto>> GetGlobalTemplateValuesForClinicAsync(int clinicId)
     {
         var assignments = await _unitOfWork.Repository<ClinicTemplateAssignment>()
@@ -481,6 +532,9 @@ public class ClinicTemplateAssignmentService : IClinicTemplateAssignmentService
                 IsAutoPopulated = isAuto
             });
         }
+
+        var signatureNames = await GetSignatureVariableNamesForClinicAsync(clinicId);
+        result.RemoveAll(r => signatureNames.Contains(r.VariableName));
 
         return result;
     }

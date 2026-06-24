@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = Localizer.T("Page.CreateDocumentTemplate");
+    var selectedClinicType = (string?)ViewBag.SelectedClinicType;
+    var selectedStandard = (string?)ViewBag.SelectedStandard;
 }
 
 <!-- Hero Banner -->
@@ -210,10 +212,23 @@
             document.getElementById('uploadArea').classList.remove('has-file');
         });
 
-        // Pre-select if value exists (for re-rendering after validation error)
-        var preselectedType = $('#clinicTypeHidden').val();
+        // Pre-select clinicType and standard from query string or validation re-render
+        var preselectedType = $('#clinicTypeHidden').val() || '@selectedClinicType';
         if (preselectedType) {
             $('#clinicTypeSelect').val(preselectedType).trigger('change');
+        }
+
+        // After standards load, pre-select DepartmentCategory if provided in query string
+        var preselectedStandard = '@selectedStandard';
+        if (preselectedStandard) {
+            var checkInterval = setInterval(function () {
+                var $dept = $('#departmentCategorySelect');
+                if ($dept.find('option[value="' + preselectedStandard + '"]').length > 0) {
+                    $dept.val(preselectedStandard);
+                    clearInterval(checkInterval);
+                }
+            }, 100);
+            setTimeout(function () { clearInterval(checkInterval); }, 5000);
         }
     </script>
 }

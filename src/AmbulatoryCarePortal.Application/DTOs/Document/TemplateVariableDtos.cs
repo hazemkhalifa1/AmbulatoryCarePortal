@@ -55,6 +55,7 @@ public class ClinicTemplateValueDto
     public string DisplayName { get; set; } = string.Empty;
     public bool IsImage { get; set; }
     public bool IsRequired { get; set; }
+    public bool IsSignature { get; set; }
     public string? Value { get; set; }
     public string? ImagePath { get; set; }
 }
@@ -119,6 +120,7 @@ public class GlobalTemplateValueDto
     public string DisplayName { get; set; } = string.Empty;
     public bool IsImage { get; set; }
     public bool IsRequired { get; set; }
+    public bool IsSignature { get; set; }
     public string? Value { get; set; }
     public string? ImagePath { get; set; }
     public bool IsAutoPopulated { get; set; }

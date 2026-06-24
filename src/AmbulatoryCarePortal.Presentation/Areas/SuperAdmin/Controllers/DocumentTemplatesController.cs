@@ -62,47 +62,51 @@ public class DocumentTemplatesController : Controller
                 .GroupBy(t => t.DepartmentCategory)
                 .ToDictionary(g => g.Key, g => g.Count());
 
+            Expression<Func<DocumentTemplate, bool>> predicate;
+
             if (!string.IsNullOrEmpty(standard))
             {
-                Expression<Func<DocumentTemplate, bool>> predicate = t =>
-                    t.ClinicType == parsedType && t.DepartmentCategory == standard && !t.IsDeleted;
-
-                if (!string.IsNullOrEmpty(searchTerm))
-                {
-                    var term = searchTerm.ToLower();
-                    predicate = t => t.ClinicType == parsedType && t.StandardCode == standard && !t.IsDeleted
-                        && (t.TitleEn.ToLower().Contains(term) || (t.TitleAr != null && t.TitleAr.Contains(term)));
-                }
-
-                var pagedResult = await _unitOfWork.Repository<DocumentTemplate>()
-                    .GetPagedAsync(page, pageSize, predicate, t => t.StandardCode);
-
-                var dtoList = pagedResult.Data.Select(t => new DocumentTemplateDto
-                {
-                    Id = t.Id,
-                    StandardCode = t.StandardCode,
-                    TitleEn = t.TitleEn,
-                    TitleAr = t.TitleAr,
-                    Description = t.Description,
-                    DepartmentCategory = t.DepartmentCategory,
-                    ClinicType = t.ClinicType,
-                    TemplateFilePath = t.TemplateFilePath,
-                    IsActive = t.IsActive,
-                    CreatedAt = t.CreatedAt
-                }).ToList();
-
-                var result = new PagedResult<DocumentTemplateDto>
-                {
-                    Data = dtoList,
-                    TotalCount = pagedResult.TotalCount,
-                    PageNumber = pagedResult.PageNumber,
-                    PageSize = pagedResult.PageSize
-                };
-
-                return View(result);
+                predicate = t => t.ClinicType == parsedType && t.DepartmentCategory == standard && !t.IsDeleted;
+            }
+            else
+            {
+                predicate = t => t.ClinicType == parsedType && !t.IsDeleted;
             }
 
-            return View(new PagedResult<DocumentTemplateDto>());
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                var term = searchTerm.ToLower();
+                predicate = t => t.ClinicType == parsedType && !t.IsDeleted
+                    && (t.TitleEn.ToLower().Contains(term) || (t.TitleAr != null && t.TitleAr.Contains(term)))
+                    && (string.IsNullOrEmpty(standard) || t.DepartmentCategory == standard);
+            }
+
+            var pagedResult = await _unitOfWork.Repository<DocumentTemplate>()
+                .GetPagedAsync(page, pageSize, predicate, t => t.StandardCode);
+
+            var dtoList = pagedResult.Data.Select(t => new DocumentTemplateDto
+            {
+                Id = t.Id,
+                StandardCode = t.StandardCode,
+                TitleEn = t.TitleEn,
+                TitleAr = t.TitleAr,
+                Description = t.Description,
+                DepartmentCategory = t.DepartmentCategory,
+                ClinicType = t.ClinicType,
+                TemplateFilePath = t.TemplateFilePath,
+                IsActive = t.IsActive,
+                CreatedAt = t.CreatedAt
+            }).ToList();
+
+            var result = new PagedResult<DocumentTemplateDto>
+            {
+                Data = dtoList,
+                TotalCount = pagedResult.TotalCount,
+                PageNumber = pagedResult.PageNumber,
+                PageSize = pagedResult.PageSize
+            };
+
+            return View(result);
         }
 
         var allResult = await _templateService.GetAllTemplatesAsync(page, pageSize, searchTerm);
@@ -139,9 +143,11 @@ public class DocumentTemplatesController : Controller
     }
 
     [HttpGet]
-    public IActionResult Create()
+    public IActionResult Create(string? clinicType = null, string? standard = null)
     {
         ViewBag.PageTitle = _localizer.T("Page.CreateDocumentTemplate");
+        ViewBag.SelectedClinicType = clinicType;
+        ViewBag.SelectedStandard = standard;
         return View();
     }
 

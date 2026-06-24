@@ -115,9 +115,40 @@ public partial class TemplateVariableService : ITemplateVariableService
             _logger.LogInformation("Extracted {Count} variables from template {TemplateId}", newVariables.Count, templateId);
         }
 
-        var all = await _unitOfWork.Repository<TemplateVariable>()
+        var allVars = await _unitOfWork.Repository<TemplateVariable>()
             .FindAsync(v => v.DocumentTemplateId == templateId);
-        return _mapper.Map<List<TemplateVariableDto>>(all.ToList());
+        var existingSigners = await _unitOfWork.Repository<TemplateSigner>()
+            .FindAsync(s => s.DocumentTemplateId == templateId);
+        var existingSignerCodes = existingSigners.Select(s => s.SignerCode).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var v in allVars)
+        {
+            if (v.Name.IndexOf("Signature", StringComparison.OrdinalIgnoreCase) < 0)
+                continue;
+
+            var signerCode = v.Name.EndsWith("_SIGNATURE", StringComparison.OrdinalIgnoreCase)
+                ? v.Name[..^10]
+                : v.Name.Trim();
+
+            if (!existingSignerCodes.Contains(signerCode))
+            {
+                var signer = new TemplateSigner
+                {
+                    DocumentTemplateId = templateId,
+                    SignerCode = signerCode,
+                    SignerDisplayName = signerCode,
+                    SignerTitle = signerCode,
+                    IsRequired = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _unitOfWork.Repository<TemplateSigner>().AddAsync(signer);
+                existingSignerCodes.Add(signerCode);
+            }
+        }
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return _mapper.Map<List<TemplateVariableDto>>(allVars.ToList());
     }
 
     public async Task<TemplateVariableDto?> GetVariableByIdAsync(int id)

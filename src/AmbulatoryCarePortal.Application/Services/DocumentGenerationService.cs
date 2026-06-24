@@ -307,10 +307,18 @@ public class DocumentGenerationService : IDocumentGenerationService
             var sigImagePath = await _signatureService.ResolveSignatureImagePathAsync(clinic.Id, signer.SignerCode);
             if (!string.IsNullOrEmpty(sigImagePath))
             {
-                // keep placeholder form with braces for DOCX replacements
                 imageValues[$"{{{{{signer.SignerCode}_SIGNATURE}}}}"] = sigImagePath;
-                // also add a helper key without braces
                 imageValues[$"{signer.SignerCode}_SIGNATURE"] = sigImagePath;
+
+                foreach (var v in variables)
+                {
+                    if (v.Name.IndexOf(signer.SignerCode, StringComparison.OrdinalIgnoreCase) >= 0 &&
+                        v.Name.IndexOf("Signature", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                        !imageValues.ContainsKey($"{{{{{v.Name}}}}}"))
+                    {
+                        imageValues[$"{{{{{v.Name}}}}}"] = sigImagePath;
+                    }
+                }
             }
 
             var signerName = await _signatureService.ResolveSignerNameAsync(clinic.Id, signer.SignerCode);
