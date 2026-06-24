@@ -3,69 +3,70 @@
 ################################################################################
 bin/
 obj/
-*.user
-*.suo
-*.userosscache
-*.sln.docstats
-*.userprefs
-*.DotSettings.user
-**/packages/*
+*.dll
+*.exe
+*.pdb
+*.cache
 *.nupkg
-**/[Bb]uild/
-**/[Rr]elease/
-**/[Pp]ublish/
+*.snupkg
+*.app
+*.apk
+*.ipa
+*.dSYM.zip
+*.dSYM
+[Bb]uild/
+[Rr]elease/
+[Dd]ebug/
+[Pp]ublish/
+bld/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
 
 ################################################################################
-# IDE – Visual Studio
+# NuGet
+################################################################################
+packages/
+*.nuget.props
+*.nuget.targets
+**/project.assets.json
+**/project.nuget.cache
+**/nuget.dgspec.json
+**/.nuget/
+.nuget/
+
+################################################################################
+# IDE - Visual Studio
 ################################################################################
 .vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln.docstats
 *.csproj.user
 *.dbmdl
 *.jfm
 *.rsuser
 *.vssscc
 *.vspscc
-[Dd]ebug/
-[Rr]elease/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
+*.DotSettings.user
+*.DotSettings
+*.userprefs
 
 ################################################################################
-# IDE – Visual Studio Code
+# IDE - Visual Studio Code
 ################################################################################
 .vscode/
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
 
 ################################################################################
-# IDE – JetBrains Rider
+# IDE - JetBrains Rider
 ################################################################################
 .idea/
 *.sln.iml
 *.sln.DotSettings
-*.DotSettings
-
-################################################################################
-# .NET Native / Tooling
-################################################################################
-*.app
-*.apk
-*.ipa
-*.dSYM.zip
-*.dSYM
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 ################################################################################
 # Test Results
@@ -74,30 +75,19 @@ TestResults/
 *.coverage
 *.coveragexml
 *.trx
+coverage/
+logs/
 
 ################################################################################
-# Node / npm (if any frontend tooling)
+# Node / npm / Frontend
 ################################################################################
 node_modules/
 wwwroot/lib/
 wwwroot/dist/
+wwwroot/node_modules/
 *.tgz
-
-################################################################################
-# OS files
-################################################################################
-.DS_Store
-Thumbs.db
-Desktop.ini
-
-################################################################################
-# Secrets & Configuration
-################################################################################
-appsettings.*.local.json
-appsettings.*.Development.json
-*.user.config
-*.user.secrets
-secrets.json
+yarn-error.log*
+yarn-debug.log*
 
 ################################################################################
 # Logs & Temp
@@ -106,14 +96,114 @@ secrets.json
 *.tmp
 *.temp
 *.swp
-*~.nib
-/aspnetcore-browser-refresh.js
-/coverage/
-__pycache__/
-*.pyc
+*.swo
+*~
+*.bak
+*.orig
+aspnetcore-browser-refresh.js
 
 ################################################################################
-# OpenCode
+# OS files
+################################################################################
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.lnk
+
+################################################################################
+# Secrets, Environment & Local Config
+################################################################################
+appsettings.*.local.json
+appsettings.*.Development.json
+appsettings.Development.json
+temp-appsettings.json
+.env
+.env.*
+*.user.config
+*.user.secrets
+secrets.json
+Properties/launchSettings.json
+Properties/PublishProfiles/*.pubxml.user
+
+################################################################################
+# OpenTelemetry / Diagnostics
+################################################################################
+[Oo]pen[Tt]elemetry/
+
+################################################################################
+# Python / AI generated (if present)
+################################################################################
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+################################################################################
+# Database / Local Data
+################################################################################
+*.mdf
+*.ldf
+*.sqlite
+*.db
+*.sdf
+*.bacpac
+*.dacpac
+
+################################################################################
+# Uploaded files (keep only if committed intentionally)
+################################################################################
+wwwroot/uploads/
+!wwwroot/uploads/.gitkeep
+
+################################################################################
+# Documentation / Generated
+################################################################################
+*.chm
+*.hlp
+# *.xml (intentionally not ignoring - .csproj, .config, .resx are source files)
+
+################################################################################
+# OpenCode / Playwright
 ################################################################################
 .opencode/
 playwright-mcp.json
+
+################################################################################
+# Documents & Large Binary Assets
+################################################################################
+*.docx
+*.doc
+*.xlsx
+*.xls
+*.pdf
+*.pptx
+*.ppt
+*.vsd
+*.vsdx
+
+################################################################################
+# AI / Prompt / Generated Text Files
+################################################################################
+prompt.txt
+deepseek_text*.txt
+chatgpt*.txt
+*.prompt.md
+
+################################################################################
+# Claude Code / IDE local config
+################################################################################
+.claude/
+
+################################################################################
+# Playwright / E2E test artifacts
+################################################################################
+src/.playwright-mcp/
+playwright-report/
+test-results/
+
+################################################################################
+# Docker
+################################################################################
+docker-compose.override.yml
+*.dockerignore
