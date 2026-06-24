@@ -447,8 +447,8 @@ body.login-page {
 
 /* Error Alert */
 .login-error {
-    background: var(--color-primary-lighter);
-    border: 1px solid var(--color-primary-light);
+    background: var(--primary-100);
+    border: 1px solid var(--primary-200);
     border-radius: 8px;
     padding: 0.75rem 1rem;
     margin-bottom: 1.5rem;
@@ -458,7 +458,7 @@ body.login-page {
 }
 
 .login-error i {
-    color: var(--color-primary);
+    color: var(--primary-600);
     font-size: 1rem;
     flex-shrink: 0;
     margin-top: 0.125rem;
@@ -466,7 +466,7 @@ body.login-page {
 
 .login-error div {
     font-size: 0.85rem;
-    color: var(--color-primary-dark);
+    color: var(--primary-800);
 }
 
 .login-error div:not(:last-child) {
@@ -477,12 +477,12 @@ body.login-page {
 .field-validation-error {
     display: block;
     font-size: 0.8rem;
-    color: var(--color-danger);
+    color: var(--danger);
     margin-top: 0.25rem;
 }
 
 .input-validation-error {
-    border-color: var(--color-danger) !important;
+    border-color: var(--danger) !important;
 }
 
 .input-validation-error:focus-within {
@@ -500,14 +500,14 @@ body.login-page {
 .login-success .success-icon {
     width: 64px;
     height: 64px;
-    background: var(--color-accent-light);
+    background: var(--accent-100);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
     font-size: 1.5rem;
-    color: var(--color-accent-dark);
+    color: var(--accent-700);
 }
 
 .login-success h3 {
