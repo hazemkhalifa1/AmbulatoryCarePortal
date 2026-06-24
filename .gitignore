@@ -116,14 +116,16 @@ Desktop.ini
 appsettings.*.local.json
 appsettings.*.Development.json
 appsettings.Development.json
+appsettings.*.Staging.local.json
+appsettings.Staging.local.json
 temp-appsettings.json
 .env
 .env.*
 *.user.config
 *.user.secrets
 secrets.json
-Properties/launchSettings.json
-Properties/PublishProfiles/*.pubxml.user
+**/Properties/launchSettings.json
+**/Properties/PublishProfiles/*.pubxml.user
 
 ################################################################################
 # OpenTelemetry / Diagnostics

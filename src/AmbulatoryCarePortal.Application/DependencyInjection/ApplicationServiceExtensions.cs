@@ -12,7 +12,10 @@ public static class ApplicationServiceExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         // AutoMapper
-        services.AddAutoMapper(typeof(MappingProfile));
+        services.AddAutoMapper(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
 
         // FluentValidation
         services.AddValidatorsFromAssemblyContaining(typeof(ApplicationServiceExtensions));

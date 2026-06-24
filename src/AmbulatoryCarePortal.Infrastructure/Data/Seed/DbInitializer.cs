@@ -8,7 +8,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Data.Seed;
 
 public static class DbInitializer
 {
-    public static async Task InitializeAsync(IServiceProvider serviceProvider)
+    public static async Task InitializeAsync(IServiceProvider serviceProvider, string adminPassword)
     {
         using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -22,7 +22,7 @@ public static class DbInitializer
         await SeedRolesAsync(roleManager);
 
         // Seed admin user
-        await SeedAdminUserAsync(userManager, dbContext);
+        await SeedAdminUserAsync(userManager, dbContext, adminPassword);
 
         // Seed initial clinics and departments
         await DepartmentSeeder.SeedDepartmentsAsync(dbContext, "admin@cbahi-portal.com");
@@ -35,7 +35,7 @@ public static class DbInitializer
         await RolePermissionsSeeder.SeedRolesWithPermissionsAsync(roleManager);
     }
 
-    private static async Task SeedAdminUserAsync(UserManager<AppUser> userManager, AppDbContext dbContext)
+    private static async Task SeedAdminUserAsync(UserManager<AppUser> userManager, AppDbContext dbContext, string adminPassword)
     {
         var adminEmail = "admin@cbahi-portal.com";
         var existingUser = await userManager.FindByEmailAsync(adminEmail);
@@ -53,7 +53,7 @@ public static class DbInitializer
                 // CreatedAt is set by BaseEntity default, not on AppUser (IdentityUser)
             };
 
-            var result = await userManager.CreateAsync(adminUser, "CbahiAdmin@2024");
+            var result = await userManager.CreateAsync(adminUser, adminPassword);
 
             if (result.Succeeded)
             {

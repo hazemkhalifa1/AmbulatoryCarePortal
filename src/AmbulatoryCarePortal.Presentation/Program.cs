@@ -1,9 +1,11 @@
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using AmbulatoryCarePortal.Application.BackgroundJobs;
 using AmbulatoryCarePortal.Application.DependencyInjection;
+using AmbulatoryCarePortal.Application.Settings;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Infrastructure.Data;
 using AmbulatoryCarePortal.Infrastructure.Data.Seed;
@@ -14,8 +16,20 @@ using QuestPDF.Infrastructure;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", Serilog.Events.LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .Enrich.WithEnvironmentName()
+    .Enrich.WithCorrelationId()
     .WriteTo.Console()
-    .WriteTo.File("logs/app-.log", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(
+        "logs/app-.log",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 30,
+        fileSizeLimitBytes: 10485760)
     .CreateLogger();
 
 try
@@ -24,9 +38,22 @@ try
 
     builder.Host.UseSerilog((ctx, lc) =>
     {
-        lc.MinimumLevel.Information()
+        lc.ReadFrom.Configuration(ctx.Configuration)
+          .MinimumLevel.Information()
+          .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+          .MinimumLevel.Override("Microsoft.Hosting.Lifetime", Serilog.Events.LogEventLevel.Information)
+          .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning)
+          .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
+          .Enrich.FromLogContext()
+          .Enrich.WithMachineName()
+          .Enrich.WithEnvironmentName()
+          .Enrich.WithCorrelationId()
           .WriteTo.Console()
-          .WriteTo.File("logs/app-.log", rollingInterval: RollingInterval.Day);
+          .WriteTo.File(
+              "logs/app-.log",
+              rollingInterval: RollingInterval.Day,
+              retainedFileCountLimit: 30,
+              fileSizeLimitBytes: 10485760);
 
         var connStr = ctx.Configuration.GetConnectionString("DefaultConnection")
             ?? Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
@@ -49,9 +76,34 @@ try
     builder.Services.AddIdentityConfiguration();
     builder.Services.AddCorsConfiguration();
     builder.Services.AddRateLimiting();
-    builder.Services.AddObservability();
+    builder.Services.AddObservability(builder.Configuration);
     builder.Services.AddRedisCache(builder.Configuration);
     builder.Services.AddHangfireJobs(builder.Configuration);
+
+    builder.Services.AddOptions<DatabaseSettings>()
+        .BindConfiguration(DatabaseSettings.SectionName)
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+    builder.Services.AddOptions<NotificationSettings>()
+        .BindConfiguration(NotificationSettings.SectionName)
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+    builder.Services.AddOptions<FileUploadSettings>()
+        .BindConfiguration(FileUploadSettings.SectionName)
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+    builder.Services.AddOptions<RedisSettings>()
+        .BindConfiguration(RedisSettings.SectionName)
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+    builder.Services.AddOptions<SecuritySettings>()
+        .BindConfiguration(SecuritySettings.SectionName)
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+    builder.Services.AddOptions<EmailSettings>()
+        .BindConfiguration(EmailSettings.SectionName)
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
 
     builder.Services.AddRazorPages();
     builder.Services.AddControllersWithViews();
@@ -69,8 +121,10 @@ try
         await RolePermissionsSeeder.SeedRolesWithPermissionsAsync(roleManager);
 
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-        var adminPassword = builder.Configuration["AdminPassword"]
-            ?? throw new InvalidOperationException("AdminPassword environment variable not set.");
+        var adminPassword = builder.Configuration.GetSection("Security")["AdminPassword"]
+            ?? builder.Configuration["AdminPassword"]
+            ?? Environment.GetEnvironmentVariable("ADMIN_PASSWORD")
+            ?? throw new InvalidOperationException("AdminPassword not configured. Set Security:AdminPassword in appsettings, the AdminPassword key, or the ADMIN_PASSWORD environment variable.");
         await SeedAdminUserAsync(userManager, adminPassword);
 
         var dbCtx = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -97,19 +151,18 @@ try
 
     app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
     {
-        Predicate = _ => false,
-        ResponseWriter = async (ctx, r) =>
-        {
-            await ctx.Response.WriteAsync("Healthy");
-        }
+        Predicate = check => check.Tags.Contains("ready"),
+        ResponseWriter = WriteHealthCheckResponseAsync
     });
     app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
     {
-        Predicate = check => check.Tags.Contains("ready")
+        Predicate = check => check.Tags.Contains("ready"),
+        ResponseWriter = WriteHealthCheckResponseAsync
     });
     app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
     {
-        Predicate = _ => true
+        Predicate = check => check.Tags.Contains("live"),
+        ResponseWriter = WriteHealthCheckResponseAsync
     });
 
     app.UseHangfireDashboard("/hangfire", new DashboardOptions
@@ -131,6 +184,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
+    app.UseMiddleware<LogContextEnrichmentMiddleware>();
     app.UseMiddleware<SecurityHeadersMiddleware>();
     app.UseMiddleware<ClinicAccessMiddleware>();
 
@@ -155,6 +209,28 @@ catch (Exception ex)
 finally
 {
     Log.CloseAndFlush();
+}
+
+static async Task WriteHealthCheckResponseAsync(HttpContext context, HealthReport report)
+{
+    context.Response.ContentType = "application/json; charset=utf-8";
+
+    var response = new
+    {
+        status = report.Status.ToString(),
+        totalDuration = report.TotalDuration.TotalMilliseconds,
+        entries = report.Entries.ToDictionary(
+            e => e.Key,
+            e => new
+            {
+                status = e.Value.Status.ToString(),
+                description = e.Value.Description,
+                duration = e.Value.Duration.TotalMilliseconds,
+                data = e.Value.Data.Count > 0 ? e.Value.Data : null
+            })
+    };
+
+    await System.Text.Json.JsonSerializer.SerializeAsync(context.Response.Body, response);
 }
 
 static async Task SeedAdminUserAsync(UserManager<AppUser> userManager, string adminPassword)
