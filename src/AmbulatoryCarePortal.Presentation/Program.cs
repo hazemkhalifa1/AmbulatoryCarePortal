@@ -59,14 +59,22 @@ try
             ?? Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
         if (!string.IsNullOrEmpty(connStr))
         {
-            lc.WriteTo.MSSqlServer(
-                connectionString: connStr,
-                sinkOptions: new Serilog.Sinks.MSSqlServer.MSSqlServerSinkOptions
-                {
-                    TableName = "LogEvents",
-                    AutoCreateSqlTable = true,
-                    BatchPostingLimit = 50
-                });
+            try
+            {
+                lc.WriteTo.MSSqlServer(
+                    connectionString: connStr,
+                    sinkOptions: new Serilog.Sinks.MSSqlServer.MSSqlServerSinkOptions
+                    {
+                        TableName = "LogEvents",
+                        AutoCreateSqlTable = true,
+                        BatchPostingLimit = 50
+                    });
+            }
+            catch
+            {
+                // MSSqlServer sink unavailable (expected during EF Core design-time
+                // when the database doesn't exist yet). Console + File sinks remain active.
+            }
         }
     });
 
@@ -207,7 +215,7 @@ try
 
     app.Run();
 }
-catch (Exception ex)
+catch (Exception ex) when (ex is not HostAbortedException)
 {
     Log.Fatal(ex, "Application terminated unexpectedly");
 }

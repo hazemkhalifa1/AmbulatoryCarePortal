@@ -17,9 +17,18 @@ public static class InfrastructureServiceExtensions
         // DbContext with audit interceptor
         services.AddDbContext<AppDbContext>((sp, options) =>
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection")
-                ?? Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
-                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found. Set appsettings.json or DB_CONNECTION_STRING environment variable.");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            }
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException(
+                    "Connection string 'DefaultConnection' not found. " +
+                    "Set appsettings.json or the DB_CONNECTION_STRING environment variable.");
+            }
 
             options.UseSqlServer(connectionString, sqlOptions =>
             {

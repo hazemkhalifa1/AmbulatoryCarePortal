@@ -9,14 +9,26 @@ public class AppDbContextDesignTimeFactory : IDesignTimeDbContextFactory<AppDbCo
 {
     public AppDbContext CreateDbContext(string[] args)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: true)
-            .AddJsonFile("appsettings.Development.json", optional: true)
-            .Build();
+        var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: true)
+                .AddJsonFile("appsettings.Development.json", optional: true)
+                .Build();
+
+            connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
+
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException(
+                "Missing DB_CONNECTION_STRING environment variable. " +
+                "Set DB_CONNECTION_STRING before running 'dotnet ef database update'.");
+        }
 
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-
         optionsBuilder.UseSqlServer(connectionString, sqlOptions =>
         {
             sqlOptions.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName);
