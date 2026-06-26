@@ -1,47 +1,101 @@
-@model (int CurrentPage, int TotalPages, int TotalCount, string? SearchTerm, string ActionName)
+@model (int CurrentPage, int TotalPages, int TotalCount, string? SearchTerm, string ActionName, string? ControllerName, string? AreaName)
+
 @{
     var currentPage = Model.CurrentPage;
     var totalPages = Model.TotalPages;
     var totalCount = Model.TotalCount;
     var searchTerm = Model.SearchTerm;
     var actionName = Model.ActionName;
+    var controllerName = Model.ControllerName;
+    var areaName = Model.AreaName;
+
+    bool HasController() => !string.IsNullOrEmpty(controllerName);
 }
+
 @if (totalPages > 1)
 {
     var startPage = Math.Max(1, currentPage - 2);
     var endPage = Math.Min(totalPages, currentPage + 2);
-    <div class="data-table-pagination">
+
+    <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
         <div class="page-info">
             @Localizer.T("Common.Page") <strong>@currentPage</strong> @Localizer.T("Common.Of") <strong>@totalPages</strong> (@totalCount @Localizer.T("Common.Total"))
         </div>
         <nav aria-label="Pagination">
             <ul class="pagination mb-0">
+
+                @* First page *@
                 <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" asp-action="@actionName" asp-route-page="1" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Policy.FirstPage")"><i class="fas fa-angle-double-left"></i></a>
+                    @if (HasController())
+                    {
+                        <a class="page-link" asp-action="@actionName" asp-controller="@controllerName" asp-area="@areaName" asp-route-page="1" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Policy.FirstPage")"><i class="fas fa-angle-double-left"></i></a>
+                    }
+                    else
+                    {
+                        <a class="page-link" asp-action="@actionName" asp-route-page="1" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Policy.FirstPage")"><i class="fas fa-angle-double-left"></i></a>
+                    }
                 </li>
+
+                @* Previous page *@
                 <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" asp-action="@actionName" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Common.Previous")"><i class="fas fa-angle-left"></i></a>
+                    @if (HasController())
+                    {
+                        <a class="page-link" asp-action="@actionName" asp-controller="@controllerName" asp-area="@areaName" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Common.Previous")"><i class="fas fa-angle-left"></i></a>
+                    }
+                    else
+                    {
+                        <a class="page-link" asp-action="@actionName" asp-route-page="@(currentPage - 1)" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Common.Previous")"><i class="fas fa-angle-left"></i></a>
+                    }
                 </li>
+
                 @if (startPage > 1)
                 {
                     <li class="page-item disabled"><span class="page-link">...</span></li>
                 }
+
                 @for (var i = startPage; i <= endPage; i++)
                 {
                     <li class="page-item @(i == currentPage ? "active" : "")">
-                        <a class="page-link" asp-action="@actionName" asp-route-page="@i" asp-route-searchTerm="@searchTerm">@i</a>
+                        @if (HasController())
+                        {
+                            <a class="page-link" asp-action="@actionName" asp-controller="@controllerName" asp-area="@areaName" asp-route-page="@i" asp-route-searchTerm="@searchTerm">@i</a>
+                        }
+                        else
+                        {
+                            <a class="page-link" asp-action="@actionName" asp-route-page="@i" asp-route-searchTerm="@searchTerm">@i</a>
+                        }
                     </li>
                 }
+
                 @if (endPage < totalPages)
                 {
                     <li class="page-item disabled"><span class="page-link">...</span></li>
                 }
+
+                @* Next page *@
                 <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                    <a class="page-link" asp-action="@actionName" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Common.Next")"><i class="fas fa-angle-right"></i></a>
+                    @if (HasController())
+                    {
+                        <a class="page-link" asp-action="@actionName" asp-controller="@controllerName" asp-area="@areaName" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Common.Next")"><i class="fas fa-angle-right"></i></a>
+                    }
+                    else
+                    {
+                        <a class="page-link" asp-action="@actionName" asp-route-page="@(currentPage + 1)" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Common.Next")"><i class="fas fa-angle-right"></i></a>
+                    }
                 </li>
+
+                @* Last page *@
                 <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                    <a class="page-link" asp-action="@actionName" asp-route-page="@totalPages" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Policy.LastPage")"><i class="fas fa-angle-double-right"></i></a>
+                    @if (HasController())
+                    {
+                        <a class="page-link" asp-action="@actionName" asp-controller="@controllerName" asp-area="@areaName" asp-route-page="@totalPages" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Policy.LastPage")"><i class="fas fa-angle-double-right"></i></a>
+                    }
+                    else
+                    {
+                        <a class="page-link" asp-action="@actionName" asp-route-page="@totalPages" asp-route-searchTerm="@searchTerm" title="@Localizer.T("Policy.LastPage")"><i class="fas fa-angle-double-right"></i></a>
+                    }
                 </li>
+
             </ul>
         </nav>
     </div>

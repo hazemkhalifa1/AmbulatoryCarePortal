@@ -199,6 +199,7 @@ p { margin-bottom: 0.75rem; line-height: 1.7; }
     flex-direction: column;
     transition: transform var(--dur-slow) var(--ease-out);
     overflow: hidden;
+    border-inline-end: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* Brand area */
@@ -1832,29 +1833,8 @@ select.form-control {
 /* ============================================================
    27. RTL SUPPORT
    ============================================================ */
-html[dir="rtl"] .app-sidebar {
-    inset-inline-start: auto;
-    inset-inline-end: 0;
-    border-inline-end: none;
-    border-inline-start: 1px solid rgba(255, 255, 255, 0.06);
-}
-
 html[dir="rtl"] body.sidebar-collapsed .app-sidebar {
     transform: translateX(100%);
-}
-
-html[dir="rtl"] .app-header {
-    inset-inline-start: 0;
-    inset-inline-end: var(--sidebar-w);
-}
-
-html[dir="rtl"] body.sidebar-collapsed .app-header {
-    inset-inline-end: 0;
-}
-
-html[dir="rtl"] .nav-link.active::before {
-    inset-inline-start: auto;
-    inset-inline-end: -0.65rem;
 }
 
 html[dir="rtl"] select.form-control {

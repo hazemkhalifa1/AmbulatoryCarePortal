@@ -37,6 +37,12 @@ public class ActiveRouteTagHelper : TagHelper
         {
             var existingClass = output.Attributes.FirstOrDefault(a => a.Name == "class")?.Value.ToString() ?? "";
             output.Attributes.SetAttribute("class", $"{existingClass} active".Trim());
+
+            // Only set aria-current="page" for exact page matches (when asp-action is specified)
+            if (!string.IsNullOrEmpty(Action))
+            {
+                output.Attributes.SetAttribute("aria-current", "page");
+            }
         }
     }
 }

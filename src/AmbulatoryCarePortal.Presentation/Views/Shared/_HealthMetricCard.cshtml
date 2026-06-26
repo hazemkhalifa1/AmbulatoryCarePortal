@@ -10,7 +10,7 @@
         Link = "/ClinicAdmin/Dashboard/Policies"
     }' />
 *@
-<div class="health-metric @(Model.Color ?? "primary")">
+<div class="metric-card @(Model.Color ?? "primary")">
     <div class="metric-top">
         <div class="metric-icon"><i class="fas @(Model.Icon ?? "fa-chart-line")"></i></div>
         @if (!string.IsNullOrEmpty(Model.Badge))

@@ -1,0 +1,32 @@
+@inject ITranslationService Localizer
+
+@{
+    // Breadcrumb data can be provided via ViewData.
+    // Usage: ViewData["Breadcrumbs"] = new[] { ("Nav.Home", "/"), ("Nav.Users", "/Users"), ("Current Page", null) };
+    // Each item is (LabelKey, Url). When Url is null, item renders as active (current page).
+
+    var breadcrumbs = ViewData["Breadcrumbs"] as IEnumerable<(string LabelKey, string? Url)>;
+}
+
+@if (breadcrumbs != null && breadcrumbs.Any())
+{
+    <nav aria-label="@Localizer.T("Common.Breadcrumb")" class="mb-3">
+        <ol class="breadcrumb">
+            @foreach (var crumb in breadcrumbs)
+            {
+                if (!string.IsNullOrEmpty(crumb.Url))
+                {
+                    <li class="breadcrumb-item">
+                        <a href="@crumb.Url">@Localizer.T(crumb.LabelKey)</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item active" aria-current="page">
+                        @Localizer.T(crumb.LabelKey)
+                    </li>
+                }
+            }
+        </ol>
+    </nav>
+}

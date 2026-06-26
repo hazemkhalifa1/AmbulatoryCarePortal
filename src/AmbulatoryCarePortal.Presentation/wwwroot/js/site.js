@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTableSearch();
     initLoadingButtons();
     initLanguageToggle();
+    initSidebarKeyboard();
 });
 
 // ============================================================
@@ -57,31 +58,37 @@ function initSidebar() {
 
 function toggleSidebar() {
     const body = document.body;
+    const sidebar = document.querySelector('.app-sidebar');
+    const hamburger = document.querySelector('.header-hamburger');
+
     if (window.innerWidth <= 1199) {
         body.classList.toggle('sidebar-mobile-open');
+        const isOpen = body.classList.contains('sidebar-mobile-open');
+        if (sidebar) sidebar.setAttribute('aria-hidden', (!isOpen).toString());
+        if (hamburger) hamburger.setAttribute('aria-expanded', isOpen.toString());
+        // Focus management
+        if (isOpen && sidebar) {
+            sidebar.querySelector('.nav-link')?.focus();
+        }
     } else {
         body.classList.toggle('sidebar-collapsed');
+        const isOpen = !body.classList.contains('sidebar-collapsed');
+        if (hamburger) hamburger.setAttribute('aria-expanded', isOpen.toString());
     }
 }
 
 // ============================================================
-// ACTIVE NAV LINK
+// ACTIVE NAV — Expand submenu when child is active
+// The 'active' class is managed server-side by ActiveRouteTagHelper.
+// This function only ensures parent sub-menus are expanded.
 // ============================================================
 function initActiveNav() {
-    const path = window.location.pathname.toLowerCase();
-
-    document.querySelectorAll('.nav-link').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href && href !== '#' && path.startsWith(href.toLowerCase())) {
-            link.classList.add('active');
-        }
-    });
-
-    // Expand parent collapse if child is active
+    // Expand parent collapse if child has active class (set by TagHelper)
     document.querySelectorAll('.nav-sub .nav-link.active').forEach(active => {
         const collapse = active.closest('.collapse');
         if (collapse) {
-            const trigger = document.querySelector(`[data-bs-target="#${collapse.id}"]`);
+            const trigger = document.querySelector(`[data-bs-target="#${collapse.id}"]`) ||
+                            document.querySelector(`[href="#${collapse.id}"]`);
             if (trigger) trigger.setAttribute('aria-expanded', 'true');
             collapse.classList.add('show');
         }
@@ -346,5 +353,40 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         const toast = document.getElementById('developerToast');
         if (toast) toast.classList.remove('active');
+
+        // Close mobile sidebar on Escape
+        if (document.body.classList.contains('sidebar-mobile-open')) {
+            toggleSidebar();
+        }
     }
 });
+
+// ============================================================
+// SIDEBAR KEYBOARD SUPPORT
+// ============================================================
+function initSidebarKeyboard() {
+    const sidebar = document.querySelector('.app-sidebar');
+    if (!sidebar) return;
+
+    sidebar.addEventListener('keydown', e => {
+        // Trap focus within sidebar when open on mobile
+        if (e.key === 'Escape' && document.body.classList.contains('sidebar-mobile-open')) {
+            toggleSidebar();
+            const hamburger = document.querySelector('.header-hamburger');
+            if (hamburger) hamburger.focus();
+        }
+    });
+
+    // Sync aria-expanded on hamburger button
+    const hamburger = document.querySelector('.header-hamburger');
+    if (hamburger) {
+        const observer = new MutationObserver(() => {
+            const isOpen = document.body.classList.contains('sidebar-mobile-open') ||
+                           !document.body.classList.contains('sidebar-collapsed');
+            hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        // Initial sync
+        observer.takeRecords();
+    }
+}

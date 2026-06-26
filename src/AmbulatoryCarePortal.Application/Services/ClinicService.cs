@@ -54,7 +54,7 @@ public class ClinicService : IClinicService
 
         var userCount = await _userManager.Users.CountAsync(x => x.ClinicId == clinicId);
         var departmentCount = await _unitOfWork.Repository<Department>().CountAsync(x => x.ClinicId == clinicId);
-        var policyCount = await _unitOfWork.Repository<PolicyDocument>().CountAsync(x => x.ClinicId == clinicId);
+        var policyCount = await _unitOfWork.Repository<ClinicDocument>().CountAsync(x => x.ClinicId == clinicId);
         var openGapCount = await _unitOfWork.Repository<PolicyDocument>().CountAsync(x =>
             x.ClinicId == clinicId &&
             (x.DocumentStatus == DocumentStatus.MissingAttachment ||

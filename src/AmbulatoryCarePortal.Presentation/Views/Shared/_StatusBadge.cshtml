@@ -1,2 +1,26 @@
 @model dynamic
-<span class="status-pill @Model.CssClass">@Model.Label</span>
+
+@{
+    bool HasProp(object obj, string name) => obj.GetType().GetProperty(name) != null;
+    string SafeStr(object val) => val?.ToString() ?? "";
+
+    var status = HasProp(Model, "Status") ? SafeStr(Model.Status) : "";
+    var label = HasProp(Model, "Label") ? SafeStr(Model.Label) : "";
+    var cssClass = HasProp(Model, "CssClass") ? SafeStr(Model.CssClass) : "";
+    var size = HasProp(Model, "Size") ? SafeStr(Model.Size) : "";
+
+    var sizeClass = size == "lg" ? "badge-lg" : size == "sm" ? "badge-sm" : "";
+
+    var resolvedClass = !string.IsNullOrEmpty(cssClass)
+        ? cssClass
+        : status.ToLowerInvariant() switch
+        {
+            "active" or "approved" or "complete" or "compliant" or "valid" or "yes" => "active",
+            "inactive" or "expired" or "rejected" or "noncompliant" or "non-compliant" or "missing" or "incomplete" or "no" => "inactive",
+            "pending" or "partial" => "pending",
+            "needsreview" or "needs-review" or "needs review" or "draft" or "inprogress" or "in-progress" or "in progress" or "underreview" or "under-review" or "under review" => "needs-review",
+            _ => "needs-review"
+        };
+}
+
+<span class="status-pill @resolvedClass @sizeClass" role="status">@label</span>
