@@ -30,4 +30,12 @@ public class EmailJob
         _logger.LogInformation("EmailJob sending bulk to {Count} recipients: {Subject}", recipients.Count, subject);
         await _mailKitSender.SendBulkEmailAsync(recipients, subject, body, isHtml);
     }
+
+    [DisableConcurrentExecution(60)]
+    [AutomaticRetry(Attempts = 2, DelaysInSeconds = [120, 600], OnAttemptsExceeded = AttemptsExceededAction.Fail)]
+    public async Task SendScheduledReportAsync(string to, string reportName, byte[] reportContent)
+    {
+        _logger.LogInformation("EmailJob sending scheduled report '{ReportName}' to {To}", reportName, to);
+        await _mailKitSender.SendScheduledReportAsync(to, reportName, reportContent);
+    }
 }

@@ -184,13 +184,54 @@ public class ComplianceScoreService : IComplianceScoreService
     public async Task<List<ComplianceScoreDto>> GetAllClinicsScoresAsync()
     {
         var clinics = await _unitOfWork.Repository<Clinic>().FindAsync(c => c.IsActive);
-        var results = new List<ComplianceScoreDto>();
+        var clinicIds = clinics.Select(c => c.Id).ToList();
+
+        var snapshots = await _unitOfWork.Repository<ComplianceScoreSnapshot>().FindAsync(
+            s => clinicIds.Contains(s.ClinicId)
+        );
+        var latestPerClinic = snapshots
+            .GroupBy(s => s.ClinicId)
+            .ToDictionary(g => g.Key, g => g.OrderByDescending(s => s.CalculatedAt).First());
+
+        var results = new List<ComplianceScoreDto>(clinics.Count());
 
         foreach (var clinic in clinics)
-            results.Add(await GetLatestScoreAsync(clinic.Id));
+        {
+            if (latestPerClinic.TryGetValue(clinic.Id, out var latest))
+            {
+                results.Add(new ComplianceScoreDto
+                {
+                    ClinicId = clinic.Id,
+                    ClinicName = clinic.Name,
+                    OverallScore = latest.OverallScore,
+                    CalculatedAt = latest.CalculatedAt,
+                    Components = BuildComponents(latest)
+                });
+            }
+            else
+            {
+                results.Add(new ComplianceScoreDto
+                {
+                    ClinicId = clinic.Id,
+                    ClinicName = clinic.Name,
+                    OverallScore = 0,
+                    CalculatedAt = DateTime.UtcNow,
+                    Components = []
+                });
+            }
+        }
 
         return results;
     }
+
+    private static List<ScoreComponentDto> BuildComponents(ComplianceScoreSnapshot s) =>
+    [
+        new ScoreComponentDto { Name = "Policies", NameAr = "السياسات", Score = s.PolicyScore, Weight = s.PolicyWeight, Color = "#2196F3", Icon = "bi-file-text" },
+        new ScoreComponentDto { Name = "KPIs", NameAr = "المؤشرات", Score = s.KpiScore, Weight = s.KpiWeight, Color = "#4CAF50", Icon = "bi-bar-chart" },
+        new ScoreComponentDto { Name = "Checklists", NameAr = "قوائم التحقق", Score = s.ChecklistScore, Weight = s.ChecklistWeight, Color = "#9C27B0", Icon = "bi-check2-square" },
+        new ScoreComponentDto { Name = "HR Credentials", NameAr = "مؤهلات الموظفين", Score = s.HrScore, Weight = s.HrWeight, Color = "#FF9800", Icon = "bi-people" },
+        new ScoreComponentDto { Name = "Documents", NameAr = "المستندات", Score = s.DocumentScore, Weight = s.DocumentWeight, Color = "#F44336", Icon = "bi-folder" },
+    ];
 
     private async Task<(decimal Policy, decimal Kpi, decimal Checklist, decimal Hr, decimal Document)> CalculateComponentsAsync(int clinicId)
     {

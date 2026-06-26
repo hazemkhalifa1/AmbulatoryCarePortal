@@ -334,6 +334,13 @@ public class HRManagementController : Controller
             return RedirectToAction(nameof(Details), new { id = staffId });
         }
 
+        var (isValid, errorMsg) = FileUploadValidator.ValidateDocument(documentFile);
+        if (!isValid)
+        {
+            TempData["ErrorMessage"] = errorMsg;
+            return RedirectToAction(nameof(Details), new { id = staffId });
+        }
+
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         var fileName = Path.GetRandomFileName() + Path.GetExtension(documentFile.FileName);
         var filePath = Path.Combine("wwwroot/uploads/hr-documents", fileName);

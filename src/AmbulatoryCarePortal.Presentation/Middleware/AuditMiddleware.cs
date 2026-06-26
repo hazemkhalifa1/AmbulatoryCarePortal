@@ -45,25 +45,22 @@ public class AuditMiddleware
                 _ => AuditActionType.Create
             };
 
-            _ = Task.Run(async () =>
+            try
             {
-                try
-                {
-                    await auditService.LogActionAsync(
-                        clinicId,
-                        actionType.ToString(),
-                        $"{context.Request.Method} {context.Request.Path} ({sw.ElapsedMilliseconds}ms)",
-                        "HTTP",
-                        null,
-                        userId,
-                        ipAddress
-                    );
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to log audit entry");
-                }
-            });
+                await auditService.LogActionAsync(
+                    clinicId,
+                    actionType.ToString(),
+                    $"{context.Request.Method} {context.Request.Path} ({sw.ElapsedMilliseconds}ms)",
+                    "HTTP",
+                    null,
+                    userId,
+                    ipAddress
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to log audit entry");
+            }
         }
     }
 }

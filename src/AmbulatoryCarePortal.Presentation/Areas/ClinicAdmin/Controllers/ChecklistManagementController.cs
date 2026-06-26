@@ -267,6 +267,16 @@ public class ChecklistManagementController : Controller
             await _unitOfWork.SaveChangesAsync();
         }
 
+        if (evidenceFile != null)
+        {
+            var (isValid, errorMsg) = FileUploadValidator.ValidateDocument(evidenceFile);
+            if (!isValid)
+            {
+                TempData["ErrorMessage"] = errorMsg;
+                return RedirectToAction(nameof(ViewHistory), new { templateId });
+            }
+        }
+
         if (evidenceFile != null && evidenceFile.Length > 0)
         {
             var fileName = Path.GetRandomFileName() + Path.GetExtension(evidenceFile.FileName);

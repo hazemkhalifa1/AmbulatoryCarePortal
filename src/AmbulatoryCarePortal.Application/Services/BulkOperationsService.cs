@@ -27,12 +27,12 @@ public class BulkOperationsService : IBulkOperationsService
                 _unitOfWork.Repository<PolicyDocument>().SoftDelete(policy);
 
             await _unitOfWork.SaveChangesAsync();
-            _logger.LogInformation($"Bulk deleted {policies.Count()} policies");
+            _logger.LogInformation("Bulk deleted {Count} policies", policies.Count());
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error in bulk delete policies: {ex.Message}");
+            _logger.LogError(ex, "Error in bulk delete policies");
             return false;
         }
     }
@@ -49,12 +49,12 @@ public class BulkOperationsService : IBulkOperationsService
                 _unitOfWork.Repository<HrStaff>().SoftDelete(person);
 
             await _unitOfWork.SaveChangesAsync();
-            _logger.LogInformation($"Bulk deleted {staff.Count()} staff records");
+            _logger.LogInformation("Bulk deleted {Count} staff records", staff.Count());
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error in bulk delete staff: {ex.Message}");
+            _logger.LogError(ex, "Error in bulk delete staff");
             return false;
         }
     }
@@ -75,12 +75,12 @@ public class BulkOperationsService : IBulkOperationsService
             }
 
             await _unitOfWork.SaveChangesAsync();
-            _logger.LogInformation($"Bulk approved {rounds.Count()} checklists");
+            _logger.LogInformation("Bulk approved {Count} checklists", rounds.Count());
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error in bulk approve checklists: {ex.Message}");
+            _logger.LogError(ex, "Error in bulk approve checklists");
             return false;
         }
     }
@@ -100,12 +100,12 @@ public class BulkOperationsService : IBulkOperationsService
             }
 
             await _unitOfWork.SaveChangesAsync();
-            _logger.LogInformation($"Bulk verified {documents.Count()} documents");
+            _logger.LogInformation("Bulk verified {Count} documents", documents.Count());
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error in bulk verify documents: {ex.Message}");
+            _logger.LogError(ex, "Error in bulk verify documents");
             return false;
         }
     }
@@ -114,12 +114,12 @@ public class BulkOperationsService : IBulkOperationsService
     {
         try
         {
-            _logger.LogInformation($"Bulk export initiated for {exportType}");
+            _logger.LogInformation("Bulk export initiated for {ExportType}", exportType);
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error in bulk export: {ex.Message}");
+            _logger.LogError(ex, "Error in bulk export");
             return false;
         }
     }
@@ -128,12 +128,12 @@ public class BulkOperationsService : IBulkOperationsService
     {
         try
         {
-            _logger.LogInformation($"Bulk status update for {entityType}: {ids.Count()} items");
+            _logger.LogInformation("Bulk status update for {EntityType}: {Count} items", entityType, ids.Count());
             return ids.Count();
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error in bulk status update: {ex.Message}");
+            _logger.LogError(ex, "Error in bulk status update");
             return 0;
         }
     }

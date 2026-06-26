@@ -23,7 +23,8 @@ public class ExceptionMiddleware
         }
         catch (Exception exception)
         {
-            _logger.LogError($"An unhandled exception occurred: {exception.Message}", exception);
+            _logger.LogError(exception, "Unhandled exception processing request {Method} {Path}",
+                context.Request.Method, context.Request.Path);
             await HandleExceptionAsync(context, exception);
         }
     }
@@ -33,23 +34,27 @@ public class ExceptionMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-        var response = new ErrorResponse
-        {
-            Message = exception.Message,
-            StatusCode = context.Response.StatusCode
-        };
-
+        string message;
         if (exception is ArgumentException || exception is KeyNotFoundException)
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            response.StatusCode = context.Response.StatusCode;
-            response.Message = "Invalid request parameters";
+            message = "Invalid request parameters";
         }
         else if (exception is UnauthorizedAccessException)
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            response.StatusCode = context.Response.StatusCode;
+            message = "Unauthorized";
         }
+        else
+        {
+            message = "An unexpected error occurred. Please try again later.";
+        }
+
+        var response = new ErrorResponse
+        {
+            Message = message,
+            StatusCode = context.Response.StatusCode
+        };
 
         return context.Response.WriteAsJsonAsync(response);
     }

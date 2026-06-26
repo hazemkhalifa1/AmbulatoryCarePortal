@@ -28,16 +28,31 @@ public class WeeklyDigestJob
     {
         _logger.LogInformation("Weekly digest generation starting");
 
+        var warningDaysStr = await _settingsService.GetValueAsync("PolicyDocument.ExpiryWarningDays");
+        var warnDays = int.TryParse(warningDaysStr, out var wd) ? wd : 30;
+        var today = DateTime.UtcNow;
+
         var clinics = await _unitOfWork.Repository<Clinic>().GetAllAsync();
-        foreach (var clinic in clinics.Where(c => c.IsActive))
+        var activeClinics = clinics.Where(c => c.IsActive).ToList();
+        var clinicIds = activeClinics.Select(c => c.Id).ToList();
+
+        var existingDigests = await _unitOfWork.Repository<Notification>().FindAsync(
+            n => n.NotificationType == NotificationType.ComplianceAlert &&
+                 n.Title == "Weekly Compliance Digest" &&
+                 clinicIds.Contains(n.ClinicId) &&
+                 n.CreatedAt >= today.AddDays(-7)
+        );
+        var digestClinicIds = new HashSet<int>(existingDigests.Select(n => n.ClinicId));
+        foreach (var clinic in activeClinics)
         {
             ct.ThrowIfCancellationRequested();
 
+            if (digestClinicIds.Contains(clinic.Id))
+                continue;
+
             var totalDocs = await _unitOfWork.Repository<PolicyDocument>().CountAsync(d => d.ClinicId == clinic.Id);
-            var warningDaysStr = await _settingsService.GetValueAsync("PolicyDocument.ExpiryWarningDays");
-            var warnDays = int.TryParse(warningDaysStr, out var wd) ? wd : 30;
             var expiringDocs = await _unitOfWork.Repository<PolicyDocument>().CountAsync(
-                d => d.ClinicId == clinic.Id && d.ExpiryDate <= DateTime.UtcNow.AddDays(warnDays)
+                d => d.ClinicId == clinic.Id && d.ExpiryDate <= today.AddDays(warnDays)
             );
 
             var notification = new Notification
@@ -55,6 +70,6 @@ public class WeeklyDigestJob
         }
 
         await _unitOfWork.SaveChangesAsync();
-        _logger.LogInformation("Weekly digest notifications created for {Count} clinics", clinics.Count(c => c.IsActive));
+        _logger.LogInformation("Weekly digest notifications created for {Count} clinics", activeClinics.Count);
     }
 }

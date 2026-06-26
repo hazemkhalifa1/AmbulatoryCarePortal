@@ -27,9 +27,22 @@ public class ComplianceAlertJob
         _logger.LogInformation("Compliance alert check starting");
 
         var clinics = await _unitOfWork.Repository<Clinic>().FindAsync(c => c.IsActive);
+        var clinicIds = clinics.Select(c => c.Id).ToList();
+
+        var existingAlerts = await _unitOfWork.Repository<Notification>().FindAsync(
+            n => n.NotificationType == NotificationType.ComplianceAlert &&
+                 n.Title == "Compliance Alert" &&
+                 clinicIds.Contains(n.ClinicId) &&
+                 n.CreatedAt >= DateTime.UtcNow.AddDays(-1)
+        );
+        var alertedClinicIds = new HashSet<int>(existingAlerts.Select(n => n.ClinicId));
+
         foreach (var clinic in clinics)
         {
             ct.ThrowIfCancellationRequested();
+
+            if (alertedClinicIds.Contains(clinic.Id))
+                continue;
 
             var missingDocs = await _unitOfWork.Repository<PolicyDocument>().CountAsync(
                 d => d.ClinicId == clinic.Id && d.DocumentStatus == DocumentStatus.MissingAttachment && !d.IsDeleted

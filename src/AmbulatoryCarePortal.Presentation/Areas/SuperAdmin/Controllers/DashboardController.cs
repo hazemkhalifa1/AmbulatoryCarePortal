@@ -127,6 +127,17 @@ public class DashboardController : Controller
 
             var clinicId = await _clinicService.CreateClinicAsync(dto);
 
+            if (logoFile != null)
+            {
+                var (isValid, errorMsg) = FileUploadValidator.ValidateImage(logoFile);
+                if (!isValid)
+                {
+                    ModelState.AddModelError(string.Empty, errorMsg);
+                    ViewBag.PageTitle = _localizer.T("Page.CreateClinic");
+                    return View(model);
+                }
+            }
+
             if (logoFile != null && logoFile.Length > 0)
             {
                 var uploadsDir = Path.Combine("wwwroot", "uploads", "clinic-logos");
@@ -223,6 +234,17 @@ public class DashboardController : Controller
             clinic.LicenseNumber = model.LicenseNumber;
             clinic.LicenseExpiry = model.LicenseExpiry;
             clinic.IsActive = model.IsActive;
+
+            if (logoFile != null)
+            {
+                var (isValid, errorMsg) = FileUploadValidator.ValidateImage(logoFile);
+                if (!isValid)
+                {
+                    ModelState.AddModelError(string.Empty, errorMsg);
+                    ViewBag.PageTitle = _localizer.T("Page.EditClinic");
+                    return View(model);
+                }
+            }
 
             if (logoFile != null && logoFile.Length > 0)
             {

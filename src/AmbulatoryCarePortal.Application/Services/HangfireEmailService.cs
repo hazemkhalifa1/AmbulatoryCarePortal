@@ -35,7 +35,7 @@ public class HangfireEmailService : IEmailService
         return SendEmailAsync(to, subject, body);
     }
 
-    public Task<bool> SendWelcomeEmailAsync(string to, string userName, string tempPassword)
+    public Task<bool> SendWelcomeEmailAsync(string to, string userName, string callbackUrl)
     {
         var subject = "Your CBAHI Portal Account Has Been Created";
         var body = $@"
@@ -43,10 +43,12 @@ public class HangfireEmailService : IEmailService
             <p>Hello {userName},</p>
             <p>Your account has been successfully created.</p>
             <p><strong>Email:</strong> {to}</p>
-            <p><strong>Temporary Password:</strong> {tempPassword}</p>
-            <p>Please login and change your password immediately.</p>
+            <p>Click the link below to set your password and activate your account:</p>
+            <p><a href='{callbackUrl}'>Set Your Password</a></p>
+            <p>This link will expire in 24 hours.</p>
+            <p>If you did not request this, please ignore this email.</p>
             <hr/>
-            <p>For security, please do not share this email with others.</p>
+            <p>This is an automated notification from CBAHI Portal</p>
         ";
         return SendEmailAsync(to, subject, body);
     }
@@ -85,8 +87,7 @@ public class HangfireEmailService : IEmailService
 
     public Task<bool> SendScheduledReportAsync(string to, string reportName, byte[] reportContent)
     {
-        BackgroundJob.Enqueue<EmailJob>(job => job.SendEmailAsync(to, $"Scheduled Report: {reportName}",
-            $"<p>Your scheduled report <strong>{reportName}</strong> is attached.</p>", true));
+        BackgroundJob.Enqueue<EmailJob>(job => job.SendScheduledReportAsync(to, reportName, reportContent!));
         return Task.FromResult(true);
     }
 

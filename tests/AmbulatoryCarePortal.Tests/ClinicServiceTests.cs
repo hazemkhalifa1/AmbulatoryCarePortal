@@ -89,33 +89,6 @@ public class ClinicServiceTests
     }
 
     [Fact]
-    public async Task CalculateComplianceScoreAsync_WithCompletePolicies_ShouldReturn100()
-    {
-        // Arrange
-        int clinicId = 1;
-
-        _mockPolicyRepo
-            .SetupSequence(r => r.CountAsync(It.IsAny<Expression<Func<PolicyDocument, bool>>>(), false))
-            .ReturnsAsync(10)
-            .ReturnsAsync(0);
-
-        _mockClinicRepo
-            .Setup(r => r.GetByIdAsync(clinicId, false))
-            .ReturnsAsync(new Clinic { Id = clinicId, Name = "Test Clinic" });
-
-        _mockClinicRepo
-            .Setup(r => r.Update(It.IsAny<Clinic>()));
-
-        _mockUnitOfWork.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
-
-        // Act
-        var result = await _clinicService.CalculateComplianceScoreAsync(clinicId);
-
-        // Assert
-        Assert.Equal(0, result); // No complete policies, so score is 0
-    }
-
-    [Fact]
     public async Task GetAllClinicsAsync_ShouldReturnPagedResult()
     {
         // Arrange

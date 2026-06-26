@@ -1,29 +1,42 @@
 using AmbulatoryCarePortal.Application.Interfaces;
+using AmbulatoryCarePortal.Application.Settings;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MimeKit;
 
 namespace AmbulatoryCarePortal.Application.Services;
 
-public class MailKitEmailSender
+public class MailKitEmailSender : IEmailService
 {
     private readonly ISettingsService _settingsService;
+    private readonly IOptions<EmailSettings> _emailSettings;
     private readonly ILogger<MailKitEmailSender> _logger;
 
-    public MailKitEmailSender(ISettingsService settingsService, ILogger<MailKitEmailSender> logger)
+    public MailKitEmailSender(
+        ISettingsService settingsService,
+        IOptions<EmailSettings> emailSettings,
+        ILogger<MailKitEmailSender> logger)
     {
         _settingsService = settingsService;
+        _emailSettings = emailSettings;
         _logger = logger;
     }
 
     private async Task<SmtpClient> CreateSmtpClientAsync()
     {
-        var smtpServer = await _settingsService.GetValueAsync("Smtp.Host") ?? "localhost";
-        var smtpPort = await _settingsService.GetValueAsync("Smtp.Port", 587);
+        var config = _emailSettings.Value;
+
+        var smtpServer = await _settingsService.GetValueAsync("Smtp.Host")
+            ?? (string.IsNullOrEmpty(config.SmtpServer) ? "localhost" : config.SmtpServer);
+        var smtpPortStr = await _settingsService.GetValueAsync("Smtp.Port");
+        var smtpPort = smtpPortStr is not null ? int.Parse(smtpPortStr) : config.SmtpPort;
         var enableSsl = await _settingsService.GetValueAsync("Smtp.EnableSsl", true);
-        var username = await _settingsService.GetValueAsync("Smtp.Username");
-        var password = await _settingsService.GetValueAsync("Smtp.Password");
+        var username = await _settingsService.GetValueAsync("Smtp.Username")
+            ?? (string.IsNullOrEmpty(config.Username) ? null : config.Username);
+        var password = await _settingsService.GetValueAsync("Smtp.Password")
+            ?? (string.IsNullOrEmpty(config.Password) ? null : config.Password);
 
         var client = new SmtpClient();
 
@@ -42,12 +55,14 @@ public class MailKitEmailSender
 
     private async Task<string> GetSenderEmailAsync()
     {
-        return await _settingsService.GetValueAsync("Smtp.FromAddress") ?? "noreply@cbahi-portal.com";
+        return await _settingsService.GetValueAsync("Smtp.FromAddress")
+            ?? (string.IsNullOrEmpty(_emailSettings.Value.SenderEmail) ? "noreply@cbahi-portal.com" : _emailSettings.Value.SenderEmail);
     }
 
     private async Task<string> GetSenderNameAsync()
     {
-        return await _settingsService.GetValueAsync("Smtp.FromName") ?? "CBAHI Portal";
+        return await _settingsService.GetValueAsync("Smtp.FromName")
+            ?? (string.IsNullOrEmpty(_emailSettings.Value.SenderName) ? "CBAHI Portal" : _emailSettings.Value.SenderName);
     }
 
     public async Task<bool> SendEmailAsync(string to, string subject, string body, bool isHtml = true)
@@ -162,7 +177,7 @@ public class MailKitEmailSender
         return SendEmailAsync(to, subject, body);
     }
 
-    public Task<bool> SendWelcomeEmailAsync(string to, string userName, string tempPassword)
+    public Task<bool> SendWelcomeEmailAsync(string to, string userName, string callbackUrl)
     {
         var subject = "Your CBAHI Portal Account Has Been Created";
         var body = $@"
@@ -170,10 +185,12 @@ public class MailKitEmailSender
             <p>Hello {userName},</p>
             <p>Your account has been successfully created.</p>
             <p><strong>Email:</strong> {to}</p>
-            <p><strong>Temporary Password:</strong> {tempPassword}</p>
-            <p>Please login and change your password immediately.</p>
+            <p>Click the link below to set your password and activate your account:</p>
+            <p><a href='{callbackUrl}'>Set Your Password</a></p>
+            <p>This link will expire in 24 hours.</p>
+            <p>If you did not request this, please ignore this email.</p>
             <hr/>
-            <p>For security, please do not share this email with others.</p>
+            <p>This is an automated notification from CBAHI Portal</p>
         ";
         return SendEmailAsync(to, subject, body);
     }

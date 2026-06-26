@@ -125,7 +125,15 @@ public class UserManagementController : Controller
                 await _userManager.AddToRoleAsync(user, model.SelectedRole);
             }
 
-            await _emailService.SendWelcomeEmailAsync(user.Email, model.FullName, password);
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var callbackUrl = Url.Action(
+                "ResetPassword",
+                "Account",
+                new { email = user.Email, code = resetToken },
+                Request.Scheme
+            );
+
+            await _emailService.SendWelcomeEmailAsync(user.Email, model.FullName, callbackUrl!);
 
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var auditLog = new AuditTrail

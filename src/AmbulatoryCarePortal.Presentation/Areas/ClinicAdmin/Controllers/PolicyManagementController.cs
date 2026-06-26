@@ -116,6 +116,19 @@ public class PolicyManagementController : Controller
             DocumentStatus = DocumentStatus.Draft
         };
 
+        if (policyFile != null)
+        {
+            var (isValid, errorMsg) = FileUploadValidator.ValidateDocument(policyFile);
+            if (!isValid)
+            {
+                ModelState.AddModelError(string.Empty, errorMsg);
+                var clinicId = int.Parse(User.FindFirst("ClinicId")?.Value ?? "0");
+                var departments = await _unitOfWork.Repository<Department>().FindAsync(d => d.ClinicId == clinicId);
+                model.AvailableDepartments = departments.Select(d => new DepartmentViewModel { Id = d.Id, Name = d.NameEn, ClinicId = d.ClinicId }).ToList();
+                return View(model);
+            }
+        }
+
         if (policyFile != null && policyFile.Length > 0)
         {
             var fileName = Path.GetRandomFileName() + Path.GetExtension(policyFile.FileName);
@@ -289,6 +302,13 @@ public class PolicyManagementController : Controller
         if (evidenceFile == null || evidenceFile.Length == 0)
         {
             TempData["ErrorMessage"] = _localizer.T("Alert.Error.NoFileSelected");
+            return RedirectToAction(nameof(Details), new { id = policyId });
+        }
+
+        var (isValid, errorMsg) = FileUploadValidator.ValidateDocument(evidenceFile);
+        if (!isValid)
+        {
+            TempData["ErrorMessage"] = errorMsg;
             return RedirectToAction(nameof(Details), new { id = policyId });
         }
 

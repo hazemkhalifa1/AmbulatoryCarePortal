@@ -166,6 +166,17 @@ public class DocumentTemplatesController : Controller
             var templateId = await _templateService.CreateTemplateAsync(dto);
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
+            if (templateFile != null)
+            {
+                var (isValid, errorMsg) = FileUploadValidator.ValidateTemplate(templateFile);
+                if (!isValid)
+                {
+                    ModelState.AddModelError(string.Empty, errorMsg);
+                    ViewBag.PageTitle = _localizer.T("Page.CreateDocumentTemplate");
+                    return View(dto);
+                }
+            }
+
             if (templateFile != null && templateFile.Length > 0)
             {
                 var fileName = $"{dto.StandardCode}_{Path.GetRandomFileName()}.docx";
@@ -254,6 +265,17 @@ public class DocumentTemplatesController : Controller
                 return NotFound();
 
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (templateFile != null)
+            {
+                var (isValid, errorMsg) = FileUploadValidator.ValidateTemplate(templateFile);
+                if (!isValid)
+                {
+                    ModelState.AddModelError(string.Empty, errorMsg);
+                    ViewBag.PageTitle = _localizer.T("Page.EditDocumentTemplate");
+                    return View(dto);
+                }
+            }
 
             if (templateFile != null && templateFile.Length > 0)
             {

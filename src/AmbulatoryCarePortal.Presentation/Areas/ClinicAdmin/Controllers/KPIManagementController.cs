@@ -297,6 +297,19 @@ public class KPIManagementController : Controller
             CreatedBy = userId
         };
 
+        if (evidenceFile != null)
+        {
+            var (isValid, errorMsg) = FileUploadValidator.ValidateDocument(evidenceFile);
+            if (!isValid)
+            {
+                ModelState.AddModelError(string.Empty, errorMsg);
+                model.KPIName = kpi.Name;
+                model.TargetValue = kpi.TargetValue;
+                model.Frequency = kpi.Frequency.ToString();
+                return View(model);
+            }
+        }
+
         if (evidenceFile != null && evidenceFile.Length > 0)
         {
             var fileName = Path.GetRandomFileName() + Path.GetExtension(evidenceFile.FileName);

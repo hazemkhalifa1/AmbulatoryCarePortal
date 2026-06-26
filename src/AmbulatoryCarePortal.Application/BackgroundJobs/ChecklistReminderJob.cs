@@ -31,9 +31,22 @@ public class ChecklistReminderJob
             t => t.IsActive && !t.IsDeleted
         );
 
+        var templateIds = templates.Select(t => t.Id).ToList();
+        var existingReminders = await _unitOfWork.Repository<Notification>().FindAsync(
+            n => n.NotificationType == NotificationType.OpenGap &&
+                 n.TargetObjectType == "ChecklistTemplate" &&
+                 n.TargetObjectId.HasValue &&
+                 templateIds.Contains(n.TargetObjectId.Value) &&
+                 n.CreatedAt >= today.AddDays(-7)
+        );
+        var remindedTemplateIds = new HashSet<int>(existingReminders.Select(n => n.TargetObjectId!.Value));
+
         foreach (var template in templates)
         {
             ct.ThrowIfCancellationRequested();
+
+            if (remindedTemplateIds.Contains(template.Id))
+                continue;
 
             var recentRounds = await _unitOfWork.Repository<ChecklistRound>().FindAsync(
                 r => r.ChecklistTemplateId == template.Id && r.ExecutedAt >= today.AddDays(-(int)template.Frequency)

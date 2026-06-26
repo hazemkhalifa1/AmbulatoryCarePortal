@@ -47,21 +47,33 @@ public class DocumentExpiryCheckJob
             .GroupBy(d => d.HrStaffId)
             .ToList();
 
+        var staffIds = groups.Select(g => g.Key).ToList();
+        var staffLookup = (await _unitOfWork.Repository<HrStaff>().FindAsync(s => staffIds.Contains(s.Id)))
+            .ToDictionary(s => s.Id);
+
+        var allDocIds = expiringDocs.Select(d => d.Id).ToList();
+        var existingNotifications = await _unitOfWork.Repository<Notification>().FindAsync(
+            n => n.TargetObjectType == "HrDocument" && n.TargetObjectId.HasValue && allDocIds.Contains(n.TargetObjectId.Value)
+        );
+        var notifiedDocIds = new HashSet<int>(existingNotifications.Select(n => n.TargetObjectId!.Value));
+
         foreach (var docGroup in groups)
         {
             ct.ThrowIfCancellationRequested();
 
-            var staff = await _unitOfWork.Repository<HrStaff>().GetByIdAsync(docGroup.Key);
-            if (staff?.CreatedBy != null)
+            if (!staffLookup.TryGetValue(docGroup.Key, out var staff) || staff.CreatedBy == null)
+                continue;
+
+            foreach (var doc in docGroup)
             {
-                foreach (var doc in docGroup)
-                {
-                    await _emailService.SendExpiryReminderAsync(
-                        staff.CreatedBy,
-                        doc.DocumentName,
-                        doc.ExpiryDate.Value
-                    );
-                }
+                if (notifiedDocIds.Contains(doc.Id))
+                    continue;
+
+                await _emailService.SendExpiryReminderAsync(
+                    staff.CreatedBy,
+                    doc.DocumentName,
+                    doc.ExpiryDate.Value
+                );
             }
         }
 

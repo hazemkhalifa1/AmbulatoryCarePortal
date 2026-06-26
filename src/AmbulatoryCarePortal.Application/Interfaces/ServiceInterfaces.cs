@@ -12,7 +12,6 @@ public interface IClinicService
     Task<int> CreateClinicAsync(CreateClinicDto dto);
     Task<bool> UpdateClinicAsync(UpdateClinicDto dto);
     Task<bool> DeleteClinicAsync(int clinicId);
-    Task<decimal> CalculateComplianceScoreAsync(int clinicId);
 }
 
 public interface IPolicyDocumentService

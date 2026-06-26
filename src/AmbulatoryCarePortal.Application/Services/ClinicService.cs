@@ -1,3 +1,4 @@
+using System.Transactions;
 using AmbulatoryCarePortal.Application.Common;
 using AmbulatoryCarePortal.Application.DTOs.Clinic;
 using AmbulatoryCarePortal.Application.DTOs.Document;
@@ -104,6 +105,8 @@ public class ClinicService : IClinicService
 
     public async Task<int> CreateClinicAsync(CreateClinicDto dto)
     {
+        using var tx = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
         var clinic = _mapper.Map<Clinic>(dto);
         clinic.IsActive = true;
         clinic.ComplianceScore = 0;
@@ -136,6 +139,7 @@ public class ClinicService : IClinicService
             await _unitOfWork.SaveChangesAsync();
         }
 
+        tx.Complete();
         return clinic.Id;
     }
 
@@ -164,30 +168,6 @@ public class ClinicService : IClinicService
         await _unitOfWork.SaveChangesAsync();
 
         return true;
-    }
-
-    public async Task<decimal> CalculateComplianceScoreAsync(int clinicId)
-    {
-        var totalPolicies = await _unitOfWork.Repository<PolicyDocument>().CountAsync(x => x.ClinicId == clinicId);
-
-        if (totalPolicies == 0)
-            return 0;
-
-        var completePolicies = await _unitOfWork.Repository<PolicyDocument>().CountAsync(x =>
-            x.ClinicId == clinicId && x.DocumentStatus == DocumentStatus.Complete
-        );
-
-        var score = (completePolicies * 100m) / totalPolicies;
-
-        var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(clinicId);
-        if (clinic != null)
-        {
-            clinic.ComplianceScore = Math.Round(score, 2);
-            _unitOfWork.Repository<Clinic>().Update(clinic);
-            await _unitOfWork.SaveChangesAsync();
-        }
-
-        return Math.Round(score, 2);
     }
 
     private async Task CreateDefaultDepartmentsAsync(int clinicId)
