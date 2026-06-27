@@ -774,7 +774,25 @@ p { margin-bottom: 0.75rem; line-height: 1.7; }
 }
 
 /* ============================================================
-   9. FOOTER
+   9. BREADCRUMB
+   ============================================================ */
+.breadcrumb {
+    flex-wrap: wrap;
+}
+
+.breadcrumb-item {
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.breadcrumb-item a {
+    display: inline;
+}
+
+/* ============================================================
+   10. FOOTER
    ============================================================ */
 .app-footer {
     padding: 1rem 1.5rem;
@@ -787,7 +805,7 @@ p { margin-bottom: 0.75rem; line-height: 1.7; }
 }
 
 /* ============================================================
-   10. CARDS — Premium Elevated Design
+   11. CARDS — Premium Elevated Design
    ============================================================ */
 .card {
     background: var(--white);
@@ -849,7 +867,7 @@ p { margin-bottom: 0.75rem; line-height: 1.7; }
 }
 
 /* ============================================================
-   11. METRIC CARDS — Modern KPI Display
+   12. METRIC CARDS — Modern KPI Display
    ============================================================ */
 .metric-card {
     background: var(--white);
@@ -950,7 +968,7 @@ p { margin-bottom: 0.75rem; line-height: 1.7; }
 }
 
 /* ============================================================
-   12. FORMS — Clean & Accessible
+   13. FORMS — Clean & Accessible
    ============================================================ */
 .form-group { margin-bottom: 1.25rem; }
 
@@ -1107,7 +1125,7 @@ select.form-control {
 }
 
 /* ============================================================
-   13. BUTTONS — Modern & Clean
+   14. BUTTONS — Modern & Clean
    ============================================================ */
 .btn {
     display: inline-flex;
@@ -1235,7 +1253,7 @@ select.form-control {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ============================================================
-   14. TABLES — Clean Data Display
+   15. TABLES — Clean Data Display
    ============================================================ */
 .table-container {
     overflow-x: auto;
@@ -1316,7 +1334,7 @@ select.form-control {
 }
 
 /* ============================================================
-   15. BADGES
+   16. BADGES
    ============================================================ */
 .badge {
     display: inline-flex;
@@ -1341,7 +1359,7 @@ select.form-control {
 .badge-sm { padding: 0.1rem 0.4rem; font-size: 0.6rem; }
 
 /* ============================================================
-   16. STATUS PILL
+   17. STATUS PILL
    ============================================================ */
 .status-pill {
     display: inline-flex;
@@ -1396,7 +1414,7 @@ select.form-control {
 .status-pill.active::before { background: var(--success); box-shadow: 0 0 6px rgba(5, 150, 105, 0.4); }
 
 /* ============================================================
-   17. ACCORDION
+   18. ACCORDION
    ============================================================ */
 .accordion {
     display: flex;
@@ -1450,7 +1468,7 @@ select.form-control {
 }
 
 /* ============================================================
-   18. ALERTS
+   19. ALERTS
    ============================================================ */
 .alert {
     display: flex;
@@ -1489,7 +1507,7 @@ select.form-control {
 .alert-info { background: var(--info-light); color: var(--info-dark); border-color: #BFDBFE; }
 
 /* ============================================================
-   19. PROGRESS
+   20. PROGRESS
    ============================================================ */
 .progress {
     height: 8px;
@@ -1510,7 +1528,7 @@ select.form-control {
 .progress-bar.bg-primary { background: var(--primary-500); }
 
 /* ============================================================
-   20. DETAIL LIST
+   21. DETAIL LIST
    ============================================================ */
 .detail-grid {
     display: grid;
@@ -1541,7 +1559,7 @@ select.form-control {
 }
 
 /* ============================================================
-   21. ACTION BUTTONS GRID
+   22. ACTION BUTTONS GRID
    ============================================================ */
 .action-grid {
     display: grid;
@@ -1607,7 +1625,7 @@ select.form-control {
 .action-card-btn.info i { background: var(--info-light); color: var(--info); }
 
 /* ============================================================
-   22. EMPTY STATE
+   23. EMPTY STATE
    ============================================================ */
 .empty-state {
     text-align: center;
@@ -1633,7 +1651,7 @@ select.form-control {
 }
 
 /* ============================================================
-   23. LOADING & SKELETON
+   24. LOADING & SKELETON
    ============================================================ */
 .spinner {
     display: inline-block;
@@ -1660,7 +1678,7 @@ select.form-control {
 }
 
 /* ============================================================
-   24. PAGINATION
+   25. PAGINATION
    ============================================================ */
 .pagination {
     display: flex;
@@ -1704,7 +1722,7 @@ select.form-control {
 }
 
 /* ============================================================
-   25. MODALS — Modern & Clean
+   26. MODALS — Modern & Clean
    ============================================================ */
 .modal-overlay {
     position: fixed;
@@ -1777,7 +1795,7 @@ select.form-control {
 }
 
 /* ============================================================
-   26. SEARCH / FILTER BAR
+   27. SEARCH / FILTER BAR
    ============================================================ */
 .filter-bar {
     display: flex;
@@ -1831,7 +1849,7 @@ select.form-control {
 }
 
 /* ============================================================
-   27. RTL SUPPORT
+   28. RTL SUPPORT
    ============================================================ */
 html[dir="rtl"] body.sidebar-collapsed .app-sidebar {
     transform: translateX(100%);
@@ -1868,7 +1886,7 @@ html[dir="rtl"] .pagination .page-link i {
 }
 
 /* ============================================================
-   28. SIDEBAR STATES
+   29. SIDEBAR STATES
    ============================================================ */
 body.sidebar-collapsed .app-sidebar {
     transform: translateX(-100%);
@@ -1891,7 +1909,7 @@ body.sidebar-mobile-open .sidebar-overlay {
 }
 
 /* ============================================================
-   29. COMPLIANCE WIDGET
+   30. COMPLIANCE WIDGET
    ============================================================ */
 .score-ring {
     position: relative;
@@ -1919,7 +1937,7 @@ body.sidebar-mobile-open .sidebar-overlay {
 }
 
 /* ============================================================
-   30. HEALTH INFO ROWS
+   31. HEALTH INFO ROWS
    ============================================================ */
 .health-info-row {
     display: flex;
@@ -1944,7 +1962,7 @@ body.sidebar-mobile-open .sidebar-overlay {
 }
 
 /* ============================================================
-   31. READINESS / GAUGE
+   32. READINESS / GAUGE
    ============================================================ */
 .readiness-score {
     text-align: center;
@@ -1980,7 +1998,7 @@ body.sidebar-mobile-open .sidebar-overlay {
 }
 
 /* ============================================================
-   32. ALERT OVERRIDE (legacy Bootstrap compat)
+   33. ALERT OVERRIDE (legacy Bootstrap compat)
    ============================================================ */
 .alert-dismissible .btn-close {
     position: absolute;
@@ -1994,7 +2012,7 @@ body.sidebar-mobile-open .sidebar-overlay {
 }
 
 /* ============================================================
-   33. RESPONSIVE DESIGN
+   34. RESPONSIVE DESIGN
    ============================================================ */
 @media (max-width: 1199.98px) {
     .app-sidebar { transform: translateX(-100%); }
@@ -2050,7 +2068,7 @@ body.sidebar-mobile-open .sidebar-overlay {
 }
 
 /* ============================================================
-   34. LEGACY COMPATIBILITY
+   35. LEGACY COMPATIBILITY
    ============================================================ */
 .form-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); margin-bottom: 1.5rem; }
 .form-card-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-100); font-weight: 600; }

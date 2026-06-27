@@ -3,46 +3,17 @@
 @{
     ViewData["Title"] = Localizer.T("App.Title");
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    ViewData["ShowAuthFeatures"] = true;
 }
 
 <div class="login-container">
-    <div class="login-brand-panel">
-        <div class="grid-pattern"></div>
-        <div class="login-brand-content">
-            <div class="brand-icon-large">
-                <i class="fas fa-heartbeat"></i>
-            </div>
-            <h1>@Localizer.T("App.Name")</h1>
-            <p class="brand-subtitle">@Localizer.T("App.Tagline")</p>
-            <div class="login-features">
-                <div class="login-feature-item">
-                    <span class="feature-icon"><i class="fas fa-check"></i></span>
-                    <span>@Localizer.T("Login.Feature.Policy")</span>
-                </div>
-                <div class="login-feature-item">
-                    <span class="feature-icon"><i class="fas fa-check"></i></span>
-                    <span>@Localizer.T("Login.Feature.KPI")</span>
-                </div>
-                <div class="login-feature-item">
-                    <span class="feature-icon"><i class="fas fa-check"></i></span>
-                    <span>@Localizer.T("Login.Feature.Staff")</span>
-                </div>
-                <div class="login-feature-item">
-                    <span class="feature-icon"><i class="fas fa-check"></i></span>
-                    <span>@Localizer.T("Login.Feature.Audit")</span>
-                </div>
-            </div>
-        </div>
-        <div class="login-brand-footer">
-            <p>@Localizer.T("App.Copyright")</p>
-        </div>
-    </div>
+    <partial name="_AuthBrandPanel" />
 
     <div class="login-form-panel">
         <div class="login-form-wrapper">
             <div class="form-header">
                 <div class="form-badge">
-                    <i class="fas fa-lock"></i> @Localizer.T("Login.SecureLogin")
+                    <i class="fas fa-lock" aria-hidden="true"></i> @Localizer.T("Login.SecureLogin")
                 </div>
                 <h2>@Localizer.T("Login.WelcomeBack")</h2>
                 <p>@Localizer.T("Login.Subtitle")</p>
@@ -51,8 +22,8 @@
             <div class="login-card">
                 @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="login-error" role="alert">
-                        <i class="fas fa-exclamation-circle"></i>
+                    <div class="login-error" role="alert" aria-live="assertive">
+                        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
                         <div>
                             @foreach (var modelState in ViewData.ModelState.Values)
                             {
@@ -65,26 +36,42 @@
                     </div>
                 }
 
+                @if (ViewBag.SuccessMessage != null)
+                {
+                    <div class="auth-success" role="alert" aria-live="polite">
+                        <i class="fas fa-check-circle" aria-hidden="true"></i>
+                        <span>@ViewBag.SuccessMessage</span>
+                    </div>
+                }
+
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="login-error" role="alert" aria-live="assertive">
+                        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                        <div>@ViewBag.ErrorMessage</div>
+                    </div>
+                }
+
                 <form method="post" asp-action="Login" novalidate>
                     <div class="form-group">
                         <label for="Email" class="form-label">@Localizer.T("Login.Email")</label>
                         <div class="input-group">
-                            <span class="input-icon"><i class="fas fa-envelope"></i></span>
-                            <input type="email" class="form-control" id="Email" placeholder="@Localizer.T("Login.EmailPlaceholder")" asp-for="Email" required autocomplete="email" autofocus>
+                            <span class="input-icon" aria-hidden="true"><i class="fas fa-envelope"></i></span>
+                            <input type="email" class="form-control" id="Email" placeholder="@Localizer.T("Login.EmailPlaceholder")" asp-for="Email" required autocomplete="email" autofocus aria-required="true">
                         </div>
-                        <span asp-validation-for="Email" class="form-error"></span>
+                        <span asp-validation-for="Email" class="form-error" role="alert"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="Password" class="form-label">@Localizer.T("Login.Password")</label>
                         <div class="input-group">
-                            <span class="input-icon"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" id="Password" placeholder="@Localizer.T("Login.PasswordPlaceholder")" asp-for="Password" required autocomplete="current-password">
-                            <button type="button" class="toggle-password" aria-label="@Localizer.T("Login.Password")">
-                                <i class="fas fa-eye"></i>
+                            <span class="input-icon" aria-hidden="true"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="Password" placeholder="@Localizer.T("Login.PasswordPlaceholder")" asp-for="Password" required autocomplete="current-password" aria-required="true">
+                            <button type="button" class="toggle-password" aria-label="@Localizer.T("Login.Password")" aria-controls="Password" tabindex="0">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
                             </button>
                         </div>
-                        <span asp-validation-for="Password" class="form-error"></span>
+                        <span asp-validation-for="Password" class="form-error" role="alert"></span>
                     </div>
 
                     <div class="login-options">
@@ -98,7 +85,7 @@
                     <button type="submit" class="login-btn" data-loading>
                         <span class="btn-text">@Localizer.T("Login.SignIn")</span>
                         <span class="btn-loading">
-                            <span class="spinner spinner-sm"></span>
+                            <span class="spinner spinner-sm" aria-hidden="true"></span>
                             @Localizer.T("Login.SigningIn")
                         </span>
                     </button>

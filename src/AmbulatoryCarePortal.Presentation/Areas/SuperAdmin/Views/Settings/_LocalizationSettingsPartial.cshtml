@@ -18,24 +18,32 @@
     @Html.AntiForgeryToken()
     <div class="settings-card">
         <div class="settings-card-header">
-            <div class="header-icon icon-globe"><i class="fas fa-globe"></i></div>
-            <h3>@Localizer.T("Settings.Localization.Title")</h3>
+            <div class="header-icon header-icon-lg icon-globe"><i class="fas fa-globe" aria-hidden="true"></i></div>
+            <div>
+                <h3>@Localizer.T("Settings.Localization.Title")</h3>
+                <p class="card-subtitle">Configure language, region, and locale preferences</p>
+            </div>
             <span class="header-badge">@Localizer.T("Settings.Localization.Tab")</span>
         </div>
         <div class="settings-card-body">
             <div class="row g-3">
                 <div class="col-md-5">
-                    <label class="form-label">@Localizer.T("Settings.Localization.DefaultLanguage")</label>
-                    <select name="Localization_DefaultLanguage" class="form-select">
+                    <label class="form-label" for="Localization_DefaultLanguage">@Localizer.T("Settings.Localization.DefaultLanguage")</label>
+                    <select name="Localization_DefaultLanguage" id="Localization_DefaultLanguage" class="form-select">
                         <option value="en" selected="@(SettingValue("Localization.DefaultLanguage") == "en")">English</option>
                         <option value="ar" selected="@(SettingValue("Localization.DefaultLanguage") == "ar")">العربية</option>
                     </select>
                 </div>
                 <div class="col-md-7">
-                    <label class="form-label">@Localizer.T("Settings.Localization.AllowToggle")</label>
-                    @await Html.PartialAsync("_SettingsToggle", new { Name = "Localization_AllowUserLanguageToggle", Label = Localizer.T("Settings.Localization.AllowToggle"), Checked = SettingBool("Localization.AllowUserLanguageToggle") })
+                    <label class="form-label" for="Localization_AllowUserLanguageToggle">@Localizer.T("Settings.Localization.AllowToggle")</label>
+                    @await Html.PartialAsync("_SettingsToggle", new { Name = "Localization_AllowUserLanguageToggle", Id = "Localization_AllowUserLanguageToggle", Label = Localizer.T("Settings.Localization.AllowToggle"), Checked = SettingBool("Localization.AllowUserLanguageToggle") })
                 </div>
             </div>
+        </div>
+        <div class="settings-card-footer">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i> @Localizer.T("Common.Save")
+            </button>
         </div>
     </div>
 </form>

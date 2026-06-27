@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initLoadingButtons();
     initLanguageToggle();
     initSidebarKeyboard();
+    initPasswordStrength();
 });
 
 // ============================================================
@@ -73,6 +74,7 @@ function toggleSidebar() {
     } else {
         body.classList.toggle('sidebar-collapsed');
         const isOpen = !body.classList.contains('sidebar-collapsed');
+        if (sidebar) sidebar.setAttribute('aria-hidden', (!isOpen).toString());
         if (hamburger) hamburger.setAttribute('aria-expanded', isOpen.toString());
     }
 }
@@ -389,4 +391,52 @@ function initSidebarKeyboard() {
         // Initial sync
         observer.takeRecords();
     }
+}
+
+// ============================================================
+// PASSWORD STRENGTH INDICATOR
+// ============================================================
+function initPasswordStrength() {
+    const inputs = document.querySelectorAll('[data-password-strength]');
+    if (!inputs.length) return;
+
+    inputs.forEach(input => {
+        const container = input.closest('.form-group').querySelector('.password-strength');
+        if (!container) return;
+        const bar = container.querySelector('.password-strength-bar');
+        const text = container.querySelector('.password-strength-text');
+        if (!bar) return;
+
+        function evaluateStrength() {
+            const val = input.value;
+            let score = 0;
+
+            if (val.length >= 8) score++;
+            if (val.length >= 12) score++;
+            if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
+            if (/\d/.test(val) && /[^A-Za-z0-9]/.test(val)) score++;
+
+            const widths = ['0%', '25%', '50%', '75%', '100%'];
+            const colors = ['', 'var(--danger)', 'var(--warning)', 'var(--info)', 'var(--success)'];
+            const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+            const l10n = {
+                'Weak': 'Weak',
+                'Fair': 'Fair',
+                'Good': 'Good',
+                'Strong': 'Strong'
+            };
+
+            bar.style.setProperty('--strength-width', widths[score]);
+            bar.style.setProperty('--strength-color', colors[score]);
+
+            if (text) {
+                text.textContent = score > 0 ? (l10n[labels[score]] || labels[score]) : '';
+            }
+            bar.setAttribute('aria-valuenow', score);
+        }
+
+        input.addEventListener('input', evaluateStrength);
+        input.addEventListener('blur', evaluateStrength);
+        evaluateStrength();
+    });
 }

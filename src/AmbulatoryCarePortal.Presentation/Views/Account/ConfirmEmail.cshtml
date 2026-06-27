@@ -5,20 +5,8 @@
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
 }
 
-<div class="login-container" style="min-height:100vh">
-    <div class="login-brand-panel">
-        <div class="grid-pattern"></div>
-        <div class="login-brand-content">
-            <div class="brand-icon-large">
-                <i class="fas fa-heartbeat"></i>
-            </div>
-            <h1>@Localizer.T("App.Name")</h1>
-            <p class="brand-subtitle">@Localizer.T("App.Tagline")</p>
-        </div>
-        <div class="login-brand-footer">
-            <p>@Localizer.T("App.Copyright")</p>
-        </div>
-    </div>
+<div class="login-container">
+    <partial name="_AuthBrandPanel" />
 
     <div class="login-form-panel">
         <div class="login-form-wrapper">
@@ -27,8 +15,8 @@
                     <input type="hidden" asp-for="UserId" />
                     <input type="hidden" asp-for="Code" />
 
-                    <div class="text-center mb-4">
-                        <div style="font-size: 4rem; color: var(--primary-color);">
+                    <div class="auth-status">
+                        <div class="auth-status-icon auth-status-info" aria-hidden="true">
                             <i class="fas fa-envelope"></i>
                         </div>
                         <h3>@Localizer.T("ConfirmEmail.Heading")</h3>
@@ -38,7 +26,7 @@
                     <button type="submit" class="login-btn" data-loading>
                         <span class="btn-text">@Localizer.T("ConfirmEmail.ConfirmBtn")</span>
                         <span class="btn-loading">
-                            <span class="spinner"></span>
+                            <span class="spinner spinner-sm" aria-hidden="true"></span>
                             @Localizer.T("ConfirmEmail.Confirming")
                         </span>
                     </button>

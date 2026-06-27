@@ -3,12 +3,20 @@
 }
 
 <div class="error-page fade-in">
-    <div class="headline text-danger">403</div>
-    <div class="error-content">
-        <h3><i class="fas fa-lock text-danger me-2"></i> @Localizer.T("AccessDenied.Heading")</h3>
+    <div class="error-card">
+        <div class="error-code" aria-hidden="true">403</div>
+        <div class="error-icon" aria-hidden="true">
+            <i class="fas fa-lock"></i>
+        </div>
+        <h3>@Localizer.T("AccessDenied.Heading")</h3>
         <p>@Localizer.T("AccessDenied.Message")</p>
-        <a href="/" class="btn btn-primary">
-            <i class="fas fa-home"></i> @Localizer.T("AccessDenied.ReturnHome")
-        </a>
+        <div class="error-actions">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="login-btn auth-status-btn">
+                <i class="fas fa-home" aria-hidden="true"></i> @Localizer.T("AccessDenied.ReturnHome")
+            </a>
+            <a asp-area="" asp-controller="Account" asp-action="Login" class="error-back-link">
+                <i class="fas fa-sign-in-alt" aria-hidden="true"></i> @Localizer.T("Login.SignIn")
+            </a>
+        </div>
     </div>
 </div>

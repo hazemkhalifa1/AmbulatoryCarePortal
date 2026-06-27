@@ -99,7 +99,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a is-active-route asp-area="SuperAdmin" asp-controller="UserManagement" class="nav-link">
+                                <a is-active-route asp-area="SuperAdmin" asp-controller="UserManagement" asp-action="Index" class="nav-link">
                                     <i class="nav-icon fas fa-users-cog" aria-hidden="true"></i>
                                     <p>@Localizer.T("Nav.ManageUsers")</p>
                                 </a>
@@ -347,7 +347,7 @@
                 </div>
 
                 <!-- Footer -->
-                <footer class="app-footer" role="contentinfo">
+                <footer class="app-footer">
                     <strong>@Localizer.T("App.Name")</strong> @Localizer.T("App.Copyright")
                     <span class="ms-2">
                         <a href="#" class="developer-branding" data-dev-card aria-label="@Localizer.T("Developer.Branding")">@Localizer.T("Developer.Branding")</a>

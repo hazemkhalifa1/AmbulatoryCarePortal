@@ -5,83 +5,103 @@
 
     var navItems = new[]
     {
-        new { Id = "mail", Icon = "fa-envelope", Label = Localizer.T("Settings.Mail.Tab") },
-        new { Id = "documenttemplate", Icon = "fa-file-alt", Label = Localizer.T("Settings.DocumentTemplate.Tab") },
-        new { Id = "branding", Icon = "fa-palette", Label = Localizer.T("Settings.Branding.Tab") },
-        new { Id = "notifications", Icon = "fa-bell", Label = Localizer.T("Settings.Notifications.Tab") },
-        new { Id = "localization", Icon = "fa-globe", Label = Localizer.T("Settings.Localization.Tab") },
-        new { Id = "general", Icon = "fa-wrench", Label = Localizer.T("Settings.General.Tab") }
+        new { Id = "mail", Icon = "fa-envelope", Label = Localizer.T("Settings.Mail.Tab"), Desc = "SMTP and email delivery configuration" },
+        new { Id = "documenttemplate", Icon = "fa-file-alt", Label = Localizer.T("Settings.DocumentTemplate.Tab"), Desc = "Upload rules, expiry warnings, and file limits" },
+        new { Id = "branding", Icon = "fa-palette", Label = Localizer.T("Settings.Branding.Tab"), Desc = "Site identity, colors, and contact info" },
+        new { Id = "notifications", Icon = "fa-bell", Label = Localizer.T("Settings.Notifications.Tab"), Desc = "Alert preferences and daily digest settings" },
+        new { Id = "localization", Icon = "fa-globe", Label = Localizer.T("Settings.Localization.Tab"), Desc = "Language, region, and locale preferences" },
+        new { Id = "general", Icon = "fa-wrench", Label = Localizer.T("Settings.General.Tab"), Desc = "System-wide preferences and maintenance" }
+    };
+
+    var partialMap = new Dictionary<string, string>
+    {
+        { "mail", "_MailSettingsPartial" },
+        { "documenttemplate", "_DocumentTemplateSettingsPartial" },
+        { "branding", "_BrandingSettingsPartial" },
+        { "notifications", "_NotificationsSettingsPartial" },
+        { "localization", "_LocalizationSettingsPartial" },
+        { "general", "_GeneralSettingsPartial" }
     };
 }
 
-<div class="dashboard-hero mb-4">
-    <div class="hero-content">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div>
-                <h1 class="hero-title"><i class="fas fa-cog me-2"></i>@Localizer.T("Page.SystemSettings")</h1>
-                <p class="hero-subtitle mb-0">@Localizer.T("Settings.Subtitle")</p>
-            </div>
+<div class="settings-page-wrapper">
+    <div class="settings-header">
+        <div class="settings-header-icon">
+            <i class="fas fa-cog"></i>
         </div>
+        <div>
+            <h1 class="settings-header-title">@Localizer.T("Page.SystemSettings")</h1>
+            <p class="settings-header-desc">@Localizer.T("Settings.Subtitle")</p>
+        </div>
+    </div>
+
+    <button class="settings-sidebar-toggle" id="settingsSidebarToggle" type="button" aria-expanded="false" aria-controls="settingsNav">
+        <span><i class="fas fa-bars me-2" aria-hidden="true"></i>@Localizer.T("Settings.SidebarTitle")</span>
+        <i class="fas fa-chevron-down"></i>
+    </button>
+
+    <div class="settings-pills" id="settingsPills" role="tablist">
+        @foreach (var item in navItems)
+        {
+            <button type="button" class="pill @(activeTab == item.Id ? "active" : "")"
+                    id="pill-@item.Id" data-target="@item.Id" role="tab"
+                    aria-selected="@(activeTab == item.Id ? "true" : "false")"
+                    aria-controls="section-@item.Id">
+                <i class="fas @item.Icon" aria-hidden="true"></i>
+                <span>@item.Label</span>
+            </button>
+        }
+    </div>
+
+    <div class="settings-layout">
+        <aside class="settings-sidebar" id="settingsSidebar">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-layer-group me-1" aria-hidden="true"></i> @Localizer.T("Settings.SidebarTitle")
+                </div>
+                <div class="list-group" id="settingsNav" role="tablist">
+                    @foreach (var item in navItems)
+                    {
+                        <button type="button" class="list-group-item list-group-item-action @(activeTab == item.Id ? "active" : "")"
+                                id="nav-@item.Id" data-target="@item.Id" role="tab"
+                                aria-selected="@(activeTab == item.Id ? "true" : "false")"
+                                aria-controls="section-@item.Id">
+                            <i class="fas @item.Icon" aria-hidden="true"></i>
+                            <span class="nav-label">@item.Label</span>
+                            <span class="nav-desc">@item.Desc</span>
+                        </button>
+                    }
+                </div>
+            </div>
+        </aside>
+
+        <main class="settings-content" id="settingsContent">
+            <div id="settingsSections">
+                @foreach (var item in navItems)
+                {
+                    var isActive = activeTab == item.Id;
+                    <div class="settings-section" id="section-@item.Id" role="tabpanel"
+                         aria-labelledby="nav-@item.Id"
+                         data-active="@(isActive ? "true" : "false")"
+                         style="display: @(isActive ? "block" : "none")">
+                        @await Html.PartialAsync(partialMap[item.Id])
+                    </div>
+                }
+            </div>
+
+            <div class="settings-action-bar">
+                <button type="button" class="btn btn-outline-secondary" id="resetDefaultsBtn">
+                    <i class="fas fa-undo" aria-hidden="true"></i> @Localizer.T("Settings.ResetToDefault")
+                </button>
+                <button type="button" class="btn btn-primary" id="saveAllSettingsBtn">
+                    <i class="fas fa-save" aria-hidden="true"></i> @Localizer.T("Settings.SaveAll")
+                </button>
+            </div>
+        </main>
     </div>
 </div>
 
-<button class="settings-sidebar-toggle" id="settingsSidebarToggle" type="button">
-    <span><i class="fas fa-bars me-2"></i>@Localizer.T("Settings.SidebarTitle")</span>
-    <i class="fas fa-chevron-down"></i>
-</button>
-
-<div class="settings-layout">
-    <aside class="settings-sidebar" id="settingsSidebar">
-        <div class="card">
-            <div class="card-header">
-                <i class="fas fa-layer-group me-1"></i> @Localizer.T("Settings.SidebarTitle")
-            </div>
-            <div class="list-group" id="settingsNav" role="tablist">
-                @foreach (var item in navItems)
-                {
-                    <button type="button" class="list-group-item list-group-item-action @(activeTab == item.Id ? "active" : "")"
-                            id="nav-@item.Id" data-target="@item.Id" role="tab">
-                        <i class="fas @item.Icon"></i>
-                        <span>@item.Label</span>
-                    </button>
-                }
-            </div>
-        </div>
-    </aside>
-
-    <main class="settings-content">
-        <div id="settingsSections">
-            @{
-                var partialMap = new Dictionary<string, string>
-                {
-                    { "mail", "_MailSettingsPartial" },
-                    { "documenttemplate", "_DocumentTemplateSettingsPartial" },
-                    { "branding", "_BrandingSettingsPartial" },
-                    { "notifications", "_NotificationsSettingsPartial" },
-                    { "localization", "_LocalizationSettingsPartial" },
-                    { "general", "_GeneralSettingsPartial" }
-                };
-            }
-            @foreach (var item in navItems)
-            {
-                <div class="settings-section @(activeTab == item.Id ? "active" : "")" id="section-@item.Id" style="display: @(activeTab == item.Id ? "block" : "none")">
-                    @await Html.PartialAsync(partialMap[item.Id])
-                </div>
-            }
-        </div>
-
-        <div class="settings-action-bar">
-            <button type="button" class="btn btn-outline-secondary" id="resetDefaultsBtn">
-                <i class="fas fa-undo"></i> @Localizer.T("Settings.ResetToDefault")
-            </button>
-            <button type="button" class="btn btn-primary" id="saveAllSettingsBtn">
-                <i class="fas fa-save"></i> @Localizer.T("Settings.SaveAll")
-            </button>
-        </div>
-    </main>
-</div>
-
-<div class="settings-toast-container" id="toastContainer"></div>
+<div class="settings-toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <div class="settings-loading" id="settingsLoading">
     <div class="spinner-border" role="status">
@@ -93,49 +113,74 @@
     <script>
         (function() {
             var activeSection = '@activeTab';
+            var validSections = ['mail', 'documenttemplate', 'branding', 'notifications', 'localization', 'general'];
+            var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
             function showToast(message, type) {
                 type = type || 'success';
                 var container = document.getElementById('toastContainer');
                 var toast = document.createElement('div');
                 toast.className = 'settings-toast toast-' + type;
+                if (prefersReducedMotion) {
+                    toast.style.animation = 'none';
+                }
                 var iconMap = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle', warning: 'fa-exclamation-triangle' };
                 var icon = iconMap[type] || 'fa-info-circle';
                 toast.innerHTML =
-                    '<i class="fas ' + icon + '"></i>' +
+                    '<i class="fas ' + icon + '" aria-hidden="true"></i>' +
                     '<span>' + message + '</span>' +
-                    '<button type="button" class="toast-close" onclick="this.parentElement.remove()">&times;</button>';
+                    '<button type="button" class="toast-close" aria-label="Close">&times;</button>';
+                toast.querySelector('.toast-close').addEventListener('click', function() {
+                    toast.remove();
+                });
                 container.appendChild(toast);
                 setTimeout(function() {
                     if (toast.parentNode) toast.remove();
                 }, 4000);
             }
 
+            function setActiveNav(sectionId) {
+                document.querySelectorAll('#settingsNav .list-group-item').forEach(function(el) {
+                    el.classList.remove('active');
+                    el.setAttribute('aria-selected', 'false');
+                });
+                var navBtn = document.getElementById('nav-' + sectionId);
+                if (navBtn) {
+                    navBtn.classList.add('active');
+                    navBtn.setAttribute('aria-selected', 'true');
+                }
+                document.querySelectorAll('#settingsPills .pill').forEach(function(el) {
+                    el.classList.remove('active');
+                    el.setAttribute('aria-selected', 'false');
+                });
+                var pill = document.getElementById('pill-' + sectionId);
+                if (pill) {
+                    pill.classList.add('active');
+                    pill.setAttribute('aria-selected', 'true');
+                    pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                }
+            }
+
             function switchSection(sectionId) {
-                var sections = document.querySelectorAll('.settings-section');
-                sections.forEach(function(el) {
+                document.querySelectorAll('.settings-section').forEach(function(el) {
                     el.style.display = 'none';
                     el.classList.remove('active');
+                    el.setAttribute('data-active', 'false');
                 });
                 var target = document.getElementById('section-' + sectionId);
                 if (target) {
                     target.style.display = 'block';
                     target.classList.add('active');
+                    target.setAttribute('data-active', 'true');
                 }
-                var navBtns = document.querySelectorAll('#settingsNav .list-group-item');
-                navBtns.forEach(function(el) {
-                    el.classList.remove('active');
-                });
-                var navBtn = document.getElementById('nav-' + sectionId);
-                if (navBtn) {
-                    navBtn.classList.add('active');
-                }
+                setActiveNav(sectionId);
                 activeSection = sectionId;
                 if (window.location.hash !== '#' + sectionId) {
                     history.replaceState(null, '', '#' + sectionId);
                 }
                 var toggle = document.getElementById('settingsSidebarToggle');
                 if (toggle) {
+                    toggle.setAttribute('aria-expanded', 'false');
                     var icon = toggle.querySelector('.fa-chevron-down, .fa-chevron-up');
                     if (icon) icon.className = 'fas fa-chevron-down';
                 }
@@ -143,7 +188,7 @@
                 if (listGroup) listGroup.classList.remove('show');
             }
 
-            document.querySelectorAll('#settingsNav .list-group-item').forEach(function(btn) {
+            document.querySelectorAll('#settingsNav .list-group-item, #settingsPills .pill').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     var target = this.getAttribute('data-target');
                     if (target) switchSection(target);
@@ -152,19 +197,20 @@
 
             document.getElementById('settingsSidebarToggle')?.addEventListener('click', function() {
                 var listGroup = document.querySelector('#settingsSidebar .list-group');
+                var isExpanded = this.getAttribute('aria-expanded') === 'true';
                 if (listGroup) listGroup.classList.toggle('show');
+                this.setAttribute('aria-expanded', !isExpanded);
                 var icon = this.querySelector('.fa-chevron-down, .fa-chevron-up');
                 if (icon) {
-                    icon.className = icon.classList.contains('fa-chevron-down')
-                        ? 'fas fa-chevron-up'
-                        : 'fas fa-chevron-down';
+                    icon.className = isExpanded
+                        ? 'fas fa-chevron-down'
+                        : 'fas fa-chevron-up';
                 }
             });
 
             var hash = window.location.hash.replace('#', '');
-            if (hash) {
-                var validSections = ['mail', 'documenttemplate', 'branding', 'notifications', 'localization', 'general'];
-                if (validSections.indexOf(hash) >= 0) switchSection(hash);
+            if (hash && validSections.indexOf(hash) >= 0) {
+                switchSection(hash);
             }
 
             document.getElementById('saveAllSettingsBtn')?.addEventListener('click', function() {
@@ -175,7 +221,7 @@
                 var loading = document.getElementById('settingsLoading');
                 if (loading) loading.classList.add('active');
 
-                var activeForm = document.querySelector('.settings-section[style*="block"] form');
+                var activeForm = document.querySelector('.settings-section[data-active="true"] form');
                 if (activeForm) {
                     var formData = new FormData(activeForm);
                     fetch(activeForm.action, {
@@ -221,7 +267,7 @@
                     var btn = this;
                     btn.disabled = true;
                     var originalHtml = btn.innerHTML;
-                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> @Localizer.T("Common.Loading")';
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> @Localizer.T("Common.Loading")';
 
                     fetch('/SuperAdmin/Settings/SendTestEmail', {
                         method: 'POST',
@@ -248,9 +294,30 @@
                     var targetName = this.getAttribute('data-target');
                     var input = document.querySelector('input[name="' + targetName + '"]');
                     if (input) {
-                        input.type = input.type === 'password' ? 'text' : 'password';
-                        this.querySelector('i').classList.toggle('fa-eye');
-                        this.querySelector('i').classList.toggle('fa-eye-slash');
+                        var isPassword = input.type === 'password';
+                        input.type = isPassword ? 'text' : 'password';
+                        var icon = this.querySelector('i');
+                        if (icon) {
+                            icon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+                        }
+                        this.setAttribute('aria-label', isPassword
+                            ? 'Hide password'
+                            : 'Show password');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.settings-card form').forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    var submitBtn = this.querySelector('.settings-card-footer .btn-primary');
+                    if (submitBtn && !submitBtn.disabled) {
+                        submitBtn.disabled = true;
+                        var originalHtml = submitBtn.innerHTML;
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> @Localizer.T("Settings.Saving")';
+                        setTimeout(function() {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalHtml;
+                        }, 10000);
                     }
                 });
             });

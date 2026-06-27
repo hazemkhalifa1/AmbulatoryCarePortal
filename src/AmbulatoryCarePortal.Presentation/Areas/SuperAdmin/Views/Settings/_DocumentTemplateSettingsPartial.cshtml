@@ -18,32 +18,42 @@
     @Html.AntiForgeryToken()
     <div class="settings-card">
         <div class="settings-card-header">
-            <div class="header-icon icon-docs"><i class="fas fa-file-alt"></i></div>
-            <h3>@Localizer.T("Settings.DocumentTemplate.Title")</h3>
+            <div class="header-icon header-icon-lg icon-docs"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
+            <div>
+                <h3>@Localizer.T("Settings.DocumentTemplate.Title")</h3>
+                <p class="card-subtitle">Set document upload rules and expiry warnings</p>
+            </div>
             <span class="header-badge">@Localizer.T("Settings.DocumentTemplate.Tab")</span>
         </div>
         <div class="settings-card-body">
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.ExpiryWarningDays")</label>
-                    <input name="DocumentTemplate_DefaultExpiryWarningDays" class="form-control" value="@SettingValue("DocumentTemplate.DefaultExpiryWarningDays")" type="number" min="1" placeholder="30" />
+                    <label class="form-label" for="DocumentTemplate_DefaultExpiryWarningDays">@Localizer.T("Settings.DocumentTemplate.ExpiryWarningDays")</label>
+                    <input name="DocumentTemplate_DefaultExpiryWarningDays" id="DocumentTemplate_DefaultExpiryWarningDays" class="form-control" value="@SettingValue("DocumentTemplate.DefaultExpiryWarningDays")" type="number" min="1" placeholder="30" />
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.MaxFileSizeMB")</label>
-                    <input name="DocumentTemplate_MaxFileSizeMB" class="form-control" value="@SettingValue("DocumentTemplate.MaxFileSizeMB")" type="number" min="1" placeholder="20" />
+                    <label class="form-label" for="DocumentTemplate_MaxFileSizeMB">@Localizer.T("Settings.DocumentTemplate.MaxFileSizeMB")</label>
+                    <input name="DocumentTemplate_MaxFileSizeMB" id="DocumentTemplate_MaxFileSizeMB" class="form-control" value="@SettingValue("DocumentTemplate.MaxFileSizeMB")" type="number" min="1" placeholder="20" />
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.AutoAssign")</label>
-                    @await Html.PartialAsync("_SettingsToggle", new { Name = "DocumentTemplate_AutoAssignToNewClinics", Label = Localizer.T("Settings.DocumentTemplate.AutoAssign"), Checked = SettingBool("DocumentTemplate.AutoAssignToNewClinics") })
+                    <label class="form-label" for="DocumentTemplate_AutoAssignToNewClinics">@Localizer.T("Settings.DocumentTemplate.AutoAssign")</label>
+                    @await Html.PartialAsync("_SettingsToggle", new { Name = "DocumentTemplate_AutoAssignToNewClinics", Id = "DocumentTemplate_AutoAssignToNewClinics", Label = Localizer.T("Settings.DocumentTemplate.AutoAssign"), Checked = SettingBool("DocumentTemplate.AutoAssignToNewClinics") })
                 </div>
             </div>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">@Localizer.T("Settings.DocumentTemplate.AllowedExtensions")</label>
-                    <input name="DocumentTemplate_AllowedFileExtensions" class="form-control" value="@SettingValue("DocumentTemplate.AllowedFileExtensions")" placeholder=".pdf,.docx,.xlsx" />
-                    <span class="form-text">@Localizer.T("Settings.DocumentTemplate.ExtensionsHelp")</span>
+            <div class="settings-field-group">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="DocumentTemplate_AllowedFileExtensions">@Localizer.T("Settings.DocumentTemplate.AllowedExtensions")</label>
+                        <input name="DocumentTemplate_AllowedFileExtensions" id="DocumentTemplate_AllowedFileExtensions" class="form-control" value="@SettingValue("DocumentTemplate.AllowedFileExtensions")" placeholder=".pdf,.docx,.xlsx" />
+                        <span class="form-text">@Localizer.T("Settings.DocumentTemplate.ExtensionsHelp")</span>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="settings-card-footer">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i> @Localizer.T("Common.Save")
+            </button>
         </div>
     </div>
 </form>

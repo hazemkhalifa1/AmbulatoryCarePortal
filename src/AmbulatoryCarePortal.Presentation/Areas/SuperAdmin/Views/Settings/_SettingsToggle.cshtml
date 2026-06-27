@@ -1,11 +1,12 @@
 @model dynamic
 @{
     var name = (string)Model.Name;
+    var id = (string)Model.Id;
     var label = (string)Model.Label;
     var isChecked = (bool)Model.Checked;
 }
-<label class="toggle-switch">
-    <input type="checkbox" name="@name" value="true" @(isChecked ? "checked" : "") />
-    <span class="toggle-slider"></span>
+<label class="toggle-switch" for="@id">
+    <input type="checkbox" name="@name" id="@id" value="true" @(isChecked ? "checked" : "") aria-label="@label" />
+    <span class="toggle-slider" aria-hidden="true"></span>
     <span class="toggle-label">@label</span>
 </label>

@@ -1,0 +1,37 @@
+@{
+    var showFeatures = ViewData["ShowAuthFeatures"] as bool? ?? false;
+}
+<div class="login-brand-panel" role="presentation">
+    <div class="grid-pattern" aria-hidden="true"></div>
+    <div class="login-brand-content">
+        <div class="brand-icon-large" aria-hidden="true">
+            <i class="fas fa-heartbeat"></i>
+        </div>
+        <h1>@Localizer.T("App.Name")</h1>
+        <p class="brand-subtitle">@Localizer.T("App.Tagline")</p>
+        @if (showFeatures)
+        {
+            <div class="login-features" aria-label="@Localizer.T("Login.Feature.Policy")">
+                <div class="login-feature-item">
+                    <span class="feature-icon" aria-hidden="true"><i class="fas fa-check"></i></span>
+                    <span>@Localizer.T("Login.Feature.Policy")</span>
+                </div>
+                <div class="login-feature-item">
+                    <span class="feature-icon" aria-hidden="true"><i class="fas fa-check"></i></span>
+                    <span>@Localizer.T("Login.Feature.KPI")</span>
+                </div>
+                <div class="login-feature-item">
+                    <span class="feature-icon" aria-hidden="true"><i class="fas fa-check"></i></span>
+                    <span>@Localizer.T("Login.Feature.Staff")</span>
+                </div>
+                <div class="login-feature-item">
+                    <span class="feature-icon" aria-hidden="true"><i class="fas fa-check"></i></span>
+                    <span>@Localizer.T("Login.Feature.Audit")</span>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="login-brand-footer">
+        <p>@Localizer.T("App.Copyright")</p>
+    </div>
+</div>
