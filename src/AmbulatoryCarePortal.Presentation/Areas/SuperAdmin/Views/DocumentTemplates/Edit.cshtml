@@ -5,160 +5,176 @@
     var templateFilePath = (string?)ViewBag.TemplateFilePath;
 }
 
-<!-- Hero Banner -->
-<div class="template-hero mb-4">
-    <div class="template-hero-content">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="template-hero-title"><i class="fas fa-edit me-2"></i>@Localizer.T("Page.EditDocumentTemplate")</h1>
-                <p class="template-hero-subtitle mb-0">Update standard code: <strong>@Model.StandardCode</strong></p>
+@section Styles {
+    <link rel="stylesheet" href="~/css/document-templates.css" asp-append-version="true" />
+}
+
+<div class="fade-in">
+    <div class="template-page-header">
+        <div class="template-page-header-left">
+            <div class="template-page-header-icon">
+                <i class="fas fa-edit"></i>
             </div>
-            <a asp-action="Index" class="btn btn-light btn-lg">
-                <i class="fas fa-arrow-left me-2"></i>@Localizer.T("Common.Back")
+            <div>
+                <h1>@Localizer.T("Page.EditDocumentTemplate")</h1>
+                <p class="template-page-header-sub">@Localizer.T("Doc.EditTemplateHint", "Update standard code") <span class="standard-code-badge">@Model.StandardCode</span></p>
+            </div>
+        </div>
+        <div class="template-page-header-actions">
+            <a asp-action="Index" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                @Localizer.T("Common.Back")
             </a>
         </div>
     </div>
-</div>
 
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card template-form-card">
-            <div class="card-body">
-                <form method="post" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" role="form" aria-label="Edit template form">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="ClinicType" id="clinicTypeHidden" />
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="post" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" role="form" aria-label="Edit template form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="ClinicType" id="clinicTypeHidden" />
 
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <i class="fas fa-tag me-2"></i>
-                            <span>Standard Identification</span>
-                        </div>
-                        <div class="form-section-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="StandardCode" class="form-label">Standard Code <span class="text-danger">*</span></label>
-                                    <input asp-for="StandardCode" class="form-control" required aria-required="true" />
-                                    <span asp-validation-for="StandardCode" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="ClinicType" class="form-label">@Localizer.T("Doc.ClinicType") <span class="text-danger">*</span></label>
-                                    <select asp-for="ClinicType" class="form-select" id="clinicTypeSelect" asp-items="Html.GetEnumSelectList<ClinicType>()">
-                                        <option value="">-- @Localizer.T("Doc.SelectClinicType") --</option>
-                                    </select>
-                                    <span asp-validation-for="ClinicType" class="text-danger"></span>
-                                </div>
+                        <!-- Standard Identification -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-tag me-2"></i>@Localizer.T("Template.StandardIdentification", "Standard Identification")
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="DepartmentCategory" class="form-label">@Localizer.T("Template.DepartmentCategory") <span class="text-danger">*</span></label>
-                                    <select asp-for="DepartmentCategory" class="form-select" id="departmentCategorySelect">
-                                        <option value="">-- @Localizer.T("Doc.SelectStandard") --</option>
-                                    </select>
-                                    <span asp-validation-for="DepartmentCategory" class="text-danger"></span>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="StandardCode" class="form-label">Standard Code <span class="text-danger">*</span></label>
+                                        <input asp-for="StandardCode" class="form-control" required aria-required="true" />
+                                        <span asp-validation-for="StandardCode" class="form-error"></span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <i class="fas fa-heading me-2"></i>
-                            <span>Title Information</span>
-                        </div>
-                        <div class="form-section-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="TitleEn" class="form-label">Title (English) <span class="text-danger">*</span></label>
-                                    <input asp-for="TitleEn" class="form-control" required aria-required="true" />
-                                    <span asp-validation-for="TitleEn" class="text-danger"></span>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="ClinicType" class="form-label">@Localizer.T("Doc.ClinicType") <span class="text-danger">*</span></label>
+                                        <select asp-for="ClinicType" class="form-control" id="clinicTypeSelect" asp-items="Html.GetEnumSelectList<ClinicType>()">
+                                            <option value="">-- @Localizer.T("Doc.SelectClinicType") --</option>
+                                        </select>
+                                        <span asp-validation-for="ClinicType" class="form-error"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="TitleAr" class="form-label">Title (Arabic)</label>
-                                    <input asp-for="TitleAr" class="form-control" dir="rtl" />
-                                    <span asp-validation-for="TitleAr" class="text-danger"></span>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="DepartmentCategory" class="form-label">@Localizer.T("Template.DepartmentCategory") <span class="text-danger">*</span></label>
+                                        <select asp-for="DepartmentCategory" class="form-control" id="departmentCategorySelect">
+                                            <option value="">-- @Localizer.T("Doc.SelectStandard") --</option>
+                                        </select>
+                                        <span asp-validation-for="DepartmentCategory" class="form-error"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <i class="fas fa-align-left me-2"></i>
-                            <span>Description</span>
+                        <!-- Title Information -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-heading me-2"></i>@Localizer.T("Template.TitleInformation", "Title Information")
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="TitleEn" class="form-label">@Localizer.T("Doc.TitleEn") <span class="text-danger">*</span></label>
+                                        <input asp-for="TitleEn" class="form-control" required aria-required="true" />
+                                        <span asp-validation-for="TitleEn" class="form-error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="TitleAr" class="form-label">@Localizer.T("Doc.TitleAr")</label>
+                                        <input asp-for="TitleAr" class="form-control" dir="rtl" />
+                                        <span asp-validation-for="TitleAr" class="form-error"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-section-body">
-                            <div class="mb-3">
-                                <label asp-for="Description" class="form-label">Description</label>
+
+                        <!-- Description -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-align-left me-2"></i>@Localizer.T("Template.Description", "Description")
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Description" class="form-label">@Localizer.T("Doc.Description")</label>
                                 <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                                <span asp-validation-for="Description" class="text-danger"></span>
+                                <span asp-validation-for="Description" class="form-error"></span>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <i class="fas fa-toggle-on me-2"></i>
-                            <span>Status</span>
-                        </div>
-                        <div class="form-section-body">
-                            <div class="form-check form-switch">
-                                <input asp-for="IsActive" class="form-check-input" role="switch" id="IsActive" />
-                                <label asp-for="IsActive" class="form-check-label" for="IsActive">@Localizer.T("Common.Active")</label>
+                        <!-- Status -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-toggle-on me-2"></i>@Localizer.T("Template.Status", "Status")
                             </div>
+                            <label class="toggle-switch">
+                                <input asp-for="IsActive" role="switch" />
+                                <span class="toggle-track"></span>
+                                <span class="toggle-label">@Localizer.T("Common.Active")</span>
+                            </label>
                         </div>
-                    </div>
 
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <i class="fas fa-upload me-2"></i>
-                            <span>Template File</span>
-                        </div>
-                        <div class="form-section-body">
+                        <!-- Template File -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-upload me-2"></i>@Localizer.T("Template.TemplateFile", "Template File")
+                            </div>
                             @if (!string.IsNullOrEmpty(templateFilePath))
                             {
-                                <div class="alert alert-info">
-                                    <i class="fas fa-file-word me-2"></i>
-                                    Current file: <a href="@templateFilePath" target="_blank" class="alert-link">@System.IO.Path.GetFileName(templateFilePath)</a>
-                                    <br /><small>Upload a new file to replace the existing one.</small>
+                                <div class="current-file">
+                                    <i class="fas fa-file-word current-file-icon"></i>
+                                    <div class="current-file-info">
+                                        <span class="current-file-name">@System.IO.Path.GetFileName(templateFilePath)</span>
+                                        <span class="current-file-hint">@Localizer.T("Template.UploadReplaceHint", "Upload a new file to replace the existing one.")</span>
+                                    </div>
+                                    <a href="@templateFilePath" target="_blank" class="btn btn-sm btn-outline-primary flex-shrink-0">
+                                        <i class="fas fa-eye me-1"></i>@Localizer.T("Common.View")
+                                    </a>
                                 </div>
                             }
-                            <div class="upload-area" id="uploadArea">
-                                <div class="upload-area-content">
+                            <div class="upload-zone" id="uploadArea">
+                                <div class="upload-initial">
                                     <i class="fas fa-cloud-upload-alt upload-icon"></i>
                                     <h5>@Localizer.T("Template.DragDropUpload")</h5>
-                                    <p class="text-muted mb-3">Supported format: .docx</p>
-                                    <input type="file" name="templateFile" class="form-control d-none" id="templateFile" accept=".docx" aria-label="Template .docx file" />
+                                    <p>@Localizer.T("Template.SupportedFormats", "Supported format: .docx")</p>
+                                    <input type="file" name="templateFile" class="d-none" id="templateFile" accept=".docx" aria-label="Template .docx file" />
                                     <button type="button" class="btn btn-outline-primary" id="uploadBtn">
                                         <i class="fas fa-folder-open me-1"></i>@Localizer.T("Button.Upload")
                                     </button>
                                 </div>
-                                <div class="upload-area-preview d-none" id="uploadPreview">
-                                    <div class="file-info">
-                                        <i class="fas fa-file-word file-icon"></i>
-                                        <div class="file-details">
-                                            <span class="file-name" id="fileName"></span>
-                                            <span class="file-size text-muted" id="fileSize"></span>
-                                        </div>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" id="removeFile">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                                <div class="upload-preview" id="uploadPreview">
+                                    <i class="fas fa-file-word file-icon-lg"></i>
+                                    <div class="file-details">
+                                        <span class="file-name" id="fileName"></span>
+                                        <span class="file-size" id="fileSize"></span>
                                     </div>
+                                    <button type="button" class="btn btn-sm btn-ghost text-danger" id="removeFile" title="Remove file">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <small class="text-muted mt-2 d-block">Upload a .docx file with placeholders like <code>{{ClinicName}}</code>, <code>{{LicenseNumber}}</code>, etc.</small>
+                            <div class="form-help mt-2">
+                                <i class="fas fa-info-circle me-1"></i>
+                                @Localizer.T("Template.UploadHint", "Upload a .docx file with placeholders like")
+                                <code>{{ClinicName}}</code>, <code>{{LicenseNumber}}</code>, etc.
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="d-flex gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
-                            <i class="fas fa-save me-2"></i>@Localizer.T("Template.SaveChanges")
-                        </button>
-                        <a asp-action="Index" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-times me-2"></i>@Localizer.T("Button.Cancel")
-                        </a>
-                    </div>
-                </form>
+                        <!-- Actions -->
+                        <div class="d-flex gap-3 mt-4 pt-3 border-top">
+                            <button type="submit" class="btn btn-primary btn-lg flex-fill">
+                                <i class="fas fa-save me-2"></i>@Localizer.T("Template.SaveChanges")
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>@Localizer.T("Button.Cancel")
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -182,7 +198,6 @@
                     $deptSelect.append('<option value="' + s + '">' + s + '</option>');
                 });
 
-                // Re-select the previously saved DepartmentCategory if it matches any standard
                 var savedDept = '@Model.DepartmentCategory';
                 if (savedDept) {
                     $deptSelect.val(savedDept);
@@ -190,7 +205,6 @@
             });
         });
 
-        // Trigger on load to populate standards for the current ClinicType
         $(function() {
             var initialType = $('#clinicTypeSelect').val();
             if (initialType) {
@@ -212,19 +226,35 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            document.querySelector('.upload-area-content').classList.add('d-none');
-            document.getElementById('uploadPreview').classList.remove('d-none');
+            document.getElementById('uploadArea').classList.add('has-file');
             document.getElementById('fileName').textContent = file.name;
             document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
-            document.getElementById('uploadArea').classList.add('has-file');
         });
 
         document.getElementById('removeFile').addEventListener('click', function(e) {
             e.stopPropagation();
             document.getElementById('templateFile').value = '';
-            document.querySelector('.upload-area-content').classList.remove('d-none');
-            document.getElementById('uploadPreview').classList.add('d-none');
             document.getElementById('uploadArea').classList.remove('has-file');
+        });
+
+        var uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        });
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+        });
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            var files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('templateFile').files = files;
+                var event = new Event('change', { bubbles: true });
+                document.getElementById('templateFile').dispatchEvent(event);
+            }
         });
     </script>
 }
