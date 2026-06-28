@@ -14,41 +14,40 @@
     bool SettingBool(string key) => bool.TryParse(GetSetting(key)?.Value, out var b) && b;
 }
 
-<form method="post" asp-action="UpdateNotifications" aria-label="@Localizer.T("Settings.Notifications.Tab")">
+<form method="post" asp-action="UpdateNotifications" aria-label="@Localizer.T("Settings.Notifications.Tab")" novalidate>
     @Html.AntiForgeryToken()
     <div class="settings-card">
         <div class="settings-card-header">
-            <div class="header-icon header-icon-lg icon-bell"><i class="fas fa-bell" aria-hidden="true"></i></div>
-            <div>
+            <div class="settings-card-icon bell-icon"><i class="fas fa-bell" aria-hidden="true"></i></div>
+            <div class="settings-card-heading">
                 <h3>@Localizer.T("Settings.Notifications.Title")</h3>
-                <p class="card-subtitle">Manage alert preferences and daily digest settings</p>
+                <p class="card-subtitle">@Localizer.T("Settings.Notifications.Subtitle")</p>
             </div>
-            <span class="header-badge">@Localizer.T("Settings.Notifications.Tab")</span>
         </div>
         <div class="settings-card-body">
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label" for="Notifications_PolicyExpiryWarningDays">@Localizer.T("Settings.Notifications.PolicyExpiryWarningDays")</label>
-                    <input name="Notifications_PolicyExpiryWarningDays" id="Notifications_PolicyExpiryWarningDays" class="form-control" value="@SettingValue("Notifications.PolicyExpiryWarningDays")" type="number" min="1" placeholder="30" />
+                    <label class="settings-label" for="Notifications_PolicyExpiryWarningDays">@Localizer.T("Settings.Notifications.PolicyExpiryWarningDays")</label>
+                    <input name="Notifications_PolicyExpiryWarningDays" id="Notifications_PolicyExpiryWarningDays" class="settings-input" value="@SettingValue("Notifications.PolicyExpiryWarningDays")" type="number" min="1" placeholder="30" />
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label" for="Notifications_HRDocumentExpiryWarningDays">@Localizer.T("Settings.Notifications.HRDocumentExpiryWarningDays")</label>
-                    <input name="Notifications_HRDocumentExpiryWarningDays" id="Notifications_HRDocumentExpiryWarningDays" class="form-control" value="@SettingValue("Notifications.HRDocumentExpiryWarningDays")" type="number" min="1" placeholder="30" />
+                    <label class="settings-label" for="Notifications_HRDocumentExpiryWarningDays">@Localizer.T("Settings.Notifications.HRDocumentExpiryWarningDays")</label>
+                    <input name="Notifications_HRDocumentExpiryWarningDays" id="Notifications_HRDocumentExpiryWarningDays" class="settings-input" value="@SettingValue("Notifications.HRDocumentExpiryWarningDays")" type="number" min="1" placeholder="30" />
                 </div>
             </div>
             <div class="settings-field-group">
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label" for="Notifications_EnableEmailNotifications">@Localizer.T("Settings.Notifications.EnableEmail")</label>
+                        <label class="settings-label" for="Notifications_EnableEmailNotifications">@Localizer.T("Settings.Notifications.EnableEmail")</label>
                         @await Html.PartialAsync("_SettingsToggle", new { Name = "Notifications_EnableEmailNotifications", Id = "Notifications_EnableEmailNotifications", Label = Localizer.T("Settings.Notifications.EnableEmail"), Checked = SettingBool("Notifications.EnableEmailNotifications") })
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label" for="Notifications_DailyDigestEnabled">@Localizer.T("Settings.Notifications.DailyDigest")</label>
+                        <label class="settings-label" for="Notifications_DailyDigestEnabled">@Localizer.T("Settings.Notifications.DailyDigest")</label>
                         @await Html.PartialAsync("_SettingsToggle", new { Name = "Notifications_DailyDigestEnabled", Id = "Notifications_DailyDigestEnabled", Label = Localizer.T("Settings.Notifications.DailyDigest"), Checked = SettingBool("Notifications.DailyDigestEnabled") })
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label" for="Notifications_DigestSendTime">@Localizer.T("Settings.Notifications.DigestSendTime")</label>
-                        <input name="Notifications_DigestSendTime" id="Notifications_DigestSendTime" class="form-control" value="@SettingValue("Notifications.DigestSendTime")" type="time" />
+                        <label class="settings-label" for="Notifications_DigestSendTime">@Localizer.T("Settings.Notifications.DigestSendTime")</label>
+                        <input name="Notifications_DigestSendTime" id="Notifications_DigestSendTime" class="settings-input" value="@SettingValue("Notifications.DigestSendTime")" type="time" />
                     </div>
                 </div>
             </div>

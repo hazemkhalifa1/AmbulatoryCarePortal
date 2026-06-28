@@ -1,8 +1,3 @@
-using Hangfire;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Serilog;
 using AmbulatoryCarePortal.Application.BackgroundJobs;
 using AmbulatoryCarePortal.Application.DependencyInjection;
 using AmbulatoryCarePortal.Application.Settings;
@@ -12,7 +7,12 @@ using AmbulatoryCarePortal.Infrastructure.Data.Seed;
 using AmbulatoryCarePortal.Infrastructure.DependencyInjection;
 using AmbulatoryCarePortal.Presentation.DependencyInjection;
 using AmbulatoryCarePortal.Presentation.Middleware;
+using Hangfire;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using QuestPDF.Infrastructure;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()

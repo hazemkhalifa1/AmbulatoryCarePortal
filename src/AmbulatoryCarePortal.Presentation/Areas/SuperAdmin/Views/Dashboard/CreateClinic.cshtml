@@ -4,187 +4,218 @@
     ViewData["Title"] = Localizer.T("Page.CreateClinic");
 }
 
-<!-- Hero Banner -->
-<div class="create-clinic-hero mb-4">
-    <div class="hero-content">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="hero-title"><i class="fas fa-plus-circle me-2"></i>@Localizer.T("Clinic.CreateHeading")</h1>
-                <p class="hero-subtitle mb-0">@Localizer.T("Clinic.CreateSubtitle")</p>
-            </div>
-            <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-light btn-lg">
-                <i class="fas fa-arrow-left me-2"></i>@Localizer.T("Common.Back")
-            </a>
-        </div>
+<link rel="stylesheet" href="~/css/_create-clinic.css" asp-append-version="true" />
+
+<div class="create-clinic-hero">
+    <div class="create-clinic-hero-icon"><i class="fas fa-plus-circle" aria-hidden="true"></i></div>
+    <div class="create-clinic-hero-body">
+        <h1 class="create-clinic-hero-title"><i class="fas fa-plus-circle" aria-hidden="true"></i>@Localizer.T("Clinic.CreateHeading")</h1>
+        <p class="create-clinic-hero-desc">@Localizer.T("Clinic.CreateSubtitle")</p>
     </div>
+    <a asp-action="Clinics" asp-controller="Dashboard" asp-area="SuperAdmin" class="btn-back">
+        <i class="fas fa-arrow-left" aria-hidden="true"></i>@Localizer.T("Common.Back")
+    </a>
 </div>
 
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card form-card">
-            <div class="card-body">
-                <form method="post" asp-action="CreateClinic" enctype="multipart/form-data" aria-label="Create clinic form">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+<div class="create-clinic-layout">
+    <div class="create-clinic-form-wrap">
+        <form method="post" asp-action="CreateClinic" enctype="multipart/form-data" aria-label="Create clinic form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="validation-summary-errors" role="alert"></div>
 
-                    <!-- Section: Basic Information -->
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <span>@Localizer.T("Form.BasicInformation")</span>
+            <!-- Section: Basic Information -->
+            <div class="clinic-form-card">
+                <div class="clinic-form-header">
+                    <div class="form-header-icon icon-info"><i class="fas fa-info-circle" aria-hidden="true"></i></div>
+                    <div class="clinic-form-heading">
+                        <h2 class="form-section-label">@Localizer.T("Form.BasicInformation")</h2>
+                        <p class="form-section-hint">@Localizer.T("Clinic.BasicInfoHint")</p>
+                    </div>
+                </div>
+                <div class="clinic-form-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Name" class="form-label">@Localizer.T("Form.NameEn") <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control" placeholder="@Localizer.T("Clinic.NameEnPlaceholder")" required aria-required="true" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
-                        <div class="form-section-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="Name" class="form-label">@Localizer.T("Form.NameEn") <span class="text-danger">*</span></label>
-                                    <input asp-for="Name" class="form-control" placeholder="@Localizer.T("Clinic.NameEnPlaceholder")" required aria-required="true" />
-                                    <span asp-validation-for="Name" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="NameAr" class="form-label">@Localizer.T("Form.NameAr")</label>
-                                    <input asp-for="NameAr" class="form-control" placeholder="@Localizer.T("Clinic.NameArPlaceholder")" dir="rtl" />
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="CityEn" class="form-label">@Localizer.T("Form.CityEn")</label>
-                                    <input asp-for="CityEn" class="form-control" placeholder="@Localizer.T("Clinic.CityEnPlaceholder")" />
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="CityAr" class="form-label">@Localizer.T("Form.CityAr")</label>
-                                    <input asp-for="CityAr" class="form-control" placeholder="@Localizer.T("Clinic.CityArPlaceholder")" dir="rtl" />
-                                </div>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NameAr" class="form-label">@Localizer.T("Form.NameAr")</label>
+                            <input asp-for="NameAr" class="form-control" placeholder="@Localizer.T("Clinic.NameArPlaceholder")" dir="rtl" />
                         </div>
                     </div>
-
-                    <!-- Section: Classification -->
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <i class="fas fa-tag me-2"></i>
-                            <span>@Localizer.T("Form.Classification")</span>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CityEn" class="form-label">@Localizer.T("Form.CityEn")</label>
+                            <input asp-for="CityEn" class="form-control" placeholder="@Localizer.T("Clinic.CityEnPlaceholder")" />
                         </div>
-                        <div class="form-section-body">
-                            <div class="mb-3">
-                                <label asp-for="ClinicType" class="form-label">@Localizer.T("Clinic.Type") <span class="text-danger">*</span></label>
-                                <select asp-for="ClinicType" class="form-select" asp-items="Html.GetEnumSelectList<ClinicType>()" required aria-required="true">
-                                    <option value="">@Localizer.T("Form.SelectClinicType")</option>
-                                </select>
-                                <span asp-validation-for="ClinicType" class="text-danger"></span>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CityAr" class="form-label">@Localizer.T("Form.CityAr")</label>
+                            <input asp-for="CityAr" class="form-control" placeholder="@Localizer.T("Clinic.CityArPlaceholder")" dir="rtl" />
                         </div>
                     </div>
-
-                    <!-- Section: Clinic Logo -->
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <i class="fas fa-image me-2"></i>
-                            <span>@Localizer.T("Clinic.Logo")</span>
-                        </div>
-                        <div class="form-section-body">
-                            <div class="upload-area" id="logoUploadArea">
-                                <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                                <h5>@Localizer.T("Upload.DropOrClick")</h5>
-                                <p class="text-muted mb-0">@Localizer.T("Upload.SupportedFormats") .jpg, .jpeg, .png, .svg, .webp</p>
-                                <p class="text-muted small">@Localizer.T("Upload.MaxSize") 2MB</p>
-                                <input asp-for="LogoFile" type="file" class="d-none" id="logoFileInput" accept=".jpg,.jpeg,.png,.svg,.webp" />
-                            </div>
-                            <div id="logoPreview" class="mt-3 d-none">
-                                <div class="file-info">
-                                    <div class="file-icon"><i class="fas fa-file-image"></i></div>
-                                    <div class="file-details">
-                                        <span class="file-name" id="logoFileName"></span>
-                                        <span class="file-size text-muted" id="logoFileSize"></span>
-                                    </div>
-                                    <button type="button" class="btn btn-sm btn-danger" id="removeLogoBtn"><i class="fas fa-times"></i></button>
-                                </div>
-                            </div>
-                            @if (!string.IsNullOrEmpty(Model.ExistingLogoPath))
-                            {
-                                <div class="mt-3">
-                                    <label class="form-label">@Localizer.T("Common.Current")</label>
-                                    <div class="border rounded p-2 d-inline-block">
-                                        <img src="@Model.ExistingLogoPath" alt="Current logo" style="max-height:80px" />
-                                    </div>
-                                </div>
-                            }
-                            <span asp-validation-for="LogoFile" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <!-- Section: License Information -->
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <i class="fas fa-certificate me-2"></i>
-                            <span>@Localizer.T("Form.LicenseInformation")</span>
-                        </div>
-                        <div class="form-section-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="LicenseNumber" class="form-label">@Localizer.T("Clinic.LicenseNumber")</label>
-                                    <input asp-for="LicenseNumber" class="form-control" placeholder="@Localizer.T("Clinic.LicensePlaceholder")" />
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="LicenseExpiry" class="form-label">@Localizer.T("Clinic.LicenseExpiry")</label>
-                                    <input asp-for="LicenseExpiry" type="date" class="form-control" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
-                            <i class="fas fa-save me-2"></i>@Localizer.T("Clinic.CreateButton")
-                        </button>
-                        <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-times me-2"></i>@Localizer.T("Button.Cancel")
-                        </a>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
+
+            <!-- Section: Classification -->
+            <div class="clinic-form-card">
+                <div class="clinic-form-header">
+                    <div class="form-header-icon icon-tag"><i class="fas fa-tag" aria-hidden="true"></i></div>
+                    <div class="clinic-form-heading">
+                        <h2 class="form-section-label">@Localizer.T("Form.Classification")</h2>
+                        <p class="form-section-hint">@Localizer.T("Clinic.ClassificationHint")</p>
+                    </div>
+                </div>
+                <div class="clinic-form-body">
+                    <div class="mb-3">
+                        <label asp-for="ClinicType" class="form-label">@Localizer.T("Clinic.Type") <span class="text-danger">*</span></label>
+                        <select asp-for="ClinicType" class="form-select" asp-items="Html.GetEnumSelectList<ClinicType>()" required aria-required="true">
+                            <option value="">@Localizer.T("Form.SelectClinicType")</option>
+                        </select>
+                        <span asp-validation-for="ClinicType" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Clinic Logo -->
+            <div class="clinic-form-card">
+                <div class="clinic-form-header">
+                    <div class="form-header-icon icon-image"><i class="fas fa-image" aria-hidden="true"></i></div>
+                    <div class="clinic-form-heading">
+                        <h2 class="form-section-label">@Localizer.T("Clinic.Logo")</h2>
+                        <p class="form-section-hint">@Localizer.T("Clinic.LogoHint")</p>
+                    </div>
+                </div>
+                <div class="clinic-form-body">
+                    <div class="clinic-upload-zone" id="logoUploadZone">
+                        <div class="upload-icon"><i class="fas fa-cloud-upload-alt" aria-hidden="true"></i></div>
+                        <div class="upload-heading">@Localizer.T("Upload.DropOrClick")</div>
+                        <p class="upload-hint">@Localizer.T("Upload.SupportedFormats") .jpg, .jpeg, .png, .svg, .webp</p>
+                        <p class="upload-hint">@Localizer.T("Upload.MaxSize") 2MB</p>
+                        <input asp-for="LogoFile" type="file" class="d-none" id="logoFileInput" accept=".jpg,.jpeg,.png,.svg,.webp" />
+                    </div>
+
+                    <div class="clinic-file-preview" id="logoPreview">
+                        <div class="clinic-file-card">
+                            <div class="file-icon"><i class="fas fa-file-image" aria-hidden="true"></i></div>
+                            <div class="file-info">
+                                <span class="file-name" id="logoFileName"></span>
+                                <span class="file-size" id="logoFileSize"></span>
+                            </div>
+                            <button type="button" class="file-remove" id="removeLogoBtn" aria-label="@Localizer.T("Common.Remove")">
+                                <i class="fas fa-times" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.ExistingLogoPath))
+                    {
+                        <div class="clinic-current-logo">
+                            <div class="clinic-current-logo-label">@Localizer.T("Common.Current")</div>
+                            <img src="@Model.ExistingLogoPath" alt="Current logo" />
+                        </div>
+                    }
+                    <span asp-validation-for="LogoFile" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Section: License Information -->
+            <div class="clinic-form-card">
+                <div class="clinic-form-header">
+                    <div class="form-header-icon icon-cert"><i class="fas fa-certificate" aria-hidden="true"></i></div>
+                    <div class="clinic-form-heading">
+                        <h2 class="form-section-label">@Localizer.T("Form.LicenseInformation")</h2>
+                        <p class="form-section-hint">@Localizer.T("Clinic.LicenseHint")</p>
+                    </div>
+                </div>
+                <div class="clinic-form-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LicenseNumber" class="form-label">@Localizer.T("Clinic.LicenseNumber")</label>
+                            <input asp-for="LicenseNumber" class="form-control" placeholder="@Localizer.T("Clinic.LicensePlaceholder")" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LicenseExpiry" class="form-label">@Localizer.T("Clinic.LicenseExpiry")</label>
+                            <input asp-for="LicenseExpiry" type="date" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clinic-form-footer">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save" aria-hidden="true"></i>@Localizer.T("Clinic.CreateButton")
+                </button>
+                <a asp-action="Clinics" asp-controller="Dashboard" asp-area="SuperAdmin" class="btn btn-secondary">
+                    <i class="fas fa-times" aria-hidden="true"></i>@Localizer.T("Button.Cancel")
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var uploadArea = document.getElementById('logoUploadArea');
+        (function() {
+            var uploadZone = document.getElementById('logoUploadZone');
             var fileInput = document.getElementById('logoFileInput');
             var preview = document.getElementById('logoPreview');
             var fileName = document.getElementById('logoFileName');
             var fileSize = document.getElementById('logoFileSize');
             var removeBtn = document.getElementById('removeLogoBtn');
 
-            if (uploadArea && fileInput) {
-                uploadArea.addEventListener('click', function () { fileInput.click(); });
-                uploadArea.addEventListener('dragover', function (e) { e.preventDefault(); uploadArea.classList.add('has-file'); });
-                uploadArea.addEventListener('dragleave', function () { uploadArea.classList.remove('has-file'); });
-                uploadArea.addEventListener('drop', function (e) {
+            if (uploadZone && fileInput) {
+                uploadZone.addEventListener('click', function() { fileInput.click(); });
+
+                uploadZone.addEventListener('dragover', function(e) {
                     e.preventDefault();
-                    uploadArea.classList.remove('has-file');
-                    if (e.dataTransfer.files.length) {
+                    e.stopPropagation();
+                    uploadZone.classList.add('is-dragover');
+                });
+
+                uploadZone.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    uploadZone.classList.remove('is-dragover');
+                });
+
+                uploadZone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    uploadZone.classList.remove('is-dragover');
+                    if (e.dataTransfer.files && e.dataTransfer.files.length) {
                         fileInput.files = e.dataTransfer.files;
-                        handleFile(e.dataTransfer.files[0]);
+                        updateFilePreview(e.dataTransfer.files[0]);
                     }
                 });
-                fileInput.addEventListener('change', function () {
-                    if (fileInput.files.length) handleFile(fileInput.files[0]);
+
+                fileInput.addEventListener('change', function() {
+                    if (fileInput.files && fileInput.files.length) {
+                        updateFilePreview(fileInput.files[0]);
+                    }
                 });
             }
 
-            function handleFile(file) {
-                preview.classList.remove('d-none');
+            function updateFilePreview(file) {
+                if (!file) return;
+                preview.classList.add('show');
                 fileName.textContent = file.name;
-                fileSize.textContent = file.size > 1024 ? (file.size / 1024).toFixed(1) + ' KB' : file.size + ' B';
+                var size = file.size;
+                if (size > 1048576) {
+                    fileSize.textContent = (size / 1048576).toFixed(1) + ' MB';
+                } else if (size > 1024) {
+                    fileSize.textContent = (size / 1024).toFixed(1) + ' KB';
+                } else {
+                    fileSize.textContent = size + ' B';
+                }
             }
 
             if (removeBtn) {
-                removeBtn.addEventListener('click', function () {
+                removeBtn.addEventListener('click', function() {
                     fileInput.value = '';
-                    preview.classList.add('d-none');
+                    preview.classList.remove('show');
                 });
             }
-        });
+        })();
     </script>
 }

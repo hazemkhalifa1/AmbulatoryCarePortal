@@ -14,43 +14,44 @@
     bool SettingBool(string key) => bool.TryParse(GetSetting(key)?.Value, out var b) && b;
 }
 
-<form method="post" asp-action="UpdateMail" aria-label="@Localizer.T("Settings.Mail.Tab")">
+<form method="post" asp-action="UpdateMail" aria-label="@Localizer.T("Settings.Mail.Tab")" novalidate>
     @Html.AntiForgeryToken()
     <div class="settings-card">
         <div class="settings-card-header">
-            <div class="header-icon header-icon-lg icon-mail"><i class="fas fa-server" aria-hidden="true"></i></div>
-            <div>
+            <div class="settings-card-icon mail-icon"><i class="fas fa-server" aria-hidden="true"></i></div>
+            <div class="settings-card-heading">
                 <h3>@Localizer.T("Settings.Mail.SmtpSettings")</h3>
-                <p class="card-subtitle">Configure outgoing email server settings</p>
+                <p class="card-subtitle">@Localizer.T("Settings.Mail.Subtitle")</p>
             </div>
-            <span class="header-badge">SMTP</span>
+            <span class="settings-card-status">SMTP</span>
         </div>
         <div class="settings-card-body">
             <div class="row g-3">
                 <div class="col-md-5">
-                    <label class="form-label" for="Smtp_Host">@Localizer.T("Settings.Mail.Host") <span class="text-danger" aria-hidden="true">*</span></label>
-                    <input name="Smtp_Host" id="Smtp_Host" class="form-control" value="@SettingValue("Smtp.Host")" placeholder="smtp.example.com" aria-required="true" autocomplete="off" />
+                    <label class="settings-label" for="Smtp_Host">@Localizer.T("Settings.Mail.Host") <span class="text-danger" aria-hidden="true">*</span></label>
+                    <input name="Smtp_Host" id="Smtp_Host" class="settings-input" value="@SettingValue("Smtp.Host")" placeholder="smtp.example.com" aria-required="true" autocomplete="off" />
+                    <span class="settings-error" data-valmsg-for="Smtp_Host"></span>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label" for="Smtp_Port">@Localizer.T("Settings.Mail.Port")</label>
-                    <input name="Smtp_Port" id="Smtp_Port" class="form-control" value="@SettingValue("Smtp.Port")" placeholder="587" type="number" min="1" max="65535" />
+                    <label class="settings-label" for="Smtp_Port">@Localizer.T("Settings.Mail.Port")</label>
+                    <input name="Smtp_Port" id="Smtp_Port" class="settings-input" value="@SettingValue("Smtp.Port")" placeholder="587" type="number" min="1" max="65535" />
                 </div>
                 <div class="col-md-5">
-                    <label class="form-label" for="Smtp_EnableSsl">&nbsp;</label>
+                    <label class="settings-label" for="Smtp_EnableSsl">&nbsp;</label>
                     @await Html.PartialAsync("_SettingsToggle", new { Name = "Smtp_EnableSsl", Id = "Smtp_EnableSsl", Label = Localizer.T("Settings.Mail.EnableSsl"), Checked = SettingBool("Smtp.EnableSsl") })
                 </div>
             </div>
             <div class="settings-field-group">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label" for="Smtp_Username">@Localizer.T("Settings.Mail.Username")</label>
-                        <input name="Smtp_Username" id="Smtp_Username" class="form-control" value="@SettingValue("Smtp.Username")" placeholder="user@example.com" autocomplete="username" />
+                        <label class="settings-label" for="Smtp_Username">@Localizer.T("Settings.Mail.Username")</label>
+                        <input name="Smtp_Username" id="Smtp_Username" class="settings-input" value="@SettingValue("Smtp.Username")" placeholder="user@example.com" autocomplete="username" />
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label" for="Smtp_Password">@Localizer.T("Settings.Mail.Password")</label>
-                        <div class="input-group">
-                            <input name="Smtp_Password" id="Smtp_Password" class="form-control" value="@SettingValue("Smtp.Password")" type="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="new-password" aria-describedby="Smtp_Password_Help" />
-                            <button type="button" class="btn toggle-password" data-target="Smtp_Password" aria-label="Show password" aria-controls="Smtp_Password">
+                        <label class="settings-label" for="Smtp_Password">@Localizer.T("Settings.Mail.Password")</label>
+                        <div class="settings-input-group">
+                            <input name="Smtp_Password" id="Smtp_Password" class="settings-input" value="@SettingValue("Smtp.Password")" type="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="new-password" />
+                            <button type="button" class="settings-input-btn toggle-password" data-target="Smtp_Password" aria-label="@Localizer.T("Settings.Mail.ShowPassword")" aria-controls="Smtp_Password">
                                 <i class="fas fa-eye" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -60,25 +61,26 @@
             <div class="settings-field-group">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label" for="Smtp_FromAddress">@Localizer.T("Settings.Mail.FromAddress")</label>
-                        <input name="Smtp_FromAddress" id="Smtp_FromAddress" class="form-control" value="@SettingValue("Smtp.FromAddress")" type="email" placeholder="noreply@cbahi-portal.com" autocomplete="email" />
+                        <label class="settings-label" for="Smtp_FromAddress">@Localizer.T("Settings.Mail.FromAddress")</label>
+                        <input name="Smtp_FromAddress" id="Smtp_FromAddress" class="settings-input" value="@SettingValue("Smtp.FromAddress")" type="email" placeholder="noreply@cbahi-portal.com" autocomplete="email" />
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label" for="Smtp_FromName">@Localizer.T("Settings.Mail.FromName")</label>
-                        <input name="Smtp_FromName" id="Smtp_FromName" class="form-control" value="@SettingValue("Smtp.FromName")" placeholder="CBAHI Portal" />
+                        <label class="settings-label" for="Smtp_FromName">@Localizer.T("Settings.Mail.FromName")</label>
+                        <input name="Smtp_FromName" id="Smtp_FromName" class="settings-input" value="@SettingValue("Smtp.FromName")" placeholder="CBAHI Portal" />
                     </div>
                 </div>
             </div>
             <div class="settings-field-group">
                 <div class="row g-3">
                     <div class="col-md-7">
-                        <label class="form-label" for="Smtp_TestRecipientEmail">@Localizer.T("Settings.Mail.TestRecipient")</label>
-                        <div class="input-group">
-                            <input name="Smtp_TestRecipientEmail" id="Smtp_TestRecipientEmail" class="form-control" value="@SettingValue("Smtp.TestRecipientEmail")" type="email" placeholder="admin@example.com" />
-                            <button type="button" class="btn btn-outline-info" id="sendTestEmailBtn">
+                        <label class="settings-label" for="Smtp_TestRecipientEmail">@Localizer.T("Settings.Mail.TestRecipient")</label>
+                        <div class="settings-input-group">
+                            <input name="Smtp_TestRecipientEmail" id="Smtp_TestRecipientEmail" class="settings-input" value="@SettingValue("Smtp.TestRecipientEmail")" type="email" placeholder="admin@example.com" />
+                            <button type="button" class="settings-input-btn test-btn" id="sendTestEmailBtn">
                                 <i class="fas fa-paper-plane" aria-hidden="true"></i> @Localizer.T("Settings.Mail.SendTest")
                             </button>
                         </div>
+                        <span class="settings-help">@Localizer.T("Settings.Mail.TestRecipientHelp")</span>
                     </div>
                 </div>
             </div>

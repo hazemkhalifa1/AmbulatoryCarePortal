@@ -14,34 +14,33 @@
     bool SettingBool(string key) => bool.TryParse(GetSetting(key)?.Value, out var b) && b;
 }
 
-<form method="post" asp-action="UpdateGeneral" aria-label="@Localizer.T("Settings.General.Tab")">
+<form method="post" asp-action="UpdateGeneral" aria-label="@Localizer.T("Settings.General.Tab")" novalidate>
     @Html.AntiForgeryToken()
     <div class="settings-card">
         <div class="settings-card-header">
-            <div class="header-icon header-icon-lg icon-cog"><i class="fas fa-wrench" aria-hidden="true"></i></div>
-            <div>
+            <div class="settings-card-icon cog-icon"><i class="fas fa-wrench" aria-hidden="true"></i></div>
+            <div class="settings-card-heading">
                 <h3>@Localizer.T("Settings.General.Title")</h3>
-                <p class="card-subtitle">System-wide preferences and maintenance controls</p>
+                <p class="card-subtitle">@Localizer.T("Settings.General.Subtitle")</p>
             </div>
-            <span class="header-badge">@Localizer.T("Settings.General.Tab")</span>
         </div>
         <div class="settings-card-body">
             <div class="row g-3">
                 <div class="col-md-5">
-                    <label class="form-label" for="General_SessionTimeoutMinutes">@Localizer.T("Settings.General.SessionTimeout")</label>
-                    <input name="General_SessionTimeoutMinutes" id="General_SessionTimeoutMinutes" class="form-control" value="@SettingValue("General.SessionTimeoutMinutes")" type="number" min="1" placeholder="20" />
-                    <span class="form-text">@Localizer.T("Settings.General.SessionTimeout")</span>
+                    <label class="settings-label" for="General_SessionTimeoutMinutes">@Localizer.T("Settings.General.SessionTimeout")</label>
+                    <input name="General_SessionTimeoutMinutes" id="General_SessionTimeoutMinutes" class="settings-input" value="@SettingValue("General.SessionTimeoutMinutes")" type="number" min="1" placeholder="20" />
+                    <span class="settings-help">@Localizer.T("Settings.General.SessionTimeoutHelp")</span>
                 </div>
                 <div class="col-md-7">
-                    <label class="form-label" for="General_MaintenanceMode">@Localizer.T("Settings.General.MaintenanceMode")</label>
+                    <label class="settings-label" for="General_MaintenanceMode">@Localizer.T("Settings.General.MaintenanceMode")</label>
                     @await Html.PartialAsync("_SettingsToggle", new { Name = "General_MaintenanceMode", Id = "General_MaintenanceMode", Label = Localizer.T("Settings.General.MaintenanceMode"), Checked = SettingBool("General.MaintenanceMode") })
                 </div>
             </div>
             <div class="settings-field-group">
                 <div class="row g-3">
                     <div class="col-12">
-                        <label class="form-label" for="General_MaintenanceMessage">@Localizer.T("Settings.General.MaintenanceMessage")</label>
-                        <textarea name="General_MaintenanceMessage" id="General_MaintenanceMessage" class="form-control" rows="3" placeholder="@Localizer.T("Settings.General.MaintenanceMessage")">@SettingValue("General.MaintenanceMessage")</textarea>
+                        <label class="settings-label" for="General_MaintenanceMessage">@Localizer.T("Settings.General.MaintenanceMessage")</label>
+                        <textarea name="General_MaintenanceMessage" id="General_MaintenanceMessage" class="settings-textarea" rows="3" placeholder="@Localizer.T("Settings.General.MaintenanceMessage")">@SettingValue("General.MaintenanceMessage")</textarea>
                     </div>
                 </div>
             </div>

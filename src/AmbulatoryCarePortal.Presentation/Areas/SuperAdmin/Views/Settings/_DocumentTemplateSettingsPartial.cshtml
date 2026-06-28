@@ -14,38 +14,38 @@
     bool SettingBool(string key) => bool.TryParse(GetSetting(key)?.Value, out var b) && b;
 }
 
-<form method="post" asp-action="UpdateDocumentTemplate" aria-label="@Localizer.T("Settings.DocumentTemplate.Tab")">
+<form method="post" asp-action="UpdateDocumentTemplate" aria-label="@Localizer.T("Settings.DocumentTemplate.Tab")" novalidate>
     @Html.AntiForgeryToken()
     <div class="settings-card">
         <div class="settings-card-header">
-            <div class="header-icon header-icon-lg icon-docs"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
-            <div>
+            <div class="settings-card-icon docs-icon"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
+            <div class="settings-card-heading">
                 <h3>@Localizer.T("Settings.DocumentTemplate.Title")</h3>
-                <p class="card-subtitle">Set document upload rules and expiry warnings</p>
+                <p class="card-subtitle">@Localizer.T("Settings.DocumentTemplate.Subtitle")</p>
             </div>
-            <span class="header-badge">@Localizer.T("Settings.DocumentTemplate.Tab")</span>
         </div>
         <div class="settings-card-body">
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label" for="DocumentTemplate_DefaultExpiryWarningDays">@Localizer.T("Settings.DocumentTemplate.ExpiryWarningDays")</label>
-                    <input name="DocumentTemplate_DefaultExpiryWarningDays" id="DocumentTemplate_DefaultExpiryWarningDays" class="form-control" value="@SettingValue("DocumentTemplate.DefaultExpiryWarningDays")" type="number" min="1" placeholder="30" />
+                    <label class="settings-label" for="DocumentTemplate_DefaultExpiryWarningDays">@Localizer.T("Settings.DocumentTemplate.ExpiryWarningDays")</label>
+                    <input name="DocumentTemplate_DefaultExpiryWarningDays" id="DocumentTemplate_DefaultExpiryWarningDays" class="settings-input" value="@SettingValue("DocumentTemplate.DefaultExpiryWarningDays")" type="number" min="1" placeholder="30" />
+                    <span class="settings-help">@Localizer.T("Settings.DocumentTemplate.ExpiryWarningDaysHelp")</span>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label" for="DocumentTemplate_MaxFileSizeMB">@Localizer.T("Settings.DocumentTemplate.MaxFileSizeMB")</label>
-                    <input name="DocumentTemplate_MaxFileSizeMB" id="DocumentTemplate_MaxFileSizeMB" class="form-control" value="@SettingValue("DocumentTemplate.MaxFileSizeMB")" type="number" min="1" placeholder="20" />
+                    <label class="settings-label" for="DocumentTemplate_MaxFileSizeMB">@Localizer.T("Settings.DocumentTemplate.MaxFileSizeMB")</label>
+                    <input name="DocumentTemplate_MaxFileSizeMB" id="DocumentTemplate_MaxFileSizeMB" class="settings-input" value="@SettingValue("DocumentTemplate.MaxFileSizeMB")" type="number" min="1" placeholder="20" />
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label" for="DocumentTemplate_AutoAssignToNewClinics">@Localizer.T("Settings.DocumentTemplate.AutoAssign")</label>
+                    <label class="settings-label" for="DocumentTemplate_AutoAssignToNewClinics">@Localizer.T("Settings.DocumentTemplate.AutoAssign")</label>
                     @await Html.PartialAsync("_SettingsToggle", new { Name = "DocumentTemplate_AutoAssignToNewClinics", Id = "DocumentTemplate_AutoAssignToNewClinics", Label = Localizer.T("Settings.DocumentTemplate.AutoAssign"), Checked = SettingBool("DocumentTemplate.AutoAssignToNewClinics") })
                 </div>
             </div>
             <div class="settings-field-group">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label" for="DocumentTemplate_AllowedFileExtensions">@Localizer.T("Settings.DocumentTemplate.AllowedExtensions")</label>
-                        <input name="DocumentTemplate_AllowedFileExtensions" id="DocumentTemplate_AllowedFileExtensions" class="form-control" value="@SettingValue("DocumentTemplate.AllowedFileExtensions")" placeholder=".pdf,.docx,.xlsx" />
-                        <span class="form-text">@Localizer.T("Settings.DocumentTemplate.ExtensionsHelp")</span>
+                        <label class="settings-label" for="DocumentTemplate_AllowedFileExtensions">@Localizer.T("Settings.DocumentTemplate.AllowedExtensions")</label>
+                        <input name="DocumentTemplate_AllowedFileExtensions" id="DocumentTemplate_AllowedFileExtensions" class="settings-input" value="@SettingValue("DocumentTemplate.AllowedFileExtensions")" placeholder=".pdf,.docx,.xlsx" />
+                        <span class="settings-help">@Localizer.T("Settings.DocumentTemplate.ExtensionsHelp")</span>
                     </div>
                 </div>
             </div>
