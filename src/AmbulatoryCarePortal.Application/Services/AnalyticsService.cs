@@ -19,16 +19,15 @@ public class AnalyticsService : IAnalyticsService
     public async Task<ComplianceOverviewDto> GetComplianceAnalyticsAsync(int clinicId)
     {
         var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(clinicId);
-        var policies = await _unitOfWork.Repository<PolicyDocument>().FindAsync(p => p.ClinicId == clinicId);
         var checklists = await _unitOfWork.Repository<ChecklistRound>().FindAsync(c => c.ClinicId == clinicId);
 
         return new ComplianceOverviewDto
         {
             OverallScore = clinic?.ComplianceScore ?? 0,
-            TotalPolicies = policies.Count(),
-            ApprovedPolicies = policies.Count(p => p.DocumentStatus == Domain.Enums.DocumentStatus.Approved),
-            PendingPolicies = policies.Count(p => p.DocumentStatus == Domain.Enums.DocumentStatus.Pending),
-            PolicyCompletionRate = policies.Any() ? (policies.Count(p => p.DocumentStatus == Domain.Enums.DocumentStatus.Approved) * 100m / policies.Count()) : 0,
+            TotalPolicies = 0,
+            ApprovedPolicies = 0,
+            PendingPolicies = 0,
+            PolicyCompletionRate = 0,
             TotalChecklists = checklists.Count(),
             CompletedChecklists = checklists.Count(c => c.ExecutedAt != default),
             ChecklistCompletionRate = checklists.Any() ? (checklists.Count(c => c.ExecutedAt != default) * 100m / checklists.Count()) : 0
@@ -104,13 +103,11 @@ public class AnalyticsService : IAnalyticsService
         var metrics = new Dictionary<string, object>();
 
         var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(clinicId);
-        var policies = await _unitOfWork.Repository<PolicyDocument>().FindAsync(p => p.ClinicId == clinicId);
         var checklists = await _unitOfWork.Repository<ChecklistRound>().FindAsync(c => c.ClinicId == clinicId);
-        var auditLogs = await _unitOfWork.Repository<AuditTrail>().FindAsync(a => a.ClinicId == clinicId);
 
         metrics["TotalClinics"] = 1;
         metrics["AverageCompliance"] = clinic?.ComplianceScore ?? 0;
-        metrics["PendingApprovals"] = policies.Count(p => p.DocumentStatus == Domain.Enums.DocumentStatus.Pending);
+        metrics["PendingApprovals"] = 0;
         metrics["OverdueItems"] = 0;
         metrics["ExpiringDocuments"] = 0;
 

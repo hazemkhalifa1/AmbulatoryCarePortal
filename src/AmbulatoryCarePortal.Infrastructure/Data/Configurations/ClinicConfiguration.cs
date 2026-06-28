@@ -63,11 +63,6 @@ public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
             .HasForeignKey(x => x.ClinicId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(x => x.PolicyDocuments)
-            .WithOne(x => x.Clinic)
-            .HasForeignKey(x => x.ClinicId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasMany(x => x.KPIs)
             .WithOne(x => x.Clinic)
             .HasForeignKey(x => x.ClinicId)

@@ -12,8 +12,6 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<Clinic> Clinics { get; set; }
     public DbSet<Department> Departments { get; set; }
-    public DbSet<PolicyDocument> PolicyDocuments { get; set; }
-    public DbSet<EvidenceAttachment> EvidenceAttachments { get; set; }
     public DbSet<KPI> KPIs { get; set; }
     public DbSet<KPIEntry> KPIEntries { get; set; }
     public DbSet<ChecklistTemplate> ChecklistTemplates { get; set; }
@@ -54,8 +52,6 @@ public class AppDbContext : IdentityDbContext<AppUser>
         // Global query filters for soft delete
         modelBuilder.Entity<Clinic>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<Department>().HasQueryFilter(x => !x.IsDeleted);
-        modelBuilder.Entity<PolicyDocument>().HasQueryFilter(x => !x.IsDeleted);
-        modelBuilder.Entity<EvidenceAttachment>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<KPI>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<KPIEntry>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<ChecklistTemplate>().HasQueryFilter(x => !x.IsDeleted);

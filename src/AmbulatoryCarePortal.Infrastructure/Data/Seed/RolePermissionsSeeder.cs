@@ -194,11 +194,11 @@ public static class RoleDescriptions
         },
         {
             "ClinicAdmin",
-            "Manage clinic operations including policies, KPIs, checklists, staff, and compliance monitoring. Generate clinic reports."
+            "Manage clinic operations including documents, KPIs, checklists, staff, and compliance monitoring. Generate clinic reports."
         },
         {
             "ClinicViewer",
-            "Read-only access to clinic dashboard, compliance scores, policies, KPIs, checklists, and staff information. No modification permissions."
+            "Read-only access to clinic dashboard, compliance scores, documents, KPIs, checklists, and staff information. No modification permissions."
         }
     };
 
@@ -220,7 +220,7 @@ public static class RoleDescriptions
             {
                 "Clinic operations management (update clinic details)",
                 "Staff and document management",
-                "Policy and checklist administration (create, update, approve)",
+                "Document and checklist administration (create, update, approve)",
                 "KPI definition and monitoring",
                 "Clinic compliance monitoring",
                 "Report generation"
@@ -231,7 +231,7 @@ public static class RoleDescriptions
             {
                 "Dashboard viewing",
                 "Read-only access to compliance data",
-                "View policies, KPIs, checklists, and staff",
+                "View documents, KPIs, checklists, and staff",
                 "No modifications allowed"
             }
         }

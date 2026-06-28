@@ -1,6 +1,5 @@
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
-using AmbulatoryCarePortal.Domain.Enums;
 using ClosedXML.Excel;
 using Microsoft.Extensions.Logging;
 using QuestPDF.Fluent;
@@ -25,9 +24,6 @@ public class ReportingService : IReportingService
         var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(clinicId)
             ?? throw new InvalidOperationException("Clinic not found");
 
-        var policies = await _unitOfWork.Repository<PolicyDocument>().FindAsync(
-            p => p.ClinicId == clinicId && p.CreatedAt >= startDate && p.CreatedAt <= endDate
-        );
         var kpis = await _unitOfWork.Repository<KPI>().FindAsync(k => k.ClinicId == clinicId);
         var rounds = await _unitOfWork.Repository<ChecklistRound>().FindAsync(
             r => r.ClinicId == clinicId && r.ExecutedAt >= startDate && r.ExecutedAt <= endDate
@@ -36,9 +32,9 @@ public class ReportingService : IReportingService
 
         return format.ToLower() switch
         {
-            "pdf" => GenerateCompliancePdf(clinic, policies, kpis, rounds, staff, startDate, endDate),
-            "xlsx" => GenerateComplianceExcel(clinic, policies, kpis, rounds, staff, startDate, endDate),
-            _ => GenerateComplianceExcel(clinic, policies, kpis, rounds, staff, startDate, endDate)
+            "pdf" => GenerateCompliancePdf(clinic, kpis, rounds, staff, startDate, endDate),
+            "xlsx" => GenerateComplianceExcel(clinic, kpis, rounds, staff, startDate, endDate),
+            _ => GenerateComplianceExcel(clinic, kpis, rounds, staff, startDate, endDate)
         };
     }
 
@@ -122,9 +118,8 @@ public class ReportingService : IReportingService
         return Task.FromResult(availableReports);
     }
 
-    private byte[] GenerateCompliancePdf(Clinic clinic, IEnumerable<PolicyDocument> policies, IEnumerable<KPI> kpis, IEnumerable<ChecklistRound> rounds, IEnumerable<HrStaff> staff, DateTime start, DateTime end)
+    private byte[] GenerateCompliancePdf(Clinic clinic, IEnumerable<KPI> kpis, IEnumerable<ChecklistRound> rounds, IEnumerable<HrStaff> staff, DateTime start, DateTime end)
     {
-        var policyList = policies.ToList();
         var kpiList = kpis.ToList();
         var roundList = rounds.ToList();
         var staffList = staff.ToList();
@@ -160,46 +155,11 @@ public class ReportingService : IReportingService
                         });
 
                         AddRow(table, "Compliance Score", $"{clinic.ComplianceScore:F1}%");
-                        AddRow(table, "Total Policies", policyList.Count.ToString());
-                        AddRow(table, "Approved Policies", policyList.Count(p => p.DocumentStatus == DocumentStatus.Approved).ToString());
-                        AddRow(table, "Pending Review", policyList.Count(p => p.DocumentStatus == DocumentStatus.Pending).ToString());
-                        AddRow(table, "Expired Policies", policyList.Count(p => p.DocumentStatus == DocumentStatus.Expired).ToString());
                         AddRow(table, "Total KPIs", kpiList.Count.ToString());
                         AddRow(table, "Checklist Rounds", roundList.Count.ToString());
                         AddRow(table, "Total Staff", staffList.Count.ToString());
                         AddRow(table, "Active Staff", staffList.Count(s => s.IsActive).ToString());
                     });
-
-                    if (policyList.Count > 0)
-                    {
-                        col.Item().PaddingTop(20).Text("Policy Details").FontSize(14).Bold();
-                        col.Item().PaddingTop(5).Table(table =>
-                        {
-                            table.ColumnsDefinition(c =>
-                            {
-                                c.RelativeColumn(3);
-                                c.RelativeColumn(2);
-                                c.RelativeColumn(2);
-                                c.RelativeColumn(2);
-                            });
-
-                            table.Header(h =>
-                            {
-                                h.Cell().Background(Colors.Blue.Darken2).Padding(3).Text("Title").FontColor(Colors.White).Bold();
-                                h.Cell().Background(Colors.Blue.Darken2).Padding(3).Text("Status").FontColor(Colors.White).Bold();
-                                h.Cell().Background(Colors.Blue.Darken2).Padding(3).Text("Version").FontColor(Colors.White).Bold();
-                                h.Cell().Background(Colors.Blue.Darken2).Padding(3).Text("Expiry").FontColor(Colors.White).Bold();
-                            });
-
-                            foreach (var p in policyList)
-                            {
-                                table.Cell().Padding(2).Text(p.Title ?? "-").FontSize(9);
-                                table.Cell().Padding(2).Text(p.DocumentStatus.ToString()).FontSize(9);
-                                table.Cell().Padding(2).Text(p.VersionNumber.ToString()).FontSize(9);
-                                table.Cell().Padding(2).Text(p.ExpiryDate?.ToString("dd/MM/yyyy") ?? "N/A").FontSize(9);
-                            }
-                        });
-                    }
 
                     col.Item().PaddingTop(20).Text($"Generated: {DateTime.UtcNow:dd/MM/yyyy HH:mm} UTC").FontSize(8).FontColor(Colors.Grey.Medium);
                     col.Item().Text("CBAHI Ambulatory Care Portal").FontSize(8).FontColor(Colors.Grey.Medium);
@@ -215,7 +175,7 @@ public class ReportingService : IReportingService
         }).GeneratePdf();
     }
 
-    private byte[] GenerateComplianceExcel(Clinic clinic, IEnumerable<PolicyDocument> policies, IEnumerable<KPI> kpis, IEnumerable<ChecklistRound> rounds, IEnumerable<HrStaff> staff, DateTime start, DateTime end)
+    private byte[] GenerateComplianceExcel(Clinic clinic, IEnumerable<KPI> kpis, IEnumerable<ChecklistRound> rounds, IEnumerable<HrStaff> staff, DateTime start, DateTime end)
     {
         using var workbook = new XLWorkbook();
 
@@ -233,42 +193,15 @@ public class ReportingService : IReportingService
 
         summary.Cell("A7").Value = "Compliance Score";
         summary.Cell("B7").Value = $"{clinic.ComplianceScore:F1}%";
-        summary.Cell("A8").Value = "Total Policies";
-        summary.Cell("B8").Value = policies.Count();
-        summary.Cell("A9").Value = "Approved Policies";
-        summary.Cell("B9").Value = policies.Count(p => p.DocumentStatus == DocumentStatus.Approved);
-        summary.Cell("A10").Value = "Total KPIs";
-        summary.Cell("B10").Value = kpis.Count();
-        summary.Cell("A11").Value = "Checklist Rounds";
-        summary.Cell("B11").Value = rounds.Count();
-        summary.Cell("A12").Value = "Total Staff";
-        summary.Cell("B12").Value = staff.Count();
-        summary.Cell("A13").Value = "Active Staff";
-        summary.Cell("B13").Value = staff.Count(s => s.IsActive);
+        summary.Cell("A8").Value = "Total KPIs";
+        summary.Cell("B8").Value = kpis.Count();
+        summary.Cell("A9").Value = "Checklist Rounds";
+        summary.Cell("B9").Value = rounds.Count();
+        summary.Cell("A10").Value = "Total Staff";
+        summary.Cell("B10").Value = staff.Count();
+        summary.Cell("A11").Value = "Active Staff";
+        summary.Cell("B11").Value = staff.Count(s => s.IsActive);
         summary.Columns().AdjustToContents();
-
-        if (policies.Any())
-        {
-            var ws = workbook.Worksheets.Add("Policies");
-            ws.Cell("A1").Value = "Title";
-            ws.Cell("B1").Value = "Status";
-            ws.Cell("C1").Value = "Version";
-            ws.Cell("D1").Value = "Expiry Date";
-            ws.Range("A1:D1").Style.Fill.BackgroundColor = XLColor.Blue;
-            ws.Range("A1:D1").Style.Font.FontColor = XLColor.White;
-            ws.Range("A1:D1").Style.Font.Bold = true;
-
-            var row = 2;
-            foreach (var p in policies)
-            {
-                ws.Cell(row, 1).Value = p.Title ?? "";
-                ws.Cell(row, 2).Value = p.DocumentStatus.ToString();
-                ws.Cell(row, 3).Value = p.VersionNumber;
-                ws.Cell(row, 4).Value = p.ExpiryDate?.ToString("dd/MM/yyyy") ?? "";
-                row++;
-            }
-            ws.Columns().AdjustToContents();
-        }
 
         return GetBytes(workbook);
     }

@@ -14,8 +14,6 @@ public class AppUser : IdentityUser
 
     // Navigation properties
     public Clinic? Clinic { get; set; }
-    public ICollection<PolicyDocument> PolicyDocuments { get; set; } = new List<PolicyDocument>();
-    public ICollection<EvidenceAttachment> EvidenceAttachments { get; set; } = new List<EvidenceAttachment>();
     public ICollection<AuditTrail> AuditTrails { get; set; } = new List<AuditTrail>();
     public ICollection<ChecklistRound> ChecklistRounds { get; set; } = new List<ChecklistRound>();
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();

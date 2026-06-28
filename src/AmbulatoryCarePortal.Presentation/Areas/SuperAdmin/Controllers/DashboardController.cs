@@ -1,6 +1,5 @@
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
-using AmbulatoryCarePortal.Domain.Enums;
 using AmbulatoryCarePortal.Presentation.Helpers;
 using AmbulatoryCarePortal.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -34,18 +33,10 @@ public class DashboardController : Controller
         var clinics = await _clinicService.GetAllClinicsAsync(1, 10);
 
         var allClinics = await _unitOfWork.Repository<Clinic>().GetAllAsync();
-        var allPolicies = await _unitOfWork.Repository<PolicyDocument>().GetAllAsync();
 
         var avgCompliance = allClinics.Any()
             ? Math.Round(allClinics.Average(c => c.ComplianceScore), 1)
             : 0m;
-
-        var pendingReviews = allPolicies.Count(p =>
-            p.DocumentStatus == DocumentStatus.NeedsReview ||
-            p.DocumentStatus == DocumentStatus.Pending);
-
-        var overdueItems = allPolicies.Count(p =>
-            p.DocumentStatus == DocumentStatus.Expired);
 
         var viewModel = new SuperAdminDashboardViewModel
         {
@@ -53,8 +44,8 @@ public class DashboardController : Controller
             {
                 TotalClinics = allClinics.Count(),
                 AverageCompliance = avgCompliance,
-                PendingApprovals = pendingReviews,
-                OverdueItems = overdueItems
+                PendingApprovals = 0,
+                OverdueItems = 0
             },
             RecentClinics = clinics.Data
         };

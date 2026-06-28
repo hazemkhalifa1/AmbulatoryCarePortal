@@ -9,7 +9,6 @@ public class Department : BaseEntity
 
     // Navigation properties
     public Clinic Clinic { get; set; } = null!;
-    public ICollection<PolicyDocument> PolicyDocuments { get; set; } = new List<PolicyDocument>();
     public ICollection<HrStaff> Staff { get; set; } = new List<HrStaff>();
     public ICollection<KPI> KPIs { get; set; } = new List<KPI>();
     public ICollection<ChecklistTemplate> ChecklistTemplates { get; set; } = new List<ChecklistTemplate>();

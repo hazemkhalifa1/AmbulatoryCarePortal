@@ -38,25 +38,6 @@ public class AdvancedSearchService : IAdvancedSearchService
         }
     }
 
-    public async Task<List<PolicyDocument>> SearchPoliciesAsync(int clinicId, string searchTerm, Dictionary<string, object> filters)
-    {
-        try
-        {
-            var policies = await _unitOfWork.Repository<PolicyDocument>().FindAsync(
-                p => p.ClinicId == clinicId &&
-                     (string.IsNullOrEmpty(searchTerm) || p.Title.Contains(searchTerm) || p.StandardCode!.Contains(searchTerm))
-            );
-
-            _logger.LogInformation("Policies search completed");
-            return policies.ToList();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error searching policies: {ex.Message}");
-            throw;
-        }
-    }
-
     public async Task<List<KPI>> SearchKPIsAsync(int clinicId, string searchTerm, Dictionary<string, object> filters)
     {
         try

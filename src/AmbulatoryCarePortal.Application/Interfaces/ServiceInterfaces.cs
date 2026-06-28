@@ -1,7 +1,6 @@
 using AmbulatoryCarePortal.Application.Common;
 using AmbulatoryCarePortal.Application.DTOs;
 using AmbulatoryCarePortal.Application.DTOs.Clinic;
-using AmbulatoryCarePortal.Application.DTOs.PolicyDocument;
 
 namespace AmbulatoryCarePortal.Application.Interfaces;
 
@@ -12,18 +11,6 @@ public interface IClinicService
     Task<int> CreateClinicAsync(CreateClinicDto dto);
     Task<bool> UpdateClinicAsync(UpdateClinicDto dto);
     Task<bool> DeleteClinicAsync(int clinicId);
-}
-
-public interface IPolicyDocumentService
-{
-    Task<PagedResult<PolicyDocumentDto>> GetClinicPoliciesAsync(int clinicId, int pageNumber, int pageSize);
-    Task<PagedResult<PolicyDocumentDto>> GetDepartmentPoliciesAsync(int departmentId, int pageNumber, int pageSize);
-    Task<PolicyDocumentDetailDto?> GetPolicyDetailsAsync(int policyId);
-    Task<int> CreatePolicyAsync(CreatePolicyDocumentDto dto);
-    Task<bool> UpdatePolicyAsync(UpdatePolicyDocumentDto dto);
-    Task<bool> DeletePolicyAsync(int policyId);
-    Task<int> GetMissingPoliciesCountAsync(int clinicId);
-    Task<int> GetExpiredPoliciesCountAsync(int clinicId);
 }
 
 public interface IKPIService

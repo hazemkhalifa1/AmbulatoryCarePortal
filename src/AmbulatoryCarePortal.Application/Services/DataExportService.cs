@@ -138,12 +138,20 @@ public class DataExportService : IDataExportService
 
     public async Task<byte[]> ExportPoliciesAsync(int clinicId, string format)
     {
-        var policies = await _unitOfWork.Repository<PolicyDocument>().FindAsync(p => p.ClinicId == clinicId);
+        var policies = await _unitOfWork.Repository<ClinicTemplateAssignment>().FindWithIncludesAsync(
+            p => p.ClinicId == clinicId,
+            false,
+            p => p.DocumentTemplate
+        );
         var data = policies.Select(p => new
         {
-            p.Id, p.Title, p.StandardCode,
-            Status = p.DocumentStatus.ToString(),
-            p.ExpiryDate, p.CreatedAt, Version = p.VersionNumber
+            Id = p.Id,
+            Title = p.DocumentTemplate.TitleEn,
+            StandardCode = p.DocumentTemplate.StandardCode,
+            Status = p.AssignmentStatus.ToString(),
+            p.ExpiryDate,
+            p.CreatedAt,
+            Version = p.DocumentTemplate.CurrentVersion
         }).ToList();
 
         return format.ToLower() switch

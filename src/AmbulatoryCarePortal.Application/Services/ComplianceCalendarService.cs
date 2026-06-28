@@ -61,44 +61,10 @@ public class ComplianceCalendarService : IComplianceCalendarService
         var items = new List<ComplianceCalendarItemDto>();
         var today = DateTime.UtcNow.Date;
 
-        items.AddRange(await GetPolicyExpiryItemsAsync(clinicId, today));
         items.AddRange(await GetHRDocumentExpiryItemsAsync(clinicId, today));
         items.AddRange(await GetKPIDueItemsAsync(clinicId, today));
         items.AddRange(await GetChecklistDueItemsAsync(clinicId, today));
         items.AddRange(await GetClinicDocumentExpiryItemsAsync(clinicId, today));
-
-        return items;
-    }
-
-    private async Task<List<ComplianceCalendarItemDto>> GetPolicyExpiryItemsAsync(int clinicId, DateTime today)
-    {
-        var items = new List<ComplianceCalendarItemDto>();
-        var policies = await _unitOfWork.Repository<PolicyDocument>().FindAsync(
-            p => p.ClinicId == clinicId && p.ExpiryDate.HasValue && !p.IsDeleted
-        );
-
-        foreach (var policy in policies)
-        {
-            var daysRemaining = (policy.ExpiryDate!.Value.Date - today).Days;
-            var severity = daysRemaining <= 0 ? ComplianceItemSeverity.Critical
-                : daysRemaining <= 14 ? ComplianceItemSeverity.Warning
-                : ComplianceItemSeverity.Info;
-
-            items.Add(new ComplianceCalendarItemDto
-            {
-                Id = policy.Id,
-                Title = policy.Title,
-                TitleAr = policy.TitleAr,
-                ItemType = ComplianceItemType.PolicyExpiry,
-                Severity = severity,
-                DueDate = policy.ExpiryDate,
-                DaysRemaining = daysRemaining,
-                SourceId = policy.Id,
-                RelatedEntityName = policy.StandardCode,
-                DetailUrl = $"/ClinicAdmin/PolicyManagement/Details/{policy.Id}",
-                Status = policy.DocumentStatus.ToString()
-            });
-        }
 
         return items;
     }

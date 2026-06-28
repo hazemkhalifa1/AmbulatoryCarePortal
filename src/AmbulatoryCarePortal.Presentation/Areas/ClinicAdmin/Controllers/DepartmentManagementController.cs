@@ -51,7 +51,6 @@ public class DepartmentManagementController : Controller
         foreach (var dept in paged)
         {
             var staffCount = await _unitOfWork.Repository<HrStaff>().CountAsync(s => s.DepartmentId == dept.Id && !s.IsDeleted);
-            var policyCount = await _unitOfWork.Repository<PolicyDocument>().CountAsync(p => p.DepartmentId == dept.Id && !p.IsDeleted);
             var kpiCount = await _unitOfWork.Repository<KPI>().CountAsync(k => k.DepartmentId == dept.Id && !k.IsDeleted);
 
             dtos.Add(new DepartmentListViewModel
@@ -61,7 +60,7 @@ public class DepartmentManagementController : Controller
                 NameAr = dept.NameAr,
                 Code = dept.Code,
                 StaffCount = staffCount,
-                PolicyCount = policyCount,
+                PolicyCount = 0,
                 KPICount = kpiCount
             });
         }
@@ -214,7 +213,6 @@ public class DepartmentManagementController : Controller
             return Forbid();
 
         var staffCount = await _unitOfWork.Repository<HrStaff>().CountAsync(s => s.DepartmentId == id && !s.IsDeleted);
-        var policyCount = await _unitOfWork.Repository<PolicyDocument>().CountAsync(p => p.DepartmentId == id && !p.IsDeleted);
         var kpiCount = await _unitOfWork.Repository<KPI>().CountAsync(k => k.DepartmentId == id && !k.IsDeleted);
         var checklistCount = await _unitOfWork.Repository<ChecklistTemplate>().CountAsync(c => c.DepartmentId == id && !c.IsDeleted);
 
@@ -225,7 +223,7 @@ public class DepartmentManagementController : Controller
             NameAr = department.NameAr,
             Code = department.Code,
             StaffCount = staffCount,
-            PolicyCount = policyCount,
+            PolicyCount = 0,
             KPICount = kpiCount,
             ChecklistCount = checklistCount
         };
@@ -248,13 +246,12 @@ public class DepartmentManagementController : Controller
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
         var staffCount = await _unitOfWork.Repository<HrStaff>().CountAsync(s => s.DepartmentId == id && !s.IsDeleted);
-        var policyCount = await _unitOfWork.Repository<PolicyDocument>().CountAsync(p => p.DepartmentId == id && !p.IsDeleted);
         var kpiCount = await _unitOfWork.Repository<KPI>().CountAsync(k => k.DepartmentId == id && !k.IsDeleted);
         var checklistCount = await _unitOfWork.Repository<ChecklistTemplate>().CountAsync(c => c.DepartmentId == id && !c.IsDeleted);
 
-        if (staffCount > 0 || policyCount > 0 || kpiCount > 0 || checklistCount > 0)
+        if (staffCount > 0 || kpiCount > 0 || checklistCount > 0)
         {
-            TempData["ErrorMessage"] = _localizer.T("Alert.Error.DepartmentHasLinks", staffCount, policyCount, kpiCount, checklistCount);
+            TempData["ErrorMessage"] = _localizer.T("Alert.Error.DepartmentHasLinks", staffCount, 0, kpiCount, checklistCount);
             return RedirectToAction(nameof(Details), new { id });
         }
 

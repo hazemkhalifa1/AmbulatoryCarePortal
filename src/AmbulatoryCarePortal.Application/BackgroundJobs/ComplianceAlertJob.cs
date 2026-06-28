@@ -44,11 +44,11 @@ public class ComplianceAlertJob
             if (alertedClinicIds.Contains(clinic.Id))
                 continue;
 
-            var missingDocs = await _unitOfWork.Repository<PolicyDocument>().CountAsync(
-                d => d.ClinicId == clinic.Id && d.DocumentStatus == DocumentStatus.MissingAttachment && !d.IsDeleted
+            var missingDocs = await _unitOfWork.Repository<ClinicTemplateAssignment>().CountAsync(
+                d => d.ClinicId == clinic.Id && d.AssignmentStatus == ClinicDocumentStatus.MissingAttachment && !d.IsDeleted
             );
-            var expiredDocs = await _unitOfWork.Repository<PolicyDocument>().CountAsync(
-                d => d.ClinicId == clinic.Id && d.DocumentStatus == DocumentStatus.Expired && !d.IsDeleted
+            var expiredDocs = await _unitOfWork.Repository<ClinicTemplateAssignment>().CountAsync(
+                d => d.ClinicId == clinic.Id && d.AssignmentStatus == ClinicDocumentStatus.Expired && !d.IsDeleted
             );
 
             if (missingDocs > 5 || expiredDocs > 3)

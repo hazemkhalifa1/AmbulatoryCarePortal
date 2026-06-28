@@ -59,17 +59,6 @@
             </div>
             <div class="col-6">
                 <partial name="_HealthMetricCard" model='new {
-                    Icon = "fa-file-shield",
-                    Color = "success",
-                    Value = Model.PolicyCount.ToString(),
-                    Label = Localizer.T("Nav.Policies"),
-                    Badge = "",
-                    Link = Url.Action("Index", "PolicyManagement") + "?departmentFilter=" + Model.Id,
-                    LinkText = Localizer.T("Common.ViewAll")
-                }' />
-            </div>
-            <div class="col-6">
-                <partial name="_HealthMetricCard" model='new {
                     Icon = "fa-chart-line",
                     Color = "info",
                     Value = Model.KPICount.ToString(),

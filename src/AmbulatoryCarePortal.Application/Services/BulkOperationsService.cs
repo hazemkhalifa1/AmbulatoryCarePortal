@@ -15,28 +15,6 @@ public class BulkOperationsService : IBulkOperationsService
         _logger = logger;
     }
 
-    public async Task<bool> BulkDeletePoliciesAsync(List<int> policyIds, int clinicId, string userId)
-    {
-        try
-        {
-            var policies = await _unitOfWork.Repository<PolicyDocument>().FindAsync(
-                p => policyIds.Contains(p.Id) && p.ClinicId == clinicId
-            );
-
-            foreach (var policy in policies)
-                _unitOfWork.Repository<PolicyDocument>().SoftDelete(policy);
-
-            await _unitOfWork.SaveChangesAsync();
-            _logger.LogInformation("Bulk deleted {Count} policies", policies.Count());
-            return true;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error in bulk delete policies");
-            return false;
-        }
-    }
-
     public async Task<bool> BulkDeleteStaffAsync(List<int> staffIds, int clinicId, string userId)
     {
         try

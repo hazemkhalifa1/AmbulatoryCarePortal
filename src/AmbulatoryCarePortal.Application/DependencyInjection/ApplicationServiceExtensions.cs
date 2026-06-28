@@ -22,7 +22,6 @@ public static class ApplicationServiceExtensions
 
         // Core services
         services.AddScoped<IClinicService, ClinicService>();
-        services.AddScoped<IPolicyDocumentService, PolicyDocumentService>();
         services.AddScoped<IKPIService, KPIService>();
         services.AddScoped<IChecklistService, ChecklistService>();
         services.AddScoped<IHrService, HrService>();

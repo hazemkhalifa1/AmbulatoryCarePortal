@@ -19,7 +19,6 @@ public class Clinic : BaseEntity
     // Navigation properties
     public ICollection<AppUser> Users { get; set; } = new List<AppUser>();
     public ICollection<Department> Departments { get; set; } = new List<Department>();
-    public ICollection<PolicyDocument> PolicyDocuments { get; set; } = new List<PolicyDocument>();
     public ICollection<KPI> KPIs { get; set; } = new List<KPI>();
     public ICollection<ChecklistTemplate> ChecklistTemplates { get; set; } = new List<ChecklistTemplate>();
     public ICollection<ChecklistRound> ChecklistRounds { get; set; } = new List<ChecklistRound>();

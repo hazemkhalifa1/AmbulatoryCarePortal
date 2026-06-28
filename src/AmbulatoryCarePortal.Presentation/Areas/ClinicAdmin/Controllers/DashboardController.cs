@@ -13,7 +13,6 @@ namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 public class DashboardController : Controller
 {
     private readonly IClinicService _clinicService;
-    private readonly IPolicyDocumentService _policyDocumentService;
     private readonly IKPIService _kpiService;
     private readonly IHrService _hrService;
     private readonly IComplianceCalendarService _complianceCalendarService;
@@ -24,7 +23,6 @@ public class DashboardController : Controller
 
     public DashboardController(
         IClinicService clinicService,
-        IPolicyDocumentService policyDocumentService,
         IKPIService kpiService,
         IHrService hrService,
         IComplianceCalendarService complianceCalendarService,
@@ -34,7 +32,6 @@ public class DashboardController : Controller
         ITranslationService localizer)
     {
         _clinicService = clinicService;
-        _policyDocumentService = policyDocumentService;
         _kpiService = kpiService;
         _hrService = hrService;
         _complianceCalendarService = complianceCalendarService;
@@ -59,20 +56,6 @@ public class DashboardController : Controller
         ViewBag.PageTitle = _localizer.T("Page.ClinicDashboard");
 
         return View(clinic);
-    }
-
-    public async Task<IActionResult> Policies(int page = 1, int pageSize = 10)
-    {
-        var user = await _userManager.GetUserAsync(User);
-        var clinicId = user?.ClinicId;
-        if (!clinicId.HasValue)
-            return Unauthorized();
-
-        var policies = await _policyDocumentService.GetClinicPoliciesAsync(clinicId.Value, page, pageSize);
-        ViewBag.PageTitle = _localizer.T("Page.PolicyDocuments");
-        ViewBag.ClinicId = clinicId;
-
-        return View(policies);
     }
 
     public async Task<IActionResult> KPIs()

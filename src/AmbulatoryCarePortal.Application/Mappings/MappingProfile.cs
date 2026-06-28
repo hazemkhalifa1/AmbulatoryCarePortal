@@ -1,10 +1,8 @@
 using AutoMapper;
 using AmbulatoryCarePortal.Application.DTOs.Clinic;
 using AmbulatoryCarePortal.Application.DTOs.Document;
-using AmbulatoryCarePortal.Application.DTOs.PolicyDocument;
 using AmbulatoryCarePortal.Application.DTOs;
 using AmbulatoryCarePortal.Domain.Entities;
-using AmbulatoryCarePortal.Domain.Enums;
 
 namespace AmbulatoryCarePortal.Application.Mappings;
 
@@ -17,19 +15,6 @@ public class MappingProfile : Profile
         CreateMap<Clinic, UpdateClinicDto>().ReverseMap();
         CreateMap<Clinic, ClinicDto>();
         CreateMap<Clinic, ClinicDetailDto>();
-
-        // PolicyDocument Mappings
-        CreateMap<PolicyDocument, CreatePolicyDocumentDto>().ReverseMap();
-        CreateMap<PolicyDocument, UpdatePolicyDocumentDto>().ReverseMap();
-        CreateMap<PolicyDocument, PolicyDocumentDto>()
-            .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.NameEn))
-            .ForMember(dest => dest.AttachmentCount, opt => opt.MapFrom(src => src.Attachments.Count));
-        CreateMap<PolicyDocument, PolicyDocumentDetailDto>()
-            .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.NameEn))
-            .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.Attachments));
-
-        // EvidenceAttachment Mappings
-        CreateMap<EvidenceAttachment, EvidenceAttachmentDto>();
 
         // KPI Mappings
         CreateMap<KPI, CreateKPIDto>().ReverseMap();

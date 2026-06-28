@@ -50,8 +50,8 @@ public class WeeklyDigestJob
             if (digestClinicIds.Contains(clinic.Id))
                 continue;
 
-            var totalDocs = await _unitOfWork.Repository<PolicyDocument>().CountAsync(d => d.ClinicId == clinic.Id);
-            var expiringDocs = await _unitOfWork.Repository<PolicyDocument>().CountAsync(
+            var totalDocs = await _unitOfWork.Repository<ClinicTemplateAssignment>().CountAsync(d => d.ClinicId == clinic.Id);
+            var expiringDocs = await _unitOfWork.Repository<ClinicTemplateAssignment>().CountAsync(
                 d => d.ClinicId == clinic.Id && d.ExpiryDate <= today.AddDays(warnDays)
             );
 

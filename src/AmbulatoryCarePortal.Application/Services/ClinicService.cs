@@ -53,11 +53,11 @@ public class ClinicService : IClinicService
         var userCount = await _userManager.Users.CountAsync(x => x.ClinicId == clinicId);
         var departmentCount = await _unitOfWork.Repository<Department>().CountAsync(x => x.ClinicId == clinicId);
         var policyCount = await _unitOfWork.Repository<ClinicTemplateAssignment>().CountAsync(x => x.ClinicId == clinicId);
-        var openGapCount = await _unitOfWork.Repository<PolicyDocument>().CountAsync(x =>
+        var openGapCount = await _unitOfWork.Repository<ClinicTemplateAssignment>().CountAsync(x =>
             x.ClinicId == clinicId &&
-            (x.DocumentStatus == DocumentStatus.MissingAttachment ||
-             x.DocumentStatus == DocumentStatus.Expired ||
-             x.DocumentStatus == DocumentStatus.NeedsReview)
+            (x.AssignmentStatus == ClinicDocumentStatus.MissingAttachment ||
+             x.AssignmentStatus == ClinicDocumentStatus.Expired ||
+             x.AssignmentStatus == ClinicDocumentStatus.NeedsReview)
         );
 
         var dto = _mapper.Map<ClinicDetailDto>(clinic);

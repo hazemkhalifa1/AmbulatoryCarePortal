@@ -155,12 +155,11 @@ public class ComplianceScoreService : IComplianceScoreService
 
     public async Task<ComplianceDashboardDto> GetDashboardAsync(int clinicId)
     {
-        var policyRepo = _unitOfWork.Repository<PolicyDocument>();
         var hrDocRepo = _unitOfWork.Repository<HrDocument>();
         var roundRepo = _unitOfWork.Repository<ChecklistRound>();
 
-        var missingPolicies = await policyRepo.CountAsync(
-            p => p.ClinicId == clinicId && p.DocumentStatus == DocumentStatus.MissingAttachment);
+        var missingPolicies = await _unitOfWork.Repository<ClinicTemplateAssignment>().CountAsync(
+            a => a.ClinicId == clinicId && a.AssignmentStatus == ClinicDocumentStatus.MissingAttachment);
         var expiredDocs = await hrDocRepo.CountAsync(
             d => d.HrStaff.ClinicId == clinicId && d.ExpiryDate.HasValue && d.ExpiryDate < DateTime.UtcNow);
         var overdueChecklists = await roundRepo.CountAsync(
@@ -246,13 +245,13 @@ public class ComplianceScoreService : IComplianceScoreService
 
     private async Task<decimal> CalculatePolicyScoreAsync(int clinicId)
     {
-        var total = await _unitOfWork.Repository<PolicyDocument>().CountAsync(p => p.ClinicId == clinicId);
+        var total = await _unitOfWork.Repository<ClinicTemplateAssignment>().CountAsync(a => a.ClinicId == clinicId);
         if (total == 0) return 0;
 
-        var compliant = await _unitOfWork.Repository<PolicyDocument>().CountAsync(p =>
-            p.ClinicId == clinicId &&
-            (p.DocumentStatus == DocumentStatus.Approved || p.DocumentStatus == DocumentStatus.Complete) &&
-            (!p.ExpiryDate.HasValue || p.ExpiryDate >= DateTime.UtcNow));
+        var compliant = await _unitOfWork.Repository<ClinicTemplateAssignment>().CountAsync(a =>
+            a.ClinicId == clinicId &&
+            a.AssignmentStatus == ClinicDocumentStatus.Complete &&
+            (!a.ExpiryDate.HasValue || a.ExpiryDate >= DateTime.UtcNow));
 
         return (compliant * 100m) / total;
     }

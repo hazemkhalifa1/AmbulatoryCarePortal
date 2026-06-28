@@ -27,11 +27,6 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .HasForeignKey(x => x.ClinicId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(x => x.PolicyDocuments)
-            .WithOne(x => x.Department)
-            .HasForeignKey(x => x.DepartmentId)
-            .OnDelete(DeleteBehavior.Restrict);
-
         builder.HasMany(x => x.Staff)
             .WithOne(x => x.Department)
             .HasForeignKey(x => x.DepartmentId)
