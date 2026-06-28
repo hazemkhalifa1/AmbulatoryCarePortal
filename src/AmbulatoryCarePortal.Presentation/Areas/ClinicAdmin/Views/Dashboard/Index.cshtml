@@ -26,10 +26,10 @@
             <partial name="_HealthMetricCard" model='new { Icon = "fa-users", Color = "info", Value = Model.UserCount.ToString(), Label = Localizer.T("Clinic.Staff"), Badge = Model.DepartmentCount + " " + Localizer.T("Clinic.Departments"), Link = Url.Action("Staff"), LinkText = Localizer.T("Common.ViewDetails") }' />
         </div>
         <div class="col-lg-3 col-md-6">
-            <partial name="_HealthMetricCard" model='new { Icon = "fa-file", Color = "primary", Value = Model.PolicyDocumentCount.ToString(), Label = Localizer.T("Nav.Documents"), Badge = Localizer.T("Clinic.TotalDocuments"), Link = Url.Action("Index", "ClinicDocuments"), LinkText = Localizer.T("Common.ViewDetails") }' />
+            <partial name="_HealthMetricCard" model='new { Icon = "fa-file", Color = "primary", Value = Model.PolicyDocumentCount.ToString(), Label = Localizer.T("Nav.Documents"), Badge = Localizer.T("Clinic.TotalDocuments"), Link = Url.Action("Index", "ClinicTemplates"), LinkText = Localizer.T("Common.ViewDetails") }' />
         </div>
         <div class="col-lg-3 col-md-6">
-            <partial name="_HealthMetricCard" model='new { Icon = "fa-exclamation-triangle", Color = Model.OpenGapCount > 0 ? "danger" : "success", Value = Model.OpenGapCount.ToString(), Label = Localizer.T("Clinic.OpenGaps"), Badge = Model.OpenGapCount > 0 ? Localizer.T("Common.NeedsAttention") : Localizer.T("Common.NoIssues"), Link = Url.Action("Index", "ClinicDocuments"), LinkText = Localizer.T("Common.ViewDetails") }' />
+            <partial name="_HealthMetricCard" model='new { Icon = "fa-exclamation-triangle", Color = Model.OpenGapCount > 0 ? "danger" : "success", Value = Model.OpenGapCount.ToString(), Label = Localizer.T("Clinic.OpenGaps"), Badge = Model.OpenGapCount > 0 ? Localizer.T("Common.NeedsAttention") : Localizer.T("Common.NoIssues"), Link = Url.Action("Index", "ClinicTemplates"), LinkText = Localizer.T("Common.ViewDetails") }' />
         </div>
     </div>
 

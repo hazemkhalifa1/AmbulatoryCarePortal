@@ -448,6 +448,144 @@ html[dir="rtl"] .clinic-form-body .form-select {
 }
 
 /* --------------------------------------------------
+   Standards Section — Checkbox chips
+   -------------------------------------------------- */
+.standards-section {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-150, #E8EBF0);
+}
+
+.standards-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.standards-divider-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-500, #6B7280);
+}
+
+.standards-hint {
+    font-size: 0.7rem;
+    color: var(--gray-400, #9CA3AF);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.standards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.5rem;
+}
+
+.standard-chip {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.75rem 0.5rem;
+    border: 1.5px solid var(--gray-200, #E2E8F0);
+    border-radius: var(--radius-lg, 12px);
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    text-align: center;
+}
+
+.standard-chip:hover {
+    border-color: var(--primary-300, #93C5FD);
+    background: var(--primary-50, #EFF6FF);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+}
+
+.standard-chip.checked {
+    border-color: var(--primary-500, #3B82F6);
+    background: linear-gradient(135deg, var(--primary-50, #EFF6FF), var(--primary-100, #DBEAFE));
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.standard-chip .standard-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.standard-chip-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md, 8px);
+    background: var(--gray-100, #F0F2F5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: var(--gray-500, #6B7280);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.standard-chip:hover .standard-chip-icon {
+    background: var(--primary-100, #DBEAFE);
+    color: var(--primary-600, #2D6BA6);
+}
+
+.standard-chip.checked .standard-chip-icon {
+    background: linear-gradient(135deg, var(--primary-500, #3B82F6), var(--primary-600, #2D6BA6));
+    color: white;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+.standard-chip-code {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gray-700, #374151);
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+}
+
+.standard-chip.checked .standard-chip-code {
+    color: var(--primary-700, #254E7A);
+}
+
+.standard-chip-name {
+    font-size: 0.62rem;
+    font-weight: 500;
+    color: var(--gray-400, #9CA3AF);
+    line-height: 1.3;
+}
+
+.standard-chip.checked .standard-chip-name {
+    color: var(--primary-600, #2D6BA6);
+}
+
+@media (max-width: 575.98px) {
+    .standards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.4rem;
+    }
+
+    .standard-chip {
+        padding: 0.6rem 0.4rem;
+    }
+
+    .standard-chip-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+}
+
+/* --------------------------------------------------
    Footer actions
    -------------------------------------------------- */
 .clinic-form-footer {

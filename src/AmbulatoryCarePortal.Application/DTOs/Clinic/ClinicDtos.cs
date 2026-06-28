@@ -12,6 +12,7 @@ public class CreateClinicDto
     public ClinicType ClinicType { get; set; }
     public string? LicenseNumber { get; set; }
     public DateTime? LicenseExpiry { get; set; }
+    public List<string> SelectedStandards { get; set; } = new();
 }
 
 public class UpdateClinicDto
@@ -59,6 +60,7 @@ public class ClinicDetailDto
     public int DepartmentCount { get; set; }
     public int PolicyDocumentCount { get; set; }
     public int OpenGapCount { get; set; }
+    public List<string> SelectedStandards { get; set; } = new();
     public List<ClinicAssignmentDetailDto> DocumentAssignments { get; set; } = new();
     public List<GlobalTemplateValueDto> GlobalTemplateValues { get; set; } = new();
 }

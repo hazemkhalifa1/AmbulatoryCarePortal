@@ -13,6 +13,7 @@ public class Clinic : BaseEntity
     public string? LicenseNumber { get; set; }
     public DateTime? LicenseExpiry { get; set; }
     public bool IsActive { get; set; } = true;
+    public List<string> SelectedStandards { get; set; } = new();
     public decimal ComplianceScore { get; set; } = 0;
 
     // Navigation properties

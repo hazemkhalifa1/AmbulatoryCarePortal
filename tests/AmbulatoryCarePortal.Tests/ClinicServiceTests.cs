@@ -22,7 +22,7 @@ public class ClinicServiceTests
     private readonly Mock<IGenericRepository<Department>> _mockDeptRepo;
     private readonly Mock<IGenericRepository<PolicyDocument>> _mockPolicyRepo;
     private readonly Mock<IGenericRepository<DocumentTemplate>> _mockDocTemplateRepo;
-    private readonly Mock<IGenericRepository<ClinicDocument>> _mockClinicDocRepo;
+    private readonly Mock<IGenericRepository<ClinicTemplateAssignment>> _mockClinicDocRepo;
     private readonly Mock<IClinicTemplateAssignmentService> _mockAssignmentService;
     private readonly ClinicService _clinicService;
 
@@ -39,14 +39,14 @@ public class ClinicServiceTests
         _mockDeptRepo = new Mock<IGenericRepository<Department>>();
         _mockPolicyRepo = new Mock<IGenericRepository<PolicyDocument>>();
         _mockDocTemplateRepo = new Mock<IGenericRepository<DocumentTemplate>>();
-        _mockClinicDocRepo = new Mock<IGenericRepository<ClinicDocument>>();
+        _mockClinicDocRepo = new Mock<IGenericRepository<ClinicTemplateAssignment>>();
         _mockAssignmentService = new Mock<IClinicTemplateAssignmentService>();
 
         _mockUnitOfWork.Setup(u => u.Repository<Clinic>()).Returns(_mockClinicRepo.Object);
         _mockUnitOfWork.Setup(u => u.Repository<Department>()).Returns(_mockDeptRepo.Object);
         _mockUnitOfWork.Setup(u => u.Repository<PolicyDocument>()).Returns(_mockPolicyRepo.Object);
         _mockUnitOfWork.Setup(u => u.Repository<DocumentTemplate>()).Returns(_mockDocTemplateRepo.Object);
-        _mockUnitOfWork.Setup(u => u.Repository<ClinicDocument>()).Returns(_mockClinicDocRepo.Object);
+        _mockUnitOfWork.Setup(u => u.Repository<ClinicTemplateAssignment>()).Returns(_mockClinicDocRepo.Object);
 
         _clinicService = new ClinicService(_mockUnitOfWork.Object, _mockMapper.Object, _mockUserManager.Object, _mockAssignmentService.Object);
     }

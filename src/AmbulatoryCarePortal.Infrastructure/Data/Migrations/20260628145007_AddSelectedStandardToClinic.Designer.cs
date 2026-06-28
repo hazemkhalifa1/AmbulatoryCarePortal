@@ -4,16 +4,19 @@ using AmbulatoryCarePortal.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace AmbulatoryCarePortal.Infrastructure.Migrations
+namespace AmbulatoryCarePortal.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260628145007_AddSelectedStandardToClinic")]
+    partial class AddSelectedStandardToClinic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,7 +187,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasIndex("ClinicId", "ActionDate")
                         .IsDescending(false, true);
 
-                    b.ToTable("AuditTrails", (string)null);
+                    b.ToTable("AuditTrails");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ChecklistAnswer", b =>
@@ -238,7 +241,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("ChecklistAnswers", (string)null);
+                    b.ToTable("ChecklistAnswers");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ChecklistItem", b =>
@@ -288,7 +291,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("ChecklistTemplateId");
 
-                    b.ToTable("ChecklistItems", (string)null);
+                    b.ToTable("ChecklistItems");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ChecklistRound", b =>
@@ -355,7 +358,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsDescending(false, false, true)
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("ChecklistRounds", (string)null);
+                    b.ToTable("ChecklistRounds");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ChecklistTemplate", b =>
@@ -411,7 +414,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("ChecklistTemplates", (string)null);
+                    b.ToTable("ChecklistTemplates");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.Clinic", b =>
@@ -489,7 +492,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("Clinics", (string)null);
+                    b.ToTable("Clinics");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ClinicDocument", b =>
@@ -545,7 +548,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("ClinicDocuments", (string)null);
+                    b.ToTable("ClinicDocuments");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ClinicDocumentAttachment", b =>
@@ -603,7 +606,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("UploadedByUserId");
 
-                    b.ToTable("ClinicDocumentAttachments", (string)null);
+                    b.ToTable("ClinicDocumentAttachments");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ClinicSignature", b =>
@@ -665,7 +668,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("ClinicSignatures", (string)null);
+                    b.ToTable("ClinicSignatures");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ClinicTemplateAssignment", b =>
@@ -717,7 +720,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("ClinicTemplateAssignments", (string)null);
+                    b.ToTable("ClinicTemplateAssignments");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ClinicTemplateValue", b =>
@@ -765,7 +768,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("ClinicTemplateValues", (string)null);
+                    b.ToTable("ClinicTemplateValues");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.ComplianceScoreSnapshot", b =>
@@ -846,7 +849,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasIndex("ClinicId", "CalculatedAt")
                         .IsDescending(false, true);
 
-                    b.ToTable("ComplianceScoreSnapshot", (string)null);
+                    b.ToTable("ComplianceScoreSnapshot");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.Department", b =>
@@ -895,7 +898,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.DocumentTemplate", b =>
@@ -964,7 +967,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("DocumentTemplates", (string)null);
+                    b.ToTable("DocumentTemplates");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.DocumentTemplateVersion", b =>
@@ -1013,7 +1016,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("DocumentTemplateVersions", (string)null);
+                    b.ToTable("DocumentTemplateVersions");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.EvidenceAttachment", b =>
@@ -1081,7 +1084,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("UploadedByUserId");
 
-                    b.ToTable("EvidenceAttachments", (string)null);
+                    b.ToTable("EvidenceAttachments");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.Form", b =>
@@ -1141,7 +1144,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasIndex("ClinicId", "Category")
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("Forms", (string)null);
+                    b.ToTable("Forms");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.FormVersion", b =>
@@ -1193,7 +1196,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("UploadedByUserId");
 
-                    b.ToTable("FormVersions", (string)null);
+                    b.ToTable("FormVersions");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.GeneratedDocument", b =>
@@ -1257,7 +1260,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("DocumentTemplateId");
 
-                    b.ToTable("GeneratedDocuments", (string)null);
+                    b.ToTable("GeneratedDocuments");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.HrDocument", b =>
@@ -1333,7 +1336,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasIndex("HrStaffId", "ExpiryDate")
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("HrDocuments", (string)null);
+                    b.ToTable("HrDocuments");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.HrStaff", b =>
@@ -1413,7 +1416,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("HrStaffs", (string)null);
+                    b.ToTable("HrStaffs");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.KPI", b =>
@@ -1479,7 +1482,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("KPIs", (string)null);
+                    b.ToTable("KPIs");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.KPIEntry", b =>
@@ -1531,7 +1534,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasIndex("KPIId", "PeriodYear", "PeriodMonth")
                         .IsUnique();
 
-                    b.ToTable("KPIEntries", (string)null);
+                    b.ToTable("KPIEntries");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.Notification", b =>
@@ -1600,7 +1603,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsDescending(false, false, true)
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.PolicyDocument", b =>
@@ -1674,7 +1677,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasIndex("ClinicId", "DocumentStatus", "ExpiryDate")
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("PolicyDocuments", (string)null);
+                    b.ToTable("PolicyDocuments");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.SystemSetting", b =>
@@ -1731,7 +1734,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                     b.HasIndex("Key")
                         .IsUnique();
 
-                    b.ToTable("SystemSettings", (string)null);
+                    b.ToTable("SystemSettings");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.TemplateSigner", b =>
@@ -1784,7 +1787,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("TemplateSigners", (string)null);
+                    b.ToTable("TemplateSigners");
                 });
 
             modelBuilder.Entity("AmbulatoryCarePortal.Domain.Entities.TemplateVariable", b =>
@@ -1839,7 +1842,7 @@ namespace AmbulatoryCarePortal.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("TemplateVariables", (string)null);
+                    b.ToTable("TemplateVariables");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

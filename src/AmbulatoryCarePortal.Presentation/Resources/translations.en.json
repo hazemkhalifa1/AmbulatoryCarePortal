@@ -1024,5 +1024,8 @@
   "Calendar.ListView": "List View",
   "Calendar.GridView": "Calendar View",
   "Calendar.PreviousMonth": "Previous Month",
-  "Calendar.NextMonth": "Next Month"
+  "Calendar.NextMonth": "Next Month",
+
+  "Alert.Success.AssignmentDeleted": "Template assignment deleted successfully!",
+  "Alert.Error.AssignmentDeleteFailed": "Failed to delete template assignment."
 }

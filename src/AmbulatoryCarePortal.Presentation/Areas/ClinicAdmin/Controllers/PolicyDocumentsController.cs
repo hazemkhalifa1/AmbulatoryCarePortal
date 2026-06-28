@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AmbulatoryCarePortal.Application.Common;
 using AmbulatoryCarePortal.Application.Constants;
+using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.DTOs.PolicyDocument;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
@@ -15,20 +16,20 @@ namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 public class PolicyDocumentsController : Controller
 {
     private readonly IPolicyDocumentService _policyService;
-    private readonly IClinicDocumentService _clinicDocumentService;
+    private readonly IClinicTemplateAssignmentService _assignmentService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<PolicyDocumentsController> _logger;
     private readonly ITranslationService _localizer;
 
     public PolicyDocumentsController(
         IPolicyDocumentService policyService,
-        IClinicDocumentService clinicDocumentService,
+        IClinicTemplateAssignmentService assignmentService,
         IUnitOfWork unitOfWork,
         ILogger<PolicyDocumentsController> logger,
         ITranslationService localizer)
     {
         _policyService = policyService;
-        _clinicDocumentService = clinicDocumentService;
+        _assignmentService = assignmentService;
         _unitOfWork = unitOfWork;
         _logger = logger;
         _localizer = localizer;
@@ -50,7 +51,7 @@ public class PolicyDocumentsController : Controller
         }
 
         var policies = await _policyService.GetClinicPoliciesAsync(clinicId, 1, int.MaxValue);
-        var clinicDocuments = await _clinicDocumentService.GetClinicDocumentsAsync(clinicId, searchTerm, statusFilter, standardFilter);
+        var assignments = await _assignmentService.GetAssignmentsByClinicAsync(clinicId, searchTerm, statusFilter);
 
         var policyItems = policies.Data.Select(p => new PolicyDocumentListItem
         {
@@ -66,17 +67,17 @@ public class PolicyDocumentsController : Controller
             Type = "Policy"
         });
 
-        var clinicDocItems = clinicDocuments.Select(d => new PolicyDocumentListItem
+        var clinicDocItems = assignments.Select(a => new PolicyDocumentListItem
         {
-            Id = d.Id,
-            Title = d.TitleEn,
-            TitleAr = d.TitleAr,
-            StandardCode = d.StandardCode,
-            DepartmentName = d.DepartmentCategory ?? "",
-            DocumentStatus = d.DocumentStatus.ToString(),
-            ExpiryDate = d.ExpiryDate,
+            Id = a.Id,
+            Title = a.TitleEn,
+            TitleAr = a.TitleAr,
+            StandardCode = a.StandardCode,
+            DepartmentName = "",
+            DocumentStatus = a.AssignmentStatus,
+            ExpiryDate = a.ExpiryDate,
             VersionNumber = 1,
-            AttachmentCount = d.AttachmentCount,
+            AttachmentCount = a.GeneratedDocumentCount,
             Type = "ClinicDocument"
         });
 
@@ -118,7 +119,7 @@ public class PolicyDocumentsController : Controller
     {
         if (type == "ClinicDocument")
         {
-            return RedirectToAction("Details", "ClinicDocuments", new { area = "ClinicAdmin", id });
+            return RedirectToAction("Details", "ClinicTemplates", new { area = "ClinicAdmin", id });
         }
 
         return RedirectToAction("Details", "PolicyManagement", new { area = "ClinicAdmin", id });

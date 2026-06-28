@@ -1,7 +1,7 @@
 @model List<ClinicTemplateAssignmentDto>
 
 @{
-    ViewData["Title"] = @Localizer.T("Page.ClinicDocuments");
+    ViewData["Title"] = @Localizer.T("Page.ClinicTemplates");
     var searchTerm = (string?)ViewBag.SearchTerm;
     var statusFilter = (string?)ViewBag.StatusFilter;
     var standardFilter = (string?)ViewBag.StandardFilter;
@@ -9,7 +9,7 @@
 }
 
 <partial name="_PageHeader" model='new {
-    Title = Localizer.T("Page.ClinicDocuments"),
+    Title = Localizer.T("Page.ClinicTemplates"),
     Icon = "fa-file",
     Subtitle = "",
     Breadcrumb = ""
@@ -37,7 +37,7 @@
 <div class="table-container">
     <div class="table-toolbar">
         <div >
-            <span class="fw-semibold">@Localizer.T("Page.ClinicDocumentsList")</span>
+            <span class="fw-semibold">@Localizer.T("Page.ClinicTemplatesList")</span>
             <span class="text-muted ms-2 small">@Model.Count @Localizer.T("Doc.AttachmentCount")</span>
         </div>
         <div class="toolbar-right gap-2">
@@ -68,7 +68,7 @@
         </div>
     </div>
 
-    <table class="table table-hover" role="table" aria-label="@Localizer.T("Page.ClinicDocuments")">
+    <table class="table table-hover" role="table" aria-label="@Localizer.T("Page.ClinicTemplates")">
         <thead>
             <tr>
                 <th scope="col">@Localizer.T("Doc.StandardCode")</th>

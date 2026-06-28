@@ -1,7 +1,5 @@
-using System.Transactions;
 using AmbulatoryCarePortal.Application.Common;
 using AmbulatoryCarePortal.Application.DTOs.Clinic;
-using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
 using AmbulatoryCarePortal.Domain.Enums;
@@ -54,7 +52,7 @@ public class ClinicService : IClinicService
 
         var userCount = await _userManager.Users.CountAsync(x => x.ClinicId == clinicId);
         var departmentCount = await _unitOfWork.Repository<Department>().CountAsync(x => x.ClinicId == clinicId);
-        var policyCount = await _unitOfWork.Repository<ClinicDocument>().CountAsync(x => x.ClinicId == clinicId);
+        var policyCount = await _unitOfWork.Repository<ClinicTemplateAssignment>().CountAsync(x => x.ClinicId == clinicId);
         var openGapCount = await _unitOfWork.Repository<PolicyDocument>().CountAsync(x =>
             x.ClinicId == clinicId &&
             (x.DocumentStatus == DocumentStatus.MissingAttachment ||
@@ -105,8 +103,6 @@ public class ClinicService : IClinicService
 
     public async Task<int> CreateClinicAsync(CreateClinicDto dto)
     {
-        using var tx = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
         var clinic = _mapper.Map<Clinic>(dto);
         clinic.IsActive = true;
         clinic.ComplianceScore = 0;
@@ -116,30 +112,13 @@ public class ClinicService : IClinicService
 
         if (clinic.ClinicType == ClinicType.AMB)
         {
-            await CreateDefaultDepartmentsAsync(clinic.Id);
+            await CreateDefaultDepartmentsAsync(clinic.Id, dto.SelectedStandards);
         }
         else if (clinic.ClinicType == ClinicType.Dental)
         {
             await CreateDentalDepartmentsAsync(clinic.Id);
         }
 
-        // Auto-assign active document templates to the new clinic
-        var activeTemplates = await _unitOfWork.Repository<DocumentTemplate>().FindAsync(t => t.IsActive);
-        if (activeTemplates.Any())
-        {
-            var assignments = activeTemplates.Select(t => new ClinicTemplateAssignment
-            {
-                ClinicId = clinic.Id,
-                DocumentTemplateId = t.Id,
-                AssignmentStatus = Domain.Enums.ClinicDocumentStatus.NeedsReview,
-                CreatedAt = DateTime.UtcNow
-            }).ToList();
-
-            await _unitOfWork.Repository<ClinicTemplateAssignment>().AddRangeAsync(assignments);
-            await _unitOfWork.SaveChangesAsync();
-        }
-
-        tx.Complete();
         return clinic.Id;
     }
 
@@ -170,7 +149,7 @@ public class ClinicService : IClinicService
         return true;
     }
 
-    private async Task CreateDefaultDepartmentsAsync(int clinicId)
+    private async Task CreateDefaultDepartmentsAsync(int clinicId, List<string> SelectadStandards)
     {
         var departments = new[]
         {
@@ -187,7 +166,7 @@ public class ClinicService : IClinicService
             ("DA", "Dental Anesthesia", "تخدير الأسنان")
         };
 
-        var departmentEntities = departments.Select(d => new Department
+        var departmentEntities = departments.Where(d => SelectadStandards.Contains(d.Item1, StringComparer.OrdinalIgnoreCase)).Select(d => new Department
         {
             NameEn = d.Item2,
             NameAr = d.Item3,

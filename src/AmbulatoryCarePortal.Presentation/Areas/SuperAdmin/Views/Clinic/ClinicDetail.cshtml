@@ -31,7 +31,7 @@
         </div>
     </div>
     <div class="page-header-actions">
-        <a href="/SuperAdmin/Dashboard/Edit/@Model.Id" class="btn btn-primary">
+        <a href="/SuperAdmin/Clinic/Edit/@Model.Id" class="btn btn-primary">
             <i class="fas fa-edit"></i> @Localizer.T("Common.Edit")
         </a>
         <a href="/SuperAdmin/Dashboard/Clinics" class="btn btn-secondary">
@@ -150,7 +150,7 @@
                             <span class="action-desc">@Localizer.T("Dashboard.Action.LinkTemplates")</span>
                         </button>
                     </form>
-                    <form method="post" action="/SuperAdmin/Dashboard/Delete/@Model.Id" class="h-100 m-0 p-0" style="display: contents;" onsubmit="return confirm('@Localizer.T("Clinic.ConfirmDelete"): @Model.Name?');">
+                    <form method="post" action="/SuperAdmin/Clinic/Delete/@Model.Id" class="h-100 m-0 p-0" style="display: contents;" onsubmit="return confirm('@Localizer.T("Clinic.ConfirmDelete"): @Model.Name?');">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="action-card-btn danger" style="cursor: pointer; font-family: inherit;">
                             <i class="fas fa-trash"></i>

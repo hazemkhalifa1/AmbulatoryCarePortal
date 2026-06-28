@@ -352,12 +352,12 @@ public class ComplianceScoreService : IComplianceScoreService
         var templateCount = await _unitOfWork.Repository<DocumentTemplate>().CountAsync(t => t.IsActive);
         if (templateCount == 0) return 100;
 
-        var clinicDocs = (await _unitOfWork.Repository<ClinicDocument>().FindAsync(
-            d => d.ClinicId == clinicId)).ToList();
+        var assignments = (await _unitOfWork.Repository<ClinicTemplateAssignment>().FindAsync(
+            a => a.ClinicId == clinicId)).ToList();
 
-        var validDocs = clinicDocs.Count(d =>
-            d.DocumentStatus == ClinicDocumentStatus.Complete &&
-            (!d.ExpiryDate.HasValue || d.ExpiryDate >= DateTime.UtcNow));
+        var validDocs = assignments.Count(a =>
+            a.AssignmentStatus == ClinicDocumentStatus.Complete &&
+            (!a.ExpiryDate.HasValue || a.ExpiryDate >= DateTime.UtcNow));
 
         return templateCount > 0 ? (validDocs * 100m) / templateCount : 100;
     }

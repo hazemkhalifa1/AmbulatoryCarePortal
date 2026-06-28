@@ -11,19 +11,19 @@ namespace AmbulatoryCarePortal.Presentation.Areas.ClinicAdmin.Controllers;
 
 [Area("ClinicAdmin")]
 [Authorize(Policy = "Permission.documents.manage")]
-public class ClinicDocumentsController : Controller
+public class ClinicTemplatesController : Controller
 {
     private readonly IClinicTemplateAssignmentService _assignmentService;
     private readonly IDocumentGenerationService _generationService;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<ClinicDocumentsController> _logger;
+    private readonly ILogger<ClinicTemplatesController> _logger;
     private readonly ITranslationService _localizer;
 
-    public ClinicDocumentsController(
+    public ClinicTemplatesController(
         IClinicTemplateAssignmentService assignmentService,
         IDocumentGenerationService generationService,
         IUnitOfWork unitOfWork,
-        ILogger<ClinicDocumentsController> logger,
+        ILogger<ClinicTemplatesController> logger,
         ITranslationService localizer)
     {
         _assignmentService = assignmentService;

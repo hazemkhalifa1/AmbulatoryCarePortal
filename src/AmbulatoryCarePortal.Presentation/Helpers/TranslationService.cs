@@ -144,6 +144,7 @@ public class TranslationService : ITranslationService
 
             ["Nav.Dashboard"] = "Dashboard",
             ["Nav.Documents"] = "Documents",
+            ["Nav.ClinicTemplates"] = "Clinic Templates",
             ["Nav.Policies"] = "Policies",
             ["Nav.KPIMonitoring"] = "KPI Monitoring",
             ["Nav.Checklists"] = "Checklists",
@@ -256,7 +257,7 @@ public class TranslationService : ITranslationService
             ["Page.ReportingCenter"] = "Reporting Center",
             ["Page.ExpiringDocuments"] = "Expiring Documents",
             ["Page.NonCompliantStaff"] = "Non-Compliant Staff",
-            ["Page.ClinicDocuments"] = "Documents",
+            ["Page.ClinicTemplates"] = "Clinic Templates",
             ["Page.Profile"] = "My Profile",
             ["Page.ForgotPassword"] = "Forgot Password",
             ["Page.ResetPassword"] = "Reset Password",
@@ -480,7 +481,7 @@ public class TranslationService : ITranslationService
             ["Page.EditPolicyDocument"] = "Edit Policy Document",
             ["Page.PolicyDetails"] = "Policy Details",
             ["Page.StaffCreate"] = "Add Staff Member",
-            ["Page.ClinicDocumentsList"] = "Documents List",
+            ["Page.ClinicTemplatesList"] = "Clinic Templates List",
             ["Page.UserActivityLog"] = "Activity Log",
 
             ["Alert.Error.InvalidFileType"] = "Only PDF, Word, and Excel files are allowed",
@@ -994,6 +995,7 @@ public class TranslationService : ITranslationService
 
             ["Nav.Dashboard"] = "لوحة القيادة",
             ["Nav.Documents"] = "المستندات",
+            ["Nav.ClinicTemplates"] = "قوالب العيادة",
             ["Nav.Policies"] = "السياسات",
             ["Nav.KPIMonitoring"] = "مراقبة مؤشرات الأداء",
             ["Nav.Checklists"] = "قوائم التحقق",
@@ -1106,7 +1108,7 @@ public class TranslationService : ITranslationService
             ["Page.ReportingCenter"] = "مركز التقارير",
             ["Page.ExpiringDocuments"] = "الوثائق المنتهية صلاحيتها",
             ["Page.NonCompliantStaff"] = "الموظفون غير الملتزمين",
-            ["Page.ClinicDocuments"] = "المستندات",
+            ["Page.ClinicTemplates"] = "قوالب العيادة",
             ["Page.Profile"] = "ملفي الشخصي",
             ["Page.ForgotPassword"] = "نسيت كلمة المرور",
             ["Page.ResetPassword"] = "إعادة تعيين كلمة المرور",
@@ -1321,7 +1323,7 @@ public class TranslationService : ITranslationService
             ["Page.EditPolicyDocument"] = "تعديل وثيقة السياسة",
             ["Page.PolicyDetails"] = "تفاصيل السياسة",
             ["Page.StaffCreate"] = "إضافة موظف",
-            ["Page.ClinicDocumentsList"] = "قائمة المستندات",
+            ["Page.ClinicTemplatesList"] = "قائمة قوالب العيادة",
             ["Page.UserActivityLog"] = "سجل النشاط",
 
             ["Alert.Error.InvalidFileType"] = "يُسمح فقط بملفات PDF و Word و Excel",

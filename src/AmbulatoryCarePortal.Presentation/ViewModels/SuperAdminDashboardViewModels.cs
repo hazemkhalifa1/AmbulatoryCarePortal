@@ -22,4 +22,5 @@ public class CreateClinicViewModel
     public bool IsActive { get; set; } = true;
     public IFormFile? LogoFile { get; set; }
     public string? ExistingLogoPath { get; set; }
+    public List<string> SelectedStandards { get; set; } = new();
 }

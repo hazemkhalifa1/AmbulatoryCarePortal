@@ -239,38 +239,38 @@ public class ComplianceCalendarService : IComplianceCalendarService
     private async Task<List<ComplianceCalendarItemDto>> GetClinicDocumentExpiryItemsAsync(int clinicId, DateTime today)
     {
         var items = new List<ComplianceCalendarItemDto>();
-        var clinicDocs = await _unitOfWork.Repository<ClinicDocument>().FindAsync(
-            cd => cd.ClinicId == clinicId && cd.ExpiryDate.HasValue && !cd.IsDeleted
+        var assignments = await _unitOfWork.Repository<ClinicTemplateAssignment>().FindAsync(
+            a => a.ClinicId == clinicId && a.ExpiryDate.HasValue && !a.IsDeleted
         );
 
-        var templateIds = clinicDocs.Select(cd => cd.DocumentTemplateId).Distinct().ToList();
+        var templateIds = assignments.Select(a => a.DocumentTemplateId).Distinct().ToList();
         var templates = templateIds.Any()
             ? await _unitOfWork.Repository<DocumentTemplate>().FindAsync(t => templateIds.Contains(t.Id))
             : new List<DocumentTemplate>();
         var templateDict = templates.ToDictionary(t => t.Id, t => t);
 
-        foreach (var doc in clinicDocs)
+        foreach (var assignment in assignments)
         {
-            var daysRemaining = (doc.ExpiryDate!.Value.Date - today).Days;
+            var daysRemaining = (assignment.ExpiryDate!.Value.Date - today).Days;
             var severity = daysRemaining <= 0 ? ComplianceItemSeverity.Critical
                 : daysRemaining <= 30 ? ComplianceItemSeverity.Warning
                 : ComplianceItemSeverity.Info;
 
-            var template = templateDict.GetValueOrDefault(doc.DocumentTemplateId);
+            var template = templateDict.GetValueOrDefault(assignment.DocumentTemplateId);
 
             items.Add(new ComplianceCalendarItemDto
             {
-                Id = doc.Id,
-                Title = template?.TitleEn ?? $"Document #{doc.Id}",
+                Id = assignment.Id,
+                Title = template?.TitleEn ?? $"Document #{assignment.Id}",
                 TitleAr = template?.TitleAr,
                 ItemType = ComplianceItemType.ClinicDocumentExpiry,
                 Severity = severity,
-                DueDate = doc.ExpiryDate,
+                DueDate = assignment.ExpiryDate,
                 DaysRemaining = daysRemaining,
-                SourceId = doc.Id,
+                SourceId = assignment.Id,
                 RelatedEntityName = template?.StandardCode,
-                DetailUrl = $"/ClinicAdmin/ClinicDocuments/Details/{doc.Id}",
-                Status = doc.DocumentStatus.ToString()
+                DetailUrl = $"/ClinicAdmin/ClinicDocuments/Details/{assignment.Id}",
+                Status = assignment.AssignmentStatus.ToString()
             });
         }
 

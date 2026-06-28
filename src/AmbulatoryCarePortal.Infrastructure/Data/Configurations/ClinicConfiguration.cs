@@ -1,8 +1,21 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using AmbulatoryCarePortal.Domain.Entities;
 
 namespace AmbulatoryCarePortal.Infrastructure.Data.Configurations;
+
+public class SelectedStandardsConverter : ValueConverter<List<string>, string>
+{
+    public SelectedStandardsConverter()
+        : base(
+            v => v == null ? "[]" : System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
+            v => string.IsNullOrEmpty(v)
+                ? new List<string>()
+                : System.Text.Json.JsonSerializer.Deserialize<List<string>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new())
+    {
+    }
+}
 
 public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
 {
@@ -34,6 +47,10 @@ public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
 
         builder.Property(x => x.ComplianceScore)
             .HasPrecision(5, 2);
+
+        builder.Property(x => x.SelectedStandards)
+            .HasConversion(new SelectedStandardsConverter())
+            .HasColumnType("nvarchar(max)");
 
         // Relationships
         builder.HasMany(x => x.Users)

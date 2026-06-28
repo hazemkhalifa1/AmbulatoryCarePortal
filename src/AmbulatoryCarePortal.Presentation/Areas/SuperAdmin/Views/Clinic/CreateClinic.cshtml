@@ -1,26 +1,27 @@
 @model CreateClinicViewModel
 
 @{
-    ViewData["Title"] = Localizer.T("Page.EditClinic");
+    ViewData["Title"] = Localizer.T("Page.CreateClinic");
+    var standardNames = ViewBag.StandardNames as Dictionary<string, string> ?? new();
+    var standardIcons = ViewBag.StandardIcons as Dictionary<string, string> ?? new();
 }
 
 <link rel="stylesheet" href="~/css/_create-clinic.css" asp-append-version="true" />
 
 <div class="create-clinic-hero">
-    <div class="create-clinic-hero-icon"><i class="fas fa-edit" aria-hidden="true"></i></div>
+    <div class="create-clinic-hero-icon"><i class="fas fa-plus-circle" aria-hidden="true"></i></div>
     <div class="create-clinic-hero-body">
-        <h1 class="create-clinic-hero-title"><i class="fas fa-edit" aria-hidden="true"></i>@Localizer.T("Clinic.EditHeading")</h1>
-        <p class="create-clinic-hero-desc">@Localizer.T("Clinic.EditSubtitle")</p>
+        <h1 class="create-clinic-hero-title"><i class="fas fa-plus-circle" aria-hidden="true"></i>@Localizer.T("Clinic.CreateHeading")</h1>
+        <p class="create-clinic-hero-desc">@Localizer.T("Clinic.CreateSubtitle")</p>
     </div>
-    <a asp-action="ClinicDetail" asp-controller="Dashboard" asp-area="SuperAdmin" asp-route-id="@Model.Id" class="btn-back">
+    <a asp-action="Clinics" asp-controller="Dashboard" asp-area="SuperAdmin" class="btn-back">
         <i class="fas fa-arrow-left" aria-hidden="true"></i>@Localizer.T("Common.Back")
     </a>
 </div>
 
 <div class="create-clinic-layout">
     <div class="create-clinic-form-wrap">
-        <form method="post" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" aria-label="Edit clinic form" novalidate>
-            <input type="hidden" asp-for="Id" />
+        <form method="post" asp-action="CreateClinic" enctype="multipart/form-data" aria-label="Create clinic form" novalidate>
             <div asp-validation-summary="ModelOnly" class="validation-summary-errors" role="alert"></div>
 
             <!-- Section: Basic Information -->
@@ -57,7 +58,7 @@
                 </div>
             </div>
 
-            <!-- Section: Classification -->
+            <!-- Section: Classification & Standards -->
             <div class="clinic-form-card">
                 <div class="clinic-form-header">
                     <div class="form-header-icon icon-tag"><i class="fas fa-tag" aria-hidden="true"></i></div>
@@ -69,24 +70,20 @@
                 <div class="clinic-form-body">
                     <div class="mb-3">
                         <label asp-for="ClinicType" class="form-label">@Localizer.T("Clinic.Type") <span class="text-danger">*</span></label>
-                        <select asp-for="ClinicType" class="form-select" asp-items="Html.GetEnumSelectList<ClinicType>()" required aria-required="true">
+                        <select asp-for="ClinicType" class="form-select" id="clinicTypeSelect" asp-items="Html.GetEnumSelectList<ClinicType>()" required aria-required="true">
                             <option value="">@Localizer.T("Form.SelectClinicType")</option>
                         </select>
                         <span asp-validation-for="ClinicType" class="text-danger"></span>
                     </div>
-                    <div>
-                        <label class="form-label" for="isActiveSwitch">@Localizer.T("Common.Status")</label>
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="form-check form-switch mb-0">
-                                <input asp-for="IsActive" class="form-check-input" id="isActiveSwitch" />
-                                <label class="form-check-label" for="isActiveSwitch">
-                                    <span class="badge rounded-pill px-3 py-1 @(Model.IsActive ? "bg-success" : "bg-secondary")" id="statusBadge">
-                                        @(Model.IsActive ? Localizer.T("Common.Active") : Localizer.T("Common.Inactive"))
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+
+                    <!-- Standards Checkboxes -->
+    <div class="standards-section" id="standardsSection" style="display:none">
+        <div class="standards-divider">
+            <span class="standards-divider-label">@Localizer.T("Clinic.SelectStandards")</span>
+        </div>
+        <p class="standards-hint">@Localizer.T("Clinic.StandardsHint")</p>
+        <div class="standards-grid" id="standardsGrid"></div>
+    </div>
                 </div>
             </div>
 
@@ -100,13 +97,6 @@
                     </div>
                 </div>
                 <div class="clinic-form-body">
-                    @if (!string.IsNullOrEmpty(Model.ExistingLogoPath))
-                    {
-                        <div class="clinic-current-logo">
-                            <div class="clinic-current-logo-label">@Localizer.T("Common.Current")</div>
-                            <img src="@Model.ExistingLogoPath" alt="Current logo" />
-                        </div>
-                    }
                     <div class="clinic-upload-zone" id="logoUploadZone">
                         <div class="upload-icon"><i class="fas fa-cloud-upload-alt" aria-hidden="true"></i></div>
                         <div class="upload-heading">@Localizer.T("Upload.DropOrClick")</div>
@@ -126,6 +116,13 @@
                             </button>
                         </div>
                     </div>
+                    @if (!string.IsNullOrEmpty(Model.ExistingLogoPath))
+                    {
+                        <div class="clinic-current-logo">
+                            <div class="clinic-current-logo-label">@Localizer.T("Common.Current")</div>
+                            <img src="@Model.ExistingLogoPath" alt="Current logo" />
+                        </div>
+                    }
                     <span asp-validation-for="LogoFile" class="text-danger"></span>
                 </div>
             </div>
@@ -155,9 +152,9 @@
 
             <div class="clinic-form-footer">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save" aria-hidden="true"></i>@Localizer.T("Clinic.UpdateButton")
+                    <i class="fas fa-save" aria-hidden="true"></i>@Localizer.T("Clinic.CreateButton")
                 </button>
-                <a asp-action="ClinicDetail" asp-controller="Dashboard" asp-area="SuperAdmin" asp-route-id="@Model.Id" class="btn btn-secondary">
+                <a asp-action="Clinics" asp-controller="Dashboard" asp-area="SuperAdmin" class="btn btn-secondary">
                     <i class="fas fa-times" aria-hidden="true"></i>@Localizer.T("Button.Cancel")
                 </a>
             </div>
@@ -169,6 +166,89 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
         (function() {
+            // Enum integer values from ASP.NET: AMB=0, Dental=1
+            var enumToName = { '0': 'AMB', '1': 'Dental' };
+
+            var standardsByType = {
+                'AMB': ["LD","PC","LB","RD","DN","MM","MOI","IPC","FMS","DPU","DA"],
+                'Dental': ["LD","PC","DL","MOI","IPC","FMS"]
+            };
+
+            var standardNames = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(standardNames));
+            var standardIcons = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(standardIcons));
+
+            var clinicTypeSelect = document.getElementById('clinicTypeSelect');
+            var standardsSection = document.getElementById('standardsSection');
+            var standardsGrid = document.getElementById('standardsGrid');
+            var selectedStandards = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SelectedStandards ?? new List<string>()));
+
+            function resolveClinicType(val) {
+                return enumToName[val] || val;
+            }
+
+            function buildStandards(clinicTypeVal, selected) {
+                var name = resolveClinicType(clinicTypeVal);
+                var stds = standardsByType[name];
+                if (!clinicTypeVal || !stds) {
+                    standardsSection.style.display = 'none';
+                    return;
+                }
+
+                standardsSection.style.display = 'block';
+                standardsGrid.innerHTML = '';
+
+                stds.forEach(function(std) {
+                    var chipName = standardNames[std] || std;
+                    var icon = standardIcons[std] || 'fa-clipboard-list';
+                    var isChecked = selected && selected.indexOf(std) >= 0;
+
+                    var label = document.createElement('label');
+                    label.className = 'standard-chip' + (isChecked ? ' checked' : '');
+                    label.setAttribute('data-standard', std);
+
+                    var input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.name = 'SelectedStandards';
+                    input.value = std;
+                    if (isChecked) input.checked = true;
+                    input.className = 'standard-checkbox';
+
+                    var iconSpan = document.createElement('span');
+                    iconSpan.className = 'standard-chip-icon';
+                    iconSpan.innerHTML = '<i class="fas ' + icon + '" aria-hidden="true"></i>';
+
+                    var codeSpan = document.createElement('span');
+                    codeSpan.className = 'standard-chip-code';
+                    codeSpan.textContent = std;
+
+                    var nameSpan = document.createElement('span');
+                    nameSpan.className = 'standard-chip-name';
+                    nameSpan.textContent = chipName;
+
+                    label.appendChild(input);
+                    label.appendChild(iconSpan);
+                    label.appendChild(codeSpan);
+                    label.appendChild(nameSpan);
+
+                    input.addEventListener('change', function() {
+                        this.closest('.standard-chip').classList.toggle('checked', this.checked);
+                    });
+
+                    standardsGrid.appendChild(label);
+                });
+            }
+
+            if (clinicTypeSelect) {
+                clinicTypeSelect.addEventListener('change', function() {
+                    buildStandards(this.value, selectedStandards);
+                });
+
+                if (clinicTypeSelect.value) {
+                    buildStandards(clinicTypeSelect.value, selectedStandards);
+                }
+            }
+
+            // Logo upload
             var uploadZone = document.getElementById('logoUploadZone');
             var fileInput = document.getElementById('logoFileInput');
             var preview = document.getElementById('logoPreview');
@@ -178,33 +258,18 @@
 
             if (uploadZone && fileInput) {
                 uploadZone.addEventListener('click', function() { fileInput.click(); });
-
-                uploadZone.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    uploadZone.classList.add('is-dragover');
-                });
-
-                uploadZone.addEventListener('dragleave', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    uploadZone.classList.remove('is-dragover');
-                });
-
+                uploadZone.addEventListener('dragover', function(e) { e.preventDefault(); e.stopPropagation(); uploadZone.classList.add('is-dragover'); });
+                uploadZone.addEventListener('dragleave', function(e) { e.preventDefault(); e.stopPropagation(); uploadZone.classList.remove('is-dragover'); });
                 uploadZone.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
+                    e.preventDefault(); e.stopPropagation();
                     uploadZone.classList.remove('is-dragover');
                     if (e.dataTransfer.files && e.dataTransfer.files.length) {
                         fileInput.files = e.dataTransfer.files;
                         updateFilePreview(e.dataTransfer.files[0]);
                     }
                 });
-
                 fileInput.addEventListener('change', function() {
-                    if (fileInput.files && fileInput.files.length) {
-                        updateFilePreview(fileInput.files[0]);
-                    }
+                    if (fileInput.files && fileInput.files.length) updateFilePreview(fileInput.files[0]);
                 });
             }
 
@@ -213,34 +278,15 @@
                 preview.classList.add('show');
                 fileName.textContent = file.name;
                 var size = file.size;
-                if (size > 1048576) {
-                    fileSize.textContent = (size / 1048576).toFixed(1) + ' MB';
-                } else if (size > 1024) {
-                    fileSize.textContent = (size / 1024).toFixed(1) + ' KB';
-                } else {
-                    fileSize.textContent = size + ' B';
-                }
+                if (size > 1048576) fileSize.textContent = (size / 1048576).toFixed(1) + ' MB';
+                else if (size > 1024) fileSize.textContent = (size / 1024).toFixed(1) + ' KB';
+                else fileSize.textContent = size + ' B';
             }
 
             if (removeBtn) {
                 removeBtn.addEventListener('click', function() {
                     fileInput.value = '';
                     preview.classList.remove('show');
-                });
-            }
-
-            // IsActive toggle badge
-            var activeSwitch = document.getElementById('isActiveSwitch');
-            var statusBadge = document.getElementById('statusBadge');
-            if (activeSwitch && statusBadge) {
-                activeSwitch.addEventListener('change', function() {
-                    if (this.checked) {
-                        statusBadge.className = 'badge rounded-pill px-3 py-1 bg-success';
-                        statusBadge.textContent = '@Localizer.T("Common.Active")';
-                    } else {
-                        statusBadge.className = 'badge rounded-pill px-3 py-1 bg-secondary';
-                        statusBadge.textContent = '@Localizer.T("Common.Inactive")';
-                    }
                 });
             }
         })();

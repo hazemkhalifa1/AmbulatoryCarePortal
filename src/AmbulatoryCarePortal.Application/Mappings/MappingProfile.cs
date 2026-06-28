@@ -117,13 +117,6 @@ public class MappingProfile : Profile
         CreateMap<GeneratedDocument, GeneratedDocumentDto>()
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
 
-        // ClinicDocument Mappings
-        CreateMap<ClinicDocument, ClinicDocumentDto>();
-        CreateMap<ClinicDocument, ClinicDocumentDetailDto>();
-
-        // ClinicDocumentAttachment Mappings
-        CreateMap<ClinicDocumentAttachment, ClinicDocumentAttachmentDto>();
-
         // Department Mappings
         CreateMap<Department, DepartmentDto>()
             .ForMember(dest => dest.ClinicName, opt => opt.MapFrom(src => src.Clinic.Name));

@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="page-header-actions">
-        <a href="/SuperAdmin/Dashboard/CreateClinic" class="btn btn-primary">
+        <a href="/SuperAdmin/Clinic/CreateClinic" class="btn btn-primary">
             <i class="fas fa-plus"></i> @Localizer.T("Button.Add")
         </a>
         <a href="/SuperAdmin/Dashboard" class="btn btn-secondary">
@@ -131,13 +131,13 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex gap-1 justify-content-center">
-                                        <a href="/SuperAdmin/Dashboard/ClinicDetail/@clinic.Id" class="btn btn-sm btn-secondary btn-icon" data-bs-toggle="tooltip" title="@Localizer.T("Common.View")">
+                                        <a href="/SuperAdmin/Clinic/ClinicDetail/@clinic.Id" class="btn btn-sm btn-secondary btn-icon" data-bs-toggle="tooltip" title="@Localizer.T("Common.View")">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="/SuperAdmin/Dashboard/Edit/@clinic.Id" class="btn btn-sm btn-secondary btn-icon" data-bs-toggle="tooltip" title="@Localizer.T("Common.Edit")">
+                                        <a href="/SuperAdmin/Clinic/Edit/@clinic.Id" class="btn btn-sm btn-secondary btn-icon" data-bs-toggle="tooltip" title="@Localizer.T("Common.Edit")">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form method="post" action="/SuperAdmin/Dashboard/Delete/@clinic.Id" class="d-inline" onsubmit="return confirm('@Localizer.T("Clinic.ConfirmDelete"): @clinic.Name?');">
+                                        <form method="post" action="/SuperAdmin/Clinic/Delete/@clinic.Id" class="d-inline" onsubmit="return confirm('@Localizer.T("Clinic.ConfirmDelete"): @clinic.Name?');">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="btn btn-sm btn-secondary btn-icon" data-bs-toggle="tooltip" title="@Localizer.T("Common.Delete")">
                                                 <i class="fas fa-trash"></i>
