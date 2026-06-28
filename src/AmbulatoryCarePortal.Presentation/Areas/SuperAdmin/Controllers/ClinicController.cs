@@ -1,3 +1,4 @@
+using AmbulatoryCarePortal.Application.DTOs.Clinic;
 using AmbulatoryCarePortal.Application.DTOs.Document;
 using AmbulatoryCarePortal.Application.Interfaces;
 using AmbulatoryCarePortal.Domain.Entities;
@@ -106,7 +107,7 @@ public class ClinicController : Controller
 
         try
         {
-            var dto = new AmbulatoryCarePortal.Application.DTOs.Clinic.CreateClinicDto
+            var dto = new CreateClinicDto
             {
                 Name = model.Name,
                 NameAr = model.NameAr,
@@ -237,20 +238,40 @@ public class ClinicController : Controller
             return View(model);
         }
 
+        if (id != model.Id)
+            return BadRequest();
+
+        var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(id);
+
+        if (clinic is null)
+            return NotFound();
+
+
         try
         {
-            var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(id);
-            if (clinic == null)
-                return NotFound();
+            var dto = new UpdateClinicDto
+            {
+                Id = model.Id,
+                Name = model.Name,
+                NameAr = model.NameAr,
+                CityEn = model.CityEn,
+                CityAr = model.CityAr,
+                IsActive = model.IsActive,
+                ClinicType = model.ClinicType,
+                LicenseNumber = model.LicenseNumber,
+                LicenseExpiry = model.LicenseExpiry,
+                SelectedStandards = model.SelectedStandards
+            };
+            var result = await _clinicService.UpdateClinicAsync(dto);
 
-            clinic.Name = model.Name;
-            clinic.NameAr = model.NameAr;
-            clinic.CityEn = model.CityEn;
-            clinic.CityAr = model.CityAr;
-            clinic.ClinicType = model.ClinicType;
-            clinic.LicenseNumber = model.LicenseNumber;
-            clinic.LicenseExpiry = model.LicenseExpiry;
-            clinic.IsActive = model.IsActive;
+            if (!result)
+            {
+                ModelState.AddModelError(string.Empty, _localizer.T("Alert.Error.ClinicEditFailed"));
+                ViewBag.PageTitle = _localizer.T("Page.EditClinic");
+                ViewBag.StandardNames = GetStandardNames();
+                ViewBag.StandardIcons = GetStandardIcons();
+                return View(model);
+            }
 
             if (logoFile != null)
             {
@@ -320,7 +341,7 @@ public class ClinicController : Controller
                 }
             }
 
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var auditLog = new AuditTrail
             {
                 ClinicId = id,
@@ -332,7 +353,7 @@ public class ClinicController : Controller
                 ActionDate = DateTime.UtcNow,
                 IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
             };
-
+            clinic.SelectedStandards = model.SelectedStandards;
             await _unitOfWork.Repository<AuditTrail>().AddAsync(auditLog);
             await _unitOfWork.SaveChangesAsync();
 

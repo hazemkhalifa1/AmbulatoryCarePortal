@@ -25,6 +25,7 @@ public class UpdateClinicDto
     public ClinicType ClinicType { get; set; }
     public string? LicenseNumber { get; set; }
     public DateTime? LicenseExpiry { get; set; }
+    public List<string> SelectedStandards { get; set; } = new();
     public bool IsActive { get; set; }
 }
 

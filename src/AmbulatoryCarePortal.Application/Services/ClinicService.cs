@@ -124,12 +124,52 @@ public class ClinicService : IClinicService
 
     public async Task<bool> UpdateClinicAsync(UpdateClinicDto dto)
     {
-        var clinic = await _unitOfWork.Repository<Clinic>().GetByIdAsync(dto.Id);
+        var clinic = (await _unitOfWork.Repository<Clinic>().FindWithIncludesAsync(c => c.Id == dto.Id, includes: c => c.Departments)).FirstOrDefault();
+        if (clinic == null)
+            return false;
+
+        clinic.Name = dto.Name;
+        clinic.NameAr = dto.NameAr;
+        clinic.CityEn = dto.CityEn;
+        clinic.CityAr = dto.CityAr;
+        clinic.ClinicType = dto.ClinicType;
+        clinic.LicenseNumber = dto.LicenseNumber;
+        clinic.LicenseExpiry = dto.LicenseExpiry;
+        clinic.IsActive = dto.IsActive;
+
+        List<string> removedStandards = new List<string>();
+
+        if (clinic.SelectedStandards.Count == 0 && dto.SelectedStandards.Count > 0)
+        {
+            removedStandards = dto.SelectedStandards;
+        }
+        else
+        {
+            removedStandards = clinic.SelectedStandards.Except(dto.SelectedStandards).ToList();
+        }
+
+        if (removedStandards.Count > 0)
+        {
+            var departmentsToRemove = clinic.Departments.Where(d => removedStandards.Contains(d.Code, StringComparer.OrdinalIgnoreCase)).ToList();
+            foreach (var department in departmentsToRemove)
+            {
+                _unitOfWork.Repository<Department>().SoftDelete(department);
+            }
+        }
+
+        var addedStandards = dto.SelectedStandards.Except(clinic.SelectedStandards).ToList();
+
+        if (addedStandards.Count > 0)
+        {
+            await CreateDefaultDepartmentsAsync(clinic.Id, addedStandards);
+        }
+
         if (clinic == null)
             return false;
 
         _mapper.Map(dto, clinic);
         clinic.UpdatedAt = DateTime.UtcNow;
+        clinic.SelectedStandards = dto.SelectedStandards;
 
         _unitOfWork.Repository<Clinic>().Update(clinic);
         await _unitOfWork.SaveChangesAsync();
